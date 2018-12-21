@@ -1,8 +1,5 @@
-# Automatically created by $QP_ROOT/scripts/module/module_handler.py 
 .ninja_deps
 .ninja_log
-/vortex/u/eginer/qp_toto/quantum_package/src/dft_utils_two_body/print_rsdft_variational_energy
-/vortex/u/eginer/qp_toto/quantum_package/src/dft_utils_two_body/write_effective_rsdft_hamiltonian
 IRPF90_man
 IRPF90_temp
 Makefile
