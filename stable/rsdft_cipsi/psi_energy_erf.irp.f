@@ -3,7 +3,7 @@ BEGIN_PROVIDER [ double precision, psi_energy_erf, (N_states) ]
   use bitmasks
   implicit none
   BEGIN_DOC
-  ! Computes e_0 = <Psi|W_{ee}^{lr}|Psi>/<Psi|Psi>
+  ! psi_energy_erf = <Psi|W_{ee}^{lr}|Psi>/<Psi|Psi>
   !
   END_DOC
   integer :: i
@@ -19,16 +19,16 @@ BEGIN_PROVIDER [ double precision, psi_energy_h_core_and_sr_hartree, (N_states) 
   BEGIN_DOC
 ! psi_energy_h_core                = <Psi| h_{core} + v_{H}^{sr}|Psi>
   END_DOC
-  psi_energy_h_core_and_sr_hartree = psi_energy_h_core + short_range_Hartree
+  psi_energy_h_core_and_sr_hartree = psi_dft_energy_h_core + short_range_Hartree
 END_PROVIDER
 
 
-BEGIN_PROVIDER [ double precision, total_range_separated_electronic_energy, (N_states) ]
+BEGIN_PROVIDER [ double precision, var_rsdft_energy, (N_states) ]
   implicit none
   BEGIN_DOC
 ! Total_range_separated_electronic_energy = <Psi| h_{core} |Psi> + (1/2) <Psi| v_{H}^{sr} |Psi> + <i|W_{ee}^{lr}|i> + E_{x} + E_{c}
   END_DOC
-   total_range_separated_electronic_energy = psi_energy_h_core + short_range_Hartree + psi_energy_erf + energy_x + energy_c 
+   var_rsdft_energy = psi_dft_energy_h_core + short_range_Hartree + psi_energy_erf + energy_x + energy_c 
 END_PROVIDER
 
 

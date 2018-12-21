@@ -5,13 +5,16 @@ BEGIN_PROVIDER [double precision, electronic_energy_mr_dft, (N_states)]
  END_DOC
  
   print*,'You are using a variational method which uses the wave function stored in the EZFIO folder'
-  electronic_energy_mr_dft = total_range_separated_electronic_energy
+  electronic_energy_mr_dft = var_rsdft_energy
 
 
 END_PROVIDER 
 
  subroutine print_variational_energy_dft
  implicit none
+ BEGIN_DOC
+! routines that prints the variational energy, and many more quantities
+ END_DOC
  print*,'/////////////////////////'
   print*,  '****************************************'
   print*,'///////////////////'
@@ -40,5 +43,8 @@ END_PROVIDER
   write(*, '(A22,X,F16.10)') '<Psi| H | Psi>      = ',psi_energy
   write(*, '(A22,X,F16.10)') 'psi_energy_bielec   = ',psi_energy_bielec
   write(*, '(A22,X,F16.10)') 'psi_energy_h_core   = ',psi_energy_h_core
+  print*,  '****************************************'
+  print*,'Test for the coherence between density and wave function used'
+  print*,'psi_energy_h_core - psi_dft_energy_h_core = ',psi_energy_h_core - psi_dft_energy_h_core
  end
 
