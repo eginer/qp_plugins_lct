@@ -147,7 +147,7 @@ for i in {1..1}
 do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
    echo "F"  >    ${ezfio}/determinants/read_wf 
-   qp_run fci_zmq ${ezfio} | tee ${ezfio}/fci-$i
+   qp_run fci ${ezfio} | tee ${ezfio}/fci-$i
    # run 
    EV=0
 
@@ -159,7 +159,7 @@ do
       # value of the variational RS-DFT energy 
       EV_new=`grep "TOTAL ENERGY        =" ${ezfio}/rsdft-${i}-${j} | cut -d "=" -f 2`
       # rediagonalize the new effective Hamiltonian to obtain a new wave function and a new density 
-      qp_run diag_restart_save_lowest_state ${ezfio} | tee ${ezfio}/diag-${i}-${j}
+      qp_run diagonalize_h ${ezfio} | tee ${ezfio}/diag-${i}-${j}
       # checking the convergence
       DE=`echo "${EV_new} - ${EV}" | bc`
       DEabs=`echo "print abs(${DE})" | python `
@@ -175,7 +175,7 @@ do
 
     echo "T"  >    ${ezfio}/determinants/read_wf
 
-    qp_run fci_zmq ${ezfio} | tee ${ezfio}_FCI_final.out_$ndetmax
+    qp_run fci ${ezfio} | tee ${ezfio}_FCI_final.out_$ndetmax
     
     qp_run print_rsdft_variational_energy ${ezfio} | tee ${ezfio}_printdft_final.out_$ndetmax
     
