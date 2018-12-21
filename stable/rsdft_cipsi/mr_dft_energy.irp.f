@@ -19,7 +19,7 @@ END_PROVIDER
   print*,  '****************************************'
   print*,'///////////////////'
   print*,  ' Regular range separated DFT energy '
-  write(*, '(A22,X,F32.10)') 'mu_erf              = ',mu_erf          
+  write(*, '(A22,X,F32.10)') 'mu_erf_dft              = ',mu_erf_dft          
   write(*, '(A22,X,F16.10)') 'TOTAL ENERGY        = ',electronic_energy_mr_dft+nuclear_repulsion
   print*, ''
   print*, 'Component of the energy ....'
