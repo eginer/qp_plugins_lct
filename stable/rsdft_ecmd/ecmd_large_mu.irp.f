@@ -14,7 +14,7 @@
  allocate(integrals_ij(mo_tot_num,mo_tot_num))
  double precision :: wall0,wall1
  integral_on_top = 0.d0
- provide two_bod_alpha_beta_mo_physician mo_integrals_ijkl_r3_map
+ provide two_bod_alpha_beta_mo_physicist mo_integrals_ijkl_r3_map
  call wall_time(wall0)
    do j = 1, mo_tot_num ! loop over the second electron 
     do i = 1, mo_tot_num ! loop over the first electron 
@@ -23,7 +23,7 @@
      do l = 1, mo_tot_num
       do k = 1, mo_tot_num
        do istate = 1, N_states
-        integral_on_top(istate) += two_bod_alpha_beta_mo_physician(k,l,i,j,istate) * integrals_ij(k,l)
+        integral_on_top(istate) += two_bod_alpha_beta_mo_physicist(k,l,i,j,istate) * integrals_ij(k,l)
        enddo
       enddo
      enddo

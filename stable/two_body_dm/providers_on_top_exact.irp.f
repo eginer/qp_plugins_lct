@@ -47,7 +47,7 @@ double precision function two_dm_in_r(r1,r2,istate)
     do j = 1, mo_tot_num
      do i = 1, mo_tot_num
      !                                              1 2 1 2 
-     two_dm_in_r += two_bod_alpha_beta_mo_physician(i,j,k,l,istate) * mos_array_r1(i) * mos_array_r1(k) * mos_array_r2(j) * mos_array_r2(l)
+     two_dm_in_r += two_bod_alpha_beta_mo_physicist(i,j,k,l,istate) * mos_array_r1(i) * mos_array_r1(k) * mos_array_r2(j) * mos_array_r2(l)
     enddo
    enddo
   enddo
@@ -68,7 +68,7 @@ end
     do j = 1, mo_tot_num
      do i = 1, mo_tot_num
      !                                                            1 2 1 2 
-     on_top_of_r_from_provider += two_bod_alpha_beta_mo_physician(i,j,k,l,istate) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint) * mos_in_r_array(l,ipoint) * mos_in_r_array(k,ipoint)
+     on_top_of_r_from_provider += two_bod_alpha_beta_mo_physicist(i,j,k,l,istate) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint) * mos_in_r_array(l,ipoint) * mos_in_r_array(k,ipoint)
     enddo
    enddo
   enddo

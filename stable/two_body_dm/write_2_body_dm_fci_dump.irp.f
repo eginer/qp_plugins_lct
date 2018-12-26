@@ -39,7 +39,7 @@ subroutine routine_print
     do j=1,mo_tot_num
      do i=1,mo_tot_num
       !                                                     1 2 1 2
-      integral = two_bod_alpha_beta_mo_physician(i,j,k,l,1)
+      integral = two_bod_alpha_beta_mo_physicist(i,j,k,l,1)
       if(dabs(integral).lt.1.d-16)then
         integral = 0.d0
       endif
