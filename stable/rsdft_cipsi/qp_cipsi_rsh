@@ -143,7 +143,7 @@ echo "damping_rs_dft"  > ${ezfio}/dft_keywords/density_for_dft
 # specify the damping factor on the density : 0 == no update of the density, 1 == full update of the density 
 echo "0.75"            > ${ezfio}/dft_keywords/damping_for_rs_dft
 
-for i in {1..1}
+for i in {1..3}
 do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
    echo "F"  >    ${ezfio}/determinants/read_wf 
