@@ -22,12 +22,12 @@
      r(2) = grid_points_per_atom(2,l,k,j)
      r(3) = grid_points_per_atom(3,l,k,j)
      call dm_dft_alpha_beta_and_all_aos_at_r(r,rho_a,rho_b,aos_array)
-     if(dabs(final_weight_functions_at_grid_points(l,k,j) * (rho_a(1)+rho_b(1))).lt.threshold)cycle
+     if(dabs(final_weight_at_r_vector(l,k,j) * (rho_a(1)+rho_b(1))).lt.threshold)cycle
 
      do istate = 1, N_states
 !!!!!!!!!!!! CORRELATION PART
       call ESRC_MD_LDAERF (mu_erf_dft,rho_a(istate),rho_b(istate),dospin,ec(istate))
-      Energy_c_md_LDA(istate) += final_weight_functions_at_grid_points(l,k,j) * ec(istate)
+      Energy_c_md_LDA(istate) += final_weight_at_r_vector(l,k,j) * ec(istate)
      enddo
     enddo
    enddo

@@ -13,7 +13,7 @@ END_PROVIDER
  subroutine print_variational_energy_dft
  implicit none
  BEGIN_DOC
-! routines that prints the variational energy, and many more quantities
+! Routines that prints the variational energy, and many more quantities
  END_DOC
  print*,'/////////////////////////'
   print*,  '****************************************'

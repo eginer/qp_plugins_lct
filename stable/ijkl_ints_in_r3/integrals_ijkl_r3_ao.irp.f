@@ -10,7 +10,7 @@ double precision function ao_bielec_integral_ijkl_r3(i,j,k,l)
   double precision               :: I_center(3),J_center(3),K_center(3),L_center(3)
   integer                        :: num_i,num_j,num_k,num_l,dim1,I_power(3),J_power(3),K_power(3),L_power(3)
   double precision               :: integral,intx,inty,intz,overlap_gaussian_x
-  include 'Utils/constants.include.F'
+  include 'utils/constants.include.F'
   double precision               :: P_new(0:max_dim,3),P_center(3),fact_p,pp
   double precision               :: Q_new(0:max_dim,3),Q_center(3),fact_q,qq
   integer                        :: iorder_p(3), iorder_q(3)

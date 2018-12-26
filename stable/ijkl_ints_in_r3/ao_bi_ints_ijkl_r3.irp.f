@@ -7,7 +7,7 @@ subroutine compute_ao_bielec_integrals_ijkl_r3(j,k,l,sze,buffer_value)
   ! Compute AO integrals for all i and fixed j,k,l
   END_DOC
   
-  include 'Utils/constants.include.F'
+  include 'utils/constants.include.F'
   integer, intent(in)            :: j,k,l,sze
   real(integral_kind), intent(out) :: buffer_value(sze)
   double precision               :: ao_bielec_integral_ijkl_r3

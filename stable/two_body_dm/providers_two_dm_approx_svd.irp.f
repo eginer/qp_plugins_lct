@@ -178,7 +178,7 @@ BEGIN_PROVIDER [double precision, integral_on_top_of_r_approx_svd, (N_states)]
  integer :: istate
  do istate = 1, N_states
   do i = 1, n_points_final_grid
-   weight=final_weight_functions_at_final_grid_points(i)
+   weight = final_weight_at_r_vector(i)
    integral_on_top_of_r_approx_svd(istate) += on_top_of_r_approx_svd(i,istate) * weight
   enddo
  enddo
@@ -371,7 +371,7 @@ END_PROVIDER
  integer :: istate
  do istate = 1, N_states
   do i = 1, n_points_final_grid
-   weight=final_weight_functions_at_final_grid_points(i)
+   weight = final_weight_at_r_vector(i)
    integral_on_top_of_r_approx_svd_correlation(istate) += on_top_of_r_approx_svd_correlation(i,istate) * weight
   enddo
  enddo

@@ -11,7 +11,7 @@ BEGIN_PROVIDER [ logical, ao_bielec_integrals_ijkl_r3_in_map ]
   integer                        :: i,j,k,l
   double precision               :: ao_bielec_integral_ijkl_r3,cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
-  include 'Utils/constants.include.F'
+  include 'utils/constants.include.F'
   
   ! For integrals file
   integer(key_kind),allocatable  :: buffer_i(:)
