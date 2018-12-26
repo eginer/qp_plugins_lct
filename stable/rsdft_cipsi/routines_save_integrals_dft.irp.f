@@ -22,7 +22,7 @@ subroutine write_all_integrals_for_mrdft
  ! one-body effective potential and two-elec erf integrals
  END_DOC
  call save_one_e_effective_potential
- call save_erf_bi_elec_integrals_mo
- call save_erf_bi_elec_integrals_ao
+ call save_erf_bielec_ints_mo_into_ints_mo
+ call save_erf_bielec_ints_ao_into_ints_ao
 end
 

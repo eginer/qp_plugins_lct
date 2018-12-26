@@ -4,8 +4,8 @@ BEGIN_PROVIDER [double precision, electronic_energy_mr_dft, (N_states)]
  ! Energy for the multi determinantal DFT calculation
  END_DOC
  
-  print*,'You are using a variational method which uses the wave function stored in the EZFIO folder'
-  electronic_energy_mr_dft = var_rsdft_energy
+ print*,'You are using a variational method which uses the wave function stored in the EZFIO folder'
+ electronic_energy_mr_dft = var_rsdft_energy
 
 
 END_PROVIDER 
