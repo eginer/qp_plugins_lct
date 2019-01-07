@@ -136,7 +136,7 @@ end
 
 SUBST [ ao_integrals_map, ao_integrals, ao_num ]
 ao_integrals_erf_mu_of_r_map ; ao_integrals_erf_mu_of_r ; ao_num ;;
-mo_integrals_erf_mu_of_r_map ; mo_integrals_erf_mu_of_r ; mo_tot_num;;
+mo_integrals_erf_mu_of_r_map ; mo_integrals_erf_mu_of_r ; mo_num;;
 END_TEMPLATE
 
 
@@ -149,7 +149,7 @@ BEGIN_PROVIDER [ type(map_type), mo_integrals_erf_mu_of_r_map ]
   END_DOC
   integer(key_kind)              :: key_max
   integer(map_size_kind)         :: sze
-  call bielec_integrals_index(mo_tot_num,mo_tot_num,mo_tot_num,mo_tot_num,key_max)
+  call two_e_integrals_index(mo_num,mo_num,mo_num,mo_num,key_max)
   sze = key_max
   call map_init(mo_integrals_erf_mu_of_r_map,sze)
   print*, 'MO ERF map initialized'
@@ -192,7 +192,7 @@ end
  ! Min and max values of the MOs for which the integrals are in the cache
  END_DOC
  mo_integrals_erf_mu_of_r_cache_min = max(1,elec_alpha_num - 31)
- mo_integrals_erf_mu_of_r_cache_max = min(mo_tot_num,mo_integrals_erf_mu_of_r_cache_min+63)
+ mo_integrals_erf_mu_of_r_cache_max = min(mo_num,mo_integrals_erf_mu_of_r_cache_min+63)
 
 END_PROVIDER
 
@@ -213,7 +213,7 @@ BEGIN_PROVIDER [ double precision, mo_integrals_erf_mu_of_r_cache, (0:64*64*64*6
      do j=mo_integrals_erf_mu_of_r_cache_min,mo_integrals_erf_mu_of_r_cache_max
        do i=mo_integrals_erf_mu_of_r_cache_min,mo_integrals_erf_mu_of_r_cache_max
          !DIR$ FORCEINLINE
-         call bielec_integrals_index(i,j,k,l,idx)
+         call two_e_integrals_index(i,j,k,l,idx)
          !DIR$ FORCEINLINE
          call map_get(mo_integrals_erf_mu_of_r_map,idx,integral)
          ii = l-mo_integrals_erf_mu_of_r_cache_min
@@ -248,7 +248,7 @@ double precision function get_mo_bielec_integral_erf_mu_of_r(i,j,k,l,map)
   ii = ior(ii, i-mo_integrals_erf_mu_of_r_cache_min)
   if (iand(ii, -64) /= 0) then
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(i,j,k,l,idx)
+    call two_e_integrals_index(i,j,k,l,idx)
     !DIR$ FORCEINLINE
     call map_get(map,idx,tmp)
     get_mo_bielec_integral_erf_mu_of_r = dble(tmp)
@@ -293,7 +293,7 @@ subroutine get_mo_bielec_integrals_erf_mu_of_r(j,k,l,sze,out_val,map)
   
   do i=1,sze
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(i,j,k,l,hash(i))
+    call two_e_integrals_index(i,j,k,l,hash(i))
   enddo
   
   if (key_kind == 8) then
@@ -333,7 +333,7 @@ subroutine get_mo_bielec_integrals_erf_mu_of_r_ij(k,l,sze,out_array,map)
    do i=1,sze
     kk += 1
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(i,j,k,l,hash(kk))
+    call two_e_integrals_index(i,j,k,l,hash(kk))
     pairs(1,kk) = i
     pairs(2,kk) = j
     iorder(kk) = kk
@@ -380,7 +380,7 @@ subroutine get_mo_bielec_integrals_erf_mu_of_r_coulomb_ii(k,l,sze,out_val,map)
   integer :: kk
   do i=1,sze
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(k,i,l,i,hash(i))
+    call two_e_integrals_index(k,i,l,i,hash(i))
   enddo
   
   if (key_kind == 8) then
@@ -413,7 +413,7 @@ subroutine get_mo_bielec_integrals_erf_mu_of_r_exch_ii(k,l,sze,out_val,map)
   integer :: kk
   do i=1,sze
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(k,i,i,l,hash(i))
+    call two_e_integrals_index(k,i,i,l,hash(i))
   enddo
   
   if (key_kind == 8) then

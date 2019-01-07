@@ -35,7 +35,7 @@ end
 !implicit none
 !double precision, allocatable :: integrals_mo(:,:),mos_array(:)
 !double precision :: r(3),mu_in
-!allocate(integrals_mo(mo_tot_num,mo_tot_num),mos_array(mo_tot_num))
+!allocate(integrals_mo(mo_num,mo_num),mos_array(mo_num))
 !r = 0.d0
 !mu_in = 0.001d0
 !integer :: i_mu,n_mui,j,k,l
@@ -157,7 +157,7 @@ subroutine test_prim
       r(1) = grid_points_per_atom(1,l,k,j)
       r(2) = grid_points_per_atom(2,l,k,j)
       r(3) = grid_points_per_atom(3,l,k,j)
-      weight = final_weight_functions_at_grid_points(l,k,j)
+      weight = final_weight_at_r(l,k,j)
       dist = 0.d0
       do i = 1, 3
        dist += (r(i) - C_center(i))**2
@@ -189,7 +189,7 @@ subroutine test_prim
 !      r(1) = grid_points_per_atom(1,l,k,j)
 !      r(2) = grid_points_per_atom(2,l,k,j)
 !      r(3) = grid_points_per_atom(3,l,k,j)
-!      weight = final_weight_functions_at_grid_points(l,k,j)
+!      weight = final_weight_at_r(l,k,j)
 !      dist = 0.d0
 !      do i = 1, 3
 !       dist += (r(i) - C_center(i))**2
@@ -491,7 +491,7 @@ subroutine bis
           r(1) = grid_points_per_atom(1,l,k,j)
           r(2) = grid_points_per_atom(2,l,k,j)
           r(3) = grid_points_per_atom(3,l,k,j)
-          weight = final_weight_functions_at_grid_points(l,k,j)
+          weight = final_weight_at_r(l,k,j)
           dist = 0.d0
           do i = 1, 3
            dist += (r(i) - C_center(i))**2
@@ -589,7 +589,7 @@ subroutine test_aos
         r(1) = grid_points_per_atom(1,l,k,j)
         r(2) = grid_points_per_atom(2,l,k,j)
         r(3) = grid_points_per_atom(3,l,k,j)
-        weight = final_weight_functions_at_grid_points(l,k,j)
+        weight = final_weight_at_r(l,k,j)
         dist = 0.d0
         do i = 1, 3
          dist += (r(i) - C_center(i))**2
@@ -636,7 +636,7 @@ subroutine test_int_erf_bielec_ijkl
  integer :: i,j,k,l
  double precision :: accu_relative,accu_absolute
  double precision, allocatable :: integrals_array(:,:)
- double precision :: integral_erf,erf_mu_of_r_ao,test,ao_bielec_integral_erf,test_2,erf_mu_of_r_ao_old
+ double precision :: integral_erf,erf_mu_of_r_ao,test,ao_two_e_integral_erf,test_2,erf_mu_of_r_ao_old
  allocate(integrals_array(ao_num,ao_num))
  accu_relative = 0.d0
  accu_absolute = 0.d0
@@ -645,7 +645,7 @@ subroutine test_int_erf_bielec_ijkl
  integral_erf = erf_mu_of_r_ao(1,1,1,1)
  print*,''
  call wall_time(wall1)
- provide ao_bielec_integrals_erf_in_map ao_bielec_integrals_erf_mu_of_r_in_map 
+ provide ao_two_e_integrals_erf_in_map ao_bielec_integrals_erf_mu_of_r_in_map 
  do i = 1, ao_num ! electron 1 
   do j = 1, ao_num ! electron 1 
    print*,i,j
@@ -654,7 +654,7 @@ subroutine test_int_erf_bielec_ijkl
     do l = 1, ao_num ! electron 2 
      double precision :: get_ao_bielec_integral_erf_mu_of_r,integral_erf_map,i_count
      
-     integral_erf = ao_bielec_integral_erf(i,j,k,l)
+     integral_erf = ao_two_e_integral_erf(i,j,k,l)
     !integral_erf = erf_mu_of_r_ao(i,j,k,l)
   ! !test = erf_mu_of_r_ao(i,j,k,l)
 !    test = integrals_array(l,k)
@@ -689,10 +689,10 @@ subroutine test_int_erf_bielec_ijkl_mo
  integer :: m,n,p,q
  double precision :: accu,get_mo_bielec_integral_erf_mu_of_r, integral, get_ao_bielec_integral_erf_mu_of_r,integral_2
 
- do i = 1, mo_tot_num ! 1 
-  do j = 1, mo_tot_num ! 2 
-   do k = 1, mo_tot_num ! 1 
-    do l = 1, mo_tot_num ! 2
+ do i = 1, mo_num ! 1 
+  do j = 1, mo_num ! 2 
+   do k = 1, mo_num ! 1 
+    do l = 1, mo_num ! 2
      integral = get_mo_bielec_integral_erf_mu_of_r(i,j,k,l,mo_integrals_erf_mu_of_r_map)
      integral_2 = 0.d0
      do m = 1, ao_num

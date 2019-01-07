@@ -13,7 +13,7 @@ BEGIN_PROVIDER [ logical, ao_bielec_integrals_erf_mu_of_r_in_map ]
   integer                        :: i,j,k,l
   double precision               :: erf_mu_of_r_ao,cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
-  include 'Utils/constants.include.F'
+  include 'utils/constants.include.F'
   
   ! For integrals file
   integer(key_kind),allocatable  :: buffer_i(:)
@@ -30,14 +30,14 @@ BEGIN_PROVIDER [ logical, ao_bielec_integrals_erf_mu_of_r_in_map ]
 
   
   double precision               :: map_mb
-  PROVIDE read_ao_integrals_mu_of_r disk_ao_integrals_mu_of_r
-  if (read_ao_integrals_mu_of_r) then
-    print*,'Reading the AO ERF mu of r integrals'
-      call map_load_from_disk(trim(ezfio_filename)//'/work/ao_ints_erf_mu_of_r',ao_integrals_erf_mu_of_r_map)
-      print*, 'AO ERF mu of r integrals provided'
-      ao_bielec_integrals_erf_mu_of_r_in_map = .True.
-      return
-  endif
+  PROVIDE read_ao_integrals_mu_of_r io_ao_integrals_mu_of_r
+ !if (read_ao_integrals_mu_of_r) then
+ !  print*,'Reading the AO ERF mu of r integrals'
+ !    call map_load_from_disk(trim(ezfio_filename)//'/work/ao_ints_erf_mu_of_r',ao_integrals_erf_mu_of_r_map)
+ !    print*, 'AO ERF mu of r integrals provided'
+ !    ao_bielec_integrals_erf_mu_of_r_in_map = .True.
+ !    return
+ !endif
   
   print*, 'Providing the AO ERF mu of r integrals'
   call wall_time(wall_0)
@@ -92,11 +92,11 @@ BEGIN_PROVIDER [ logical, ao_bielec_integrals_erf_mu_of_r_in_map ]
   
   ao_bielec_integrals_erf_mu_of_r_in_map = .True.
 
-  if (write_ao_integrals_mu_of_r) then
-    call ezfio_set_work_empty(.False.)
-    call map_save_to_disk(trim(ezfio_filename)//'/work/ao_ints_erf_mu_of_r',ao_integrals_erf_mu_of_r_map)
-    call ezfio_set_mu_of_r_ints_disk_ao_integrals_mu_of_r("Read")
-  endif
+ !if (write_ao_integrals_mu_of_r) then
+ !  call ezfio_set_work_empty(.False.)
+ !  call map_save_to_disk(trim(ezfio_filename)//'/work/ao_ints_erf_mu_of_r',ao_integrals_erf_mu_of_r_map)
+ !  call ezfio_set_mu_of_r_ints_io_ao_integrals_mu_of_r("Read")
+ !endif
   
 END_PROVIDER
  

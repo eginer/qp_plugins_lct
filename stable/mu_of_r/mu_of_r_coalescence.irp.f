@@ -7,7 +7,7 @@
  END_DOC
  integer :: i_point,k,i,j
  double precision :: r(3)
- double precision :: cpu0,cpu1,local_potential
+ double precision :: cpu0,cpu1,local_potential,two_bod
  print*,'providing the mu_of_r_hf_coal_vector ...'
  call wall_time(cpu0)
  r = 0.d0
@@ -52,17 +52,17 @@
  call wall_time(cpu0)
 
  if(.True.)then
-  provide on_top_of_r_vector_simple 
+  provide on_top_of_r_vector 
   provide f_psi_ab
  endif
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (i_point,r,local_potential,two_body_dm) & 
- !$OMP shARED (n_points_final_grid,final_grid_points,mu_of_r_psi_coal_vector,f_psi_ab,on_top_of_r_vector_simple) 
+ !$OMP shARED (n_points_final_grid,final_grid_points,mu_of_r_psi_coal_vector,f_psi_ab,on_top_of_r_vector) 
  do i_point = 1, n_points_final_grid
-  local_potential = f_psi_ab(i_point) / on_top_of_r_vector_simple(i_point,1)
-  if(on_top_of_r_vector_simple(i_point,1).gt.1.d-12.and.f_psi_ab(i_point).gt.1.d-12)then
-   local_potential = f_psi_ab(i_point)/on_top_of_r_vector_simple(i_point,1)
+  local_potential = f_psi_ab(i_point) / on_top_of_r_vector(i_point,1)
+  if(on_top_of_r_vector(i_point,1).gt.1.d-12.and.f_psi_ab(i_point).gt.1.d-12)then
+   local_potential = f_psi_ab(i_point)/on_top_of_r_vector(i_point,1)
   else 
    local_potential = 1.d-10
   endif

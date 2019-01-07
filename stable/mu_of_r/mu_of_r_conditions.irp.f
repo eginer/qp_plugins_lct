@@ -15,14 +15,14 @@
   r(1) = final_grid_points(1,i_point)
   r(2) = final_grid_points(2,i_point)
   r(3) = final_grid_points(3,i_point)
-  if(mu_of_r_potential.EQ."cusp_condition")then
-   mu_of_r_vector(i_point) = mu_of_r_cusp_condition_vector(i_point,1)
-  else if(mu_of_r_potential.EQ."hf_coallescence")then
+! if(mu_of_r_potential.EQ."cusp_condition")then
+!  mu_of_r_vector(i_point) = mu_of_r_cusp_condition_vector(i_point,1)
+  if(mu_of_r_potential.EQ."hf_coallescence")then
    mu_of_r_vector(i_point) =  mu_of_r_hf_coal_vector(i_point)
   else if(mu_of_r_potential.EQ."psi_coallescence")then
    mu_of_r_vector(i_point) =  mu_of_r_psi_coal_vector(i_point)
-  else if(mu_of_r_potential.EQ."hf_integral")then
-   mu_of_r_vector(i_point) = mu_of_r_integral_hf_vector(i_point)
+! else if(mu_of_r_potential.EQ."hf_integral")then
+!  mu_of_r_vector(i_point) = mu_of_r_integral_hf_vector(i_point)
   else 
     print*,'you requested the following mu_of_r_potential'
     print*,mu_of_r_potential

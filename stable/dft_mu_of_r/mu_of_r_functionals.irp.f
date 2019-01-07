@@ -16,7 +16,7 @@
  call wall_time(wall0)
  do i = 1, n_points_final_grid
   mu = mu_of_r_vector(i)
-  weight=final_weight_functions_at_final_grid_points(i)
+  weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
    rho_a(istate) = one_body_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_body_dm_beta_at_r(i,istate)
@@ -56,7 +56,7 @@
   r(1) = final_grid_points(1,i)
   r(2) = final_grid_points(2,i)
   r(3) = final_grid_points(3,i)
-  weight=final_weight_functions_at_final_grid_points(i)
+  weight=final_weight_at_r_vector(i)
   two_dm(:) = on_top_of_r_vector(i,:)
   mu = mu_of_r_vector(i)
 
@@ -92,7 +92,7 @@
  allocate(rho_a(N_states), rho_b(N_states))
  do i = 1, n_points_final_grid
   mu = mu_of_r_vector(i)
-  weight=final_weight_functions_at_final_grid_points(i)
+  weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
    rho_a(istate) = one_body_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_body_dm_beta_at_r(i,istate)
@@ -116,7 +116,7 @@ BEGIN_PROVIDER [double precision, Energy_c_LDA_mu_of_r, (N_states)]
  
  do i = 1, n_points_final_grid
   mu = mu_of_r_vector(i)
-  weight=final_weight_functions_at_final_grid_points(i)
+  weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
    rho_a(istate) = one_body_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_body_dm_beta_at_r(i,istate)
@@ -138,7 +138,7 @@ END_PROVIDER
  integer :: i,j,k
  double precision :: r(3), weight,tmp,integral_of_mu_of_r_on_HF
  double precision, allocatable :: integrals_mo(:,:),mos_array(:)
- allocate(integrals_mo(mo_tot_num,mo_tot_num),mos_array(mo_tot_num))
+ allocate(integrals_mo(mo_num,mo_num),mos_array(mo_num))
  HF_alpha_beta_mu_of_r_bielec_energy = 0.d0
   
  integer                        :: occ(N_int*bit_kind_size,2)
@@ -154,7 +154,7 @@ END_PROVIDER
  HF_alpha_beta_bielec_energy = 0.d0
  do j= 1, elec_beta_num
   do i= 1, elec_alpha_num
-    HF_alpha_beta_bielec_energy += mo_bielec_integral_jj(occ(i,1),occ(j,2))
+    HF_alpha_beta_bielec_energy += mo_two_e_integrals_jj(occ(i,1),occ(j,2))
   enddo
  enddo
 

@@ -11,7 +11,7 @@ subroutine compute_ao_integrals_erf_mu_of_r_jl_old(j,l,n_integrals,buffer_i,buff
   real(integral_kind),intent(out) :: buffer_value(ao_num*ao_num)
 
   integer                        :: i,k
-  double precision               :: ao_bielec_integral_erf,cpu_1,cpu_2, wall_1, wall_2
+  double precision               :: ao_two_e_integral_erf,cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
   double precision               :: thr,erf_mu_of_r_ao
   integer                        :: kk, m, j1, i1
@@ -34,7 +34,7 @@ subroutine compute_ao_integrals_erf_mu_of_r_jl_old(j,l,n_integrals,buffer_i,buff
       if (ao_overlap_abs(i,k)*ao_overlap_abs(j,l) < thr) then
         cycle
       endif
-!     if (ao_bielec_integral_erf_schwartz(i,k)*ao_bielec_integral_erf_schwartz(j,l) < thr ) then
+!     if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) then
 !       cycle
 !     endif
       !DIR$ FORCEINLINE
@@ -44,7 +44,7 @@ subroutine compute_ao_integrals_erf_mu_of_r_jl_old(j,l,n_integrals,buffer_i,buff
       endif
       n_integrals += 1
       !DIR$ FORCEINLINE
-      call bielec_integrals_index(i,j,k,l,buffer_i(n_integrals))
+      call two_e_integrals_index(i,j,k,l,buffer_i(n_integrals))
       buffer_value(n_integrals) = integral
     enddo
   enddo
@@ -64,7 +64,7 @@ subroutine compute_ao_integrals_erf_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_v
   real(integral_kind),intent(out) :: buffer_value(ao_num*ao_num)
 
   integer                        :: i,k
-  double precision               :: ao_bielec_integral_erf,cpu_1,cpu_2, wall_1, wall_2
+  double precision               :: ao_two_e_integral_erf,cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
   double precision               :: thr,erf_mu_of_r_ao
   integer                        :: kk, m, j1, i1
