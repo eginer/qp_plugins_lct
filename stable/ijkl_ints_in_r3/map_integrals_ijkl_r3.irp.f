@@ -10,7 +10,7 @@ BEGIN_PROVIDER [ type(map_type), ao_integrals_ijkl_r3_map ]
   END_DOC
   integer(key_kind)              :: key_max
   integer(map_size_kind)         :: sze
-  call bielec_integrals_index(ao_num,ao_num,ao_num,ao_num,key_max)
+  call two_e_integrals_index(ao_num,ao_num,ao_num,ao_num,key_max)
   sze = key_max
   call map_init(ao_integrals_ijkl_r3_map,sze)
   print*,  'AO map initialized : ', sze
@@ -43,7 +43,7 @@ BEGIN_PROVIDER [ double precision, ao_integrals_ijkl_r3_cache, (0:64*64*64*64) ]
      do j=ao_integrals_ijkl_r3_cache_min,ao_integrals_ijkl_r3_cache_max
        do i=ao_integrals_ijkl_r3_cache_min,ao_integrals_ijkl_r3_cache_max
          !DIR$ FORCEINLINE
-         call bielec_integrals_index(i,j,k,l,idx)
+         call two_e_integrals_index(i,j,k,l,idx)
          !DIR$ FORCEINLINE
          call map_get(ao_integrals_ijkl_r3_map,idx,integral)
          ii = l-ao_integrals_ijkl_r3_cache_min
@@ -84,7 +84,7 @@ double precision function get_ao_bielec_integral_ijkl_r3(i,j,k,l,map) result(res
     ii = ior(ii, i-ao_integrals_ijkl_r3_cache_min)
     if (iand(ii, -64) /= 0) then
       !DIR$ FORCEINLINE
-      call bielec_integrals_index(i,j,k,l,idx)
+      call two_e_integrals_index(i,j,k,l,idx)
       !DIR$ FORCEINLINE
       call map_get(map,idx,tmp)
       tmp = tmp
@@ -159,7 +159,7 @@ subroutine get_ao_bielec_integrals_ijkl_r3_non_zero(j,k,l,sze,out_val,out_val_in
     if (ao_bielec_integral_ijkl_r3_schwartz(i,k)*ao_bielec_integral_ijkl_r3_schwartz(j,l) < thresh) then
       cycle
     endif
-    call bielec_integrals_index(i,j,k,l,hash)
+    call two_e_integrals_index(i,j,k,l,hash)
     call map_get(ao_integrals_ijkl_r3_map, hash,tmp)
     if (dabs(tmp) < thresh ) cycle
     non_zero_int = non_zero_int+1
@@ -325,7 +325,7 @@ end
 
 SUBST [ ao_integrals_map, ao_integrals, ao_num ]
 ao_integrals_ijkl_r3_map ; ao_integrals_ijkl_r3 ; ao_num ;;
-mo_integrals_ijkl_r3_map ; mo_integrals_ijkl_r3 ; mo_tot_num;;
+mo_integrals_ijkl_r3_map ; mo_integrals_ijkl_r3 ; mo_num;;
 END_TEMPLATE
 
 
@@ -338,7 +338,7 @@ BEGIN_PROVIDER [ type(map_type), mo_integrals_ijkl_r3_map ]
   END_DOC
   integer(key_kind)              :: key_max
   integer(map_size_kind)         :: sze
-  call bielec_integrals_index(mo_tot_num,mo_tot_num,mo_tot_num,mo_tot_num,key_max)
+  call two_e_integrals_index(mo_num,mo_num,mo_num,mo_num,key_max)
   sze = key_max
   call map_init(mo_integrals_ijkl_r3_map,sze)
   print*, 'MO ERF map initialized'
@@ -381,7 +381,7 @@ end
  ! Min and max values of the MOs for which the integrals are in the cache
  END_DOC
  mo_integrals_ijkl_r3_cache_min = max(1,elec_alpha_num - 31)
- mo_integrals_ijkl_r3_cache_max = min(mo_tot_num,mo_integrals_ijkl_r3_cache_min+63)
+ mo_integrals_ijkl_r3_cache_max = min(mo_num,mo_integrals_ijkl_r3_cache_min+63)
 
 END_PROVIDER
 
@@ -402,7 +402,7 @@ BEGIN_PROVIDER [ double precision, mo_integrals_ijkl_r3_cache, (0:64*64*64*64) ]
      do j=mo_integrals_ijkl_r3_cache_min,mo_integrals_ijkl_r3_cache_max
        do i=mo_integrals_ijkl_r3_cache_min,mo_integrals_ijkl_r3_cache_max
          !DIR$ FORCEINLINE
-         call bielec_integrals_index(i,j,k,l,idx)
+         call two_e_integrals_index(i,j,k,l,idx)
          !DIR$ FORCEINLINE
          call map_get(mo_integrals_ijkl_r3_map,idx,integral)
          ii = l-mo_integrals_ijkl_r3_cache_min
@@ -437,7 +437,7 @@ double precision function get_mo_bielec_integral_ijkl_r3(i,j,k,l,map)
   ii = ior(ii, i-mo_integrals_ijkl_r3_cache_min)
   if (iand(ii, -64) /= 0) then
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(i,j,k,l,idx)
+    call two_e_integrals_index(i,j,k,l,idx)
     !DIR$ FORCEINLINE
     call map_get(map,idx,tmp)
     get_mo_bielec_integral_ijkl_r3 = dble(tmp)
@@ -482,7 +482,7 @@ subroutine get_mo_bielec_integrals_ijkl_r3(j,k,l,sze,out_val,map)
   
   do i=1,sze
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(i,j,k,l,hash(i))
+    call two_e_integrals_index(i,j,k,l,hash(i))
   enddo
   
   if (key_kind == 8) then
@@ -522,7 +522,7 @@ subroutine get_mo_bielec_integrals_ijkl_r3_ij(k,l,sze,out_array,map)
    do i=1,sze
     kk += 1
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(i,j,k,l,hash(kk))
+    call two_e_integrals_index(i,j,k,l,hash(kk))
     pairs(1,kk) = i
     pairs(2,kk) = j
     iorder(kk) = kk
@@ -569,7 +569,7 @@ subroutine get_mo_bielec_integrals_ijkl_r3_coulomb_ii(k,l,sze,out_val,map)
   integer :: kk
   do i=1,sze
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(k,i,l,i,hash(i))
+    call two_e_integrals_index(k,i,l,i,hash(i))
   enddo
   
   if (key_kind == 8) then
@@ -602,7 +602,7 @@ subroutine get_mo_bielec_integrals_ijkl_r3_exch_ii(k,l,sze,out_val,map)
   integer :: kk
   do i=1,sze
     !DIR$ FORCEINLINE
-    call bielec_integrals_index(k,i,i,l,hash(i))
+    call two_e_integrals_index(k,i,i,l,hash(i))
   enddo
   
   if (key_kind == 8) then

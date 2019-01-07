@@ -84,7 +84,7 @@ subroutine compute_ao_integrals_ijkl_r3_jl(j,l,n_integrals,buffer_i,buffer_value
       endif
       n_integrals += 1
       !DIR$ FORCEINLINE
-      call bielec_integrals_index(i,j,k,l,buffer_i(n_integrals))
+      call two_e_integrals_index(i,j,k,l,buffer_i(n_integrals))
       buffer_value(n_integrals) = integral
     enddo
   enddo

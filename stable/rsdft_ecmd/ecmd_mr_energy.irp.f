@@ -16,7 +16,7 @@
   write(*, '(A22,X,F16.10)') '<Psi| H | Psi>      = ',psi_energy
   write(*, '(A22,X,F16.10)') 'Energy_c_md_on_top  = ',Energy_c_md_on_top
   print*,  '****************************************'
-  write(*, '(A22,X,F16.10)') 'psi_energy_bielec   = ',psi_energy_bielec
+  write(*, '(A22,X,F16.10)') 'psi_energy_two_e   = ',psi_energy_two_e
   write(*, '(A22,X,F16.10)') 'psi_energy_h_core   = ',psi_energy_h_core
   print*,  '****************************************'
   print*,'Test for the coherence between density and wave function used'

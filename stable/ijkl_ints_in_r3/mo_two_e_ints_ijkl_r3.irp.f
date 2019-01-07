@@ -26,7 +26,7 @@ BEGIN_PROVIDER [ logical, mo_bielec_integrals_ijkl_r3_in_map ]
   integer(bit_kind)              :: mask_ijk(N_int,3)
   
   BEGIN_DOC
-  ! If True, the map of MO bielectronic integrals is provided
+  ! If True, the map of MO two-electron integrals is provided
   END_DOC
   
   real                           :: map_mb
@@ -61,13 +61,13 @@ BEGIN_PROVIDER [ logical, mo_bielec_integrals_ijkl_r3_in_map ]
 END_PROVIDER
 
 
- BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_from_ao, (mo_tot_num,mo_tot_num) ]
-&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_exchange_from_ao, (mo_tot_num,mo_tot_num) ]
-&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_anti_from_ao, (mo_tot_num,mo_tot_num) ]
+ BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_from_ao, (mo_num,mo_num) ]
+&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_exchange_from_ao, (mo_num,mo_num) ]
+&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_anti_from_ao, (mo_num,mo_num) ]
   BEGIN_DOC
-  ! mo_bielec_integral_jj_from_ao(i,j) = J_ij
-  ! mo_bielec_integral_jj_exchange_from_ao(i,j) = J_ij
-  ! mo_bielec_integral_jj_anti_from_ao(i,j) = J_ij - K_ij
+  ! mo_two_e_integral_jj_from_ao(i,j) = J_ij
+  ! mo_two_e_integrals_jj_exchange_from_ao(i,j) = J_ij
+  ! mo_two_e_integrals_jj_anti_from_ao(i,j) = J_ij - K_ij
   END_DOC
   implicit none
   integer                        :: i,j,p,q,r,s
@@ -92,13 +92,13 @@ END_PROVIDER
   !$OMP PARALLEL DEFAULT(NONE)                                       &
       !$OMP PRIVATE (i,j,p,q,r,s,integral,c,n,pp,int_value,int_idx,  &
       !$OMP  iqrs, iqsr,iqri,iqis)                                   &
-      !$OMP SHARED(mo_tot_num,mo_coef_transp,ao_num,&
+      !$OMP SHARED(mo_num,mo_coef_transp,ao_num,&
       !$OMP  ao_integrals_threshold,do_direct_integrals)             &
       !$OMP REDUCTION(+:mo_bielec_integral_ijkl_r3_jj_from_ao,mo_bielec_integral_ijkl_r3_jj_exchange_from_ao)
   
   allocate( int_value(ao_num), int_idx(ao_num),                      &
-      iqrs(mo_tot_num,ao_num), iqis(mo_tot_num), iqri(mo_tot_num),&
-      iqsr(mo_tot_num,ao_num) )
+      iqrs(mo_num,ao_num), iqis(mo_num), iqri(mo_num),&
+      iqsr(mo_num,ao_num) )
   
   !$OMP DO SCHEDULE (guided)
   do s=1,ao_num
@@ -106,7 +106,7 @@ END_PROVIDER
       
       do j=1,ao_num
         !DIR$ VECTOR ALIGNED
-        do i=1,mo_tot_num
+        do i=1,mo_num
           iqrs(i,j) = 0.d0
           iqsr(i,j) = 0.d0
         enddo
@@ -120,7 +120,7 @@ END_PROVIDER
             integral = int_value(p)
             if (abs(integral) > ao_integrals_threshold) then
               !DIR$ VECTOR ALIGNED
-              do i=1,mo_tot_num
+              do i=1,mo_num
                 iqrs(i,r) += mo_coef_transp(i,p) * integral
               enddo
             endif
@@ -130,7 +130,7 @@ END_PROVIDER
             integral = int_value(p)
             if (abs(integral) > ao_integrals_threshold) then
               !DIR$ VECTOR ALIGNED
-              do i=1,mo_tot_num
+              do i=1,mo_num
                 iqsr(i,r) += mo_coef_transp(i,p) * integral
               enddo
             endif
@@ -146,7 +146,7 @@ END_PROVIDER
             integral = int_value(pp)
             if (abs(integral) > ao_integrals_threshold) then
               !DIR$ VECTOR ALIGNED
-              do i=1,mo_tot_num
+              do i=1,mo_num
                 iqrs(i,r) += mo_coef_transp(i,p) * integral
               enddo
             endif
@@ -157,7 +157,7 @@ END_PROVIDER
             integral = int_value(pp)
             if (abs(integral) > ao_integrals_threshold) then
               !DIR$ VECTOR ALIGNED
-              do i=1,mo_tot_num
+              do i=1,mo_num
                 iqsr(i,r) += mo_coef_transp(i,p) * integral
               enddo
             endif
@@ -168,14 +168,14 @@ END_PROVIDER
       iqri = 0.d0
       do r=1,ao_num
         !DIR$ VECTOR ALIGNED
-        do i=1,mo_tot_num
+        do i=1,mo_num
           iqis(i) += mo_coef_transp(i,r) * iqrs(i,r)
           iqri(i) += mo_coef_transp(i,r) * iqsr(i,r)
         enddo
       enddo
-      do i=1,mo_tot_num
+      do i=1,mo_num
         !DIR$ VECTOR ALIGNED
-        do j=1,mo_tot_num
+        do j=1,mo_num
           c = mo_coef_transp(j,q)*mo_coef_transp(j,s)
           mo_bielec_integral_ijkl_r3_jj_from_ao(j,i) += c * iqis(i)
           mo_bielec_integral_ijkl_r3_jj_exchange_from_ao(j,i) += c * iqri(i)
@@ -195,14 +195,14 @@ END_PROVIDER
 END_PROVIDER 
 
 
- BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj, (mo_tot_num,mo_tot_num) ]
-&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_exchange, (mo_tot_num,mo_tot_num) ]
-&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_anti, (mo_tot_num,mo_tot_num) ]
+ BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj, (mo_num,mo_num) ]
+&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_exchange, (mo_num,mo_num) ]
+&BEGIN_PROVIDER [ double precision, mo_bielec_integral_ijkl_r3_jj_anti, (mo_num,mo_num) ]
   implicit none
   BEGIN_DOC
-  ! mo_bielec_integral_jj(i,j) = J_ij
-  ! mo_bielec_integral_jj_exchange(i,j) = K_ij
-  ! mo_bielec_integral_jj_anti(i,j) = J_ij - K_ij
+  ! mo_two_e_integrals_jj(i,j) = J_ij
+  ! mo_two_e_integrals_jj_exchange(i,j) = K_ij
+  ! mo_two_e_integrals_jj_anti(i,j) = J_ij - K_ij
   END_DOC
   
   integer                        :: i,j
@@ -212,8 +212,8 @@ END_PROVIDER
   mo_bielec_integral_ijkl_r3_jj = 0.d0
   mo_bielec_integral_ijkl_r3_jj_exchange = 0.d0
   
-  do j=1,mo_tot_num
-    do i=1,mo_tot_num
+  do j=1,mo_num
+    do i=1,mo_num
       mo_bielec_integral_ijkl_r3_jj(i,j) = get_mo_bielec_integral_ijkl_r3(i,j,i,j,mo_integrals_ijkl_r3_map)
       mo_bielec_integral_ijkl_r3_jj_exchange(i,j) = get_mo_bielec_integral_ijkl_r3(i,j,j,i,mo_integrals_ijkl_r3_map)
       mo_bielec_integral_ijkl_r3_jj_anti(i,j) = mo_bielec_integral_ijkl_r3_jj(i,j) - mo_bielec_integral_ijkl_r3_jj_exchange(i,j)
@@ -259,12 +259,12 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
   
   integer, allocatable           :: list_ijkl(:,:)
   integer                        :: n_i, n_j, n_k, n_l
-  integer, allocatable           :: bielec_tmp_0_idx(:)
-  real(integral_kind), allocatable :: bielec_tmp_0(:,:)
-  double precision, allocatable  :: bielec_tmp_1(:)
-  double precision, allocatable  :: bielec_tmp_2(:,:)
-  double precision, allocatable  :: bielec_tmp_3(:,:,:)
-  !DIR$ ATTRIBUTES ALIGN : 64    :: bielec_tmp_1, bielec_tmp_2, bielec_tmp_3
+  integer, allocatable           :: two_e_tmp_0_idx(:)
+  real(integral_kind), allocatable :: two_e_tmp_0(:,:)
+  double precision, allocatable  :: two_e_tmp_1(:)
+  double precision, allocatable  :: two_e_tmp_2(:,:)
+  double precision, allocatable  :: two_e_tmp_3(:,:,:)
+  !DIR$ ATTRIBUTES ALIGN : 64    :: two_e_tmp_1, two_e_tmp_2, two_e_tmp_3
   
   integer                        :: n_integrals
   integer                        :: size_buffer
@@ -276,12 +276,12 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
   integer                        :: i2,i3,i4
   double precision,parameter     :: thr_coef = 1.d-10
   
-  PROVIDE ao_bielec_integrals_in_map  mo_coef
+  PROVIDE ao_two_e_integrals_in_map  mo_coef
   
   !Get list of MOs for i,j,k and l
   !-------------------------------
   
-  allocate(list_ijkl(mo_tot_num,4))
+  allocate(list_ijkl(mo_num,4))
   call bitstring_to_list( mask_ijkl(1,1), list_ijkl(1,1), n_i, N_int )
   call bitstring_to_list( mask_ijkl(1,2), list_ijkl(1,2), n_j, N_int )
   call bitstring_to_list( mask_ijkl(1,3), list_ijkl(1,3), n_k, N_int )
@@ -333,7 +333,7 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
   
   size_buffer = min(ao_num*ao_num*ao_num,16000000)
   print*, 'Providing the ijkl_r3 molecular integrals '
-  print*, 'Buffers : ', 8.*(mo_tot_num*(n_j)*(n_k+1) + mo_tot_num+&
+  print*, 'Buffers : ', 8.*(mo_num*(n_j)*(n_k+1) + mo_num+&
       ao_num+ao_num*ao_num+ size_buffer*3)/(1024*1024), 'MB / core'
   
   call wall_time(wall_1)
@@ -342,22 +342,22 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
   accu_bis = 0.d0
   
   !$OMP PARALLEL PRIVATE(l1,k1,j1,i1,i2,i3,i4,i,j,k,l,c, ii1,kmax,   &
-      !$OMP  bielec_tmp_0_idx, bielec_tmp_0, bielec_tmp_1,bielec_tmp_2,bielec_tmp_3,&
+      !$OMP  two_e_tmp_0_idx, two_e_tmp_0, two_e_tmp_1,two_e_tmp_2,two_e_tmp_3,&
       !$OMP  buffer_i,buffer_value,n_integrals,wall_2,i0,j0,k0,l0,   &
       !$OMP  wall_0,thread_num,accu_bis)                             &
       !$OMP  DEFAULT(NONE)                                           &
-      !$OMP  SHARED(size_buffer,ao_num,mo_tot_num,n_i,n_j,n_k,n_l,   &
+      !$OMP  SHARED(size_buffer,ao_num,mo_num,n_i,n_j,n_k,n_l,   &
       !$OMP  mo_coef_transp,                                         &
       !$OMP  mo_coef_transp_is_built, list_ijkl,                     &
       !$OMP  mo_coef_is_built, wall_1,                               &
       !$OMP  mo_coef,mo_integrals_threshold,mo_integrals_ijkl_r3_map)
   n_integrals = 0
   wall_0 = wall_1
-  allocate(bielec_tmp_3(mo_tot_num, n_j, n_k),                 &
-      bielec_tmp_1(mo_tot_num),                                &
-      bielec_tmp_0(ao_num,ao_num),                                   &
-      bielec_tmp_0_idx(ao_num),                                      &
-      bielec_tmp_2(mo_tot_num, n_j),                           &
+  allocate(two_e_tmp_3(mo_num, n_j, n_k),                 &
+      two_e_tmp_1(mo_num),                                &
+      two_e_tmp_0(ao_num,ao_num),                                   &
+      two_e_tmp_0_idx(ao_num),                                      &
+      two_e_tmp_2(mo_num, n_j),                           &
       buffer_i(size_buffer),                                         &
       buffer_value(size_buffer) )
   
@@ -365,57 +365,57 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
   !$  thread_num = omp_get_thread_num()
   !$OMP DO SCHEDULE(guided)
   do l1 = 1,ao_num
-    bielec_tmp_3 = 0.d0
+    two_e_tmp_3 = 0.d0
     do k1 = 1,ao_num
-      bielec_tmp_2 = 0.d0
+      two_e_tmp_2 = 0.d0
       do j1 = 1,ao_num
-        call get_ao_bielec_integrals_ijkl_r3(j1,k1,l1,ao_num,bielec_tmp_0(1,j1)) ! all integrals for a given l1, k1
-        ! call compute_ao_bielec_integrals(j1,k1,l1,ao_num,bielec_tmp_0(1,j1))
+        call get_ao_bielec_integrals_ijkl_r3(j1,k1,l1,ao_num,two_e_tmp_0(1,j1)) ! all integrals for a given l1, k1
+        ! call compute_ao_two_e_integrals(j1,k1,l1,ao_num,two_e_tmp_0(1,j1))
       enddo
       do j1 = 1,ao_num
         kmax = 0
         do i1 = 1,ao_num
-          c = bielec_tmp_0(i1,j1)
+          c = two_e_tmp_0(i1,j1)
           if (c == 0.d0) then
             cycle
           endif
           kmax += 1
-          bielec_tmp_0(kmax,j1) = c
-          bielec_tmp_0_idx(kmax) = i1
+          two_e_tmp_0(kmax,j1) = c
+          two_e_tmp_0_idx(kmax) = i1
         enddo
         
         if (kmax==0) then
           cycle
         endif
         
-        bielec_tmp_1 = 0.d0
+        two_e_tmp_1 = 0.d0
         ii1=1
         ! sum_m c_m^i (m)
         do ii1 = 1,kmax-4,4
-          i1 = bielec_tmp_0_idx(ii1)
-          i2 = bielec_tmp_0_idx(ii1+1)
-          i3 = bielec_tmp_0_idx(ii1+2)
-          i4 = bielec_tmp_0_idx(ii1+3)
+          i1 = two_e_tmp_0_idx(ii1)
+          i2 = two_e_tmp_0_idx(ii1+1)
+          i3 = two_e_tmp_0_idx(ii1+2)
+          i4 = two_e_tmp_0_idx(ii1+3)
           do i = list_ijkl(1,1), list_ijkl(n_i,1)
-            bielec_tmp_1(i)  =  bielec_tmp_1(i) +                    &
-                mo_coef_transp(i,i1) * bielec_tmp_0(ii1,j1) +        &
-                mo_coef_transp(i,i2) * bielec_tmp_0(ii1+1,j1) +      &
-                mo_coef_transp(i,i3) * bielec_tmp_0(ii1+2,j1) +      &
-                mo_coef_transp(i,i4) * bielec_tmp_0(ii1+3,j1)
+            two_e_tmp_1(i)  =  two_e_tmp_1(i) +                    &
+                mo_coef_transp(i,i1) * two_e_tmp_0(ii1,j1) +        &
+                mo_coef_transp(i,i2) * two_e_tmp_0(ii1+1,j1) +      &
+                mo_coef_transp(i,i3) * two_e_tmp_0(ii1+2,j1) +      &
+                mo_coef_transp(i,i4) * two_e_tmp_0(ii1+3,j1)
           enddo ! i
         enddo  ! ii1
         
         i2 = ii1
         do ii1 = i2,kmax
-          i1 = bielec_tmp_0_idx(ii1)
+          i1 = two_e_tmp_0_idx(ii1)
           do i = list_ijkl(1,1), list_ijkl(n_i,1)
-            bielec_tmp_1(i) = bielec_tmp_1(i) + mo_coef_transp(i,i1) * bielec_tmp_0(ii1,j1)
+            two_e_tmp_1(i) = two_e_tmp_1(i) + mo_coef_transp(i,i1) * two_e_tmp_0(ii1,j1)
           enddo ! i
         enddo  ! ii1
         c = 0.d0
         
         do i = list_ijkl(1,1), list_ijkl(n_i,1)
-          c = max(c,abs(bielec_tmp_1(i)))
+          c = max(c,abs(two_e_tmp_1(i)))
           if (c>mo_integrals_threshold) exit
         enddo
         if ( c < mo_integrals_threshold ) then
@@ -429,11 +429,11 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
             cycle
           endif
           do i = list_ijkl(1,1), list_ijkl(n_i,1)
-            bielec_tmp_2(i,j0)  = bielec_tmp_2(i,j0) + c * bielec_tmp_1(i)
+            two_e_tmp_2(i,j0)  = two_e_tmp_2(i,j0) + c * two_e_tmp_1(i)
           enddo ! i
         enddo  ! j
       enddo !j1
-      if ( maxval(abs(bielec_tmp_2)) < mo_integrals_threshold ) then
+      if ( maxval(abs(two_e_tmp_2)) < mo_integrals_threshold ) then
         cycle
       endif
       
@@ -448,7 +448,7 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
         do j0 = 1, n_j
           j = list_ijkl(j0,2)
           do i = list_ijkl(1,1), k
-            bielec_tmp_3(i,j0,k0) = bielec_tmp_3(i,j0,k0) + c* bielec_tmp_2(i,j0)
+            two_e_tmp_3(i,j0,k0) = two_e_tmp_3(i,j0,k0) + c* two_e_tmp_2(i,j0)
           enddo!i
         enddo !j
         
@@ -478,13 +478,13 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
           else
             exit
           endif
-          bielec_tmp_1 = 0.d0
+          two_e_tmp_1 = 0.d0
           do i0 = 1, n_i
             i = list_ijkl(i0,1)
             if (i>k) then
               exit
             endif
-            bielec_tmp_1(i) = c*bielec_tmp_3(i,j0,k0)
+            two_e_tmp_1(i) = c*two_e_tmp_3(i,j0,k0)
             !           i1+=1
           enddo
           
@@ -493,13 +493,13 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
             if(i> min(k,j1-i1+list_ijkl(1,1)-1))then
               exit
             endif
-            if (abs(bielec_tmp_1(i)) < mo_integrals_threshold) then
+            if (abs(two_e_tmp_1(i)) < mo_integrals_threshold) then
               cycle
             endif
             n_integrals += 1
-            buffer_value(n_integrals) = bielec_tmp_1(i)
+            buffer_value(n_integrals) = two_e_tmp_1(i)
             !DIR$ FORCEINLINE
-            call mo_bielec_integrals_index(i,j,k,l,buffer_i(n_integrals))
+            call mo_two_e_integrals_index(i,j,k,l,buffer_i(n_integrals))
             if (n_integrals == size_buffer) then
               call insert_into_mo_integrals_ijkl_r3_map(n_integrals,buffer_i,buffer_value,&
                   real(mo_integrals_threshold,integral_kind))
@@ -520,7 +520,7 @@ subroutine add_integrals_to_map_ijkl_r3(mask_ijkl)
     endif
   enddo
   !$OMP END DO NOWAIT
-  deallocate (bielec_tmp_1,bielec_tmp_2,bielec_tmp_3)
+  deallocate (two_e_tmp_1,two_e_tmp_2,two_e_tmp_3)
   
   integer                        :: index_needed
   

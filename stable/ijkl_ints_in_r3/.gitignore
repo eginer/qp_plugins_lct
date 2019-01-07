@@ -7,8 +7,8 @@ tags
 Makefile
 ao_basis
 ao_one_e_integrals
-ao_two_e_erf_integrals
-ao_two_e_integrals
+ao_two_e_erf_ints
+ao_two_e_ints
 aux_quantities
 becke_numerical_grid
 bitmask
@@ -37,8 +37,8 @@ kohn_sham_rs
 mo_basis
 mo_guess
 mo_one_e_integrals
-mo_two_e_erf_integrals
-mo_two_e_integrals
+mo_two_e_erf_ints
+mo_two_e_ints
 mpi
 mrpt_utils
 nuclei
