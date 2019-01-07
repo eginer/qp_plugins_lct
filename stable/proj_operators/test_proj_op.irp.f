@@ -14,7 +14,7 @@ end
 subroutine routine_rho
  implicit none
  print*,'integral_r1r2_f_HF_aa = ',integral_r1r2_f_HF_aa
- print*,'psi_energy_bielec      = ',psi_energy_bielec
+ print*,'psi_energy_two_e      = ',psi_energy_two_e
 
 end
 subroutine routine_v
@@ -23,7 +23,7 @@ subroutine routine_v
  double precision :: accu, weight,r(3),integral_of_f_PSI_ab_over_2,f_HF_aa_integrated
  accu = 0.d0
  do ipoint  = 1, n_points_final_grid
-  weight=final_weight_functions_at_final_grid_points(ipoint)
+  weight=final_weight_at_r_vector(ipoint)
   r(1) = final_grid_points(1,ipoint)
   r(2) = final_grid_points(2,ipoint)
   r(3) = final_grid_points(3,ipoint)
@@ -31,12 +31,12 @@ subroutine routine_v
 ! accu += integral_of_f_PSI_ab_over_2(r) * weight
  enddo
  print*,'accu                   = ',accu
- print*,'psi_energy_bielec      = ',psi_energy_bielec
+ print*,'psi_energy_two_e      = ',psi_energy_two_e
 !print*,'integral_f_hf          = ',integral_f_hf
  accu = 0.d0
  integer :: i,j
- do i = 1, mo_tot_num
-  do j = 1, mo_tot_num
+ do i = 1, mo_num
+  do j = 1, mo_num
    accu +=  two_bod_alpha_beta_mo(j,j,i,i,1)
   enddo
  enddo

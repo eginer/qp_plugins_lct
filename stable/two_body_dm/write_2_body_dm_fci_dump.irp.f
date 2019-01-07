@@ -34,10 +34,10 @@ subroutine routine_print
 
   double precision :: integral
 
-  do l=1,mo_tot_num
-   do k=1,mo_tot_num
-    do j=1,mo_tot_num
-     do i=1,mo_tot_num
+  do l=1,mo_num
+   do k=1,mo_num
+    do j=1,mo_num
+     do i=1,mo_num
       !                                                     1 2 1 2
       integral = two_bod_alpha_beta_mo_physicist(i,j,k,l,1)
       if(dabs(integral).lt.1.d-16)then

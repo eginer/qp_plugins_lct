@@ -7,15 +7,15 @@ double precision function f_HF_aa(r1,r2)
  END_DOC
  double precision, intent(in) :: r1(3),r2(3)
  integer :: i,j,k,l
- double precision :: mos_array_r1(mo_tot_num)
- double precision :: mos_array_r2(mo_tot_num)
+ double precision :: mos_array_r1(mo_num)
+ double precision :: mos_array_r2(mo_num)
  call give_all_mos_at_r(r1,mos_array_r1) 
  call give_all_mos_at_r(r2,mos_array_r2) 
  f_HF_aa = 0.d0
  do j = 1, elec_alpha_num ! electron 2
   do i = 1, elec_alpha_num ! electron 1 
-   do l = 1, mo_tot_num ! electron 2 
-    do k = 1, mo_tot_num ! electron 1 
+   do l = 1, mo_num ! electron 2 
+    do k = 1, mo_num ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      f_HF_aa += integrals_for_hf_potential(k,l,i,j) *  mos_array_r1(i) * mos_array_r2(j) & 
                 * (mos_array_r1(k) * mos_array_r2(l) - mos_array_r1(l) * mos_array_r2(k)) ! direct and exchange term
@@ -37,7 +37,7 @@ subroutine f_HF_aa_spherical_averaged(r1,r12,laplacian,value_f_HF_aa)
  double precision, allocatable :: mos_grad_array_r1(:,:),mos_array_r1(:)
  double precision, allocatable :: mos_lapl_array_r1(:,:)
  double precision :: lapl_j,grad_j,lapl_k,grad_k,lapl_l,grad_l,grad_jl,grad_jk,direct_term,exchange_term
- allocate(mos_array_r1(mo_tot_num),mos_grad_array_r1(mo_tot_num,3),mos_lapl_array_r1(mo_tot_num,3))
+ allocate(mos_array_r1(mo_num),mos_grad_array_r1(mo_num,3),mos_lapl_array_r1(mo_num,3))
  call give_all_mos_and_grad_and_lapl_at_r(r1,mos_array_r1,mos_grad_array_r1,mos_lapl_array_r1)
  laplacian = 0.d0
  value_f_HF_aa = 0.d0
@@ -45,8 +45,8 @@ subroutine f_HF_aa_spherical_averaged(r1,r12,laplacian,value_f_HF_aa)
  exchange_term = 0.d0
  do j = 1, elec_alpha_num ! electron 2
   do i = 1, elec_alpha_num ! electron 1 
-   do l = 1, mo_tot_num ! electron 2 
-    do k = 1, mo_tot_num ! electron 1 
+   do l = 1, mo_num ! electron 2 
+    do k = 1, mo_num ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      lapl_j  = mos_lapl_array_r1(j,1)    + mos_lapl_array_r1(j,2)    + mos_lapl_array_r1(j,3)
      grad_j  = mos_grad_array_r1(j,1)**2 + mos_grad_array_r1(j,2)**2 + mos_grad_array_r1(j,3)**2
@@ -80,13 +80,13 @@ double precision function f_HF_aa_integrated(r1)
  END_DOC
  double precision, intent(in) :: r1(3)
  integer :: i,j,k,l
- double precision :: mos_array_r1(mo_tot_num)
+ double precision :: mos_array_r1(mo_num)
  call give_all_mos_at_r(r1,mos_array_r1) 
  f_HF_aa_integrated = 0.d0
  do j = 1, elec_alpha_num ! electron 2
   do i = 1, elec_alpha_num ! electron 1 
    do l = j, j ! electron 2 
-    do k = 1, mo_tot_num ! electron 1 
+    do k = 1, mo_num ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      f_HF_aa_integrated += integrals_for_hf_potential(k,l,i,j) *  mos_array_r1(i) * mos_array_r1(k)  
     enddo
@@ -96,7 +96,7 @@ double precision function f_HF_aa_integrated(r1)
 
  do j = 1, elec_alpha_num ! electron 2
   do i = 1, elec_alpha_num ! electron 1 
-   do l = 1, mo_tot_num ! electron 2 
+   do l = 1, mo_num ! electron 2 
     do k = j, j ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      f_HF_aa_integrated -= integrals_for_hf_potential(k,l,i,j) *  mos_array_r1(i) * mos_array_r1(l)  
@@ -117,15 +117,15 @@ double precision function f_HF_bb(r1,r2)
  END_DOC
  double precision, intent(in) :: r1(3),r2(3)
  integer :: i,j,k,l
- double precision :: mos_array_r1(mo_tot_num)
- double precision :: mos_array_r2(mo_tot_num)
+ double precision :: mos_array_r1(mo_num)
+ double precision :: mos_array_r2(mo_num)
  call give_all_mos_at_r(r1,mos_array_r1) 
  call give_all_mos_at_r(r2,mos_array_r2) 
  f_HF_bb = 0.d0
  do j = 1, elec_beta_num ! electron 2
   do i = 1, elec_beta_num ! electron 1 
-   do l = 1, mo_tot_num ! electron 2 
-    do k = 1, mo_tot_num ! electron 1 
+   do l = 1, mo_num ! electron 2 
+    do k = 1, mo_num ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      f_HF_bb += integrals_for_hf_potential(k,l,i,j) *  mos_array_r1(i) * mos_array_r2(j) & 
                 * (mos_array_r1(k) * mos_array_r2(l) - mos_array_r1(l) * mos_array_r2(k)) ! direct and exchange term
@@ -144,13 +144,13 @@ double precision function f_HF_bb_integrated(r1)
  END_DOC
  double precision, intent(in) :: r1(3)
  integer :: i,j,k,l
- double precision :: mos_array_r1(mo_tot_num)
+ double precision :: mos_array_r1(mo_num)
  call give_all_mos_at_r(r1,mos_array_r1) 
  f_HF_bb_integrated = 0.d0
  do j = 1, elec_beta_num ! electron 2
   do i = 1, elec_beta_num ! electron 1 
    do l = j, j ! electron 2 
-    do k = 1, mo_tot_num ! electron 1 
+    do k = 1, mo_num ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      f_HF_bb_integrated += integrals_for_hf_potential(k,l,i,j) *  mos_array_r1(i) * mos_array_r1(k)  
     enddo
@@ -160,7 +160,7 @@ double precision function f_HF_bb_integrated(r1)
 
  do j = 1, elec_beta_num ! electron 2
   do i = 1, elec_beta_num ! electron 1 
-   do l = 1, mo_tot_num ! electron 2 
+   do l = 1, mo_num ! electron 2 
     do k = j, j ! electron 1 
      !                                     1 2 1 2 : <ij|kl> 
      f_HF_bb_integrated -= integrals_for_hf_potential(k,l,i,j) *  mos_array_r1(i) * mos_array_r1(l)  

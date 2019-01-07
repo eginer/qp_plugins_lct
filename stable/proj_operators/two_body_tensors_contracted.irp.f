@@ -1,5 +1,5 @@
 
- BEGIN_PROVIDER [double precision, two_bod_alpha_beta_mo_contracted, (mo_tot_num,mo_tot_num,mo_tot_num,mo_tot_num,N_states)]
+ BEGIN_PROVIDER [double precision, two_bod_alpha_beta_mo_contracted, (mo_num,mo_num,mo_num,mo_num,N_states)]
  implicit none
  BEGIN_DOC
  !  two_bod_alpha_beta_mo_contracted(n,m,j,i) = \sum_{k,l} <ij|kl> <\Psi|a^{dagger}_{k,alpha} a^{dagger}_{l,beta} a_{n,beta} a_{m,alpha}|\Psi>
@@ -12,26 +12,26 @@
  i=1 
  j=1
  double precision, allocatable :: integrals_array(:,:)
- allocate(integrals_array(mo_tot_num,mo_tot_num))
- call get_mo_bielec_integrals_ij(i,j,mo_tot_num,integrals_array,mo_integrals_map) 
+ allocate(integrals_array(mo_num,mo_num))
+ call get_mo_two_e_integrals_ij(i,j,mo_num,integrals_array,mo_integrals_map) 
  deallocate(integrals_array)
 
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (l,k,i,j,n,m,accu,integrals_array,istate,mo_integrals_map) &
- !$OMP SHARED  (mo_tot_num,two_bod_alpha_beta_mo_transposed,N_states,two_bod_alpha_beta_mo_contracted) 
- allocate(integrals_array(mo_tot_num,mo_tot_num))
+ !$OMP SHARED  (mo_num,two_bod_alpha_beta_mo_transposed,N_states,two_bod_alpha_beta_mo_contracted) 
+ allocate(integrals_array(mo_num,mo_num))
  do istate = 1, N_states 
  !$OMP DO              
-  do i = 1, mo_tot_num ! 1 
-   do j = 1, mo_tot_num  ! 2 
+  do i = 1, mo_num ! 1 
+   do j = 1, mo_num  ! 2 
                                  !  1 2 
-    call get_mo_bielec_integrals_ij(i,j,mo_tot_num,integrals_array,mo_integrals_map) 
-    do m = 1, mo_tot_num ! 1 
-     do n = 1, mo_tot_num ! 2 
+    call get_mo_two_e_integrals_ij(i,j,mo_num,integrals_array,mo_integrals_map) 
+    do m = 1, mo_num ! 1 
+     do n = 1, mo_num ! 2 
       accu = 0.d0
-      do l = 1, mo_tot_num ! 2 
-       do k = 1, mo_tot_num ! 1 
+      do l = 1, mo_num ! 2 
+       do k = 1, mo_num ! 1 
         !                                        
         !                                        1 2 2 1                           1 2
         accu += two_bod_alpha_beta_mo_transposed(k,l,n,m,istate) * integrals_array(k,l) 
@@ -54,7 +54,7 @@
  END_PROVIDER 
 
 
- BEGIN_PROVIDER [double precision, two_bod_alpha_beta_mo_transposed, (mo_tot_num,mo_tot_num,mo_tot_num,mo_tot_num,N_states)]
+ BEGIN_PROVIDER [double precision, two_bod_alpha_beta_mo_transposed, (mo_num,mo_num,mo_num,mo_num,N_states)]
  implicit none
  BEGIN_DOC
  !  two_bod_alpha_beta_mo_transposed(i,j,k,l) = <Psi| a^{dagger}_{l,alpha} a^{dagger}_{k,beta} a_{j,beta} a_{i,alpha} | Psi>
@@ -68,10 +68,10 @@
  print*,'providing two_bod_alpha_beta transposed ...'
  call cpu_time(cpu_0)
  do istate = 1, N_states 
-  do i = 1, mo_tot_num
-   do j = 1, mo_tot_num
-    do k = 1, mo_tot_num
-     do l = 1, mo_tot_num
+  do i = 1, mo_num
+   do j = 1, mo_num
+    do k = 1, mo_num
+     do l = 1, mo_num
       !                                1 2 2 1                                 1 1 2 2
       two_bod_alpha_beta_mo_transposed(l,k,j,i,istate) = two_bod_alpha_beta_mo(i,l,j,k,istate)
      enddo

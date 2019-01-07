@@ -1,4 +1,4 @@
-BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_grid,mo_tot_num,mo_tot_num)]
+BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_grid,mo_num,mo_num)]
  implicit none
  BEGIN_DOC
 ! V_kl_contracted_transposed(ipoint,k,l) = \sum_{ij} V_{ij}^{kl} phi_i(r_ipoint) phi_j(r_ipoint)
@@ -7,10 +7,10 @@ BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_gr
  integer :: ipoint
  double precision, allocatable :: integrals_array(:,:), mos_array_r(:),r(:)
  ! just not to mess with parallelization
- allocate(integrals_array(mo_tot_num,mo_tot_num))
+ allocate(integrals_array(mo_num,mo_num))
   k = 1
   l = 1
-  call get_mo_bielec_integrals_ij(k,l,mo_tot_num,integrals_array,mo_integrals_map) 
+  call get_mo_two_e_integrals_ij(k,l,mo_num,integrals_array,mo_integrals_map) 
  deallocate(integrals_array)
  double precision :: wall0,wall1
  call wall_time(wall0)
@@ -20,15 +20,15 @@ BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_gr
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,k,l,i,j,integrals_array) & 
- !$OMP SHARED (mo_tot_num, n_points_final_grid, V_kl_contracted_transposed, mo_integrals_map,final_grid_points,mos_in_r_array)
- allocate(integrals_array(mo_tot_num,mo_tot_num))
+ !$OMP SHARED (mo_num, n_points_final_grid, V_kl_contracted_transposed, mo_integrals_map,final_grid_points,mos_in_r_array)
+ allocate(integrals_array(mo_num,mo_num))
  !$OMP DO              
-  do l = 1, mo_tot_num ! 2 
-   do k = 1, mo_tot_num ! 1 
-    call get_mo_bielec_integrals_ij(k,l,mo_tot_num,integrals_array,mo_integrals_map) 
+  do l = 1, mo_num ! 2 
+   do k = 1, mo_num ! 1 
+    call get_mo_two_e_integrals_ij(k,l,mo_num,integrals_array,mo_integrals_map) 
     do ipoint = 1, n_points_final_grid
-     do j = 1, mo_tot_num
-      do i = 1, mo_tot_num
+     do j = 1, mo_num
+      do i = 1, mo_num
                                         !1 2                     1 2 
        V_kl_contracted_transposed(ipoint,k,l) += integrals_array(i,j) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
       enddo
@@ -44,14 +44,14 @@ BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_gr
  print*,'Time to provide V_kl_contracted_transposed = ',wall1 - wall0
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, V_kl_contracted, (mo_tot_num,mo_tot_num,n_points_final_grid)]
+BEGIN_PROVIDER [double precision, V_kl_contracted, (mo_num,mo_num,n_points_final_grid)]
  implicit none
  BEGIN_DOC
 ! V_kl_contracted(k,l,ipoint) = \sum_{ij} V_{ij}^{kl} phi_i(r_ipoint) phi_j(r_ipoint)
  END_DOC
  integer :: ipoint,k,l
- do k = 1, mo_tot_num
-  do l = 1, mo_tot_num
+ do k = 1, mo_num
+  do l = 1, mo_num
    do ipoint = 1, n_points_final_grid
     V_kl_contracted(k,l,ipoint) = V_kl_contracted_transposed(ipoint,k,l)
    enddo
@@ -61,7 +61,7 @@ BEGIN_PROVIDER [double precision, V_kl_contracted, (mo_tot_num,mo_tot_num,n_poin
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, rho2_kl_contracted_transposed, (n_points_final_grid,mo_tot_num,mo_tot_num)]
+BEGIN_PROVIDER [double precision, rho2_kl_contracted_transposed, (n_points_final_grid,mo_num,mo_num)]
  implicit none
  BEGIN_DOC
 ! rho2_kl_contracted_transposed(k,l,ipoint) = \sum_{ij} rho2_{ij}^{kl} phi_i(r_ipoint) phi_j(r_ipoint)
@@ -77,13 +77,13 @@ BEGIN_PROVIDER [double precision, rho2_kl_contracted_transposed, (n_points_final
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,k,l,i,j) & 
- !$OMP SHARED  (mo_tot_num, n_points_final_grid, rho2_kl_contracted_transposed, final_grid_points,two_bod_alpha_beta_mo_physicist,mos_in_r_array )
+ !$OMP SHARED  (mo_num, n_points_final_grid, rho2_kl_contracted_transposed, final_grid_points,two_bod_alpha_beta_mo_physicist,mos_in_r_array )
  !$OMP DO              
- do l = 1, mo_tot_num ! 2 
-  do k = 1, mo_tot_num ! 1 
+ do l = 1, mo_num ! 2 
+  do k = 1, mo_num ! 1 
    do ipoint = 1, n_points_final_grid
-    do j = 1, mo_tot_num
-     do i = 1, mo_tot_num
+    do j = 1, mo_num
+     do i = 1, mo_num
                                           !1 2                                     1 2 1 2 
       rho2_kl_contracted_transposed(ipoint,k,l) += two_bod_alpha_beta_mo_physicist(i,j,k,l,1) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
      enddo
@@ -98,14 +98,14 @@ BEGIN_PROVIDER [double precision, rho2_kl_contracted_transposed, (n_points_final
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, rho2_kl_contracted, (mo_tot_num,mo_tot_num,n_points_final_grid)]
+BEGIN_PROVIDER [double precision, rho2_kl_contracted, (mo_num,mo_num,n_points_final_grid)]
  implicit none
  BEGIN_DOC
 ! rho2_kl_contracted(k,l,ipoint) = \sum_{ij} V_{ij}^{kl} phi_i(r_ipoint) phi_j(r_ipoint)
  END_DOC
  integer :: ipoint,k,l
- do k = 1, mo_tot_num
-  do l = 1, mo_tot_num
+ do k = 1, mo_num
+  do l = 1, mo_num
    do ipoint = 1, n_points_final_grid
     rho2_kl_contracted(k,l,ipoint) = rho2_kl_contracted_transposed(ipoint,k,l)
    enddo
@@ -127,12 +127,12 @@ BEGIN_PROVIDER [double precision, f_psi_ab, (n_points_final_grid)]
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,k,l) & 
- !$OMP SHARED  (mo_tot_num, n_points_final_grid, rho2_kl_contracted, V_kl_contracted, f_psi_ab)
+ !$OMP SHARED  (mo_num, n_points_final_grid, rho2_kl_contracted, V_kl_contracted, f_psi_ab)
  !$OMP DO              
  do ipoint = 1, n_points_final_grid
   f_psi_ab(ipoint) = 0.d0
-  do l = 1, mo_tot_num ! 2 
-   do k = 1, mo_tot_num ! 1
+  do l = 1, mo_num ! 2 
+   do k = 1, mo_num ! 1
     f_psi_ab(ipoint) += V_kl_contracted(k,l,ipoint) * rho2_kl_contracted(k,l,ipoint)
    enddo
   enddo
@@ -195,15 +195,15 @@ BEGIN_PROVIDER [double precision, integral_f_psi_ab_old]
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,jpoint,r1,r2,coulomb,two_body_dm,weight1,weight2,r12) & 
- !$OMP SHARED  (n_points_final_grid, integral_f_psi_ab_old, final_grid_points,final_weight_functions_at_final_grid_points,accu)
+ !$OMP SHARED  (n_points_final_grid, integral_f_psi_ab_old, final_grid_points,final_weight_at_r_vector,accu)
  !$OMP DO              
  do ipoint = 1, n_points_final_grid
-  weight1=final_weight_functions_at_final_grid_points(ipoint)
+  weight1=final_weight_at_r_vector(ipoint)
   r1(1) = final_grid_points(1,ipoint)
   r1(2) = final_grid_points(2,ipoint)
   r1(3) = final_grid_points(3,ipoint)
   do jpoint = 1, n_points_final_grid
-   weight2=final_weight_functions_at_final_grid_points(jpoint)
+   weight2=final_weight_at_r_vector(jpoint)
    r2(1) = final_grid_points(1,jpoint)
    r2(2) = final_grid_points(2,jpoint)
    r2(3) = final_grid_points(3,jpoint)
@@ -221,6 +221,6 @@ BEGIN_PROVIDER [double precision, integral_f_psi_ab_old]
  print*,'Time to provide f_psi_ab_old = ',wall1 - wall0
  print*,'integral_f_psi_ab_old = ',integral_f_psi_ab_old
  print*,'accu                  = ',accu
- print*,'psi_energy_bielec     = ',psi_energy_bielec
+ print*,'psi_energy_two_e     = ',psi_energy_two_e
 END_PROVIDER 
 

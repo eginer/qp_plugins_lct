@@ -1,14 +1,14 @@
 
- BEGIN_PROVIDER [integer, approx_two_dm_map, (mo_tot_num**2,2)]
-&BEGIN_PROVIDER [integer, approx_two_dm_map_rev, (mo_tot_num,mo_tot_num)]
+ BEGIN_PROVIDER [integer, approx_two_dm_map, (mo_num**2,2)]
+&BEGIN_PROVIDER [integer, approx_two_dm_map_rev, (mo_num,mo_num)]
  implicit none
  BEGIN_DOC 
 ! map a couple of orbitals to an index  
  END_DOC
  integer :: i,j,ij
  ij = 0
- do i = 1,mo_tot_num
-  do j=1,mo_tot_num
+ do i = 1,mo_num
+  do j=1,mo_num
    ij += 1
    approx_two_dm_map(ij,1) = i
    approx_two_dm_map(ij,2) = j
@@ -34,10 +34,10 @@ END_PROVIDER
  print*,'************************'
 
  double precision, allocatable :: mat_i(:,:)
- allocate(mat_i(mo_tot_num**2,mo_tot_num**2))
+ allocate(mat_i(mo_num**2,mo_num**2))
 
  double precision, allocatable :: u_i(:,:),vt_i(:,:),D_i(:)
- allocate(u_i(mo_tot_num**2,mo_tot_num**2),vt_i(mo_tot_num**2,mo_tot_num**2),D_i(mo_tot_num**2))
+ allocate(u_i(mo_num**2,mo_num**2),vt_i(mo_num**2,mo_num**2),D_i(mo_num**2))
 
  !!!!!!unfoldage!!!!!!!
  print*,'*** Approximated two-body tensor '
@@ -46,12 +46,12 @@ END_PROVIDER
   ij = 0
   kl = 0
   print*,'*** For state',istate
-  do i=1,mo_tot_num
-   do j=1,mo_tot_num
+  do i=1,mo_num
+   do j=1,mo_num
     ij += 1
     kl = 0
-    do k=1,mo_tot_num
-     do l=1,mo_tot_num
+    do k=1,mo_num
+     do l=1,mo_num
       kl += 1
       mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate)
      enddo
@@ -69,7 +69,7 @@ END_PROVIDER
  print*,'Wall time for SVD = ',wall_2 - wall_1
   n_approx_svd_two_dm(istate) =1 
   print*,n_approx_svd_two_dm(istate),D_i(n_approx_svd_two_dm(istate))
-  do while ( (dabs(D_i(n_approx_svd_two_dm(istate))) .gt. thresh) .AND. (n_approx_svd_two_dm(istate) .lt. mo_tot_num**2)  )
+  do while ( (dabs(D_i(n_approx_svd_two_dm(istate))) .gt. thresh) .AND. (n_approx_svd_two_dm(istate) .lt. mo_num**2)  )
    n_approx_svd_two_dm(istate) += 1
    print*,n_approx_svd_two_dm(istate),D_i(n_approx_svd_two_dm(istate))
   enddo
@@ -85,8 +85,8 @@ END_PROVIDER
 END_PROVIDER
 
  BEGIN_PROVIDER [double precision, approx_svd_two_dm, (n_max_approx_svd_two_dm, N_states)]
-&BEGIN_PROVIDER [double precision, l_vec_approx_svd_two_dm, (mo_tot_num**2,n_max_approx_svd_two_dm,N_states)]
-&BEGIN_PROVIDER [double precision, r_vec_approx_svd_two_dm, (mo_tot_num**2,n_max_approx_svd_two_dm,N_states)]
+&BEGIN_PROVIDER [double precision, l_vec_approx_svd_two_dm, (mo_num**2,n_max_approx_svd_two_dm,N_states)]
+&BEGIN_PROVIDER [double precision, r_vec_approx_svd_two_dm, (mo_num**2,n_max_approx_svd_two_dm,N_states)]
  BEGIN_DOC 
 ! approx_svd_two_dm(i,istate) = ith Singular values to represent the two-body tensor of the state istate 
 ! l_vec_approx_svd_two_dm(I,i,istate) = component on the couple of MOs approx_two_dm_map(I,1) and approx_two_dm_map(I,2) of the ith Singular l vector of the state istate 
@@ -95,22 +95,22 @@ END_PROVIDER
  implicit none
  integer :: i,j,k,l,ij,kl
  double precision, allocatable :: mat_i(:,:)
- allocate(mat_i(mo_tot_num**2,mo_tot_num**2))
+ allocate(mat_i(mo_num**2,mo_num**2))
 
  double precision, allocatable :: u_i(:,:),vt_i(:,:),D_i(:)
- allocate(u_i(mo_tot_num**2,mo_tot_num**2),vt_i(mo_tot_num**2,mo_tot_num**2),D_i(mo_tot_num**2))
+ allocate(u_i(mo_num**2,mo_num**2),vt_i(mo_num**2,mo_num**2),D_i(mo_num**2))
 
  integer :: istate
  do istate = 1, N_states
   ij = 0
   kl = 0
   !!!!!!unfoldage!!!!!!!
-  do i = 1,mo_tot_num
-   do j=1,mo_tot_num
+  do i = 1,mo_num
+   do j=1,mo_num
     ij += 1
     kl = 0
-    do k=1,mo_tot_num
-     do l=1,mo_tot_num
+    do k=1,mo_num
+     do l=1,mo_num
       kl += 1
       mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate)
      enddo
@@ -123,7 +123,7 @@ END_PROVIDER
  
   do i = 1,n_approx_svd_two_dm(istate)
    approx_svd_two_dm(i,istate) = D_i(i)
-   do j = 1,mo_tot_num**2
+   do j = 1,mo_num**2
     l_vec_approx_svd_two_dm(j,i,istate) = u_i(j,i)
     r_vec_approx_svd_two_dm(j,i,istate) = vt_i(i,j)
    enddo 
@@ -149,7 +149,7 @@ END_PROVIDER
  do istate = 1, N_states
   do i = 1,n_points_final_grid
    do j = 1,n_approx_svd_two_dm(istate) 
-    do k = 1,mo_tot_num**2
+    do k = 1,mo_num**2
      l_vec_approx_svd_two_dm_at_r(j,i,istate) +=  l_vec_approx_svd_two_dm(k,j,istate) * mos_in_r_array(approx_two_dm_map(k,1),i) * mos_in_r_array(approx_two_dm_map(k,2),i)
      r_vec_approx_svd_two_dm_at_r(j,i,istate)+= r_vec_approx_svd_two_dm(k,j,istate) * mos_in_r_array(approx_two_dm_map(k,1),i) * mos_in_r_array(approx_two_dm_map(k,2),i) 
     enddo
@@ -232,10 +232,10 @@ end
  print*,'************************'
 
  double precision, allocatable :: mat_i(:,:)
- allocate(mat_i(mo_tot_num**2,mo_tot_num**2))
+ allocate(mat_i(mo_num**2,mo_num**2))
 
  double precision, allocatable :: u_i(:,:),vt_i(:,:),D_i(:)
- allocate(u_i(mo_tot_num**2,mo_tot_num**2),vt_i(mo_tot_num**2,mo_tot_num**2),D_i(mo_tot_num**2))
+ allocate(u_i(mo_num**2,mo_num**2),vt_i(mo_num**2,mo_num**2),D_i(mo_num**2))
 
  !!!!!!unfoldage!!!!!!!
  print*,'*** Approximated two-body tensor '
@@ -244,12 +244,12 @@ end
   ij = 0
   kl = 0
   print*,'*** For state',istate
-  do i=1,mo_tot_num
-   do j=1,mo_tot_num
+  do i=1,mo_num
+   do j=1,mo_num
     ij += 1
     kl = 0
-    do k=1,mo_tot_num
-     do l=1,mo_tot_num
+    do k=1,mo_num
+     do l=1,mo_num
       kl += 1
       mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate) - one_body_dm_mo_alpha_for_dft(k,i,istate)* one_body_dm_mo_beta_for_dft(l,j,istate)
      enddo
@@ -267,7 +267,7 @@ end
  print*,'Wall time for SVD = ',wall_2 - wall_1
   n_approx_svd_two_dm_correl(istate) =1 
   print*,n_approx_svd_two_dm_correl(istate),D_i(n_approx_svd_two_dm_correl(istate))
-  do while ( (dabs(D_i(n_approx_svd_two_dm_correl(istate))) .gt. thresh) .AND. (n_approx_svd_two_dm_correl(istate) .lt. mo_tot_num**2)  )
+  do while ( (dabs(D_i(n_approx_svd_two_dm_correl(istate))) .gt. thresh) .AND. (n_approx_svd_two_dm_correl(istate) .lt. mo_num**2)  )
    n_approx_svd_two_dm_correl(istate) += 1
    print*,n_approx_svd_two_dm_correl(istate),D_i(n_approx_svd_two_dm_correl(istate))
   enddo
@@ -283,8 +283,8 @@ end
 END_PROVIDER
 
  BEGIN_PROVIDER [double precision, approx_svd_two_dm_correl, (n_max_approx_svd_two_dm_correl, N_states)]
-&BEGIN_PROVIDER [double precision, l_vec_approx_svd_two_dm_correl, (mo_tot_num**2,n_max_approx_svd_two_dm_correl,N_states)]
-&BEGIN_PROVIDER [double precision, r_vec_approx_svd_two_dm_correl, (mo_tot_num**2,n_max_approx_svd_two_dm_correl,N_states)]
+&BEGIN_PROVIDER [double precision, l_vec_approx_svd_two_dm_correl, (mo_num**2,n_max_approx_svd_two_dm_correl,N_states)]
+&BEGIN_PROVIDER [double precision, r_vec_approx_svd_two_dm_correl, (mo_num**2,n_max_approx_svd_two_dm_correl,N_states)]
  BEGIN_DOC 
  !approx_svd_two_dm(i,istate) = ith Singular values to represent the two-body tensor of the state istate 
  !l_vec_approx_svd_two_dm(I,i,istate) = component on the couple of MOs approx_two_dm_map(I,1) and approx_two_dm_map(I,2) of the ith Singular l vector of the state istate 
@@ -293,22 +293,22 @@ END_PROVIDER
  implicit none
  integer :: i,j,k,l,ij,kl
  double precision, allocatable :: mat_i(:,:)
- allocate(mat_i(mo_tot_num**2,mo_tot_num**2))
+ allocate(mat_i(mo_num**2,mo_num**2))
 
  double precision, allocatable :: u_i(:,:),vt_i(:,:),D_i(:)
- allocate(u_i(mo_tot_num**2,mo_tot_num**2),vt_i(mo_tot_num**2,mo_tot_num**2),D_i(mo_tot_num**2))
+ allocate(u_i(mo_num**2,mo_num**2),vt_i(mo_num**2,mo_num**2),D_i(mo_num**2))
 
  integer :: istate
  do istate = 1, N_states
   ij = 0
   kl = 0
   !!!!!!unfoldage!!!!!!!
-  do i = 1,mo_tot_num
-   do j=1,mo_tot_num
+  do i = 1,mo_num
+   do j=1,mo_num
     ij += 1
     kl = 0
-    do k=1,mo_tot_num
-     do l=1,mo_tot_num
+    do k=1,mo_num
+     do l=1,mo_num
       kl += 1
       mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate) - one_body_dm_mo_alpha_for_dft(k,i,istate)*one_body_dm_mo_beta_for_dft(l,j,istate)
      enddo
@@ -321,7 +321,7 @@ END_PROVIDER
  
   do i = 1,n_approx_svd_two_dm_correl(istate)
    approx_svd_two_dm_correl(i,istate) = D_i(i)
-   do j = 1,mo_tot_num**2
+   do j = 1,mo_num**2
     l_vec_approx_svd_two_dm_correl(j,i,istate) = u_i(j,i)
     r_vec_approx_svd_two_dm_correl(j,i,istate) = vt_i(i,j)
    enddo 
@@ -347,7 +347,7 @@ END_PROVIDER
  do istate = 1, N_states
   do i = 1,n_points_final_grid
    do j = 1,n_approx_svd_two_dm_correl(istate) 
-    do k = 1,mo_tot_num**2
+    do k = 1,mo_num**2
      l_vec_approx_svd_two_dm_at_r_correl(j,i,istate) +=  l_vec_approx_svd_two_dm_correl(k,j,istate) * mos_in_r_array(approx_two_dm_map(k,1),i) * mos_in_r_array(approx_two_dm_map(k,2),i)
      r_vec_approx_svd_two_dm_at_r_correl(j,i,istate)+= r_vec_approx_svd_two_dm_correl(k,j,istate) * mos_in_r_array(approx_two_dm_map(k,1),i) * mos_in_r_array(approx_two_dm_map(k,2),i) 
     enddo
