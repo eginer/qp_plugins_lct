@@ -8,16 +8,16 @@ program write_effective_RSDFT_hamiltonian
  END_DOC
  read_wf = .true.
  touch read_wf
- disk_access_mo_one_integrals = "None"
- touch disk_access_mo_one_integrals  
- disk_access_mo_integrals = "None"
- touch disk_access_mo_integrals
- disk_access_ao_integrals = "None"
- touch disk_access_ao_integrals
- disk_access_mo_integrals_erf = "None" 
- touch disk_access_mo_integrals_erf
- disk_access_ao_integrals_erf = "None" 
- touch disk_access_ao_integrals_erf
+ io_mo_one_e_integrals = "None"
+ touch io_mo_one_e_integrals  
+ io_mo_two_e_integrals = "None"
+ touch io_mo_two_e_integrals
+ io_ao_two_e_integrals = "None"
+ touch io_ao_two_e_integrals
+ io_mo_two_e_integrals_erf = "None" 
+ touch io_mo_two_e_integrals_erf
+ io_ao_two_e_integrals_erf = "None" 
+ touch io_ao_two_e_integrals_erf
  call routines_write_int
  call routines_compute_energy
 end
