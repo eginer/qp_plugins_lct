@@ -28,8 +28,6 @@ subroutine routines_write_int
 ! routine that computes the effective RSDFT Hamiltoninan and writes it into the EZFIO folder
  END_DOC
  call write_all_integrals_for_mrdft
- density_for_dft = "WFT" 
- touch density_for_dft 
 end 
 
 subroutine routines_compute_energy
@@ -39,6 +37,8 @@ subroutine routines_compute_energy
 !
 ! and saves the current one-body density matrix into the aux_quantities folder the EZFIO folder
  END_DOC
+ density_for_dft = "WFT" 
+ touch density_for_dft 
  call print_variational_energy_dft
  call ezfio_set_aux_quantities_data_one_body_alpha_dm_mo(one_body_dm_mo_alpha)
  call ezfio_set_aux_quantities_data_one_body_beta_dm_mo(one_body_dm_mo_beta)

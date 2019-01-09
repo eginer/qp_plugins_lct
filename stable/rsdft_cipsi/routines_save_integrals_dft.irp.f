@@ -6,11 +6,11 @@ subroutine save_one_e_effective_potential
 ! this effective_one_e_potential is computed with the current density 
 ! and will couple the WFT with DFT for the next regular WFT calculation
  END_DOC
- call ezfio_get_mo_one_e_ints_mo_integrals_e_n(effective_one_e_potential_without_kin)
- call ezfio_get_mo_one_e_ints_mo_integrals_kinetic(mo_kinetic_integrals)
+ call ezfio_set_mo_one_e_ints_mo_integrals_e_n(effective_one_e_potential_without_kin)
+ call ezfio_set_mo_one_e_ints_mo_integrals_kinetic(mo_kinetic_integrals)
 
  print *,  'Effective DFT potential is written on disk on the mo_ne_integral integrals'
- call ezfio_get_mo_one_e_ints_mo_one_e_integrals("Read")
+ call ezfio_set_mo_one_e_ints_mo_one_e_integrals("Read")
 
 end
 
