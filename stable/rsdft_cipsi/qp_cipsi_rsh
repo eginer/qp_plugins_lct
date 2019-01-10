@@ -136,8 +136,8 @@ qp_edit -c ${ezfio}
 # write the effective Hamiltonian containing long-range interaction and short-range effective potential to be diagonalized in a self-consistent way
 qp_run write_effective_rsdft_hamiltonian ${ezfio} | tee ${ezfio}_rsdft-0
 
-# save the RS-KS one-body density for the damping on the density 
-qp_run save_one_body_dm ${ezfio} 
+# save the RS-KS one-e density for the damping on the density 
+qp_run save_one_e_dm ${ezfio} 
 # specify that you will do some damping on the density later on 
 echo "damping_rs_dft"  > ${ezfio}/dft_keywords/density_for_dft
 # specify the damping factor on the density : 0 == no update of the density, 1 == full update of the density 

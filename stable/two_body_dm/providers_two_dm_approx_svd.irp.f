@@ -251,7 +251,7 @@ end
     do k=1,mo_num
      do l=1,mo_num
       kl += 1
-      mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate) - one_body_dm_mo_alpha_for_dft(k,i,istate)* one_body_dm_mo_beta_for_dft(l,j,istate)
+      mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate) - one_e_dm_mo_alpha_for_dft(k,i,istate)* one_e_dm_mo_beta_for_dft(l,j,istate)
      enddo
     enddo
    enddo
@@ -310,7 +310,7 @@ END_PROVIDER
     do k=1,mo_num
      do l=1,mo_num
       kl += 1
-      mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate) - one_body_dm_mo_alpha_for_dft(k,i,istate)*one_body_dm_mo_beta_for_dft(l,j,istate)
+      mat_i(kl,ij) = two_bod_alpha_beta_mo_physicist(l,k,j,i,istate) - one_e_dm_mo_alpha_for_dft(k,i,istate)*one_e_dm_mo_beta_for_dft(l,j,istate)
      enddo
     enddo
    enddo
@@ -392,8 +392,8 @@ END_PROVIDER
  on_top_of_r_approx_svd_correl(1,1) = on_top_of_r_approx_svd_correl_function(1,1)
  do istate = 1, N_states
   do i= 1, n_points_final_grid
-   dm_a = one_body_dm_alpha_at_r(i,istate)
-   dm_b = one_body_dm_beta_at_r(i,istate)
+   dm_a = one_e_dm_alpha_at_r(i,istate)
+   dm_b = one_e_dm_beta_at_r(i,istate)
    on_top_of_r_approx_svd_correl(i,istate) = dm_a*dm_b + on_top_of_r_approx_svd_correl_function(i,istate)
   enddo
  enddo
