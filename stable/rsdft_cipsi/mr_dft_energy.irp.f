@@ -41,7 +41,7 @@ END_PROVIDER
   write(*, '(A22,X,F16.10)') 'Trace_v_Hxc         = ',Trace_v_Hxc
  
   write(*, '(A22,X,F16.10)') '<Psi| H | Psi>      = ',psi_energy
-  write(*, '(A22,X,F16.10)') 'psi_energy_two_e   = ',psi_energy_two_e
+  write(*, '(A22,X,F16.10)') 'psi_energy_two_e    = ',psi_energy_two_e
   write(*, '(A22,X,F16.10)') 'psi_energy_h_core   = ',psi_energy_h_core
   print*,  '****************************************'
   print*,'Test for the coherence between density and wave function used'
