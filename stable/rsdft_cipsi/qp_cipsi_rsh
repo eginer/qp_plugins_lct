@@ -5,40 +5,35 @@ QP=$QP_ROOT
 . ${QP}/quantum_package.rc
 
 
-TEMP=$(getopt -o m:f:p:n:t:h -l mu:,func:pt2_max:ndet_max:thresh,help -n $0 -- "$@") || exit 1
+TEMP=$(getopt -o m:f:p:n:t:h -l mu:,func:pt2max:ndetmax:thresh,help -n $0 -- "$@") || exit 1 # get the input / options 
+eval set -- "$TEMP" # set "--" in the string 
 
-function help() {
-  cat << EOF
- 
- 
- ********            ********* 
- This script runs a RSH-CIPSI calculation starting from a ezfio folder 
- Here are the ASSUMTIONS 
- ******** ASSUMPTIONS ********* 
- 1) The mo_class should be specified in the EZFIO folder 
- 2) The wave function stored in the EZFIO folder, whatever it is, will be used as the starting point to run the RSH calculation 
-    Usually a single Slater determinant RSH wave function with the same mu and functional is a good starting point (run the RS_KS_SCF program)  
- ********            ********* 
-                               
- Here are the INPUTS ARGUMENT for the script 
- ******** INPUTS OF THE SCRIPT ********* 
- \$1 : ezfio = EZFIO folder on which you are going to run the script 
-      no orbitals would be changed, it will only modify the wave function stored in the EZFIO folder 
- \$2 : functional = EXCHANGE / CORRELATION functionals to be used in RS-DFT calculation 
-      can be LDA or PBE 
- \$3 : mu = SPLITTING of the INTERACTION to be used in RS-DFT calculation  
-       0 <=> pure DFT calculation, Infinity <=> pure WFT calculation  
- \$4 : pt2max  : maximum value of the PT2 for the CIPSI calculation (note that it is with the effective hamiltonian so it can be self-consistent)  
-       0 <=> FCI calculation, any bigger value is selected CI 
- \$5 : ndetmax  : maximum size of the CIPSI wave function  
-                                                              
- \$6 : thresh : (OPTIONAL) value of the convergence of the energy for the self-consistent CIPSI calculation for a given set of Slater determinants   
-       if not specified, a value of 0.0000001 is set by default (more than enough for regular calculations) 
-********            *********
-                             
-                             
+echo $TEMP
+function help()
+{
+    cat <<EOF
+Range Separated CIPSI program: 
+
+Usage:
+  $(basename $0) -m <real> -f <string> -n <integer> -p <real> [-t <real>] [--] EZFIO
+
+
+Options:
+  -m, --mu=<positive real>              range separation parameter (default=0.5)
+  -f, --func=<UPPER CASE STRING>        range separated functional (default=PBE)
+  -n, --ndetmax=<positive integer>      max number of determinants in the CIPSI wf (default=1.e6)
+  -p, --pt2max=<positive real>          max value of the PT2 correction (default=1.e-3)
+  -t, --thresh=<positive real>          threshold on the convergence of the variational energy (default=1.e-10)
+  -h, --help                            Print the HELP message
+
+Example:
+  ./$(basename $0) -c config/gfortran.cfg
+
+
 EOF
+    exit
 }
+
 
 while true ; do
     case "$1" in
@@ -56,14 +51,14 @@ while true ; do
             esac 
             shift 2
 	    ;;
-        -n|--ndet_max) 
+        -n|--ndetmax) 
             case "$2" in
                 "") help ; break;;
                 *) ndetmax="$2"
             esac 
             shift 2
 	    ;;
-        -p|--pt2_max) 
+        -p|--pt2max) 
             case "$2" in
                 "") help ; break;;
                 *) pt2max="$2"
@@ -80,7 +75,7 @@ while true ; do
         -h|-help|--help) 
             help
             exit 0;;
-        --) shift ; break ;;
+        --) shift  ; break ;;
 	"") help ; break ;;
     esac
 done
