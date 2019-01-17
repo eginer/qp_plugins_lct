@@ -94,10 +94,8 @@ fi
 echo "  **********"
 echo "Here are the following INPUT parameters for the RSH-CIPSI run .."
 echo "  **********"
-echo "EZFIO folder :  "$ezfio 
-if [[ -d $ezfio ]]; then
-   echo "File $ezfio does exist !"
-else
+echo "EZFIO folder         :  "$ezfio 
+if [[ ! -d $ezfio ]]; then
    echo "Input EZFIO folder does not exists !"
    echo "Folder $ezfio does not exist."
    echo "stopping ..."
@@ -107,36 +105,36 @@ else
    exit
 fi
 # define the exchange / correlation functionals to be used in RS-DFT calculation
-if [[ -n $functional ]]; then
+if [[ -z $functional ]]; then
  echo "you did not specify the \$functional parameter, it will be set to PBE by default (run --help for explanations)"
  functional="PBE"
 fi
 echo "FUNCTIONAL for RS-DFT:  "$functional
 # splitting of the interaction to be used in RS-DFT calculation 
-if [[ -n $mu ]]; then
+if [[ -z $mu ]]; then
  echo "you did not specify the \$mu parameter, it will be set to 0.5 by default (run --help for explanations)"
  mu=0.5
 fi
-echo "MU for RS-DFT:  "$mu
+echo "MU for RS-DFT        :  "$mu
 # maximum value of the PT2 for the CIPSI calculation (note that it is with the effective hamiltonian so it can be self-consistent)
-if [[ -n $pt2max ]]; then
+if [[ -z $pt2max ]]; then
  echo "you did not specify the \$pt2max parameter, it will be set to 0.001 by default (run --help for explanations)"
  pt2max=0.001
 fi
-echo "PT2MAX for RS-DFT:  "$pt2max
+echo "PT2MAX for RS-DFT    :  "$pt2max
 # ndetmax  : maximum size of the CIPSI wave function 
-if [[ -n $ndetmax ]]; then
+if [[  -z $ndetmax ]]; then
  echo "you did not specify the \$ndetmax parameter, it will be set to 10000000 by default (run --help for explanations)"
  ndetmax=10000000
 fi
-echo "NDETMAX for RS-DFT:  "$ndetmax
+echo "NDETMAX for RS-DFT   :  "$ndetmax
 
 # value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
-if [[ -n $thresh ]]; then
+if [[ -z $thresh ]]; then
  echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
  thresh="1.e-10"
 fi
- echo "\$thresh of convergence is " $thresh
+echo "thresh of convergence:  "$thresh
 
 
 qp set_file $ezfio
@@ -145,9 +143,11 @@ qp  set  dft_keywords       exchange_functional     "short_range_${functional}"
 qp  set  dft_keywords       correlation_functional  "short_range_${functional}"
 qp  set  ao_two_e_erf_ints  mu_erf                  $mu
 qp  set  perturbation       pt2_max                 $pt2max
-qp  set  determinants       ndet_max                $ndetmax
+qp  set  determinants       n_det_max                $ndetmax
 # Use the wave function stored in the EZFIO to build effective RS-DFT potential
 qp  set  density_for_dft    density_for_dft         "WFT"
+exit
+
 
 # write the effective Hamiltonian containing long-range interaction and short-range effective potential to be diagonalized in a self-consistent way
 qp run write_effective_rsdft_hamiltonian | tee ${ezfio}_rsdft-0
