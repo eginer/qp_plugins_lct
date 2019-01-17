@@ -35,3 +35,14 @@ subroutine write_all_integrals_for_mrdft
  call save_erf_two_e_ints_ao_into_ints_ao
 end
 
+
+subroutine write_all_integrals_for_mrdft_read_all
+ implicit none
+ BEGIN_DOC
+ ! saves all integrals needed for RS-DFT-MRCI calculation: 
+ !
+ ! one-body effective potential and two-elec erf integrals
+ END_DOC
+ call save_one_e_effective_potential
+end
+
