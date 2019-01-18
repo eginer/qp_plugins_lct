@@ -234,20 +234,32 @@ else
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
+     # save the erf integrals into the two-elec file
+     for file in consolidated_idx consolidated_key consolidated_value
+      do 
+       cp ${ezfio}/work/mo_ints_erf_$file ${ezfio}/work/mo_ints_$file
+      done
      qp run fci  | tee ${ezfio}/fci-$i
      EV=0
 
      echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}_data_conv_${i}
      for j in {1..100}
      do
-        # write the new effective Hamiltonian with the damped density (and the current density to be damped with the next density)
+        # save the regular integrals into the two-elec file
         for file in consolidated_idx consolidated_key consolidated_value
          do 
           cp ${ezfio}/work/mo_ints_regular_$file ${ezfio}/work/mo_ints_$file
          done
+        # write the new effective Hamiltonian with the damped density (and the current density to be damped with the next density)
         qp run write_rsdft_h_read_ints | tee ${ezfio}/rsdft-${i}-${j}
         # value of the variational RS-DFT energy 
         EV_new=`grep "TOTAL ENERGY        =" ${ezfio}/rsdft-${i}-${j} | cut -d "=" -f 2`
+
+        # save the erf integrals into the two-elec file
+        for file in consolidated_idx consolidated_key consolidated_value
+         do 
+          cp ${ezfio}/work/mo_ints_erf_$file ${ezfio}/work/mo_ints_$file
+         done
         # rediagonalize the new effective Hamiltonian to obtain a new wave function and a new density 
         qp run diagonalize_h  | tee ${ezfio}/diag-${i}-${j}
         # checking the convergence
@@ -261,6 +273,7 @@ else
         EV=$EV_new
       done
      
+      # save the regular integrals into the two-elec file
       for file in consolidated_idx consolidated_key consolidated_value
        do 
         cp ${ezfio}/work/mo_ints_regular_$file ${ezfio}/work/mo_ints_$file
