@@ -291,7 +291,7 @@ subroutine i_h_core_psi_minilist(key,keys,idx_key,N_minilist,coef,Nint,Ndet,Ndet
       i_in_key = idx(ii)
       i_in_coef = idx_key(idx(ii))
       !DIR$ FORCEINLINE
-      call i_H_j_monoelec(keys(1,1,i_in_key),key,Nint,hij)
+      call i_H_j_hcore(keys(1,1,i_in_key),key,Nint,hij)
       ! TODO : Cache misses
       i_H_psi_array(1) = i_H_psi_array(1) + coef(i_in_coef,1)*hij
     enddo
@@ -302,7 +302,7 @@ subroutine i_h_core_psi_minilist(key,keys,idx_key,N_minilist,coef,Nint,Ndet,Ndet
       i_in_key = idx(ii)
       i_in_coef = idx_key(idx(ii))
       !DIR$ FORCEINLINE
-      call i_H_j_monoelec(keys(1,1,i_in_key),key,Nint,hij)
+      call i_H_j_hcore(keys(1,1,i_in_key),key,Nint,hij)
       do j = 1, Nstate
         i_H_psi_array(j) = i_H_psi_array(j) + coef(i_in_coef,j)*hij
       enddo

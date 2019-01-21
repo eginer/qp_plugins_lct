@@ -30,7 +30,7 @@ subroutine routine
     i += 1
     print*,'-----------------------'
     print*,'i = ',i
-    call H_apply_just_mono_h_core(pt2, norm_pert, H_pert_diag,  N_st)
+    call H_apply_just_mono_hcore(pt2, norm_pert, H_pert_diag,  N_st)
     call diagonalize_CI
     print*,'N_det = ',N_det
     print*,'E        = ',CI_energy

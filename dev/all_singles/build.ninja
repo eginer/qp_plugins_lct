@@ -14,21 +14,24 @@
 #
 # https://github.com/LCPQ/quantum_package,
 #
-# Generated automatically by /vortex/u/eginer/qp_bibi/new/quantum_package/scripts/compilation/qp_create_ninja.py
+# Generated automatically by $QP_ROOT/scripts/compilation/qp_create_ninja
 #
 #
-builddir = /vortex/u/eginer/qp_toto/quantum_package/config
+
+QP_ROOT = /vortex/u/eginer/quantum_package
+
+builddir = $QP_ROOT/config
 
 rule update_build_ninja_root
-   command = /vortex/u/eginer/qp_bibi/new/quantum_package/scripts/compilation/qp_create_ninja.py update
+   command = /vortex/u/eginer/quantum_package/scripts/compilation/qp_create_ninja update
 
 rule make_local_binaries
-   command = ninja -f /vortex/u/eginer/qp_toto/quantum_package/config/build.ninja module_all_singles
+   command = ninja -f $QP_ROOT/config/build.ninja module_all_singles
    pool = console
    description = Compile only all_singles
 
 rule make_all_binaries
-  command = ninja -f /vortex/u/eginer/qp_toto/quantum_package/config/build.ninja
+  command = ninja -f $QP_ROOT/config/build.ninja
   pool = console
   description = Compiling all modules
 
@@ -36,11 +39,17 @@ rule make_clean
   command = module_handler.py clean all_singles
   description = Cleaning module all_singles
 
+rule executables
+  command = make -C $QP_ROOT/ocaml executables .gitignore qp_edit.native qp_run.native
+  description = Updating OCaml executables
+
 build dummy_target: update_build_ninja_root
 
 build all: make_all_binaries dummy_target
 
 build local: make_local_binaries dummy_target
+
+build executables: executables local dummy_target
 
 default local
 
