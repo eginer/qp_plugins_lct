@@ -1,0 +1,47 @@
+#
+#  _______                     _____
+#  __  __ \___  _______ _________  /____  ________ ___
+#  _  / / /  / / /  __ `/_  __ \  __/  / / /_  __ `__ \
+#  / /_/ // /_/ // /_/ /_  / / / /_ / /_/ /_  / / / / /
+#  \___\_\\__,_/ \__,_/ /_/ /_/\__/ \__,_/ /_/ /_/ /_/
+#
+#               ________             ______
+#               ___  __ \_____ _________  /_______ _______ _____
+#               __  /_/ /  __ `/  ___/_  //_/  __ `/_  __ `/  _ \
+#               _  ____// /_/ // /__ _  ,<  / /_/ /_  /_/ //  __/
+#               /_/     \__,_/ \___/ /_/|_| \__,_/ _\__, / \___/
+#                                                  /____/
+#
+# https://github.com/LCPQ/quantum_package,
+#
+# Generated automatically by /vortex/u/eginer/qp_bibi/new/quantum_package/scripts/compilation/qp_create_ninja.py
+#
+#
+builddir = /vortex/u/eginer/qp_toto/quantum_package/config
+
+rule update_build_ninja_root
+   command = /vortex/u/eginer/qp_bibi/new/quantum_package/scripts/compilation/qp_create_ninja.py update
+
+rule make_local_binaries
+   command = ninja -f /vortex/u/eginer/qp_toto/quantum_package/config/build.ninja module_all_singles
+   pool = console
+   description = Compile only all_singles
+
+rule make_all_binaries
+  command = ninja -f /vortex/u/eginer/qp_toto/quantum_package/config/build.ninja
+  pool = console
+  description = Compiling all modules
+
+rule make_clean
+  command = module_handler.py clean all_singles
+  description = Cleaning module all_singles
+
+build dummy_target: update_build_ninja_root
+
+build all: make_all_binaries dummy_target
+
+build local: make_local_binaries dummy_target
+
+default local
+
+build clean: make_clean dummy_target
