@@ -5,10 +5,14 @@ program restart_more_singles
   END_DOC
   read_wf = .true.
   touch read_wf 
-  call routine
-
+  if(selected_singles)then
+   call routine_selection
+  else
+   call routine_no_selection
+  endif
 end 
-subroutine routine
+
+subroutine routine_selection
   implicit none
   integer                        :: i,k
   double precision, allocatable  :: pt2(:), norm_pert(:), H_pert_diag(:)
@@ -74,4 +78,28 @@ subroutine routine
   endif
   call save_wavefunction
   deallocate(pt2,norm_pert,E_before)
+end
+
+subroutine routine_no_selection
+ implicit none
+ integer :: i
+
+ call H_apply_just_mono_no_selection
+  print *,  'N_det = ', N_det
+  print*,'******************************'
+  print *,  'Energies  of the states:'
+  do i = 1,N_states
+    print *,  i, CI_energy(i)
+  enddo
+  if (N_states > 1) then
+    print*,'******************************'
+    print*,'Excitation energies '
+    do i = 2, N_states
+      print*, i ,CI_energy(i) - CI_energy(1)
+    enddo
+  endif
+
+  psi_coef = ci_eigenvectors
+  SOFT_TOUCH psi_coef
+  call save_wavefunction
 end

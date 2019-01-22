@@ -10,6 +10,9 @@ s = H_apply("just_mono_hcore",do_double_exc=False)
 s.set_selection_pt2("hcore")
 print s
 
+H = H_apply("just_mono_no_selection",do_double_exc=False)
+print H
+
 
 
 END_SHELL
