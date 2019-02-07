@@ -1,0 +1,161 @@
+ subroutine give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha)
+ implicit none
+ double precision, intent(in) :: r1(3),r2(3)
+ double precision, intent(out) :: f_hf_alpha_alpha 
+ double precision :: get_two_e_integral 
+ integer :: i,j,k,l
+
+ double precision :: mos_array_r1(mo_num),mos_array_r2(mo_num)
+
+ call give_all_mos_at_r(r1,mos_array_r1)
+ call give_all_mos_at_r(r2,mos_array_r2)
+ f_hf_alpha_alpha = 0.d0
+
+ do l = 1, elec_alpha_num 
+  do k = 1, elec_alpha_num
+   do j = 1,mo_num
+    do i = 1,mo_num
+     f_hf_alpha_alpha += get_two_e_integral(i,j,k,l,mo_integrals_map)*(mos_array_r1(k)*mos_array_r2(l)-mos_array_r2(k)*mos_array_r1(l))*mos_array_r1(i)*mos_array_r2(j) 
+    enddo
+   enddo
+  enddo
+ enddo
+
+ end
+
+
+
+ subroutine give_f_alpha_alpha_hf_at_r(r,f_hf_alpha_alpha)
+ implicit none
+ double precision, intent(in) :: r(3)
+ double precision, intent(out) :: f_hf_alpha_alpha 
+ double precision :: get_two_e_integral 
+ integer :: i,j,k,l
+
+ double precision :: mos_array_r(mo_num)
+
+ call give_all_mos_at_r(r,mos_array_r)
+ f_hf_alpha_alpha = 0.d0
+
+ do l = 1, elec_alpha_num 
+  do k = 1, elec_alpha_num
+   do i = 1,mo_num
+    f_hf_alpha_alpha += get_two_e_integral(i,l,k,l,mo_integrals_map)*mos_array_r(k)*mos_array_r(i)-get_two_e_integral(i,k,k,l,mo_integrals_map)*mos_array_r(l)*mos_array_r(i)
+   enddo
+  enddo
+ enddo
+
+
+ end
+
+
+
+ subroutine give_n2_alpha_alpha_hf_at_r1_r2(r1,r2,n2_hf_alpha_alpha)
+ implicit none
+ double precision, intent(in) :: r1(3),r2(3)
+ double precision, intent(out) :: n2_hf_alpha_alpha 
+ integer :: i,j
+
+ double precision :: mos_array_r1(mo_num),mos_array_r2(mo_num)
+
+ call give_all_mos_at_r(r1,mos_array_r1)
+ call give_all_mos_at_r(r2,mos_array_r2)
+ n2_hf_alpha_alpha = 0.d0
+
+ do j = 1, elec_alpha_num 
+  do i = 1, elec_alpha_num
+   n2_hf_alpha_alpha += mos_array_r1(i)**2 *mos_array_r2(j)**2-mos_array_r1(i)*mos_array_r2(i)*mos_array_r1(j)*mos_array_r2(j)
+  enddo
+ enddo
+
+ end
+
+
+ subroutine give_n2_alpha_alpha_hf_at_r(r,n2_hf_alpha_alpha)
+ implicit none
+ double precision, intent(in) :: r(3)
+ double precision, intent(out) :: n2_hf_alpha_alpha 
+ integer :: i,j
+
+ double precision :: mos_array_r(mo_num)
+
+ call give_all_mos_at_r(r,mos_array_r)
+ n2_hf_alpha_alpha = 0.d0
+
+ do j = 1, elec_alpha_num 
+  do i = 1, elec_alpha_num
+   n2_hf_alpha_alpha += mos_array_r(i)**2 
+  enddo
+  n2_hf_alpha_alpha -= mos_array_r(j)**2
+ enddo
+
+ end
+
+
+ 
+ subroutine give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,n2_hf_alpha_alpha,n2_deriv2,n2_deriv4)
+ implicit none
+ double precision, intent(in)  :: r1(3)
+ double precision, intent(in)  :: r12
+ double precision, intent(out) :: n2_hf_alpha_alpha
+ double precision, intent(out) :: n2_deriv2,n2_deriv4
+ integer :: i,j
+
+ double precision :: mos_array_r1(mo_num)
+ double precision :: nabla_2_at_r_mo(mo_num,mo_num)
+ double precision :: nabla_4_at_r_mo(mo_num,mo_num)
+ call give_all_mos_at_r(r1,mos_array_r1)
+ call give_nabla_2_at_r_mo(r1,nabla_2_at_r_mo)
+ call give_nabla_4_at_r_mo(r1,nabla_4_at_r_mo)
+ 
+ n2_hf_alpha_alpha = 0.d0
+ 
+ n2_deriv2 = 0.d0
+ n2_deriv4 = 0.d0
+
+ do j = 1, elec_alpha_num
+  do i = 1, elec_alpha_num
+   n2_deriv2 += 0.3333333333333d0 * ( mos_array_r1(i)**2 * nabla_2_at_r_mo(j,j) - mos_array_r1(i)*mos_array_r1(j) * nabla_2_at_r_mo(i,j) )
+   n2_deriv4 += 0.2d0             * ( mos_array_r1(i)**2 * nabla_4_at_r_mo(j,j) - mos_array_r1(i)*mos_array_r1(j) * nabla_4_at_r_mo(i,j) )
+  enddo
+ enddo
+   
+ n2_hf_alpha_alpha = (0.5d0)*n2_deriv2*(r12**2.d0)+(fact_inv(4))*n2_deriv4*(r12**4.d0)
+ end
+
+
+ subroutine give_f_paper_alpha_alpha_hf_at_r1_r12(r1,r12,f_paper_hf_alpha_alpha,n2_deriv2,n2_deriv4)
+ implicit none
+ double precision, intent(in)  :: r1(3)
+ double precision, intent(in)  :: r12
+ double precision, intent(out) :: f_paper_hf_alpha_alpha
+ double precision, intent(out) :: n2_deriv2,n2_deriv4
+ integer :: i,j,k,l
+
+ double precision :: get_two_e_integral 
+ double precision :: mos_array_r1(mo_num)
+ double precision :: nabla_2_at_r_mo(mo_num,mo_num)
+ double precision :: nabla_4_at_r_mo(mo_num,mo_num)
+ call give_all_mos_at_r(r1,mos_array_r1)
+ call give_nabla_2_at_r_mo(r1,nabla_2_at_r_mo)
+ call give_nabla_4_at_r_mo(r1,nabla_4_at_r_mo)
+ 
+ f_paper_hf_alpha_alpha = 0.d0
+ 
+ n2_deriv2 = 0.d0
+ n2_deriv4 = 0.d0
+
+ do l = 1, elec_alpha_num 
+  do k = 1, elec_alpha_num
+   do j = 1,mo_num
+    do i = 1,mo_num
+     n2_deriv2 += 0.3333333333333d0 * get_two_e_integral(i,j,k,l,mo_integrals_map) * ( mos_array_r1(i)* mos_array_r1(k) * nabla_2_at_r_mo(j,l) - mos_array_r1(i)*mos_array_r1(l) * nabla_2_at_r_mo(j,k) )
+     n2_deriv4 += 0.2d0             * get_two_e_integral(i,j,k,l,mo_integrals_map) * ( mos_array_r1(i)* mos_array_r1(k) * nabla_4_at_r_mo(j,l) - mos_array_r1(i)*mos_array_r1(l) * nabla_4_at_r_mo(j,k) ) 
+    enddo
+   enddo
+  enddo
+ enddo
+ 
+ f_paper_hf_alpha_alpha = (0.5d0)*n2_deriv2*(r12**2.d0)+(fact_inv(4))*n2_deriv4*(r12**4.d0)
+ end
+
