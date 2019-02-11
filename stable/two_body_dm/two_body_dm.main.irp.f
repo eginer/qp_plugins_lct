@@ -162,6 +162,22 @@ end
  print*, 'Absolute error manual HF S D        =', accu_Manu_hf_s_d
  print*, '**************'
 
+ double precision :: accu_Manu_rela
+ accu_Manu_rela = (E_cor_tot_normal_prov-int_on_top_of_r_approx_svd(1))/E_cor_tot_normal_prov
+
+ double precision :: accu_Manu_corr_rela
+ accu_Manu_corr_rela = (E_cor_tot_normal_prov-int_on_top_of_r_approx_svd_correl(1))/E_cor_tot_normal_prov
+
+ double precision :: accu_Manu_hf_s_d_rela
+ accu_Manu_hf_s_d_rela = (E_cor_tot_normal_prov-int_on_top_of_r_approx_svd_hf_s_d(1))/E_cor_tot_normal_prov
+
+ print*, '**************'
+ !print*, 'Absolute error tucker          =', accu
+ print*, 'Relative error manual               =', accu_Manu_rela
+ print*, 'Relative error manual correlation   =', accu_Manu_corr_rela 
+ print*, 'Relative error manual HF S D        =', accu_Manu_hf_s_d_rela
+ print*, '**************'
+
  print*, '**************'
  print*, 'E_cor_tot_normal_provider         =', E_cor_tot_normal_prov
  print*, 'E_cor_tot_manual_provider         =', int_on_top_of_r_approx_svd(1)
