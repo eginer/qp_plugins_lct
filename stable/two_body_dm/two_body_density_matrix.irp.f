@@ -555,7 +555,7 @@
  integer                        :: exc(0:2,2,2)
  double precision               :: phase
  call bitstring_to_list_ab(det_1, occ, n_occ_ab, N_int)
- call get_mono_excitation(det_1,det_2,exc,phase,N_int)
+ call get_single_excitation(det_1,det_2,exc,phase,N_int)
  if (exc(0,1,1) == 1) then
   ! Mono alpha
   h1 = exc(1,1,1)
