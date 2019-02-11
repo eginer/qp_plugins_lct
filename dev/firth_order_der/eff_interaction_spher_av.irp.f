@@ -1,8 +1,27 @@
+ BEGIN_PROVIDER[double precision, Vijkl_eff_int_hf_alpha_alpha, (mo_num,mo_num,elec_alpha_num,elec_alpha_num)]
+ implicit none
+ BEGIN_DOC
+ ! blablablabla
+ END_DOC
+ integer :: i,j,k,l
+ double precision :: get_two_e_integral
+
+ do l = 1, elec_alpha_num
+  do k = 1, elec_alpha_num
+   do j = 1,mo_num
+    do i = 1,mo_num
+     Vijkl_eff_int_hf_alpha_alpha(i,j,k,l) = get_two_e_integral(i,j,k,l,mo_integrals_map)
+    enddo
+   enddo
+  enddo
+ enddo 
+
+ END_PROVIDER
+
  subroutine give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha)
  implicit none
  double precision, intent(in) :: r1(3),r2(3)
  double precision, intent(out) :: f_hf_alpha_alpha 
- double precision :: get_two_e_integral 
  integer :: i,j,k,l
 
  double precision :: mos_array_r1(mo_num),mos_array_r2(mo_num)
@@ -15,7 +34,7 @@
   do k = 1, elec_alpha_num
    do j = 1,mo_num
     do i = 1,mo_num
-     f_hf_alpha_alpha += get_two_e_integral(i,j,k,l,mo_integrals_map)*(mos_array_r1(k)*mos_array_r2(l)-mos_array_r2(k)*mos_array_r1(l))*mos_array_r1(i)*mos_array_r2(j) 
+     f_hf_alpha_alpha += Vijkl_eff_int_hf_alpha_alpha(i,j,k,l)*(mos_array_r1(k)*mos_array_r2(l)-mos_array_r2(k)*mos_array_r1(l))*mos_array_r1(i)*mos_array_r2(j)
     enddo
    enddo
   enddo
@@ -132,7 +151,6 @@
  double precision, intent(out) :: n2_deriv2,n2_deriv4
  integer :: i,j,k,l
 
- double precision :: get_two_e_integral 
  double precision :: mos_array_r1(mo_num)
  double precision :: nabla_2_at_r_mo(mo_num,mo_num)
  double precision :: nabla_4_at_r_mo(mo_num,mo_num)
@@ -149,8 +167,8 @@
   do k = 1, elec_alpha_num
    do j = 1,mo_num
     do i = 1,mo_num
-     n2_deriv2 += 0.3333333333333d0 * get_two_e_integral(i,j,k,l,mo_integrals_map) * ( mos_array_r1(i)* mos_array_r1(k) * nabla_2_at_r_mo(j,l) - mos_array_r1(i)*mos_array_r1(l) * nabla_2_at_r_mo(j,k) )
-     n2_deriv4 += 0.2d0             * get_two_e_integral(i,j,k,l,mo_integrals_map) * ( mos_array_r1(i)* mos_array_r1(k) * nabla_4_at_r_mo(j,l) - mos_array_r1(i)*mos_array_r1(l) * nabla_4_at_r_mo(j,k) ) 
+     n2_deriv2 += 0.3333333333333d0 * Vijkl_eff_int_hf_alpha_alpha(i,j,k,l) * ( mos_array_r1(i)* mos_array_r1(k) * nabla_2_at_r_mo(j,l) - mos_array_r1(i)*mos_array_r1(l) * nabla_2_at_r_mo(j,k) )
+     n2_deriv4 += 0.2d0             * Vijkl_eff_int_hf_alpha_alpha(i,j,k,l) * ( mos_array_r1(i)* mos_array_r1(k) * nabla_4_at_r_mo(j,l) - mos_array_r1(i)*mos_array_r1(l) * nabla_4_at_r_mo(j,k) ) 
     enddo
    enddo
   enddo
@@ -159,3 +177,16 @@
  f_paper_hf_alpha_alpha = (0.5d0)*n2_deriv2*(r12**2.d0)+(fact_inv(4))*n2_deriv4*(r12**4.d0)
  end
 
+ subroutine give_eff_inter_alpha_alpha_hf_at_r1_r12(r1,r12,f_paper_hf,n2_hf)
+ implicit none
+ double precision, intent(in)  :: r1(3)
+ double precision, intent(in)  :: r12
+ double precision, intent(out) :: f_paper_hf
+ double precision, intent(out) :: n2_hf
+
+ double precision :: f_deriv2,f_deriv4,n2_deriv2,n2_deriv4
+ 
+ call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,r12,f_paper_hf,f_deriv2,f_deriv4)  
+ call give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,n2_hf,n2_deriv2,n2_deriv4) 
+
+ end

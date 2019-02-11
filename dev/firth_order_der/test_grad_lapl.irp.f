@@ -16,7 +16,9 @@ program pouet
 !call test_int_n2_spherical_av
 !call test_nabla2_4_at_r
 !call test_int_f_paper_spherical_av
- call test_effective_intera_spherical_av
+!call test_effective_intera_spherical_av
+ call test_ecmd_alpha 
+!call test_polynome
 end
 
 
@@ -793,13 +795,15 @@ end
  accu_ana = 0.d0
  print*,'\\\\\\\\\\\\\\\\\'
  print*,' '
- r1(1) = 0.d0
- r1(2) = 0.d0
+ r1(1) = 0.5d0
+ r1(2) = 0.5d0
  r1(3) = 0.d0
  double precision :: delta,n2_deriv2,n2_deriv4
  delta=0.00001d0
  r12=0.d0
  call give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana,n2_deriv2,n2_deriv4)
+ print*,'n2_deriv2 =',n2_deriv2
+ print*,'n2_deriv4 =',n2_deriv4
  do i = 1,10000 
  accu_num = 0.d0 
   do k = 1,n_points_integration_angular
@@ -838,24 +842,24 @@ end
  delta=0.000001d0
  r12=0.d0
 
- do i = 1,100000 
- accu_num = 0.d0 
-  do k = 1,n_points_integration_angular
-   r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
-   r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
-   r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
-   call give_n2_alpha_alpha_hf_at_r1_r2(r1,r2,n2_hf_alpha_alpha) 
-   call give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha) 
-   accu_num += (f_hf_alpha_alpha/n2_hf_alpha_alpha)*weights_angular_points(k)/(4.d0*pi)
-  enddo
-  call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana_1,f_deriv2,f_deriv4)
-  call give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana_2,n2_deriv2,n2_deriv4)
-  write(33,*)r12,accu_num
-  write(44,*)r12,accu_ana_1/accu_ana_2
+!do i = 1,100000 
+!accu_num = 0.d0 
+! do k = 1,n_points_integration_angular
+!  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+!  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+!  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+!  call give_n2_alpha_alpha_hf_at_r1_r2(r1,r2,n2_hf_alpha_alpha) 
+!  call give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha) 
+!  accu_num += (f_hf_alpha_alpha/n2_hf_alpha_alpha)*weights_angular_points(k)/(4.d0*pi)
+! enddo
+! call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana_1,f_deriv2,f_deriv4)
+! call give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana_2,n2_deriv2,n2_deriv4)
+! write(33,*)r12,accu_num
+! write(44,*)r12,accu_ana_1/accu_ana_2
 
-  r12 += delta 
- 
- enddo
+! r12 += delta 
+!
+!enddo
  
  call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,0.d0,accu_ana_1,f_deriv2,f_deriv4)
  call give_n2_alpha_alpha_hf_at_r1_r12(r1,0.d0,accu_ana_2,n2_deriv2,n2_deriv4)
@@ -866,3 +870,36 @@ end
  print*,"f_deriv4(0)               =",f_deriv4
  print*,"f_deriv4(0)/n2_deriv4(0)  =",f_deriv4/n2_deriv4
 end
+
+ subroutine test_ecmd_alpha
+ implicit none
+ provide e_c_md_mur_aa_LDA_a
+ print*,'****************************************'
+ print*,' ecmd mur aa LDA a   =', e_c_md_mur_aa_LDA_a
+ print*,' mu average aa       =', mu_average_aa
+ print*,'****************************************'
+ end
+
+
+ subroutine test_polynome
+ implicit none
+ double precision :: mu_1,mu_2,mu_3
+ double precision :: r12
+ double precision :: r(3)
+ double precision :: local_potential,two_bod
+ integer :: i_point
+ r12 = 1.d-5
+ do i_point = 1, n_points_final_grid
+  r(1) = final_grid_points(1,i_point)
+  r(2) = final_grid_points(2,i_point)
+  r(3) = final_grid_points(3,i_point)
+  call give_eff_inter_alpha_alpha_hf_at_r1_r12(r,r12,local_potential,two_bod)
+  if(two_bod.le.1.d-12.or.local_potential.le.0.d0)then
+    local_potential = 1.d-10
+  else 
+    local_potential = local_potential /  two_bod
+  endif
+  call give_mu_r12(local_potential,r12,mu_1,mu_2,mu_3)
+  write(33,*)i_point,mu_1,mu_2,mu_3
+ enddo
+ end
