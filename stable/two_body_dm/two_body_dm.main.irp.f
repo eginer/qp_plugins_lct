@@ -5,7 +5,8 @@ program two_body_dm
   END_DOC
  read_wf = .True.
  touch read_wf
- touch two_bod_alpha_beta_mo_physicist
+!call comp_test
+!touch two_bod_alpha_beta_mo_physicist
  
 !call routine_print
 ! call provide_everything
@@ -13,6 +14,26 @@ program two_body_dm
 !call zero_gamma
  call comparaison_decomp_tensor
 !call print_gamma
+end
+
+subroutine comp_test
+ implicit none
+ integer :: i
+ double precision :: accu
+ accu = 0.d0
+ do i = 1, n_points_final_grid
+  accu += final_weight_at_r_vector(i)
+ enddo
+ print*,'accu = ',accu
+!provide two_bod_alpha_beta_mo_physicist 
+!call comp_test2
+ 
+end
+
+subroutine comp_test2
+ implicit none
+ provide int_on_top_of_r_approx_svd
+
 end
 
  subroutine zero_gamma 

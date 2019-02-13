@@ -1,4 +1,5 @@
  BEGIN_PROVIDER [double precision, on_top_of_r_exact,(n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, wall_time_on_top_of_r_exact ]
  implicit none
  BEGIN_DOC
  ! on top pair density at each grid point computed using the full two-body density matrix 
@@ -9,6 +10,7 @@
 
  print*,'providing the on_top_of_r_exact'
  i_point = 1
+ provide two_bod_alpha_beta_mo_physicist 
  i_state = 1
  on_top_of_r_exact(i_point,i_state) = on_top_of_r_from_provider(i_point,i_state)
  call wall_time(wall_0)
@@ -25,6 +27,7 @@
  call wall_time(wall_1)
  print*,'provided the on_top_of_r_exact'
  print*,'Time to provide :',wall_1 - wall_0
+ wall_time_on_top_of_r_exact = wall_1 - wall_0
  END_PROVIDER 
 
  
