@@ -37,7 +37,7 @@ subroutine i_H_j_erf(key_i,key_j,Nint,hij)
     case (2)
       call get_double_excitation(key_i,key_j,exc,phase,Nint)
       if (exc(0,1,1) == 1) then
-        ! Mono alpha, mono beta
+        ! Mono alpha, single beta
         if(exc(1,1,1) == exc(1,2,2) )then
          hij = phase * int_erf_3_index_exc(exc(1,1,1),exc(1,1,2),exc(1,2,1))
         else if (exc(1,2,1) ==exc(1,1,2))then
@@ -142,7 +142,7 @@ double precision function diag_H_mat_elem_erf(key_i,Nint)
   enddo
  enddo
 end
-subroutine i_H_j_mono_spin_erf(key_i,key_j,Nint,spin,hij)
+subroutine i_H_j_single_spin_erf(key_i,key_j,Nint,spin,hij)
   use bitmasks
   implicit none
   BEGIN_DOC
