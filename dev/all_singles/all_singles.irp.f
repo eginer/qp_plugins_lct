@@ -34,6 +34,8 @@ subroutine routine_selection
     print*,'-----------------------'
     print*,'i = ',i
     call H_apply_just_mono(pt2, norm_pert, H_pert_diag,  N_st)
+    logical :: found_duplicates
+!   call remove_duplicates_in_psi_det(found_duplicates)
     call diagonalize_CI
     print*,'N_det = ',N_det
     do i = 1, N_states

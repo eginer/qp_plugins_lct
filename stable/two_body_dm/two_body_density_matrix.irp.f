@@ -14,9 +14,9 @@
  dim4 = mo_num
  two_bod_alpha_beta_mo = 0.d0
  print*,'providing two_bod_alpha_beta ...'
- call cpu_time(cpu_0)
+ call wall_time(cpu_0)
  call two_body_dm_nstates_openmp(two_bod_alpha_beta_mo,dim1,dim2,dim3,dim4,psi_coef,size(psi_coef,2),size(psi_coef,1))
- call cpu_time(cpu_1)
+ call wall_time(cpu_1)
  print*,'two_bod_alpha_beta provided in',dabs(cpu_1-cpu_0)
 
  END_PROVIDER 
@@ -34,7 +34,7 @@
  double precision :: cpu_0,cpu_1
  two_bod_alpha_beta_mo_physicist = 0.d0
  print*,'providing two_bod_alpha_beta_mo_physicist ...'
- call cpu_time(cpu_0)
+ call wall_time(cpu_0)
  do istate = 1, N_states 
   do i = 1, mo_num
    do j = 1, mo_num
@@ -47,6 +47,7 @@
    enddo
   enddo
  enddo
+ call wall_time(cpu_1)
  print*,'two_bod_alpha_beta_mo_physicist provided in',dabs(cpu_1-cpu_0)
 
  END_PROVIDER 
@@ -555,7 +556,7 @@
  integer                        :: exc(0:2,2,2)
  double precision               :: phase
  call bitstring_to_list_ab(det_1, occ, n_occ_ab, N_int)
- call get_mono_excitation(det_1,det_2,exc,phase,N_int)
+ call get_single_excitation(det_1,det_2,exc,phase,N_int)
  if (exc(0,1,1) == 1) then
   ! Mono alpha
   h1 = exc(1,1,1)

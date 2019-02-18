@@ -35,7 +35,7 @@ subroutine i_H_j_hcore(key_i,key_j,Nint,hij)
     case (2)
       hij = 0.d0
     case (1)
-      call get_mono_excitation(key_i,key_j,exc,phase,Nint)
+      call get_single_excitation(key_i,key_j,exc,phase,Nint)
       !DIR$ FORCEINLINE
       call bitstring_to_list_ab(key_i, occ, n_occ_ab, Nint)
       if (exc(0,1,1) == 1) then
