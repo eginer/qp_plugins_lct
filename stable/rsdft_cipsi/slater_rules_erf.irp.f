@@ -37,7 +37,7 @@ subroutine i_H_j_erf(key_i,key_j,Nint,hij)
     case (2)
       call get_double_excitation(key_i,key_j,exc,phase,Nint)
       if (exc(0,1,1) == 1) then
-        ! Mono alpha, mono beta
+        ! Mono alpha, single beta
         if(exc(1,1,1) == exc(1,2,2) )then
          hij = phase * int_erf_3_index_exc(exc(1,1,1),exc(1,1,2),exc(1,2,1))
         else if (exc(1,2,1) ==exc(1,1,2))then
@@ -75,7 +75,7 @@ subroutine i_H_j_erf(key_i,key_j,Nint,hij)
             exc(1,2,2) ,mo_integrals_erf_map) )
       endif
     case (1)
-      call get_mono_excitation(key_i,key_j,exc,phase,Nint)
+      call get_single_excitation(key_i,key_j,exc,phase,Nint)
       !DIR$ FORCEINLINE
       call bitstring_to_list_ab(key_i, occ, n_occ_ab, Nint)
       if (exc(0,1,1) == 1) then
@@ -142,7 +142,7 @@ double precision function diag_H_mat_elem_erf(key_i,Nint)
   enddo
  enddo
 end
-subroutine i_H_j_mono_spin_erf(key_i,key_j,Nint,spin,hij)
+subroutine i_H_j_single_spin_erf(key_i,key_j,Nint,spin,hij)
   use bitmasks
   implicit none
   BEGIN_DOC
@@ -207,8 +207,8 @@ subroutine i_H_j_double_alpha_beta_erf(key_i,key_j,Nint,hij)
 
   PROVIDE int_erf_3_index_exc mo_two_e_integrals_erf_in_map
 
-  call get_mono_excitation_spin(key_i(1,1),key_j(1,1),exc(0,1,1),phase,Nint)
-  call get_mono_excitation_spin(key_i(1,2),key_j(1,2),exc(0,1,2),phase2,Nint)
+  call get_single_excitation_spin(key_i(1,1),key_j(1,1),exc(0,1,1),phase,Nint)
+  call get_single_excitation_spin(key_i(1,2),key_j(1,2),exc(0,1,2),phase2,Nint)
   phase = phase*phase2
   if (exc(1,1,1) == exc(1,2,2)) then
     hij = phase * int_erf_3_index_exc(exc(1,1,1),exc(1,1,2),exc(1,2,1))
