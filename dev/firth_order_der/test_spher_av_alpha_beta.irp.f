@@ -212,7 +212,7 @@ end
  print*,' '
  r1(1) = 0.0d0
  r1(2) = 0.0d0
- r1(3) = 0.d0
+ r1(3) = 0.5d0
  double precision :: delta,n2_deriv2,n2_deriv4,f_deriv2,f_deriv4,f2_0,n2_0
  delta=0.00001d0
  r12=0.d0
