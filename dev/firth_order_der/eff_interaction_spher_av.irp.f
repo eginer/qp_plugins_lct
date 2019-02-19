@@ -190,3 +190,92 @@
  call give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,n2_hf,n2_deriv2,n2_deriv4) 
 
  end
+
+
+double precision  function spherical_av_wee_paper(r1,r12)
+ implicit none
+ include 'utils/constants.include.F'
+ double precision, intent(in) :: r1(3),r12
+ integer :: k
+ double precision :: f_hf_alpha_alpha,r2(3),n2_hf_alpha_alpha
+ spherical_av_wee_paper = 0.d0
+ do k = 1,n_points_integration_angular
+  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+  call give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha) 
+  call give_n2_alpha_alpha_hf_at_r1_r2(r1,r2,n2_hf_alpha_alpha) 
+  spherical_av_wee_paper += f_hf_alpha_alpha/n2_hf_alpha_alpha * weights_angular_points(k)
+ enddo
+ spherical_av_wee_paper = spherical_av_wee_paper * 0.25d0 / pi 
+end
+
+
+double precision  function spherical_av_n2_ab(r1,r12)
+ implicit none
+ include 'utils/constants.include.F'
+ double precision, intent(in) :: r1(3),r12
+ integer :: k
+ double precision :: n2_hf_alpha_beta,r2(3)
+ spherical_av_n2_ab = 0.d0
+ do k = 1,n_points_integration_angular
+  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+  call give_n2_alpha_beta_hf_at_r1_r2(r1,r2,n2_hf_alpha_beta) 
+  spherical_av_n2_ab += n2_hf_alpha_beta*weights_angular_points(k)
+ enddo
+ spherical_av_n2_ab = spherical_av_n2_ab * 0.25d0 / pi 
+end
+
+double precision  function spherical_av_f_paper_ab(r1,r12)
+ implicit none
+ include 'utils/constants.include.F'
+ double precision, intent(in) :: r1(3),r12
+ integer :: k
+ double precision :: f_hf_alpha_beta,r2(3)
+ spherical_av_f_paper_ab = 0.d0
+ do k = 1,n_points_integration_angular
+  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+  call give_f_alpha_beta_hf_at_r1_r2(r1,r2,f_hf_alpha_beta) 
+  spherical_av_f_paper_ab += f_hf_alpha_beta * weights_angular_points(k)
+ enddo
+ spherical_av_f_paper_ab = spherical_av_f_paper_ab * 0.25d0 / pi 
+end
+
+double precision  function spherical_av_n2(r1,r12)
+ implicit none
+ include 'utils/constants.include.F'
+ double precision, intent(in) :: r1(3),r12
+ integer :: k
+ double precision :: n2_hf_alpha_alpha,r2(3)
+ spherical_av_n2 = 0.d0
+ do k = 1,n_points_integration_angular
+  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+  call give_n2_alpha_alpha_hf_at_r1_r2(r1,r2,n2_hf_alpha_alpha) 
+  spherical_av_n2 += n2_hf_alpha_alpha*weights_angular_points(k)
+ enddo
+ spherical_av_n2 = spherical_av_n2 * 0.25d0 / pi 
+end
+
+double precision  function spherical_av_f(r1,r12)
+ implicit none
+ include 'utils/constants.include.F'
+ double precision, intent(in) :: r1(3),r12
+ integer :: k
+ double precision :: f_hf_alpha_alpha,r2(3)
+ spherical_av_f= 0.d0
+ do k = 1,n_points_integration_angular
+  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+  call give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha) 
+  spherical_av_f+= f_hf_alpha_alpha * weights_angular_points(k)
+ enddo
+ spherical_av_f= spherical_av_f * 0.25d0 / pi 
+end
+

@@ -16,7 +16,11 @@ program pouet
 !call test_int_n2_spherical_av
 !call test_nabla2_4_at_r
 !call test_int_f_paper_spherical_av
+<<<<<<< HEAD
  call test_effective_intera_spherical_av
+=======
+!call test_effective_intera_spherical_av
+>>>>>>> 6eb03517d440ebe96b214102bef15902bd594b12
 !call test_ecmd_alpha 
 !call test_polynome
 end
@@ -721,7 +725,7 @@ end
   call give_n2_alpha_alpha_hf_at_r(r,n2_hf_alpha_alpha) 
   accu += n2_hf_alpha_alpha*final_weight_at_r_vector(i)
  enddo
- print*,'integral f             =',accu
+ print*,'integral n2            =',accu
 end
 
 
@@ -825,59 +829,13 @@ end
 end
 
 
- subroutine test_effective_intera_spherical_av
- implicit none
- include 'utils/constants.include.F'
- integer :: i,j,k,istate
- double precision :: accu_num,accu_ana_1,accu_ana_2
- double precision :: r1(3),r2(3)
- double precision :: r12
- double precision :: f_hf_alpha_alpha,n2_hf_alpha_alpha 
- print*,'\\\\\\\\\\\\\\\\\'
- print*,' '
- r1(1) = 0.d0
- r1(2) = 0.d0
- r1(3) = 0.d0
- double precision :: delta,n2_deriv2,n2_deriv4,f_deriv2,f_deriv4
- delta=0.001d0
- r12=0.d0
-
- do i = 1,10000 
- accu_num = 0.d0 
-  do k = 1,n_points_integration_angular
-   r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
-   r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
-   r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
-   call give_n2_alpha_alpha_hf_at_r1_r2(r1,r2,n2_hf_alpha_alpha) 
-   call give_f_alpha_alpha_hf_at_r1_r2(r1,r2,f_hf_alpha_alpha) 
-   accu_num += (f_hf_alpha_alpha/n2_hf_alpha_alpha)*weights_angular_points(k)/(4.d0*pi)
-  enddo
-  call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana_1,f_deriv2,f_deriv4)
-  call give_n2_alpha_alpha_hf_at_r1_r12(r1,r12,accu_ana_2,n2_deriv2,n2_deriv4)
-  write(33,*)r12,accu_num
-  write(44,*)r12,accu_ana_1/accu_ana_2
-
-  r12 += delta 
- 
- enddo
- 
- call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,0.d0,accu_ana_1,f_deriv2,f_deriv4)
- call give_n2_alpha_alpha_hf_at_r1_r12(r1,0.d0,accu_ana_2,n2_deriv2,n2_deriv4)
-
- print*,"n2_deriv2(0)              =",n2_deriv2
- print*,"n2_deriv4(0)              =",n2_deriv4
- print*,"f_deriv2(0)               =",f_deriv2
- print*,"f_deriv4(0)               =",f_deriv4
- print*,"f_deriv4(0)/n2_deriv4(0)  =",f_deriv4/n2_deriv4
-end
-
  subroutine test_ecmd_alpha
  implicit none
- provide e_c_md_mur_aa_LDA_a
- print*,'****************************************'
- print*,' ecmd mur aa LDA a   =', e_c_md_mur_aa_LDA_a
- print*,' mu average aa       =', mu_average_aa
- print*,'****************************************'
+!provide e_c_md_mur_aa_LDA_a
+!print*,'****************************************'
+!print*,' ecmd mur aa LDA a   =', e_c_md_mur_aa_LDA_a
+!print*,' mu average aa       =', mu_average_aa
+!print*,'****************************************'
  end
 
 
