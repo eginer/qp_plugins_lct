@@ -86,7 +86,7 @@ subroutine compute_ao_integrals_erf_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_v
       endif
       n_integrals += 1
       !DIR$ FORCEINLINE
-      call bielec_integrals_index_no_sym(i,j,k,l,ao_num,buffer_i(n_integrals))
+      call index_two_e_no_sym(i,j,k,l,ao_num,buffer_i(n_integrals))
       buffer_value(n_integrals) = integral
     enddo
   enddo

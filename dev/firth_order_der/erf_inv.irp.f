@@ -56,8 +56,8 @@
  double precision :: y,erf_inv,thr
  y = eff_inter*r12 
  thr = y*1.d-4
- print*,'eff_inter =',eff_inter
- print*,'eff_inter*r12 =',y
+!print*,'eff_inter =',eff_inter
+!print*,'eff_inter*r12 =',y
  mu= erf_inv(y,thr)/r12 
  
  end
@@ -87,7 +87,7 @@
     x_moins = x_plus
     x_plus = x_plus_before
    endif
-  !print*,'x_moins,x_plus',x_moins,x_plus 
+!  print*,'x_moins,x_plus',x_moins,x_plus 
   enddo
   erf_inv = 0.5d0 * (x_moins + x_plus)
  end
