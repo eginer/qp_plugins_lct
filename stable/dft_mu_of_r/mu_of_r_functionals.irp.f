@@ -18,8 +18,8 @@
   mu = mu_of_r_vector(i)
   weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
-   rho_a(istate) = one_body_dm_alpha_at_r(i,istate)
-   rho_b(istate) = one_body_dm_beta_at_r(i,istate)
+   rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
+   rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    call ESRC_MD_LDAERF (mu,rho_a(istate),rho_b(istate),dospin,ec(istate))
    Energy_c_md_mu_of_r_LDA(istate) += weight * ec(istate)
   enddo
@@ -94,8 +94,8 @@
   mu = mu_of_r_vector(i)
   weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
-   rho_a(istate) = one_body_dm_alpha_at_r(i,istate)
-   rho_b(istate) = one_body_dm_beta_at_r(i,istate)
+   rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
+   rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    mu_average(istate) +=  weight * mu_of_r_vector(i) * (rho_a(istate) + rho_b(istate))
   enddo
  enddo
@@ -118,8 +118,8 @@ BEGIN_PROVIDER [double precision, Energy_c_LDA_mu_of_r, (N_states)]
   mu = mu_of_r_vector(i)
   weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
-   rho_a(istate) = one_body_dm_alpha_at_r(i,istate)
-   rho_b(istate) = one_body_dm_beta_at_r(i,istate)
+   rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
+   rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    call ec_only_lda_sr(mu,rho_a(istate),rho_b(istate),e_lda)
    energy_c_LDA_mu_of_r(istate) += weight * e_lda
   enddo

@@ -111,7 +111,7 @@ BEGIN_PROVIDER [ type(map_type), ao_integrals_erf_mu_of_r_map ]
   END_DOC
   integer(key_kind)              :: key_max
   integer(map_size_kind)         :: sze
-  call bielec_integrals_index_no_sym(ao_num,ao_num,ao_num,ao_num,ao_num,key_max)
+  call index_two_e_no_sym(ao_num,ao_num,ao_num,ao_num,ao_num,key_max)
   sze = key_max
   call map_init(ao_integrals_erf_mu_of_r_map,sze)
   print*,  'AO map initialized : ', sze
@@ -144,7 +144,7 @@ END_PROVIDER
 !    do j=ao_integrals_erf_mu_of_r_cache_min,ao_integrals_erf_mu_of_r_cache_max
 !      do i=ao_integrals_erf_mu_of_r_cache_min,ao_integrals_erf_mu_of_r_cache_max
 !        !DIR$ FORCEINLINE
-!        call bielec_integrals_index_no_sym(i,j,k,l,ao_num,idx1)
+!        call index_two_e_no_sym(i,j,k,l,ao_num,idx1)
 !        !DIR$ FORCEINLINE
 !        call map_get(ao_integrals_erf_mu_of_r_map,idx1,integral1)
 !        ii = l-ao_integrals_erf_mu_of_r_cache_min
@@ -186,11 +186,11 @@ double precision function get_ao_bielec_integral_erf_mu_of_r(i,j,k,l,map) result
    !ii = ior(ii, i-ao_integrals_erf_mu_of_r_cache_min)
    !if (iand(ii, -64) /= 0) then
       !DIR$ FORCEINLINE
-      call bielec_integrals_index_no_sym(i,j,k,l,ao_num,idx1)
+      call index_two_e_no_sym(i,j,k,l,ao_num,idx1)
       !DIR$ FORCEINLINE
       call map_get(map,idx1,tmp1)
       !DIR$ FORCEINLINE
-      call bielec_integrals_index_no_sym(j,i,l,k,ao_num,idx2)
+      call index_two_e_no_sym(j,i,l,k,ao_num,idx2)
       !DIR$ FORCEINLINE
       call map_get(map,idx2,tmp2)
       tmp = 0.5d0 * (tmp1 + tmp2)
@@ -266,9 +266,9 @@ subroutine get_ao_bielec_integrals_erf_mu_of_r_non_zero(j,k,l,sze,out_val,out_va
     if (ao_overlap_abs(i,k)*ao_overlap_abs(j,l) < thresh) then
       cycle
     endif
-    call bielec_integrals_index_no_sym(i,j,k,l,ao_num,hash1)
+    call index_two_e_no_sym(i,j,k,l,ao_num,hash1)
     call map_get(ao_integrals_erf_mu_of_r_map, hash1,tmp1)
-    call bielec_integrals_index_no_sym(j,i,l,k,ao_num,hash2)
+    call index_two_e_no_sym(j,i,l,k,ao_num,hash2)
     call map_get(ao_integrals_erf_mu_of_r_map, hash2,tmp2)
     if (dabs(tmp1) < thresh ) cycle
     non_zero_int = non_zero_int+1
