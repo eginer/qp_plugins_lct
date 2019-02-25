@@ -1,3 +1,20 @@
+double precision  function spherical_av_f_manu(r1,r12)
+ implicit none
+ include 'utils/constants.include.F'
+ double precision, intent(in) :: r1(3),r12
+ integer :: k
+ double precision :: f_HF_aa,r2(3)
+ spherical_av_f_manu= 0.d0
+ do k = 1,n_points_integration_angular
+  r2(1)= r1(1)+r12*angular_quadrature_points(k,1)
+  r2(2)= r1(2)+r12*angular_quadrature_points(k,2)
+  r2(3)= r1(3)+r12*angular_quadrature_points(k,3)
+  spherical_av_f_manu+= f_HF_aa(r1,r2) * weights_angular_points(k)
+ enddo
+ spherical_av_f_manu= spherical_av_f_manu * 0.25d0 / pi 
+end
+
+
 double precision function f_HF_aa(r1,r2)
  implicit none
  BEGIN_DOC

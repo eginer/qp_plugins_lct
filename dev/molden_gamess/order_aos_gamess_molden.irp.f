@@ -38,7 +38,7 @@ END_PROVIDER
  integer :: i
  logical :: first
  n_first_d = 0
- list_first_d = -10000
+ list_first_d = 1
  do i=1,ao_num
   if(ao_l(i) == 2 .and. ao_l_char_space(i) == 'XX  ')then
    n_first_d += 1
@@ -51,13 +51,15 @@ END_PROVIDER
 &BEGIN_PROVIDER [integer, new_order_d_AOS_reverse_for_molden, (6)]
  implicit none
  integer :: i_ao,k,i
- new_order_d_AOS_for_molden = -1000
- i_ao = list_first_d(1) ! index of the first d
- do k = 1, 6 
-  i = i_ao + k-1
-  new_order_d_AOS_for_molden(k) = order_d( ao_l_powers(i,1) , ao_l_powers(i,2) )
-  new_order_d_AOS_reverse_for_molden(order_d( ao_l_powers(i,1) , ao_l_powers(i,2) )) = k 
- enddo
+ if(n_first_d.ne.0)then
+  new_order_d_AOS_for_molden = 1
+  i_ao = list_first_d(1) ! index of the first d
+  do k = 1, 6 
+   i = i_ao + k-1
+   new_order_d_AOS_for_molden(k) = order_d( ao_l_powers(i,1) , ao_l_powers(i,2) )
+   new_order_d_AOS_reverse_for_molden(order_d( ao_l_powers(i,1) , ao_l_powers(i,2) )) = k 
+  enddo
+ endif
  
 END_PROVIDER 
 
@@ -68,7 +70,7 @@ END_PROVIDER
  integer :: i
  logical :: first
  n_first_f = 0
- list_first_f = -10000
+ list_first_f = 1
  do i=1,ao_num
   if(ao_l(i) == 3 .and. ao_l_char_space(i) == 'XXX ')then
    n_first_f += 1
@@ -81,13 +83,15 @@ END_PROVIDER
 &BEGIN_PROVIDER [integer, new_order_f_AOS_reverse_for_molden, (10)]
  implicit none
  integer :: i_ao,k,i
- new_order_f_AOS_for_molden = -1000
- i_ao = list_first_f(1) ! index of the first f
- do k = 1, 10
-  i = i_ao + k-1
-  new_order_f_AOS_for_molden(k) = order_f( ao_l_powers(i,1) , ao_l_powers(i,2) ,ao_l_powers(i,3) )
-  new_order_f_AOS_reverse_for_molden(order_f( ao_l_powers(i,1) , ao_l_powers(i,2) ,ao_l_powers(i,3) )) = k
- enddo
+ if(n_first_f.ne.0)then
+  new_order_f_AOS_for_molden = 1
+  i_ao = list_first_f(1) ! index of the first f
+  do k = 1, 10
+   i = i_ao + k-1
+   new_order_f_AOS_for_molden(k) = order_f( ao_l_powers(i,1) , ao_l_powers(i,2) ,ao_l_powers(i,3) )
+   new_order_f_AOS_reverse_for_molden(order_f( ao_l_powers(i,1) , ao_l_powers(i,2) ,ao_l_powers(i,3) )) = k
+  enddo
+ endif
  
 END_PROVIDER 
 

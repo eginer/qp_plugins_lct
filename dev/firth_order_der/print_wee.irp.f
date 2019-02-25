@@ -16,26 +16,49 @@ subroutine write_wee_aa
  double precision :: f_hf_alpha_alpha,n2_hf_alpha_alpha 
  double precision :: r12max,delta,n2_deriv2,n2_deriv4,f_deriv2,f_deriv4,wee_paper,f_paper,n2_paper
  double precision :: mu_num,mu_ana,spherical_av_wee_paper,spherical_av_f,spherical_av_n2
+ double precision :: spherical_av_f_manu
+
+ character*(128) :: output
+ integer :: i_unit_output,getUnitAndOpen
+ provide ezfio_filename
+
+ character*(128) :: filename
+ write (filename, "(F3.1,A1,F3.1,A1,F3.1)")x_center_wee,'_',y_center_wee,'_',z_center_wee
+
+ output=trim(ezfio_filename)//'.'//trim(filename)
+ output=trim(output)
+ print*,'output = ',trim(output)
+ i_unit_output = getUnitAndOpen(output,'w')
+ 
+ 
+ f_hf_alpha_alpha = spherical_av_f(r1,delta_r12)
  print*,'\\\\\\\\\\\\\\\\\'
  print*,' '
  r1(1) = x_center_wee
  r1(2) = y_center_wee
  r1(3) = z_center_wee
- r12=0.d0
 
  ! computation of mu with the ratio of spherical averaged quantities 
  call give_f_paper_alpha_alpha_hf_at_r1_r12(r1,delta_r12,accu_ana_1,f_deriv2,f_deriv4)
  call give_n2_alpha_alpha_hf_at_r1_r12(r1,delta_r12,accu_ana_2,n2_deriv2,n2_deriv4)
  wee_paper = (accu_ana_1)/(accu_ana_2)
- call give_mu_r12(wee_paper,delta_r12,mu_num)
- print*,'mu_num = ',mu_num
+ print*,' wee_paper ',wee_paper
+ print*,'F_analytic, n2_analytic'
+ print*,accu_ana_1,accu_ana_2
+ f_hf_alpha_alpha = spherical_av_f(r1,delta_r12)
+ n2_hf_alpha_alpha= spherical_av_n2(r1,delta_r12)
+ print*,'F_numeric , n2_numeric '
+ print*,f_hf_alpha_alpha,n2_hf_alpha_alpha
+!call give_mu_r12(wee_paper,delta_r12,mu_num)
+!print*,'mu_num = ',mu_num
  ! computation of mu with the spherical average of the ratio 
  wee_paper = spherical_av_wee_paper(r1,delta_r12)
- call give_mu_r12(wee_paper,delta_r12,mu_ana)
+ print*,' wee_paper ',wee_paper
+!call give_mu_r12(wee_paper,delta_r12,mu_ana)
  print*,'mu_ana = ',mu_ana
-
- r12max = 10.d0
- npoints = 1000
+!stop
+ r12max = 5.d0
+ npoints = 100
  delta = r12max / dble(npoints)
  do i = 1,npoints
   r12 += delta
@@ -45,7 +68,8 @@ subroutine write_wee_aa
   wee_paper = spherical_av_wee_paper(r1,r12)
   f_paper   = spherical_av_f(r1,r12)
   n2_paper   = spherical_av_n2(r1,r12)
-  write(33,'(100(F16.10,X))')r12,wee_paper,erf(mu_num * r12)/r12,erf(mu_ana * r12)/r12,f_paper/n2_paper,f_paper,n2_paper
+ !write(33,'(100(F16.10,X))')r12,wee_paper,erf(mu_num * r12)/r12,erf(mu_ana * r12)/r12,f_paper/n2_paper,f_paper,n2_paper
+  write(i_unit_output,'(100(F16.10,X))')r12,wee_paper,f_paper/n2_paper,f_paper,n2_paper
  
  enddo
  
