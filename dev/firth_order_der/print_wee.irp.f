@@ -2,7 +2,8 @@ program print_wee
  implicit none
  read_wf = .true.
  touch read_wf
- call write_wee_aa
+ call write_mu_r
+!call write_wee_aa
 !call routine_ab
 end
 
@@ -21,7 +22,6 @@ subroutine write_wee_aa
  character*(128) :: output
  integer :: i_unit_output,getUnitAndOpen
  provide ezfio_filename
-
  character*(128) :: filename
  write (filename, "(F3.1,A1,F3.1,A1,F3.1)")x_center_wee,'_',y_center_wee,'_',z_center_wee
 
@@ -119,4 +119,96 @@ subroutine routine_ab
 end
 
 
+subroutine write_mu_r
+ implicit none
+ integer :: n_points,i_point
+ double precision :: dr,rmin,rmax,r(3),local_potential,two_bod
+ double precision, allocatable :: mu_average_z(:),weight_average_z(:),z_tab(:),density_z(:,:),mu_average_z_dens(:)
+ character*(128) :: output
+ integer :: i_unit_output,getUnitAndOpen
+ double precision :: dm_a,dm_b,ec,mu
+ provide ezfio_filename
+ character*(128) :: filename
+ write (filename, "(A3)")"wee"
+ output=trim(ezfio_filename)//'.'//trim(filename)
+ print*,'output = ',trim(output)
+ i_unit_output = getUnitAndOpen(output,'w')
+ n_points = 10000
+ rmin = nucl_coord(1,3)-3.d0
+ 
+ rmax = nucl_coord(1,3)+6.d0
+ dr   = (rmax - rmin)/dble(n_points) 
+ r = 0.d0
+
+
+ allocate(mu_average_z_dens(n_points+1),mu_average_z(n_points+1),weight_average_z(n_points+1),z_tab(n_points+1),density_z(2,n_points+1))
+ z_tab = 0.d0
+ r = 0.d0
+ r(3) = rmin
+ do i_point = 1, n_points
+  z_tab(i_point) = r(3)
+  r(3) += dr
+ enddo
+ mu_average_z_dens = 0.d0
+ mu_average_z = 0.d0
+ weight_average_z = 0.d0
+ density_z = 0.d0
+ do i_point = 1, n_points_final_grid
+  r(:) = final_grid_points(:,i_point)
+ !print*,'r(3)',r(3)
+  if(r(3).lt.rmin)then
+   i_tab = 1
+  else if(r(3).gt.rmax)then
+   i_tab = n_points_final_grid
+  else
+   integer :: i_tab
+   i_tab = int((r(3) - rmin)/dr)+1
+   i_tab = max(i_tab,1)
+   i_tab = min(i_tab,n_points_final_grid)
+  endif
+   mu_average_z_dens(i_tab) += mu_of_r_vector(i_point) * final_weight_at_r_vector(i_point) * ( one_e_dm_alpha_at_r(i_point,1) + one_e_dm_beta_at_r(i_point,1) )
+   mu_average_z(i_tab)      += mu_of_r_vector(i_point) * final_weight_at_r_vector(i_point) 
+   weight_average_z(i_tab) += final_weight_at_r_vector(i_point) 
+   density_z(1,i_tab) +=  one_e_dm_alpha_at_r(i_point,1)  * final_weight_at_r_vector(i_point)
+   density_z(2,i_tab) +=  one_e_dm_beta_at_r(i_point,1)   * final_weight_at_r_vector(i_point)
+  !print*,i_tab,z_tab(i_tab)
+  !pause
+ enddo
+ 
+ r = 0.d0
+ r(3) = rmin
+ double precision :: accu
+ accu = 0.d0
+ do i_point = 1, n_points
+! call f_HF_valence_ab(r,r,local_potential,two_bod)
+  call f_HF_ab(r,r,local_potential,two_bod)
+  call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
+  if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
+    local_potential = 1.d-10
+  else
+    local_potential = local_potential /  two_bod
+  endif
+  mu =  local_potential * dsqrt(dacos(-1.d0)) * 0.5d0
+
+  call ESRC_MD_LDAERF (mu,dm_a,dm_b,.True.,ec)
+  if(two_bod.ne.0.d0)then
+   write(i_unit_output,'(100(F16.10,X))')r(3),mu,ec,local_potential,two_bod,dm_a+dm_b
+  endif
+  r(3) += dr
+ !if(weight_average_z(i_point).gt.1.d-10)then
+ ! dm_a = density_z(1,i_tab)/weight_average_z(i_point)
+ ! dm_b = density_z(2,i_tab)/weight_average_z(i_point)
+ ! mu = mu_average_z(i_point)/weight_average_z(i_point)
+ ! if(.not. isnan(mu))then
+ !  call ESRC_MD_LDAERF (mu,dm_a,dm_b,.True.,ec)
+ ! endif
+ !endif
+ !if(weight_average_z(i_point).gt.1.d-10)then
+ ! write(i_unit_output,'(100(F16.10,X))')z_tab(i_point),mu_average_z(i_point)/weight_average_z(i_point),ec*weight_average_z(i_point),mu_average_z_dens(i_point),density_z(1,i_point)
+ !endif
+ !accu += mu_average_z_dens(i_point) 
+ enddo
+!print*,'accu  = ',accu/dble(elec_alpha_num + elec_beta_num)
+ print*,'mu av = ',mu_average
+end
 

@@ -21,6 +21,11 @@
    rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    call ESRC_MD_LDAERF (mu,rho_a(istate),rho_b(istate),dospin,ec(istate))
+!  write(33,'(100(F16.10,X))')i,rho_a,rho_b,mu,ec
+   if(isnan(ec(istate)))then
+    print*,'ec is nan'
+    stop
+   endif
    Energy_c_md_mu_of_r_LDA(istate) += weight * ec(istate)
   enddo
  enddo
@@ -93,6 +98,7 @@
  do i = 1, n_points_final_grid
   mu = mu_of_r_vector(i)
   weight=final_weight_at_r_vector(i)
+  if(mu.gt.1.d+9)cycle
   do istate = 1, N_states
    rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_e_dm_beta_at_r(i,istate)
@@ -160,4 +166,5 @@ END_PROVIDER
 
 
 END_PROVIDER 
+
 

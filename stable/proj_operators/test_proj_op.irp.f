@@ -3,12 +3,46 @@ program projected_operators
   BEGIN_DOC
 ! TODO
   END_DOC
-  read_wf = .True.
-  touch read_wf
-  call routine_v
+! read_wf = .True.
+! touch read_wf
+! call routine_v
 ! call routine_rho 
-  call routine_final
+! call routine_final
+  call routine_valence
 
+end
+
+subroutine routine_valence
+ implicit none
+ integer :: ipoint,k,l,i,j
+ double precision :: accu_val,accu_ful, weight,r(3),integral_psi_val,integral_psi_ful
+ accu_val = 0.d0
+ accu_ful = 0.d0
+ do ipoint  = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(ipoint)
+  r(1) = final_grid_points(1,ipoint)
+  r(2) = final_grid_points(2,ipoint)
+  r(3) = final_grid_points(3,ipoint)
+  call integral_f_HF_valence_ab(r,integral_psi_val)
+  call integral_of_f_12_hf_over_beta(r,integral_psi_ful)
+  accu_val += integral_psi_val * weight
+  accu_ful += integral_psi_ful * weight
+ enddo
+!print*,'integral_f_hf        = ',integral_f_hf
+ print*,'accu_val             = ',accu_val
+!print*,'accu_ful             = ',accu_ful
+!print*,'psi_energy_two_e_ab  = ',psi_energy_two_e_ab
+!print*,'integral_r1r2_f_HF_ab= ',integral_r1r2_f_HF_ab
+ double precision :: accu_2
+ accu_2 = 0.d0
+ do i = n_core_orb+1, elec_alpha_num
+  do j = n_core_orb+1, elec_beta_num
+!do i = 1,n_core_orb
+! do j = 1,n_core_orb
+   accu_2 += mo_two_e_integrals_jj(j,i)
+  enddo
+ enddo
+ print*,'accu_2               = ',accu_2
 end
 
 subroutine routine_rho

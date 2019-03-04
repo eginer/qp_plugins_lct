@@ -110,8 +110,8 @@
   mu = mu_of_r_hf_coal_vector(i)
   weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
-   rho_a(istate) = 0.d0 
-   rho_b(istate) = one_e_dm_beta_at_r(i,istate) 
+   rho_a(istate) = one_e_dm_beta_at_r(i,istate) 
+   rho_b(istate) = 0.d0
    call ESRC_MD_LDAERF (mu,rho_a(istate),rho_b(istate),dospin,ec(istate))
    e_c_md_mur_ab_LDA_b(istate) += weight * ec(istate)
   enddo

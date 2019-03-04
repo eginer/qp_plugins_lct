@@ -194,3 +194,43 @@
  call give_n2_alpha_beta_hf_at_r1_r12(r1,r12,n2_hf,n2_0,n2_deriv2,n2_deriv4) 
 
  end
+
+ subroutine give_Wee_eff_ab_hf_sph_av_grid_r12(i_point,r12,f_hf_ab,n2_hf_ab)
+ implicit none
+ integer, intent(in) :: i_point
+ double precision, intent(in)  :: r12
+ double precision, intent(out) :: f_hf_ab,n2_hf_ab
+ double precision              :: n2_0,n2_deriv2,n2_deriv4
+ double precision              :: f_0,f_deriv2,f_deriv4
+ integer :: i,j,k,l
+
+ 
+ f_hf_ab = 0.d0
+
+ n2_0      = 0.d0  
+ n2_deriv2 = 0.d0
+ n2_deriv4 = 0.d0
+
+ f_0       = 0.d0  
+ f_deriv2  = 0.d0
+ f_deriv4  = 0.d0
+
+ do l = 1, elec_beta_num 
+  do k = 1, elec_alpha_num
+   n2_0      += mos_in_r_array(l,i_point)**2 * mos_in_r_array(k,i_point)**2 
+   n2_deriv2 += 0.3333333333333d0 * mos_in_r_array(l,i_point)**2 * mos_nabla_2_in_r_array_2(k,k,i_point)
+   n2_deriv4 += 0.2d0             * mos_in_r_array(l,i_point)**2 * mos_nabla_4_in_r_array_2(k,k,i_point) 
+   do j = 1, mo_num
+    do i = 1, mo_num
+     f_0      += Vijkl_eff_int_hf_alpha_beta(i,j,k,l) *  mos_in_r_array(i,i_point)* mos_in_r_array(k,i_point) * mos_in_r_array(j,i_point)* mos_in_r_array(l,i_point) 
+     f_deriv2 += 0.3333333333333d0 * Vijkl_eff_int_hf_alpha_beta(i,j,k,l) *  mos_in_r_array(i,i_point)* mos_in_r_array(k,i_point) * mos_nabla_2_in_r_array_2(j,l,i_point) 
+     f_deriv4 += 0.2d0             * Vijkl_eff_int_hf_alpha_beta(i,j,k,l) *  mos_in_r_array(i,i_point)* mos_in_r_array(k,i_point) * mos_nabla_4_in_r_array_2(j,l,i_point) 
+    enddo
+   enddo
+  enddo
+ enddo
+ 
+ f_hf_ab   = f_0  + (0.5d0)*f_deriv2*(r12**2.d0) +(fact_inv(4))*f_deriv4*(r12**4.d0)
+ n2_hf_ab  = n2_0 + (0.5d0)*n2_deriv2*(r12**2.d0)+(fact_inv(4))*n2_deriv4*(r12**4.d0)
+ end
+
