@@ -98,6 +98,7 @@ BEGIN_PROVIDER [double precision, integrals_for_hf_potential, (mo_num,mo_num,ele
   do n = 1, elec_alpha_num ! electron 2 
    do i = 1, mo_num   ! electron 1 
     do j = 1, mo_num  ! electron 2 
+    !                           2 1 2 1
      integrals_for_hf_potential(j,i,n,m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
     enddo
    enddo

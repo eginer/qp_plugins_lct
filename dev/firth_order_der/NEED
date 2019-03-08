@@ -2,3 +2,4 @@ dft_utils_in_r
 rsdft_ecmd
 dft_mu_of_r
 hartree_fock  
+high_order_deriv

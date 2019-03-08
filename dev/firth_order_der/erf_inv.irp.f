@@ -56,8 +56,6 @@
  double precision :: y,erf_inv,thr
  y = eff_inter*r12 
  thr = y*1.d-4
-!print*,'eff_inter =',eff_inter
-!print*,'eff_inter*r12 =',y
  mu= erf_inv(y,thr)/r12 
  
  end
@@ -77,6 +75,9 @@
   if(y.ge.1.d0)then
    print*,'y must lt than 1'
    print*,y
+   stop
+  else if(y.lt.0.0000000001d0)then
+   print*,'y must be gt than 0'
    stop
   endif
   do while(dabs(derf(0.5d0 *( x_plus+x_moins)) - y).gt.thr)

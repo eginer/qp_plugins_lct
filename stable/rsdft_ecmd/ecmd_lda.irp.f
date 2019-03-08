@@ -69,7 +69,17 @@ END_PROVIDER
       rhos = rhoa - rhob
 
       call ec_only_lda_sr(mu,rho_a,rho_b,e1)
+      if(isnan(e1))then
+       print*,'e1 is NaN'
+       print*,mu,rho_a,rho_b
+       stop
+      endif
       call DELTA_LRSR_LDAERF (rhot,rhos,mu,dospin,e)
+      if(isnan(e))then
+       print*,'e is NaN'
+       print*,mu,rhot,rhos
+       stop
+      endif
       e = e1 + e
 
       end
@@ -126,7 +136,7 @@ END_PROVIDER
       else
         rhoa=max((rhot+rhos)*.5d0,1.0d-15)
         rhob=max((rhot-rhos)*.5d0,1.0d-15)
-        z=(rhoa-rhob)/(rhoa+rhob)
+        z=min((rhoa-rhob)/(rhoa+rhob),0.9999999999d0)
       endif
 
       z2=z*z
@@ -155,7 +165,6 @@ END_PROVIDER
       delta4=4*(d0**6)*bc2+(d0**8)*bc4;
       delta5=(d0**8)*bc3t;
       delta6=(d0**8)*bc2;
-
       delta=(delta2*(mu**2)+delta3*(mu**3)+delta4*(mu**4)+delta5*(mu**5)+delta6*(mu**6))/((1+(d0**2)*(mu**2))**4)
 
 
