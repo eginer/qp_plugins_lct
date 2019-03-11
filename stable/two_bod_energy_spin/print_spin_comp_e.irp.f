@@ -24,7 +24,7 @@ end
 subroutine print_energy_comp
  implicit none
  print*,'psi_energy_bielec_ab    = ',psi_energy_two_e
- print*,'<h_core>                = ',psi_energy - psi_energy_h_core
+ print*,'<h_core>                = ',psi_energy_h_core
 
 end
 
