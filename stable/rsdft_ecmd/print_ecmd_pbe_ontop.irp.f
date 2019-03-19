@@ -11,8 +11,8 @@ end
 
 subroutine routine
  implicit none
- print*,'Ecmd_pbe_n2_hf_aa = ',Ecmd_pbe_n2_hf_aa
- print*,'Ecmd_pbe_n2_hf_bb = ',Ecmd_pbe_n2_hf_bb
+! print*,'Ecmd_pbe_n2_hf_aa = ',Ecmd_pbe_n2_hf_aa
+! print*,'Ecmd_pbe_n2_hf_bb = ',Ecmd_pbe_n2_hf_bb
 
 
 end

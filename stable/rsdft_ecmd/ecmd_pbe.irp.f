@@ -36,6 +36,7 @@ subroutine give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE) ! JT
   double precision :: grad_rho_a(3,N_states),grad_rho_b(3,N_states)
   double precision :: grad_rho_a_2(N_states),grad_rho_b_2(N_states),grad_rho_a_b(N_states)
   double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo,vrhoc,vrhoo,vsigmacc,vsigmaco,vsigmaoo
+  double precision :: g0_UEG_mu_inf
   integer :: m, istate
 
   pi = 4.d0 * datan(1.d0)
