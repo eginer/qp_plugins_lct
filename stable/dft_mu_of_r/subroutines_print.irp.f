@@ -13,10 +13,13 @@ subroutine print_contribution_dft_mu_of_r
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ else if(mu_of_r_functional.EQ."basis_set_PBE")then
+   write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
+   print*,''
+   write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_mu_of_r_LDA
  else if(mu_of_r_functional.EQ."basis_set_on_top_PBE")then
-   write(*, '(A28,X,F16.10)') 'Energy ECMD UEG        = ',Energy_c_md_on_top_PBE_mu_of_r_UEG
-   write(*, '(A28,X,F16.10)') 'Energy ECMD NO UEG     = ',Energy_c_md_on_top_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'Energy ECMD large mu(r)= ',Energy_c_md_on_top_mu_of_r
+   write(*, '(A28,X,F16.10)') 'Energy ECMD PBE ontop  = ',Energy_c_md_on_top_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
    print*,''
    write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_mu_of_r_LDA
  endif

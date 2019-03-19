@@ -42,7 +42,6 @@ double precision function g0_UEG_mu(mu,rho_a,rho_b)
  double precision :: B, C, D, E, d2, rs, ahd, h, kf
  pi = 4d0 * datan(1d0)
  rho = rho_a+rho_b
-!zeta = (rho_a-rho_b)/(rho_a+rho_b)
  alpha = (4d0/(9d0*pi))**(1d0/3d0)
  ahd = -0.36583d0
  d2 = 0.7524d0
