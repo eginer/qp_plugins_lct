@@ -107,13 +107,13 @@ subroutine i_wee_i_diag_alpha_beta(key1,Nint,hij)
  integer(bit_kind), intent(in)  :: key1(Nint,2)
  double precision, intent(out) :: hij
  integer :: i,j,k,l
- integer :: n_occ_ab
+ integer :: n_occ_ab(2)
  integer           :: occ(Nint*bit_kind_size,2)
  call bitstring_to_list_ab(key1, occ, n_occ_ab, Nint)
  hij = 0.d0
- do i = 1, elec_alpha_num
+ do i = 1, n_occ_ab(1)
   k = occ(i,1)
-  do j = 1, elec_beta_num
+  do j = 1, n_occ_ab(2)
    l = occ(j,2)
    hij += mo_two_e_integrals_jj(k,l)
   enddo

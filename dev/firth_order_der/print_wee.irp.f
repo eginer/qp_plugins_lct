@@ -2,6 +2,8 @@ program print_wee
  implicit none
  read_wf = .true.
  touch read_wf
+ no_core_density = "no_core_dm"
+ touch no_core_density
  call write_mu_r
 !call write_wee_aa
 !call routine_ab
@@ -133,7 +135,7 @@ subroutine write_mu_r
  output=trim(ezfio_filename)//'.'//trim(filename)
  print*,'output = ',trim(output)
  i_unit_output = getUnitAndOpen(output,'w')
- n_points = 10000
+ n_points = 1000
  rmin = nucl_coord(1,3)-3.d0
  
  rmax = nucl_coord(1,3)+6.d0
@@ -141,59 +143,84 @@ subroutine write_mu_r
  r = 0.d0
 
 
- allocate(mu_average_z_dens(n_points+1),mu_average_z(n_points+1),weight_average_z(n_points+1),z_tab(n_points+1),density_z(2,n_points+1))
- z_tab = 0.d0
- r = 0.d0
- r(3) = rmin
- do i_point = 1, n_points
-  z_tab(i_point) = r(3)
-  r(3) += dr
- enddo
- mu_average_z_dens = 0.d0
- mu_average_z = 0.d0
- weight_average_z = 0.d0
- density_z = 0.d0
- do i_point = 1, n_points_final_grid
-  r(:) = final_grid_points(:,i_point)
- !print*,'r(3)',r(3)
-  if(r(3).lt.rmin)then
-   i_tab = 1
-  else if(r(3).gt.rmax)then
-   i_tab = n_points_final_grid
-  else
-   integer :: i_tab
-   i_tab = int((r(3) - rmin)/dr)+1
-   i_tab = max(i_tab,1)
-   i_tab = min(i_tab,n_points_final_grid)
-  endif
-   mu_average_z_dens(i_tab) += mu_of_r_vector(i_point) * final_weight_at_r_vector(i_point) * ( one_e_dm_alpha_at_r(i_point,1) + one_e_dm_beta_at_r(i_point,1) )
-   mu_average_z(i_tab)      += mu_of_r_vector(i_point) * final_weight_at_r_vector(i_point) 
-   weight_average_z(i_tab) += final_weight_at_r_vector(i_point) 
-   density_z(1,i_tab) +=  one_e_dm_alpha_at_r(i_point,1)  * final_weight_at_r_vector(i_point)
-   density_z(2,i_tab) +=  one_e_dm_beta_at_r(i_point,1)   * final_weight_at_r_vector(i_point)
-  !print*,i_tab,z_tab(i_tab)
-  !pause
- enddo
+!allocate(mu_average_z_dens(n_points+1),mu_average_z(n_points+1),weight_average_z(n_points+1),z_tab(n_points+1),density_z(2,n_points+1))
+!z_tab = 0.d0
+!r = 0.d0
+!r(3) = rmin
+!do i_point = 1, n_points
+! z_tab(i_point) = r(3)
+! r(3) += dr
+!enddo
+!mu_average_z_dens = 0.d0
+!mu_average_z = 0.d0
+!weight_average_z = 0.d0
+!density_z = 0.d0
+!do i_point = 1, n_points_final_grid
+! r(:) = final_grid_points(:,i_point)
+!!print*,'r(3)',r(3)
+! if(r(3).lt.rmin)then
+!  i_tab = 1
+! else if(r(3).gt.rmax)then
+!  i_tab = n_points_final_grid
+! else
+!  integer :: i_tab
+!  i_tab = int((r(3) - rmin)/dr)+1
+!  i_tab = max(i_tab,1)
+!  i_tab = min(i_tab,n_points_final_grid)
+! endif
+!  mu_average_z_dens(i_tab) += mu_of_r_vector(i_point) * final_weight_at_r_vector(i_point) * ( one_e_dm_alpha_at_r(i_point,1) + one_e_dm_beta_at_r(i_point,1) )
+!  mu_average_z(i_tab)      += mu_of_r_vector(i_point) * final_weight_at_r_vector(i_point) 
+!  weight_average_z(i_tab) += final_weight_at_r_vector(i_point) 
+!  density_z(1,i_tab) +=  one_e_dm_alpha_at_r(i_point,1)  * final_weight_at_r_vector(i_point)
+!  density_z(2,i_tab) +=  one_e_dm_beta_at_r(i_point,1)   * final_weight_at_r_vector(i_point)
+! !print*,i_tab,z_tab(i_tab)
+! !pause
+!enddo
  
  r = 0.d0
  r(3) = rmin
- double precision :: accu
+ double precision :: accu,local_potential_val,two_bod_val,mu_val,ec_val,num_val,num
  accu = 0.d0
+ integer ::i,j
+ double precision :: dm_a_val,dm_b_val
+ double precision :: mos_array(mo_num),on_top_val,on_top,two_dm_in_r
  do i_point = 1, n_points
-! call f_HF_valence_ab(r,r,local_potential,two_bod)
+  call f_HF_valence_ab(r,r,local_potential_val,two_bod_val)
+  num_val = local_potential_val
+  if(two_bod_val.le.1.d-12.or.local_potential_val.le.0.d0.or.local_potential_val * two_bod_val.lt.0.d0)then
+    local_potential_val = 1.d+10
+  else
+    local_potential_val = local_potential_val /  two_bod_val
+  endif
   call f_HF_ab(r,r,local_potential,two_bod)
+  num= local_potential
   call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
+  call give_all_mos_at_r(r,mos_array)
+  dm_a_val = 0.d0
+  dm_b_val = 0.d0
+  do i = n_core_orb + 1,elec_alpha_num
+   dm_a_val += mos_array(i)**2
+  enddo
+  do i = n_core_orb + 1, elec_beta_num
+   dm_b_val += mos_array(i)**2
+  enddo
+  on_top = two_dm_in_r(r,r,1) 
   if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
-    local_potential = 1.d-10
+    local_potential = 1.d+10
   else
     local_potential = local_potential /  two_bod
   endif
   mu =  local_potential * dsqrt(dacos(-1.d0)) * 0.5d0
+  mu_val =  local_potential_val * dsqrt(dacos(-1.d0)) * 0.5d0
 
   call ESRC_MD_LDAERF (mu,dm_a,dm_b,.True.,ec)
+  call ESRC_MD_LDAERF (mu_val,dm_a_val,dm_b_val,.True.,ec_val)
   if(two_bod.ne.0.d0)then
-   write(i_unit_output,'(100(F16.10,X))')r(3),mu,ec,local_potential,two_bod,dm_a+dm_b
-  endif
+   !                                      1   2  3       4           5    6       7         
+   write(i_unit_output,'(100(F16.10,X))')r(3),mu,ec,local_potential,num,two_bod,ec_val, & 
+                                         local_potential_val,num_val,two_bod_val,dm_a*dm_b,dm_a_val*dm_b_val,on_top
+   !                                           8                 9         10       11        12              13
+  endif 
   r(3) += dr
  !if(weight_average_z(i_point).gt.1.d-10)then
  ! dm_a = density_z(1,i_tab)/weight_average_z(i_point)
