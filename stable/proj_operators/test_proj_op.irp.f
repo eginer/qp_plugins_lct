@@ -3,8 +3,8 @@ program projected_operators
   BEGIN_DOC
 ! TODO
   END_DOC
-! read_wf = .True.
-! touch read_wf
+  read_wf = .True.
+  touch read_wf
 ! call routine_v
 ! call routine_rho 
 ! call routine_final
@@ -37,8 +37,6 @@ subroutine routine_valence
  accu_2 = 0.d0
  do i = n_core_orb+1, elec_alpha_num
   do j = n_core_orb+1, elec_beta_num
-!do i = 1,n_core_orb
-! do j = 1,n_core_orb
    accu_2 += mo_two_e_integrals_jj(j,i)
   enddo
  enddo

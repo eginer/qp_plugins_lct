@@ -30,16 +30,16 @@ program write_integrals_for_dft
  no_core_density = "no_core_dm"
  touch no_core_density
  call print_contribution_dft_mu_of_r
- print*,'**********************'
- print*,'**********************'
- print*,'LDA and PBE / HF valence coallescence  with no_core_density'
- mu_of_r_functional ="basis_set_on_top_PBE"
- touch mu_of_r_functional
- mu_of_r_potential = "hf_valence_coallescence" 
- touch mu_of_r_potential 
- no_core_density = "no_core_dm"
- touch no_core_density
- call print_contribution_dft_mu_of_r
+!print*,'**********************'
+!print*,'**********************'
+!print*,'LDA and PBE / HF valence coallescence  with no_core_density'
+!mu_of_r_functional ="basis_set_on_top_PBE"
+!touch mu_of_r_functional
+!mu_of_r_potential = "hf_valence_coallescence" 
+!touch mu_of_r_potential 
+!no_core_density = "no_core_dm"
+!touch no_core_density
+!call print_contribution_dft_mu_of_r
 
  print*,'**********************'
  print*,'**********************'

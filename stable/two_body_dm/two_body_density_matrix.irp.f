@@ -19,20 +19,53 @@
  call wall_time(cpu_1)
  print*,'two_bod_alpha_beta provided in',dabs(cpu_1-cpu_0)
 
- integer :: i,j,k,l
+ integer :: ii,jj,i,j,k,l
  if(no_core_density .EQ. "no_core_dm")then
-  do i = 1, n_core_orb ! 1 
-   do k = 1, mo_num  ! 1 
-    do j = 1, n_core_orb ! 2 
+  print*,'USING THE VALENCE ONLY TWO BODY DENSITY'
+
+  do ii = 1, n_core_orb ! 1 
+   i = list_core(ii) 
+   do j = 1, mo_num ! 2 
+    do k = 1, mo_num  ! 1 
      do l = 1, mo_num ! 2 
+      !                     2 2 1 1
       two_bod_alpha_beta_mo(l,j,k,i,:) = 0.d0
       two_bod_alpha_beta_mo(j,l,k,i,:) = 0.d0
       two_bod_alpha_beta_mo(l,j,i,k,:) = 0.d0
       two_bod_alpha_beta_mo(j,l,i,k,:) = 0.d0
+
+      two_bod_alpha_beta_mo(k,i,l,j,:) = 0.d0
+      two_bod_alpha_beta_mo(k,i,j,l,:) = 0.d0
+      two_bod_alpha_beta_mo(i,k,l,j,:) = 0.d0
+      two_bod_alpha_beta_mo(i,k,j,l,:) = 0.d0
      enddo
     enddo
    enddo
   enddo
+
+
+ !do ii = 1, n_core_orb ! 1 
+ ! i = list_core(ii) 
+ ! do jj = 1, n_core_orb ! 2 
+ !  j = list_core(jj) 
+ !  do k = 1, mo_num  ! 1 
+ !   do l = 1, mo_num ! 2 
+ !    !                     2 2 1 1
+ !    two_bod_alpha_beta_mo(l,j,k,i,:) = 0.d0
+ !    two_bod_alpha_beta_mo(j,l,k,i,:) = 0.d0
+ !    two_bod_alpha_beta_mo(l,j,i,k,:) = 0.d0
+ !    two_bod_alpha_beta_mo(j,l,i,k,:) = 0.d0
+
+ !    two_bod_alpha_beta_mo(k,i,l,j,:) = 0.d0
+ !    two_bod_alpha_beta_mo(k,i,j,l,:) = 0.d0
+ !    two_bod_alpha_beta_mo(i,k,l,j,:) = 0.d0
+ !    two_bod_alpha_beta_mo(i,k,j,l,:) = 0.d0
+ !   enddo
+ !  enddo
+ ! enddo
+ !enddo
+
+
  endif
 
  END_PROVIDER 
