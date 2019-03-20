@@ -82,7 +82,7 @@ END_PROVIDER
  implicit none
  z_min_grid_cyl = nucl_coord(1,3) - 4.5d0
  z_max_grid_cyl = nucl_coord(1,3) + 7.5d0
- n_z_grid_cyl = 1000
+ n_z_grid_cyl = 4000
  dz_grid_cyl = ( z_max_grid_cyl - z_min_grid_cyl ) /dble(n_z_grid_cyl)
 END_PROVIDER 
 
@@ -106,8 +106,8 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, rmax_grid_cyl ]
 &BEGIN_PROVIDER [double precision, dr_grid_cyl]
  implicit none
- n_radial_points_grid_cyl = 900
- rmax_grid_cyl = 9.D0
+ n_radial_points_grid_cyl = 2000
+ rmax_grid_cyl = 10.D0
  dr_grid_cyl = rmax_grid_cyl / dble(n_radial_points_grid_cyl)
 END_PROVIDER 
 
@@ -289,7 +289,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 549
+ iref = 2191
  e_c_lda_ful_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -304,7 +304,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 549
+ iref = 2191
  e_c_lda_val_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -319,7 +319,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 549
+ iref = 2191
  mu_hf_ful_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -334,7 +334,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 549
+ iref = 2191
  mu_hf_val_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -349,7 +349,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 549
+ iref = 2191
  dm_ful_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -364,7 +364,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 549
+ iref = 2191
  dm_val_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec

@@ -5,12 +5,123 @@ program projected_operators
   END_DOC
   read_wf = .True.
   touch read_wf
+ provide mo_two_e_integrals_jj
 ! call routine_v
 ! call routine_rho 
 ! call routine_final
-  call routine_valence
+! call routine_valence
+! call routine_core
+  call routine_core_valence
 
 end
+
+subroutine routine_core_valence
+ implicit none
+ integer :: ipoint,k,l,i,j
+ double precision :: accu_core_val,accu_ful, weight,r(3),integral_psi_core_val,integral_psi,r2(3),two_bod
+ accu_core_val = 0.d0
+ accu_ful = 0.d0
+ do ipoint  = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(ipoint)
+  r(1) = final_grid_points(1,ipoint)
+  r(2) = final_grid_points(2,ipoint)
+  r(3) = final_grid_points(3,ipoint)
+  call integral_f_HF_core_valence_ab(r,integral_psi_core_val)
+  accu_core_val += integral_psi_core_val * weight
+ enddo
+
+ print*,'accu_core_val        = ',accu_core_val
+ !print*,'accu_ful             = ',accu_ful
+ !print*,'psi_energy_two_e_ab  = ',psi_energy_two_e_ab
+ !print*,'integral_r1r2_f_HF_ab= ',integral_r1r2_f_HF_ab
+
+ double precision :: accu_2
+ accu_2 = 0.d0
+ ! alpha beta 
+ integer :: i_i,j_j
+ print*,'alpha core + beta val'
+ do i = 1, n_core_orb
+  i_i = list_core(i)
+  do j = 1, n_valence_orb_for_hf(2)
+   j_j = list_valence_orb_for_hf(j,2)
+!  print*,i_i,j_j,mo_two_e_integrals_jj(j_j,i_i)
+   accu_2 += mo_two_e_integrals_jj(j_j,i_i)
+  enddo
+ enddo
+
+ print*,'accu_2               = ',accu_2
+ print*,'beta  core + alpha val'
+ do i = 1, n_core_orb
+  i_i = list_core(i)
+  do j = 1, n_valence_orb_for_hf(1)
+   j_j = list_valence_orb_for_hf(j,1)
+!  print*,i_i,j_j,mo_two_e_integrals_jj(j_j,i_i)
+   accu_2 += mo_two_e_integrals_jj(j_j,i_i)
+  enddo
+ enddo
+
+ print*,'accu_2               = ',accu_2
+
+ accu_core_val = 0.d0
+ r = 0.d0
+ r(3) = 0.137d0
+ call integral_f_HF_core_valence_ab(r,integral_psi)
+ do ipoint  = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(ipoint)
+  r2(1) = final_grid_points(1,ipoint)
+  r2(2) = final_grid_points(2,ipoint)
+  r2(3) = final_grid_points(3,ipoint)
+  call f_HF_core_valence_ab(r,r2,integral_psi_core_val,two_bod)
+  accu_core_val += integral_psi_core_val * weight
+ enddo
+ !print*,'integral_f_hf        = ',integral_f_hf
+ print*,'accu_core_val        = ',accu_core_val
+ print*,'integral_psi         = ',integral_psi
+end
+
+
+subroutine routine_core
+ implicit none
+ integer :: ipoint,k,l,i,j
+ double precision :: accu_core,accu_ful, weight,r(3),integral_psi_core,integral_psi_ful
+ accu_core = 0.d0
+ accu_ful = 0.d0
+ do ipoint  = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(ipoint)
+  r(1) = final_grid_points(1,ipoint)
+  r(2) = final_grid_points(2,ipoint)
+  r(3) = final_grid_points(3,ipoint)
+  call integral_f_HF_core_ab(r,integral_psi_core)
+  accu_core += integral_psi_core * weight
+ enddo
+!print*,'integral_f_hf        = ',integral_f_hf
+ print*,'accu_core            = ',accu_core
+!print*,'accu_ful             = ',accu_ful
+!print*,'psi_energy_two_e_ab  = ',psi_energy_two_e_ab
+!print*,'integral_r1r2_f_HF_ab= ',integral_r1r2_f_HF_ab
+ double precision :: accu_2
+ accu_2 = 0.d0
+ ! alpha beta 
+ do i = 1, n_core_orb
+  do j = 1, n_core_orb
+   accu_2 += mo_two_e_integrals_jj(j,i)
+  enddo
+ enddo
+!! alpha alpha 
+!do i = 1, n_core_orb
+! do j = 1, n_core_orb
+!  accu_2 += 0.5d0 * mo_two_e_integrals_jj_anti(j,i)
+! enddo
+!enddo
+!! beta beta 
+!do i = 1, n_core_orb
+! do j = 1, n_core_orb
+!  accu_2 += 0.5d0 * mo_two_e_integrals_jj_anti(j,i)
+! enddo
+!enddo
+ print*,'accu_2               = ',accu_2
+end
+
 
 subroutine routine_valence
  implicit none

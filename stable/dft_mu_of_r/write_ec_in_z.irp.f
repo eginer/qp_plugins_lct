@@ -125,10 +125,10 @@ subroutine routine_2
  
 
  do i = 1, n_z_grid_cyl
-  write(i_unit_output,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_hf_ful_grid_cyl_z_tab(i),mu_hf_ful_grid_cyl_z_tab(i),dm_grid_cyl_z_tab(i)
-  write(i_unit_output2,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_hf_val_grid_cyl_z_tab(i),mu_hf_val_grid_cyl_z_tab(i),dm_no_core_grid_cyl_z_tab(i)
- !write(i_unit_output ,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_ful_sym(i)+e_c_lda_hf_ful_grid_cyl_z_tab(i),e_c_lda_ful_sym(i),dm_ful_sym(i)+dm_grid_cyl_z_tab(i),dm_grid_cyl_z_tab(i)
- !write(i_unit_output2,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_val_sym(i)+e_c_lda_hf_val_grid_cyl_z_tab(i),e_c_lda_val_sym(i),dm_val_sym(i)+dm_no_core_grid_cyl_z_tab(i),dm_no_core_grid_cyl_z_tab(i)
+ !write(i_unit_output,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_hf_ful_grid_cyl_z_tab(i),mu_hf_ful_grid_cyl_z_tab(i),dm_grid_cyl_z_tab(i)
+ !write(i_unit_output2,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_hf_val_grid_cyl_z_tab(i),mu_hf_val_grid_cyl_z_tab(i),dm_no_core_grid_cyl_z_tab(i)
+  write(i_unit_output ,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_ful_sym(i)+e_c_lda_hf_ful_grid_cyl_z_tab(i),e_c_lda_ful_sym(i),dm_ful_sym(i)+dm_grid_cyl_z_tab(i),dm_grid_cyl_z_tab(i)
+  write(i_unit_output2,'(100(F16.10,X))')z_points_grid_cylindr(i),e_c_lda_val_sym(i)+e_c_lda_hf_val_grid_cyl_z_tab(i),e_c_lda_val_sym(i),dm_val_sym(i)+dm_no_core_grid_cyl_z_tab(i),dm_no_core_grid_cyl_z_tab(i)
  enddo
 
 end
