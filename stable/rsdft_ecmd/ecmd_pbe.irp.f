@@ -30,13 +30,13 @@ subroutine give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE) ! JT
   implicit none
   double precision, intent(in)  :: mu , r(3)
   double precision, intent(out) :: eps_c_md_PBE(N_states)
-  double precision :: pi, e_pbe(N_states),beta(N_states)
+  double precision :: pi, e_PBE, beta
   double precision :: aos_array(ao_num), grad_aos_array(3,ao_num)
   double precision :: rho_a(N_states),rho_b(N_states)
   double precision :: grad_rho_a(3,N_states),grad_rho_b(3,N_states)
   double precision :: grad_rho_a_2(N_states),grad_rho_b_2(N_states),grad_rho_a_b(N_states)
   double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo,vrhoc,vrhoo,vsigmacc,vsigmaco,vsigmaoo
-  double precision :: g0_UEG_mu_inf
+  double precision :: g0_UEG_mu_inf, denom
   integer :: m, istate
 
   pi = 4.d0 * datan(1.d0)
@@ -57,9 +57,22 @@ subroutine give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE) ! JT
    ! convertion from (alpha,beta) formalism to (closed, open) formalism
    call rho_ab_to_rho_oc(rho_a(istate),rho_b(istate),rhoo,rhoc)
    call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
-   call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
-   beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi) * rhoc*rhoc*g0_UEG_mu_inf(rho_a(istate),rho_b(istate)) )
-   eps_c_md_PBE(istate)=e_PBE(istate)/(1.d0+beta(istate)*mu**3.d0)
+   call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE)
+
+   if(mu == 0.d0) then
+    eps_c_md_PBE(istate)=e_PBE
+   else
+!   note: the on-top pair density is (1-zeta^2) rhoc^2 g0 = 4 rhoa * rhob * g0
+    denom = (-2.d0+sqrt(2d0))*sqrt(2.d0*pi) * 4.d0*rho_a(istate)*rho_b(istate)*g0_UEG_mu_inf(rho_a(istate),rho_b(istate)) 
+    if (dabs(denom) > 1.d-12) then
+     beta = (3.d0*e_PBE)/denom
+     eps_c_md_PBE(istate)=e_PBE/(1.d0+beta*mu**3)
+    else
+     eps_c_md_PBE(istate)=0.d0
+    endif
+   endif
+!   write(*,*) "g0f=",g0f((3.d0/(4.d0*pi*rhoc))**(1.d0/3.d0))
+!   write(*,*) "g0a=",g0_UEG_mu_inf(rho_a(istate),rho_b(istate))
   enddo
  end
  
