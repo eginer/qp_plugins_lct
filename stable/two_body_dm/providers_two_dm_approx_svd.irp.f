@@ -57,7 +57,7 @@
    n_approx_svd_two_dm_correl(istate) -= 1
   endif
   print*,'************************'
-  print*,'n_eigen_approx_two_dm  =',n_approx_svd_two_dm_correl(istate)
+  print*,'n_eigen_approx_two_dm_correl  =',n_approx_svd_two_dm_correl(istate)
   print*,'************************'
  enddo
  n_max_approx_svd_two_dm_correl = maxval(n_approx_svd_two_dm_correl)

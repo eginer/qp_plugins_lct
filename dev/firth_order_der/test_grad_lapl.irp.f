@@ -66,6 +66,49 @@ subroutine test_grad_lapl_mo
  enddo
 end
 
+subroutine test_grad_density
+ implicit none
+ integer :: i,j,k,l,m,n,istate
+ double precision :: r(3),rdx_plus(3),rdx_minus(3),accu(3),accu_2(3),accu_3(3)
+ double precision :: grad_num_a(3,N_states),grad_num_b(3,N_states)
+ double precision :: dm_a_r(N_states),dm_b_r(N_states)
+ double precision :: dm_a_r_p(N_states),dm_b_r_p(N_states)
+ double precision :: dm_a_r_m(N_states),dm_b_r_m(N_states)
+ double precision :: dr
+ print*,'\\\\\\\\\\\\\\\\\'
+ print*,' '
+ print*,'Test MO'
+ print*,'dr,error grad, error lapl'
+ do n = 1, 16
+  dr = 10d0**(-n)
+  r = 0d0
+  accu = 0d0
+  accu_2= 0d0
+  accu_3= 0d0
+  do i = 1, n_points_final_grid
+   r(1) = final_grid_points(1,i)
+   r(2) = final_grid_points(2,i)
+   r(3) = final_grid_points(3,i)
+   do m = 1,3
+    rdx_plus = r
+    rdx_plus(m) = r(m) + dr
+    rdx_minus = r
+    rdx_minus(m) = r(m) - dr
+    call dm_dft_alpha_beta_at_r(r,dm_a_r,dm_b_r)
+    call dm_dft_alpha_beta_at_r(rdx_plus,dm_a_r_p,dm_b_r_p)
+    call dm_dft_alpha_beta_at_r(rdx_minus,dm_a_r_m,dm_b_r_m)
+    do istate = 1, N_states
+     grad_num_a(m,istate) = 0.5d0 * ( dm_a_r_p(istate) - dm_a_r_m(istate) )/ dr
+    enddo
+   enddo
+
+  enddo
+  write(*,'(5(F16.10,x))')dr,accu(1),accu_2(1),accu_3(1)
+  write(33,'(100(F16.10,X))'),dr,accu(1),accu(2),accu(3),accu_2(1),accu_2(2),accu_2(3)
+ enddo
+end
+
+
 
  subroutine test_grad_lapl_ao
  implicit none
