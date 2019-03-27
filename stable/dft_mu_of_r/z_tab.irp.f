@@ -33,7 +33,7 @@ END_PROVIDER
  e_c_lda_val_hf_z_tab = 0.d0
  do i = 1, n_points_final_grid
   ipoint_z = index_z_tab(i) ! to which z point does it coincide
-  mu = mu_of_r_hf_valencecoal_vector(i)
+  mu = mu_of_r_hf_coal_vv_vector(i)
   dm_a = one_e_dm_no_core_and_grad_alpha_in_r(4,i,1)
   dm_b = one_e_dm_no_core_and_grad_beta_in_r(4,i,1)
   call ESRC_MD_LDAERF (mu,dm_a,dm_b,.True.,ec)
@@ -82,7 +82,7 @@ END_PROVIDER
  implicit none
  z_min_grid_cyl = nucl_coord(1,3) - 4.5d0
  z_max_grid_cyl = nucl_coord(1,3) + 7.5d0
- n_z_grid_cyl = 4000
+ n_z_grid_cyl = 2000
  dz_grid_cyl = ( z_max_grid_cyl - z_min_grid_cyl ) /dble(n_z_grid_cyl)
 END_PROVIDER 
 
@@ -106,7 +106,7 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, rmax_grid_cyl ]
 &BEGIN_PROVIDER [double precision, dr_grid_cyl]
  implicit none
- n_radial_points_grid_cyl = 2000
+ n_radial_points_grid_cyl = 1000
  rmax_grid_cyl = 10.D0
  dr_grid_cyl = rmax_grid_cyl / dble(n_radial_points_grid_cyl)
 END_PROVIDER 
@@ -185,23 +185,37 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, one_e_dm_beta_grid_cyl , ( n_angular_points_grid_cyl, n_radial_points_grid_cyl , n_z_grid_cyl )]
 &BEGIN_PROVIDER [double precision, one_e_dm_alpha_no_core_grid_cyl , ( n_angular_points_grid_cyl, n_radial_points_grid_cyl , n_z_grid_cyl )]
 &BEGIN_PROVIDER [double precision, one_e_dm_beta_no_core_grid_cyl , ( n_angular_points_grid_cyl, n_radial_points_grid_cyl , n_z_grid_cyl )]
+&BEGIN_PROVIDER [double precision, elec_alpha_num_grid_cyl]
+&BEGIN_PROVIDER [double precision, elec_beta_num_grid_cyl]
+&BEGIN_PROVIDER [double precision, elec_alpha_num_no_core_grid_cyl]
+&BEGIN_PROVIDER [double precision, elec_beta_num_no_core_grid_cyl]
  implicit none 
  integer :: i,j,k
  double precision :: dm_a, dm_b, dm_a_no_core, dm_b_no_core,r(3)
+ double precision :: weight_tmp
  one_e_dm_alpha_grid_cyl = 0.d0
  one_e_dm_beta_grid_cyl  = 0.d0
  one_e_dm_alpha_no_core_grid_cyl = 0.d0
  one_e_dm_beta_no_core_grid_cyl  = 0.d0
+ elec_alpha_num_grid_cyl = 0.d0
+ elec_beta_num_grid_cyl = 0.d0
+ elec_alpha_num_no_core_grid_cyl = 0.d0
+ elec_beta_num_no_core_grid_cyl = 0.d0
  do i = 1, n_z_grid_cyl
   do j = 1, n_radial_points_grid_cyl
    do k = 1, n_angular_points_grid_cyl
+    weight_tmp = dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
     r(:) = grid_points_grid_cyl(:,k,j,i)
     call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
     one_e_dm_alpha_grid_cyl(k,j,i) = dm_a
     one_e_dm_beta_grid_cyl(k,j,i)  = dm_b
+    elec_beta_num_grid_cyl += dm_b * weight_tmp * dz_grid_cyl
+    elec_alpha_num_grid_cyl += dm_a * weight_tmp * dz_grid_cyl
     call dm_dft_alpha_beta_no_core_at_r(r,dm_a_no_core,dm_b_no_core)
     one_e_dm_alpha_no_core_grid_cyl(k,j,i) = dm_a_no_core
     one_e_dm_beta_no_core_grid_cyl(k,j,i)  = dm_b_no_core
+    elec_beta_num_no_core_grid_cyl += dm_b_no_core * weight_tmp * dz_grid_cyl
+    elec_alpha_num_no_core_grid_cyl += dm_a_no_core * weight_tmp * dz_grid_cyl
    enddo
   enddo
  enddo
@@ -218,10 +232,6 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, mu_hf_val_grid_cyl_z_tab, ( n_z_grid_cyl )]
 &BEGIN_PROVIDER [double precision, e_c_lda_hf_val_grid_cyl_z_sum ]
 &BEGIN_PROVIDER [double precision, e_c_lda_hf_ful_grid_cyl_z_sum ]
-&BEGIN_PROVIDER [double precision, elec_alpha_num_grid_cyl]
-&BEGIN_PROVIDER [double precision, elec_beta_num_grid_cyl]
-&BEGIN_PROVIDER [double precision, elec_alpha_num_no_core_grid_cyl]
-&BEGIN_PROVIDER [double precision, elec_beta_num_no_core_grid_cyl]
  implicit none
  integer :: i,j,k
  double precision :: weight_tmp
@@ -231,10 +241,6 @@ END_PROVIDER
  e_c_lda_hf_ful_grid_cyl_z_sum = 0.d0
  e_c_lda_hf_val_grid_cyl_z_sum = 0.d0
  e_c_lda_hf_val_grid_cyl_z_tab = 0.d0
- elec_alpha_num_grid_cyl = 0.d0
- elec_beta_num_grid_cyl = 0.d0
- elec_alpha_num_no_core_grid_cyl = 0.d0
- elec_beta_num_no_core_grid_cyl = 0.d0
  mu_hf_ful_grid_cyl_z_tab = 0.d0
  mu_hf_val_grid_cyl_z_tab = 0.d0
  dm_grid_cyl_z_tab = 0.d0
@@ -249,12 +255,10 @@ END_PROVIDER
     e_c_lda_hf_ful_grid_cyl(k,j,i) = ec
     weight_tmp = dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
 
-    e_c_lda_hf_ful_grid_cyl_z_tab(i) += ec * dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
-    mu_hf_ful_grid_cyl_z_tab(i) += mu * (dm_a + dm_b) * dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
-    dm_grid_cyl_z_tab(i) += (dm_a + dm_b) * dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl 
+    e_c_lda_hf_ful_grid_cyl_z_tab(i) += ec * weight_tmp 
+    mu_hf_ful_grid_cyl_z_tab(i) += mu * (dm_a + dm_b) * weight_tmp 
+    dm_grid_cyl_z_tab(i) += (dm_a + dm_b) * weight_tmp 
     e_c_lda_hf_ful_grid_cyl_z_sum += ec * weight_tmp * dz_grid_cyl
-    elec_beta_num_grid_cyl += dm_b * weight_tmp * dz_grid_cyl
-    elec_alpha_num_grid_cyl += dm_a * weight_tmp * dz_grid_cyl
 
     mu_val = mu_val_hf_grid_cyl(k,j,i)
     dm_a_no_core = one_e_dm_alpha_no_core_grid_cyl(k,j,i)
@@ -263,15 +267,15 @@ END_PROVIDER
     e_c_lda_hf_val_grid_cyl(k,j,i) = ec_no_core
     weight_tmp = dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
 
-    dm_no_core_grid_cyl_z_tab(i) += (dm_a_no_core + dm_b_no_core) * dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl 
-    mu_hf_val_grid_cyl_z_tab(i) += mu_val * (dm_a_no_core + dm_b_no_core) * dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
-    e_c_lda_hf_val_grid_cyl_z_tab(i) += ec_no_core * dble(j-1) * dr_grid_cyl * dr_grid_cyl * d_theta_grid_cyl
+    dm_no_core_grid_cyl_z_tab(i) += (dm_a_no_core + dm_b_no_core) * weight_tmp
+    mu_hf_val_grid_cyl_z_tab(i) += mu_val * (dm_a_no_core + dm_b_no_core) * weight_tmp 
+    e_c_lda_hf_val_grid_cyl_z_tab(i) += ec_no_core * weight_tmp
     e_c_lda_hf_val_grid_cyl_z_sum += ec_no_core * weight_tmp * dz_grid_cyl
-    elec_beta_num_no_core_grid_cyl += dm_b_no_core * weight_tmp * dz_grid_cyl
-    elec_alpha_num_no_core_grid_cyl += dm_a_no_core * weight_tmp * dz_grid_cyl
 
    enddo
   enddo
+! mu_hf_val_grid_cyl_z_tab(i) = mu_hf_val_grid_cyl_z_tab(i) / dm_no_core_grid_cyl_z_tab(i)
+! mu_hf_ful_grid_cyl_z_tab(i) = mu_hf_ful_grid_cyl_z_tab(i) / dm_grid_cyl_z_tab(i)
  enddo
  mu_hf_ful_grid_cyl_z_tab = mu_hf_ful_grid_cyl_z_tab / (elec_beta_num_grid_cyl + elec_alpha_num_grid_cyl)
  mu_hf_val_grid_cyl_z_tab = mu_hf_val_grid_cyl_z_tab / (elec_beta_num_no_core_grid_cyl + elec_alpha_num_no_core_grid_cyl)
@@ -289,7 +293,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 2191
+ iref = 1142
  e_c_lda_ful_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -304,7 +308,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 2191
+ iref = 1142
  e_c_lda_val_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -319,7 +323,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 2191
+ iref = 1142
  mu_hf_ful_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -334,7 +338,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 2191
+ iref = 1142
  mu_hf_val_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -349,7 +353,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 2191
+ iref = 1142
  dm_ful_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec
@@ -364,7 +368,7 @@ END_PROVIDER
  implicit none
  integer :: i,j
  integer :: iref
- iref = 2191
+ iref = 1142
  dm_val_sym = 0.d0
  do i = 1, n_z_grid_cyl
   j = i + iref - imax_ec

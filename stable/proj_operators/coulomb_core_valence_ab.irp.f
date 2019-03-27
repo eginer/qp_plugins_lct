@@ -67,8 +67,8 @@ subroutine f_HF_core_valence_ab(r1,r2,integral_psi,two_bod)
  enddo
  
  
- do k = 1, n_core_orb_for_hf ! electron 1 alpha 
-  do l = 1, n_valence_orb_for_hf(1) ! electron 2 beta 
+ do k = 1, n_core_orb_for_hf ! electron 1 beta 
+  do l = 1, n_valence_orb_for_hf(1) ! electron 2 alpha 
    two_bod += mos_array_core_hf_r1(k) * mos_array_core_hf_r1(k) & 
             * mos_array_valence_hf_r2(l) * mos_array_valence_hf_r2(l)
    do i = 1, mo_num

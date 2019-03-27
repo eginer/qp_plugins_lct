@@ -86,7 +86,7 @@ subroutine give_epsilon_c_md_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps
    call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
    beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm) )
-   eps_c_md_on_top_PBE(istate)=e_PBE(istate)/(1.d0+beta(istate)*mu**3.d0)
+   eps_c_md_on_top_PBE(istate)=e_PBE(istate)/(1.d0+beta(istate)*mu**3)
   enddo
  end
  

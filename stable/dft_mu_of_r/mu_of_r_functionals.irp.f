@@ -16,12 +16,12 @@
  call wall_time(wall0)
  do i = 1, n_points_final_grid
   mu = mu_of_r_vector(i)
-  weight=final_weight_at_r_vector(i)
+  weight= final_weight_at_r_vector(i)
   do istate = 1, N_states
    rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    call ESRC_MD_LDAERF (mu,rho_a(istate),rho_b(istate),dospin,ec(istate))
-!  write(33,'(100(F16.10,X))')i,rho_a,rho_b,mu,ec
+   write(33,'(100(F16.10,X))')i,rho_a,rho_b,mu,ec,weight
    if(isnan(ec(istate)))then
     print*,'ec is nan'
     stop
@@ -51,7 +51,7 @@
  Energy_c_md_mu_of_r_LDA_val = 0.d0
  call wall_time(wall0)
  do i = 1, n_points_final_grid
-  mu = mu_of_r_hf_valencecoal_vector(i)
+  mu = mu_of_r_hf_coal_vv_vector(i)
   weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
    rho_a(istate) = one_e_dm_no_core_and_grad_alpha_in_r(4,i,istate)
@@ -67,8 +67,6 @@
  enddo
  call wall_time(wall1)
  print*,'Time for Energy_c_md_mu_of_r_LDA :',wall1-wall0
-
-
  END_PROVIDER 
 
  BEGIN_PROVIDER [double precision, Energy_c_md_on_top_PBE_mu_of_r_UEG, (N_states)]
@@ -111,13 +109,46 @@
   enddo
   do istate = 1, N_states
    if(mu.gt.1.d-10)then
-    Energy_c_md_on_top_mu_of_r(istate) += ((-2.d0+sqrt(2.d0))*sqrt(2.d0*pi)/(3.d0*(mu**3))) * two_dm(istate) * weight 
+    Energy_c_md_on_top_mu_of_r(istate) += ((-2.d0+sqrt(2.d0))*sqrt(2.d0*pi)/(3.d0*(mu**3))) * 2.d0* two_dm(istate) * weight  !! JT: add missing factor 2 !
    endif
   enddo
  enddo
  double precision :: wall1, wall0
  call wall_time(wall1)
  print*,'Time for the Energy_c_md_on_top_PBE_mu_of_r:',wall1-wall0
+
+ END_PROVIDER
+
+BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
+ BEGIN_DOC
+  ! Energy_c_md_PBE_mu_of_r_vector           = PBE multi determinant functional with UEG on top for large mu using a mu(r) interaction (JT)
+ END_DOC
+ implicit none
+ double precision ::  r(3)
+ double precision :: weight,mu
+ integer :: i,istate
+ double precision,allocatable  :: eps_c_md_PBE(:)
+
+ allocate(eps_c_md_PBE(N_states))
+ Energy_c_md_PBE_mu_of_r = 0.d0
+  
+ print*,'Providing Energy_c_md_PBE_mu_of_r ...'
+ call wall_time(wall0)
+ do i = 1, n_points_final_grid
+  r(1) = final_grid_points(1,i)
+  r(2) = final_grid_points(2,i)
+  r(3) = final_grid_points(3,i)
+  weight=final_weight_at_r_vector(i)
+  mu = mu_of_r_vector(i)
+
+  call give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE)
+  do istate = 1, N_states
+   Energy_c_md_PBE_mu_of_r(istate) += eps_c_md_PBE(istate) * weight
+  enddo
+ enddo
+ double precision :: wall1, wall0
+ call wall_time(wall1)
+ print*,'Time for the Energy_c_md_PBE_mu_of_r:',wall1-wall0
 
  END_PROVIDER
 

@@ -49,10 +49,10 @@ end
 subroutine routine2
  implicit none
  integer :: i_point
- if(dabs(mu_of_r_hf_valencecoal_vector(i_point) - mu_of_r_hf_coal_vector(i_point)).gt.1.d-10)then
+ if(dabs(mu_of_r_hf_coal_vv_vector(i_point) - mu_of_r_hf_coal_vector(i_point)).gt.1.d-10)then
   print*,i_point
   print*,final_grid_points(:,i_point)
-  print*,mu_of_r_hf_valencecoal_vector(i_point),mu_of_r_hf_coal_vector(i_point)
+  print*,mu_of_r_hf_coal_vv_vector(i_point),mu_of_r_hf_coal_vector(i_point)
  endif
  
 end

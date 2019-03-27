@@ -51,27 +51,33 @@ BEGIN_PROVIDER [integer, n_inact_act_virt_orb]
  implicit none
  integer :: i
  n_inact_act_virt_orb = 0
- do i = 1, mo_num
-  if(  trim(mo_class(i))=="Inactive" & 
-  .or. trim(mo_class(i))=="Active"   &
-  .or. trim(mo_class(i))=="Virtual" )then
-   n_inact_act_virt_orb +=1 
-  endif
- enddo
+!do i = 1, mo_num
+! if(  trim(mo_class(i))=="Inactive" & 
+! .or. trim(mo_class(i))=="Active"   &
+! .or. trim(mo_class(i))=="Virtual" )then
+!  n_inact_act_virt_orb +=1 
+! endif
+!enddo
+ n_inact_act_virt_orb = mo_num 
 END_PROVIDER 
 
 BEGIN_PROVIDER [integer, list_inact_act_virt_orb, (n_inact_act_virt_orb)]
  implicit none
  integer :: i,j
- j = 0
+!j = 0
+!do i = 1, mo_num
+! if(  trim(mo_class(i))=="Inactive" & 
+! .or. trim(mo_class(i))=="Active"   &
+! .or. trim(mo_class(i))=="Virtual" )then
+!  j +=1 
+!  list_inact_act_virt_orb (j) = i
+! endif
+!enddo
+
  do i = 1, mo_num
-  if(  trim(mo_class(i))=="Inactive" & 
-  .or. trim(mo_class(i))=="Active"   &
-  .or. trim(mo_class(i))=="Virtual" )then
-   j +=1 
-   list_inact_act_virt_orb (j) = i
-  endif
+   list_inact_act_virt_orb(i) = i
  enddo
+
 END_PROVIDER 
 
 

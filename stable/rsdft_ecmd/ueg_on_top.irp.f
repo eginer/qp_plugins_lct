@@ -26,11 +26,15 @@ double precision function g0_UEG_mu_inf(rho_a,rho_b)
  B = -2d0 * ahd - d2
  C = 0.08193d0
  D = -0.01277d0
- E = 0.001859d0
- rs = (3d0 / 4d0*pi*rho)**(1d0/3d0)
- x = -d2*rs
+ E = 0.001859d0                     
+ if (dabs(rho) > 1.d-12) then
+  rs = (3d0 / (4d0*pi*rho))**(1d0/3d0) ! JT: serious bug fixed 20/03/19
+  x = -d2*rs
+  g0_UEG_mu_inf= 0.5d0 * (1d0- B*rs + C*rs**2 + D*rs**3 + E*rs**4)*exp(x)
+ else
+  g0_UEG_mu_inf= 0.d0
+ endif
 
- g0_UEG_mu_inf= 0.5d0 * (1d0- B*rs + C*rs**2d0 + D*rs**3d0 + E*rs**4d0)*exp(x)
 end
 
 
@@ -42,7 +46,6 @@ double precision function g0_UEG_mu(mu,rho_a,rho_b)
  double precision :: B, C, D, E, d2, rs, ahd, h, kf
  pi = 4d0 * datan(1d0)
  rho = rho_a+rho_b
-!zeta = (rho_a-rho_b)/(rho_a+rho_b)
  alpha = (4d0/(9d0*pi))**(1d0/3d0)
  ahd = -0.36583d0
  d2 = 0.7524d0
@@ -50,7 +53,7 @@ double precision function g0_UEG_mu(mu,rho_a,rho_b)
  C = 0.08193d0
  D = -0.01277d0
  E = 0.001859d0
- rs = (3d0 / 4d0*pi*rho)**(1d0/3d0)
+ rs = (3d0 / (4d0*pi*rho))**(1d0/3d0) ! JT: serious bug fixed 20/03/19
  kf = (alpha*rs)**(-1d0)
  zeta = mu / kf
  x = -d2*rs*h(zeta)/ahd 
