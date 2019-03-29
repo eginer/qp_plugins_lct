@@ -17,7 +17,7 @@ double precision function erf_mu_of_r_ao_old(i,j,k,l)
      r(2) = grid_points_per_atom(2,i_angular,i_radial,i_atom)
      r(3) = grid_points_per_atom(3,i_angular,i_radial,i_atom)
      call give_all_aos_at_r(r,aos_array)
-     erf_mu_of_r_ao_old += aos_array(i) * aos_array(j) * NAI_pol_mult_erf_ao(k,l,mu_of_r_prov(i_angular,i_radial,i_atom),r) * final_weight_at_r(i_angular,i_radial,i_atom)
+     erf_mu_of_r_ao_old += aos_array(i) * aos_array(j) * NAI_pol_mult_erf_ao(k,l,mu_of_r_for_ints(i_angular,i_radial,i_atom),r) * final_weight_at_r(i_angular,i_radial,i_atom)
     enddo
    enddo
   enddo
@@ -42,8 +42,8 @@ double precision function erf_mu_of_r_ao(i,j,k,l)
   r(2) = final_grid_points(2,i_point) 
   r(3) = final_grid_points(3,i_point) 
   call give_all_aos_at_r(r,aos_array)
-  erf_mu_of_r_ao += 0.5d0 * aos_array(i) * aos_array(j) * NAI_pol_mult_erf_ao(k,l,mu_of_r_prov_selected(i_point),r) * final_weight_at_r_vector(i_point)
-  erf_mu_of_r_ao += 0.5d0 * aos_array(k) * aos_array(l) * NAI_pol_mult_erf_ao(j,i,mu_of_r_prov_selected(i_point),r) * final_weight_at_r_vector(i_point)
+  erf_mu_of_r_ao += 0.5d0 * aos_array(i) * aos_array(j) * NAI_pol_mult_erf_ao(k,l,mu_of_r_for_ints_selected(i_point),r) * final_weight_at_r_vector(i_point)
+  erf_mu_of_r_ao += 0.5d0 * aos_array(k) * aos_array(l) * NAI_pol_mult_erf_ao(j,i,mu_of_r_for_ints_selected(i_point),r) * final_weight_at_r_vector(i_point)
  enddo
  deallocate(aos_array)
 
@@ -64,7 +64,7 @@ end
   r(1) = final_grid_points(1,i_point) 
   r(2) = final_grid_points(2,i_point) 
   r(3) = final_grid_points(3,i_point) 
-  tmp = NAI_pol_mult_erf_ao(k,l,mu_of_r_prov_selected(i_point),r) 
+  tmp = NAI_pol_mult_erf_ao(k,l,mu_of_r_for_ints_selected(i_point),r) 
   v_vector(i_point) = tmp
   do i = 1, ao_num
    v_array(i,i_point) = tmp * final_weight_at_r_vector(i_point) * aos_in_r_array(i,i_point)

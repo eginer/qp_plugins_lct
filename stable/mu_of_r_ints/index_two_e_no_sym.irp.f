@@ -2,7 +2,7 @@ subroutine index_two_e_no_sym(i,j,k,l,n,i1)
   use map_module
   implicit none
  BEGIN_DOC
-! symetric index for (i,k) and (j,l) but between (i,k) and (j,l)
+! symetric index for (i,k) and (j,l) but not between (i,k) and (j,l)
 ! n is the maximum value of the indices
  END_DOC
   integer, intent(in)            :: i,j,k,l
