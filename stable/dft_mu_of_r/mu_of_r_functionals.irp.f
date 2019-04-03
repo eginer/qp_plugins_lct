@@ -201,37 +201,37 @@ BEGIN_PROVIDER [double precision, Energy_c_LDA_mu_of_r, (N_states)]
 END_PROVIDER 
 
 
- BEGIN_PROVIDER [double precision, HF_alpha_beta_mu_of_r_bielec_energy]
-&BEGIN_PROVIDER [double precision, HF_alpha_beta_bielec_energy]
- implicit none
- BEGIN_DOC
+!BEGIN_PROVIDER [double precision, HF_alpha_beta_mu_of_r_bielec_energy]
+!BEGIN_PROVIDER [double precision, HF_alpha_beta_bielec_energy]
+!implicit none
+!BEGIN_DOC
 ! HF_alpha_beta_mu_of_r_bielec_energy = <HF|W_ee^{mu(r)}_{alpha/beta}|HF>
 ! HF_alpha_beta_bielec_energy         = <HF|    W_ee_{alpha/beta}    |HF>
- END_DOC
- integer :: i,j,k
- double precision :: r(3), weight,tmp,integral_of_mu_of_r_on_HF
- double precision, allocatable :: integrals_mo(:,:),mos_array(:)
- allocate(integrals_mo(mo_num,mo_num),mos_array(mo_num))
- HF_alpha_beta_mu_of_r_bielec_energy = 0.d0
-  
- integer                        :: occ(N_int*bit_kind_size,2)
- call bitstring_to_list(ref_bitmask(1,1), occ(1,1), i, N_int)
- call bitstring_to_list(ref_bitmask(1,2), occ(1,2), i, N_int)
- 
- do j= 1, elec_beta_num
-  do i= 1, elec_alpha_num
-    HF_alpha_beta_mu_of_r_bielec_energy += mo_bielec_integral_erf_mu_of_r_jj(occ(i,1),occ(j,2))
-  enddo
- enddo
+!END_DOC
+!integer :: i,j,k
+!double precision :: r(3), weight,tmp,integral_of_mu_of_r_on_HF
+!double precision, allocatable :: integrals_mo(:,:),mos_array(:)
+!allocate(integrals_mo(mo_num,mo_num),mos_array(mo_num))
+!HF_alpha_beta_mu_of_r_bielec_energy = 0.d0
+! 
+!integer                        :: occ(N_int*bit_kind_size,2)
+!call bitstring_to_list(ref_bitmask(1,1), occ(1,1), i, N_int)
+!call bitstring_to_list(ref_bitmask(1,2), occ(1,2), i, N_int)
+!
+!do j= 1, elec_beta_num
+! do i= 1, elec_alpha_num
+!   HF_alpha_beta_mu_of_r_bielec_energy += mo_bielec_integral_erf_mu_of_r_jj(occ(i,1),occ(j,2))
+! enddo
+!enddo
 
- HF_alpha_beta_bielec_energy = 0.d0
- do j= 1, elec_beta_num
-  do i= 1, elec_alpha_num
-    HF_alpha_beta_bielec_energy += mo_two_e_integrals_jj(occ(i,1),occ(j,2))
-  enddo
- enddo
+!HF_alpha_beta_bielec_energy = 0.d0
+!do j= 1, elec_beta_num
+! do i= 1, elec_alpha_num
+!   HF_alpha_beta_bielec_energy += mo_two_e_integrals_jj(occ(i,1),occ(j,2))
+! enddo
+!enddo
 
 
-END_PROVIDER 
+!ND_PROVIDER 
 
 

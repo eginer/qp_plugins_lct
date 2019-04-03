@@ -2,10 +2,10 @@ program all_mu_of_r_corrections
  implicit none
  read_wf = .true.
  touch read_wf
- io_mo_two_e_integrals = "None"
- touch io_mo_two_e_integrals
- io_ao_two_e_integrals = "None"
- touch io_ao_two_e_integrals
+!io_mo_two_e_integrals = "None"
+!touch io_mo_two_e_integrals
+!io_ao_two_e_integrals = "None"
+!touch io_ao_two_e_integrals
 
 
 
