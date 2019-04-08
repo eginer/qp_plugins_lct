@@ -21,7 +21,7 @@
    rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    call ESRC_MD_LDAERF (mu,rho_a(istate),rho_b(istate),dospin,ec(istate))
-   write(33,'(100(F16.10,X))')i,rho_a,rho_b,mu,ec,weight
+!  write(33,'(100(F16.10,X))')i,rho_a,rho_b,mu,ec,weight
    if(isnan(ec(istate)))then
     print*,'ec is nan'
     stop
