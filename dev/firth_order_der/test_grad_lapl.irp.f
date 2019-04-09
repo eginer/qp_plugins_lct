@@ -4,7 +4,7 @@ program pouet
 !call test_grad_lapl_ao
 !call test_grad_lapl_mo
 !call test_fourth_ao
-!call test_fourth_ao_cross 
+ call test_fourth_ao_cross 
 !call test_lapl_ao_product
 !call test_nabla_4_ao_product
 !call test_nabla_3_ao_product

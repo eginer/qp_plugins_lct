@@ -21,7 +21,9 @@ program pade_functional
   io_ao_integrals_kinetic = "None"
   touch io_ao_integrals_kinetic 
 ! call pote
-  call pote_hartree
+!  call pote_hartree
+! call pote_test
+  call pote_oredre_infinityyyyyy
 end
 
  subroutine pote
@@ -70,18 +72,49 @@ end
  print*,'e_h_sr_exp2   =',e_h_sr_exp2
  print*,'e_h_sr_approx =',e_h_sr_tot 
  print*,'****************************'
-!print*,'Pade 1         =',pade_1
-!print*,'Pade 2         =',pade_2
-!print*,'Pade 3         =',pade_3
-!print*,'****************************'
-!print*,' '
-!print*,' '
-!print*,'****************************'
-!print*,'e_hx_local     =',e_hx_local 
-!print*,'****************************'
-!print*,'Pade 1 local   =',e_hx_pade_local_1
-!print*,'Pade 2 local   =',e_hx_pade_local_2
-!print*,'Pade 3 local   =',e_hx_pade_local_3
-!print*,'****************************'
+ print*,'Pade 1         =',pade_1_h
+ print*,'Pade 2         =',pade_2_h
+ print*,'Pade 3         =',pade_3_h
+ print*,'****************************'
+ print*,' '
+ print*,' '
+ print*,'****************************'
+ print*,'e_h_local     =',e_h_local 
+ print*,'****************************'
+ print*,'Pade 1 local   =',e_h_pade_local_1
+ print*,'Pade 2 local   =',e_h_pade_local_2
+ print*,'Pade 3 local   =',e_h_pade_local_3
+ print*,'****************************'
 
+ end
+
+ subroutine pote_oredre_infinityyyyyy
+ implicit none
+
+ print*,'****************************'
+ print*,'E_Hx,md^sr_exact =',psi_energy_two_e-psi_energy_erf
+ print*,'****************************'
+ print*,'mu_erf         =',mu_erf
+ print*,'e_hx_sr_exp0   =',e_hx_sr_by_order_exp(1,0)
+ print*,'e_hx_sr_exp1   =',e_hx_sr_by_order_exp(1,1)
+ print*,'e_hx_sr_exp2   =',e_hx_sr_by_order_exp(1,2)
+ print*,'e_hx_sr_exp3   =',e_hx_sr_by_order_exp(1,3)
+ print*,'e_hx_sr_exp4   =',e_hx_sr_by_order_exp(1,4)
+ print*,'e_hx_sr_exp5   =',e_hx_sr_by_order_exp(1,5)
+ print*,'e_hx_sr_exp6   =',e_hx_sr_by_order_exp(1,6)
+ print*,'****************************'
+
+ end
+
+ subroutine pote_test   
+ implicit none
+ double precision :: a, b, c
+ a=e_hx_sr_exp0(1)/mu_erf **2.d0 - e_hx_sr_by_order_exp(1,0)
+ b=e_hx_sr_exp1(1)/mu_erf **4.d0 - e_hx_sr_by_order_exp(1,1)
+ c= e_hx_sr_exp2(1)/mu_erf **6.d0 - e_hx_sr_by_order_exp(1,2)
+ print*,'****************************'
+ print*,'n=0   :',a
+ print*,'n=1   :',b
+ print*,'n=2   :',c
+ print*,'****************************'
  end
