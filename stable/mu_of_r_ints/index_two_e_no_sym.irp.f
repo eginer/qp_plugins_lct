@@ -18,7 +18,7 @@ subroutine index_two_e_no_sym(i,j,k,l,n,i1)
   i1 = (p-1)*n*n + q
 end
 
-subroutine index_reverse_two_e_no_sym(p,q,r,s,n,i1)
+subroutine index_reverse_two_e_no_sym(i,j,k,l,n,i1)
   use map_module
   implicit none
  BEGIN_DOC
@@ -26,22 +26,19 @@ subroutine index_reverse_two_e_no_sym(p,q,r,s,n,i1)
 ! n is the maximum value of the indices
  END_DOC
   integer, intent(in)            :: n
+  integer, intent(out) :: i(4),j(4),k(4),l(4)
   integer(key_kind), intent(in)  :: i1
-  integer(key_kind), intent(out) :: i(4),j(4),j(4),l(4)
+  integer(key_kind)  :: i2
+  integer*8 :: n2, p, q, r, s, p2,q2                                                       
   double precision  :: x
-! n2 = n * n
-! p = i1/n2 + 1
-! q = i1 - n2 - p*n2
-! r = 1 + int(dsqrt(1+8 * p))/2
-! s = p - r(r-1)/2
-  integer*8 :: n2, p, q, r, s                                                              
-  integer :: i(4),j(4)                                                                         
-  n2 = int(n*n,8)                                                                              
-  p = i1/n2 + 1_8                                                                              
-  q = i1-n2 - p*n2                                                                             
-  x = dble(1_8+shiftl(p,3))                                                                    
-  r = 1_8 + shiftr(int(dsqrt(x)),1)                                                            
-  s = p - shiftr(r*r-r,1)
+  i = 0
+  n2 = n * n
+  p2 = i1/n2 + 1_8
+  q2 = i1 - (p2 - 1_8) * n2
+  r = (1_8 + int(dsqrt(1.d0+8.d0 * dble(p2)),8))/2_8
+  p = p2 - r*(r-1_8)/2_8
+  s = (1_8 + int(dsqrt(1.d0+8.d0 * dble(q2)),8))/2_8
+  q = q2 - s*(s-1_8)/2_8
   i(1) = int(p,4)
   j(1) = int(q,4)
   k(1) = int(r,4)
@@ -79,9 +76,9 @@ subroutine index_reverse_two_e_no_sym(p,q,r,s,n,i1)
     if (i(ii) /= 0) then
       call index_two_e_no_sym(i(ii),j(ii),k(ii),l(ii),n,i2)
       if (i1 /= i2) then
-        print *,  i1, i2
+        print *,  i1, i2,ii
         print *,  i(ii), j(ii), k(ii), l(ii)
-        stop 'two_e_integrals_index_reverse failed'
+        stop 'index_reverse_two_e_no_sym failed'
       endif
     endif
   enddo
