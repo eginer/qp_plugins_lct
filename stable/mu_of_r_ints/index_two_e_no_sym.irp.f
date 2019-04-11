@@ -29,16 +29,28 @@ subroutine index_reverse_two_e_no_sym(i,j,k,l,n,i1)
   integer, intent(out) :: i(4),j(4),k(4),l(4)
   integer(key_kind), intent(in)  :: i1
   integer(key_kind)  :: i2
-  integer*8 :: n2, p, q, r, s, p2,q2                                                       
+  integer*8 :: n2, p, q, r, s, p2,q2,rp,sq
   double precision  :: x
   i = 0
   n2 = n * n
   p2 = i1/n2 + 1_8
   q2 = i1 - (p2 - 1_8) * n2
-  r = (1_8 + int(dsqrt(1.d0+8.d0 * dble(p2)),8))/2_8
-  p = p2 - r*(r-1_8)/2_8
-  s = (1_8 + int(dsqrt(1.d0+8.d0 * dble(q2)),8))/2_8
-  q = q2 - s*(s-1_8)/2_8
+  rp = (-1_8 + int(dsqrt(1.d0+8.d0 * dble(p2)),8))/2_8 
+  if(rp + (rp*rp -rp)/2_8 == p2)then
+   r = rp
+   p = rp
+  else 
+   r = (1_8 + int(dsqrt(1.d0+8.d0 * dble(p2)),8))/2_8
+   p = p2 - r*(r-1_8)/2_8
+  endif
+  sq = (-1_8 + int(dsqrt(1.d0+8.d0 * dble(q2)),8))/2_8
+  if(sq + (sq*sq -sq)/2_8 == q2)then
+   s = sq 
+   q = sq
+  else
+   s = (1_8 + int(dsqrt(1.d0+8.d0 * dble(q2)),8))/2_8
+   q = q2 - s*(s-1_8)/2_8
+  endif
   i(1) = int(p,4)
   j(1) = int(q,4)
   k(1) = int(r,4)

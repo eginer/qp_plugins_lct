@@ -20,9 +20,9 @@ subroutine routine_print
  integer(key_kind) :: i1,i2
  allocate(integrals(ao_num))
  accu = 0.d0
- do i = 1, ao_num
-  do j = 1, ao_num
-   do k = 1, ao_num
+ do i = 1,  1
+  do j = 1,  1
+   do k = 1,  ao_num
                                            ! 1 2 1
 !   call get_ao_bielec_integrals_erf_mu_of_r(i,j,k,ao_num,integrals) 
     do l = 1, ao_num
@@ -38,7 +38,7 @@ subroutine routine_print
      write(33,*)ii(2),jj(2),kk(2),ll(2)
      write(33,*)ii(3),jj(3),kk(3),ll(3)
      write(33,*)ii(4),jj(4),kk(4),ll(4)
-     stop
+!    stop
 !    accu += dabs(integral - integrals(l))
     enddo
    enddo
@@ -60,8 +60,8 @@ subroutine routine_print_sym
  integer(key_kind) :: i1,i2
  allocate(integrals(ao_num))
  accu = 0.d0
- do i = 1, ao_num
-  do j = 1, ao_num
+ do i = 1, 1
+  do j = 1, 1
    do k = 1, ao_num
                                            ! 1 2 1
 !   call get_ao_bielec_integrals_erf_mu_of_r(i,j,k,ao_num,integrals) 
