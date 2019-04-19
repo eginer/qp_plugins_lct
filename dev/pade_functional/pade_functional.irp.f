@@ -23,7 +23,8 @@ program pade_functional
 ! call pote
 !  call pote_hartree
 ! call pote_test
-  call pote_oredre_infinityyyyyy
+! call pote_oredre_infinityyyyyy
+  call pote_oredre_infinityyyyyy_pade
 end
 
  subroutine pote
@@ -104,6 +105,27 @@ end
  print*,'e_hx_sr_exp6   =',e_hx_sr_by_order_exp(1,6)
  print*,'****************************'
 
+ end
+
+
+ subroutine pote_oredre_infinityyyyyy_pade
+ implicit none
+
+ print*,'****************************'
+ print*,'E_Hx,md^sr_exact =',psi_energy_two_e-psi_energy_erf
+ print*,'****************************'
+ print*,'mu_erf         =',mu_erf
+ print*,'e_hx_pade_diag_coef   =',e_hx_pade_diag_coef(1)
+! veeeerrriiiifffffffffffff
+ print*,'e_hx_sr_exp0   =',e_hx_sr_exp0
+!print*,'poteteeete',e_hx_sr_by_order_exp(1,1) 
+!print*,'poteteeete',e_hx_sr_by_order_exp(1,2) 
+!print*,'poteteeete',e_hx_sr_by_order_exp(1,3) 
+!print*,'poteteeete',e_hx_sr_by_order_exp(1,4) 
+ print*,'pade Old shcool 1 =',pade_1
+ print*,'pade Old shcool 2 =',pade_2
+ print*,'pade Old shcool 2 =',pade_3
+!print*,'****************************'
  end
 
  subroutine pote_test   

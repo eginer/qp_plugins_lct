@@ -120,3 +120,79 @@
 
 
 
+ BEGIN_PROVIDER[double precision, e_hx_pade_diag_coef,(n_states)]
+ implicit none
+ BEGIN_DOC
+ ! blablablabla
+ END_DOC
+ integer :: n,m,istate,INFO,i,j
+!n=(order_derivative_ontop+1)/2  
+!m=order_derivative_ontop+1-n
+!print*,"n =",n
+!print*,"m =",m
+ n=1
+ m=2
+ print*,"n =",n
+ print*,"m =",m
+ double precision :: denom,nume,x_loc
+ double precision, allocatable :: matrix_alpha(:,:)
+ double precision, allocatable :: vect_b_temp(:),vect_a(:),vect_b(:),c_pade(:)
+ integer, allocatable :: IPIV(:)
+ allocate(matrix_alpha(m,m),vect_b_temp(m),IPIV(m),vect_a(0:n),vect_b(0:m+1),c_pade(0:n+m+1))
+
+ do istate = 1, n_states
+ matrix_alpha= 0.d0
+ vect_b_temp=0.d0
+
+  c_pade = 0.d0
+  do i = 1,order_derivative_ontop+1
+   c_pade(i)=coeff_Hx_exp(i-1,istate)
+  enddo 
+
+
+  do j =1,m
+   vect_b_temp(j) = - c_pade(n+j)
+   do i = 1,m
+    matrix_alpha(i,j)=c_pade(n+i-j)
+   !print*,i,j,matrix_alpha(i,j)
+   !print*,j,vect_b_temp(j)
+   enddo
+  enddo
+ 
+  call dgesv(m,m,matrix_alpha,m,IPIV,vect_b_temp,m,INFO) 
+ 
+  print*,'***********************'  
+  print*,'INFO=',INFO  
+  print*,'***********************'  
+
+  vect_b = 0.d0
+  vect_b(0) = 1.d0
+  do i=1,m
+   vect_b(i)=vect_b_temp(i)
+  enddo
+
+  vect_a(0) = 0.d0
+  do i = 1,n
+   do j = 0,i
+    vect_a(i) += c_pade(i-j)*vect_b(j)
+   enddo
+  enddo
+ 
+  x_loc=1/(mu_erf**2.d0) 
+ 
+  nume = 0.d0
+  do i= 0,n
+   nume += vect_a(i)*x_loc**(dble(i))
+  enddo
+  
+  denom = 0.d0
+  do i= 0,m
+   denom += vect_b(i)*x_loc**(dble(i))
+  enddo
+ 
+  e_hx_pade_diag_coef(istate) = nume/denom
+
+ 
+ enddo  
+
+ END_PROVIDER

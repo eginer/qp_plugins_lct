@@ -61,9 +61,9 @@
 
  enddo
 
-!e_hx_sr_exp0 = 0.5d0 * pi * int_n_2_0 /(mu_erf **2.d0) 
-!e_hx_sr_exp1 = 3.d0 * pi * int_n_2_1 /(16.d0 * mu_erf **4.d0)
-!e_hx_sr_exp2 = 15.d0 * pi * int_n_2_2 /(576.d0 * mu_erf **6.d0)
+ e_hx_sr_exp0 = 0.5d0 * pi * int_n_2_0 /(mu_erf **2.d0) 
+ e_hx_sr_exp1 = 3.d0 * pi * int_n_2_1 /(16.d0 * mu_erf **4.d0)
+ e_hx_sr_exp2 = 15.d0 * pi * int_n_2_2 /(576.d0 * mu_erf **6.d0)
 
 
  e_hx_sr_exp0 = 0.5d0 * pi * int_n_2_0 
