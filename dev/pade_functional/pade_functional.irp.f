@@ -117,7 +117,7 @@ end
  print*,'mu_erf         =',mu_erf
  print*,'e_hx_pade_diag_coef   =',e_hx_pade_diag_coef(1)
 ! veeeerrriiiifffffffffffff
- print*,'e_hx_sr_exp0   =',e_hx_sr_exp0
+!print*,'e_hx_sr_exp0   =',e_hx_sr_exp0
 !print*,'poteteeete',e_hx_sr_by_order_exp(1,1) 
 !print*,'poteteeete',e_hx_sr_by_order_exp(1,2) 
 !print*,'poteteeete',e_hx_sr_by_order_exp(1,3) 
@@ -125,7 +125,7 @@ end
  print*,'pade Old shcool 1 =',pade_1
  print*,'pade Old shcool 2 =',pade_2
  print*,'pade Old shcool 2 =',pade_3
-!print*,'****************************'
+ print*,'****************************'
  end
 
  subroutine pote_test   

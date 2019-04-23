@@ -126,14 +126,14 @@
  ! blablablabla
  END_DOC
  integer :: n,m,istate,INFO,i,j
-!n=(order_derivative_ontop+1)/2  
-!m=order_derivative_ontop+1-n
-!print*,"n =",n
-!print*,"m =",m
- n=1
- m=2
+ n=(order_derivative_ontop+1)/2  
+ m=order_derivative_ontop+1-n
  print*,"n =",n
  print*,"m =",m
+!n=2
+!m=2
+!print*,"n =",n
+!print*,"m =",m
  double precision :: denom,nume,x_loc
  double precision, allocatable :: matrix_alpha(:,:)
  double precision, allocatable :: vect_b_temp(:),vect_a(:),vect_b(:),c_pade(:)
@@ -153,13 +153,14 @@
   do j =1,m
    vect_b_temp(j) = - c_pade(n+j)
    do i = 1,m
+   !matrix_alpha(i,j)= 0.d0
     matrix_alpha(i,j)=c_pade(n+i-j)
    !print*,i,j,matrix_alpha(i,j)
    !print*,j,vect_b_temp(j)
    enddo
   enddo
  
-  call dgesv(m,m,matrix_alpha,m,IPIV,vect_b_temp,m,INFO) 
+  call dgesv(m,1,matrix_alpha,m,IPIV,vect_b_temp,m,INFO) 
  
   print*,'***********************'  
   print*,'INFO=',INFO  
@@ -190,6 +191,7 @@
    denom += vect_b(i)*x_loc**(dble(i))
   enddo
  
+ !e_hx_pade_diag_coef(istate) = 0.d0 
   e_hx_pade_diag_coef(istate) = nume/denom
 
  
