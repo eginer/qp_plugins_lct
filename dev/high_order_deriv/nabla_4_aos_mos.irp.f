@@ -12,7 +12,7 @@ subroutine give_all_aos_and_fourth_at_r(r,aos_array,aos_grad_array,aos_lapl_arra
 !
 !            : aos_3rd_direct_array(1,i) = Third partial derivative of the ao(i) evaluated at r by X (d^3ao(i)/dx^3)
 !
-!            : aos_3rd_direct_array(1,i) = Fourth partial derivative of the ao(i) evaluated at r by X (d^4ao(i)/dx^4)
+!            : aos_4th_direct_array(1,i) = Fourth partial derivative of the ao(i) evaluated at r by X (d^4ao(i)/dx^4)
  END_DOC
  double precision, intent(in) :: r(3)
  double precision, intent(out) :: aos_array(ao_num)

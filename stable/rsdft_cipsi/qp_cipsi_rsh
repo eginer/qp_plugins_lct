@@ -126,7 +126,7 @@ fi
 # define the exchange / correlation functionals to be used in RS-DFT calculation
 if [[ -z $functional ]]; then
  echo "you did not specify the \$functional parameter, it will be set to PBE by default (run --help for explanations)"
- functional="PBE"
+ functional="pbe"
 fi
 echo "FUNCTIONAL for RS-DFT:  "$functional
 # splitting of the interaction to be used in RS-DFT calculation 
@@ -172,8 +172,8 @@ echo "READINTS             :  "$readints
 
 qp set_file $ezfio
 
-qp  set  dft_keywords       exchange_functional     "short_range_${functional}"
-qp  set  dft_keywords       correlation_functional  "short_range_${functional}"
+qp  set  dft_keywords       exchange_functional     "sr_${functional}"
+qp  set  dft_keywords       correlation_functional  "sr_${functional}"
 qp  set  ao_two_e_erf_ints  mu_erf                  $mu
 qp  set  perturbation       pt2_max                 $pt2max
 qp  set  determinants       n_det_max               $ndetmax
