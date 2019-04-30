@@ -44,28 +44,6 @@
   enddo
 
 
- !do ii = 1, n_core_orb ! 1 
- ! i = list_core(ii) 
- ! do jj = 1, n_core_orb ! 2 
- !  j = list_core(jj) 
- !  do k = 1, mo_num  ! 1 
- !   do l = 1, mo_num ! 2 
- !    !                     2 2 1 1
- !    two_bod_alpha_beta_mo(l,j,k,i,:) = 0.d0
- !    two_bod_alpha_beta_mo(j,l,k,i,:) = 0.d0
- !    two_bod_alpha_beta_mo(l,j,i,k,:) = 0.d0
- !    two_bod_alpha_beta_mo(j,l,i,k,:) = 0.d0
-
- !    two_bod_alpha_beta_mo(k,i,l,j,:) = 0.d0
- !    two_bod_alpha_beta_mo(k,i,j,l,:) = 0.d0
- !    two_bod_alpha_beta_mo(i,k,l,j,:) = 0.d0
- !    two_bod_alpha_beta_mo(i,k,j,l,:) = 0.d0
- !   enddo
- !  enddo
- ! enddo
- !enddo
-
-
  endif
 
  END_PROVIDER 
