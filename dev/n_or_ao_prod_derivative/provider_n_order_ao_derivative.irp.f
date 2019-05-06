@@ -397,3 +397,33 @@ end
  enddo
 
  end
+
+
+ BEGIN_PROVIDER[double precision, n_sphe_av_exp,(n_points_final_grid,0:order_derivative_ontop,n_states)]
+ implicit none
+ BEGIN_DOC
+ ! blablablabla
+ END_DOC
+ integer :: k,l,n,istate,r
+ double precision :: n_order_delta,r1(3)
+
+ n_sphe_av_exp = 0.d0 
+
+ do istate = 1, n_states
+  do n = 0, order_derivative_ontop      
+   do r = 1, n_points_final_grid
+    r1(1) = final_grid_points(1,r)
+    r1(2) = final_grid_points(2,r)
+    r1(3) = final_grid_points(3,r)
+    do l = 1, ao_num       
+     do k = 1, ao_num        
+      call n_order_delta_ao_product(r1,l,k,n,n_order_delta)
+      n_sphe_av_exp(r,n,istate) += (1.d0/(2.d0*dble(n)+1.d0))*((one_e_dm_alpha_ao_for_dft(k,l,istate)+one_e_dm_beta_ao_for_dft(k,l,istate)) * n_order_delta)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo  
+
+
+ END_PROVIDER

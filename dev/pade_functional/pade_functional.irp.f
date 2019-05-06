@@ -24,7 +24,8 @@ program pade_functional
 !  call pote_hartree
 ! call pote_test
 ! call pote_oredre_infinityyyyyy
-  call pote_oredre_infinityyyyyy_pade
+! call pote_oredre_infinityyyyyy_pade
+  call pote_hartree_infiny
 end
 
  subroutine pote
@@ -88,6 +89,17 @@ end
  print*,'****************************'
 
  end
+
+ subroutine pote_hartree_infiny
+ implicit none
+ print*,'****************************'
+ print*,'E_H^sr           =',short_range_Hartree
+ print*,'****************************'
+ print*,'mu_erf         =',mu_erf
+ print*,'e_h_pade_diag_coef   =',e_h_pade_diag_coef(1)
+ print*,'****************************'
+ end
+
 
  subroutine pote_oredre_infinityyyyyy
  implicit none
