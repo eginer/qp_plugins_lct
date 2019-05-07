@@ -15,6 +15,5 @@ subroutine routine_print
  mu_of_r_functional ="basis_set_on_top_PBE"
  touch mu_of_r_functional
  call print_contribution_dft_mu_of_r
- print*,'two_bod_alpha_beta_mo_physicist, = ',two_bod_alpha_beta_mo_physicist(1,2,1,2,1)
 
 end
