@@ -5,7 +5,12 @@ QP=$QP_ROOT
 . ${QP}/quantum_package.rc
 
 
+###### INPUT :
+# 1 : ezfio 
 ezfio=$1
+# 2 : threshold to cut the wave function for the definition
+thr=$2 
+
 ezfio=${ezfio%/}
 nstate=`cat $ezfio/determinants/n_states`
 
@@ -18,7 +23,7 @@ for i in `seq 1 $nstate`
  qp set_file $state 
  qp set two_body_dm ontop_approx True 
  qp set two_body_dm thr_ontop_approx 0.00001
- qp set dft_mu_of_r ci_threshold 0.0000001 
+ qp set dft_mu_of_r ci_threshold $thr 
  qp_run truncate_wf_spin_no_H $state 
  qp_run all_mu_of_r_corrections_md $state | tee ${state}.DFT.out 
 done
