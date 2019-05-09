@@ -220,8 +220,8 @@ subroutine test_on_top
  accuc  = 0.d0
  accu = 0.d0
  do i = 1, n_points_final_grid
-  accuex += on_top_of_r_from_provider(i,1) * final_weight_at_r_vector(i) 
-  accuc  += core_inact_act_on_top_of_r_from_provider(i,1) * final_weight_at_r_vector(i)
+  accuc += core_inact_act_on_top_of_r(i,1) * final_weight_at_r_vector(i) 
+  accuex += on_top_of_r_vector(i,1) * final_weight_at_r_vector(i)
   accu += dabs(accuex - accuc) * final_weight_at_r_vector(i)
  enddo
  print*,'accuex = ',accuex

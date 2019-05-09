@@ -64,7 +64,7 @@
   if(on_top_of_r_vector(i_point,1).gt.1.d-12.and.f_psi_ab(i_point).gt.1.d-12)then
    local_potential = f_psi_ab(i_point)/on_top_of_r_vector(i_point,1)
   else 
-   local_potential = 1.d-10
+   local_potential = 1.d+10
   endif
   mu_of_r_psi_coal_vector(i_point) =  local_potential * dsqrt(dacos(-1.d0)) * 0.5d0
  enddo

@@ -6,6 +6,14 @@
  ! Can use the regular two-body tensor or approximated versions
  END_DOC
  integer :: i_point,i_state
+ if(on_top_from_cas)then
+  do i_point = 1, n_points_final_grid
+   do i_state = 1, N_states
+    on_top_of_r_vector(i_point,i_state) = core_inact_act_on_top_of_r(i_point,i_state)
+   enddo
+  enddo
+  return
+ endif
  if(ontop_approx)then
   do i_point = 1, n_points_final_grid
    do i_state = 1, N_states

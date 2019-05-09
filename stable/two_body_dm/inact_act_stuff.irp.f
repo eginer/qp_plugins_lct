@@ -52,11 +52,11 @@ END_PROVIDER
  dim3 = n_core_inact_act_orb
  dim4 = n_core_inact_act_orb
  core_inact_act_two_bod_alpha_beta_mo = 0.d0
- print*,'providing two_bod_alpha_beta ...'
+ print*,'providing core_inact_act_two_bod_alpha_beta_mo ...'
  call wall_time(cpu_0)
  call two_body_dm_nstates_openmp(core_inact_act_two_bod_alpha_beta_mo,dim1,dim2,dim3,dim4,psi_coef,size(psi_coef,2),size(psi_coef,1))
  call wall_time(cpu_1)
- print*,'two_bod_alpha_beta provided in',dabs(cpu_1-cpu_0)
+ print*,'core_inact_act_two_bod_alpha_beta_mo provided in',dabs(cpu_1-cpu_0)
 
  integer :: ii,jj,i,j,k,l
  if(no_core_density .EQ. "no_core_dm")then
@@ -152,7 +152,7 @@ END_PROVIDER
 
  print*,'providing the core_inact_act_on_top_of_r'
  i_point = 1
- provide two_bod_alpha_beta_mo_physicist 
+ provide core_inact_act_two_bod_alpha_beta_mo_physicist 
  i_state = 1
  core_inact_act_on_top_of_r(i_point,i_state) = core_inact_act_on_top_of_r_from_provider(i_point,i_state)
  call wall_time(wall_0)

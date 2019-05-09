@@ -7,7 +7,7 @@ BEGIN_PROVIDER [double precision, core_inact_act_rho2_kl_contracted_transposed, 
  integer :: i,j,k,l
  integer :: ipoint
  double precision, allocatable :: mos_array_r(:),r(:)
- provide two_bod_alpha_beta_mo_physicist
+ provide core_inact_act_two_bod_alpha_beta_mo_physicist
  double precision :: wall0,wall1
  print*,'Providing  core_inact_act_rho2_kl_contracted_transposed ..... '
  call wall_time(wall0)
@@ -15,7 +15,7 @@ BEGIN_PROVIDER [double precision, core_inact_act_rho2_kl_contracted_transposed, 
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,k,l,i,j) & 
- !$OMP SHARED  (n_core_inact_act_orb, n_points_final_grid, core_inact_act_rho2_kl_contracted_transposed, final_grid_points,two_bod_alpha_beta_mo_physicist,mos_in_r_array )
+ !$OMP SHARED  (n_core_inact_act_orb, n_points_final_grid, core_inact_act_rho2_kl_contracted_transposed, final_grid_points,core_inact_act_two_bod_alpha_beta_mo_physicist,mos_in_r_array )
  !$OMP DO              
  do l = 1, n_core_inact_act_orb ! 2 
   do k = 1, n_core_inact_act_orb ! 1 
@@ -23,7 +23,7 @@ BEGIN_PROVIDER [double precision, core_inact_act_rho2_kl_contracted_transposed, 
     do j = 1, n_core_inact_act_orb
      do i = 1, n_core_inact_act_orb
                                           !1 2                                     1 2 1 2 
-      core_inact_act_rho2_kl_contracted_transposed(ipoint,k,l) += two_bod_alpha_beta_mo_physicist(i,j,k,l,1) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
+      core_inact_act_rho2_kl_contracted_transposed(ipoint,k,l) += core_inact_act_two_bod_alpha_beta_mo_physicist(i,j,k,l,1) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
      enddo
     enddo
    enddo
@@ -126,7 +126,7 @@ BEGIN_PROVIDER [double precision, core_inact_act_f_psi_ab, (n_points_final_grid)
  integer :: ipoint
  integer :: k,l 
  double precision :: wall0,wall1
- provide two_bod_alpha_beta_mo_physicist 
+ provide core_inact_act_two_bod_alpha_beta_mo_physicist 
  print*,'Providing  core_inact_act_f_psi_ab ..... '
  call wall_time(wall0)
  provide core_inact_act_V_kl_contracted core_inact_act_rho2_kl_contracted
