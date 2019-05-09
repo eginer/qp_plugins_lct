@@ -27,8 +27,8 @@ BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_gr
    do k = 1, mo_num ! 1 
     call get_mo_two_e_integrals_ij(k,l,mo_num,integrals_array,mo_integrals_map) 
     do ipoint = 1, n_points_final_grid
-     do j = 1, mo_num
-      do i = 1, mo_num
+     do j = 1, n_orb_max_basis 
+      do i = 1, n_orb_max_basis 
                                         !1 2                     1 2 
        V_kl_contracted_transposed(ipoint,k,l) += integrals_array(i,j) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
       enddo

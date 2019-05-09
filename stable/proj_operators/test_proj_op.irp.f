@@ -5,14 +5,18 @@ program projected_operators
   END_DOC
   read_wf = .True.
   touch read_wf
+ no_core_density = "no_core_dm"
+ touch no_core_density
+
   provide mo_two_e_integrals_jj
   provide mo_class
 ! call routine_v
 ! call routine_rho 
 ! call routine_final
-  call routine_valence
-  call routine_core
-  call routine_core_valence
+! call routine_valence
+! call routine_core
+! call routine_core_valence
+  call test_f
 
 end
 
@@ -222,4 +226,22 @@ subroutine routine_final
   write(33,'(100(F16.10,X))')r12,potential,erf(mu * r12)/r12,1.d0/r12,numerator,denominator,numerator/denominator
  enddo
 
+end
+
+subroutine test_f
+ implicit none
+ integer :: ipoint
+ double precision :: accuex,accuc,accu,weight
+ accuex = 0.d0
+ accuc  = 0.d0
+ accu   = 0.d0
+ do ipoint  = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(ipoint)
+  accuc += core_inact_act_f_psi_ab(ipoint) * weight
+  accuex += f_psi_ab(ipoint) * weight
+  accu += dabs(accuc - accuex)
+ enddo
+ print*,'accuex = ',accuex
+ print*,'accuc  = ',accuc 
+ print*,'accu   = ',accu  
 end

@@ -5,6 +5,7 @@ program two_body_dm
   END_DOC
  read_wf = .True.
  touch read_wf
+ call test_on_top
 !call comp_test
 !touch two_bod_alpha_beta_mo_physicist
  
@@ -12,7 +13,7 @@ program two_body_dm
 ! call provide_everything
 !call print_gamma
 !call zero_gamma
- call comparaison_decomp_tensor
+!call comparaison_decomp_tensor
 !call print_gamma
 end
 
@@ -209,3 +210,22 @@ end
  end
 
 
+
+subroutine test_on_top
+ implicit none
+ integer :: i,j
+ double precision :: accu, on_top_of_r_from_provider,core_inact_act_on_top_of_r_from_provider 
+ double precision :: accuex,accuc
+ accuex = 0.d0
+ accuc  = 0.d0
+ accu = 0.d0
+ do i = 1, n_points_final_grid
+  accuex += on_top_of_r_from_provider(i,1) * final_weight_at_r_vector(i) 
+  accuc  += core_inact_act_on_top_of_r_from_provider(i,1) * final_weight_at_r_vector(i)
+  accu += dabs(accuex - accuc) * final_weight_at_r_vector(i)
+ enddo
+ print*,'accuex = ',accuex
+ print*,'accuc  = ',accuc
+ print*,'accu   = ',accu
+
+end
