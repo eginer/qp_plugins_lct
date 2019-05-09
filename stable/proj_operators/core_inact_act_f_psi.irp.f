@@ -77,7 +77,7 @@ BEGIN_PROVIDER [double precision, core_inact_act_V_kl_contracted_transposed, (n_
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,kk,ll,k,l,i,j,integrals_array) & 
- !$OMP SHARED (mo_num, n_points_final_grid, core_inact_act_V_kl_contracted_transposed, mo_integrals_map,final_grid_points,mos_in_r_array, n_core_inact_act_orb, list_core_inact_act)
+ !$OMP SHARED (mo_num, n_points_final_grid, core_inact_act_V_kl_contracted_transposed, mo_integrals_map,final_grid_points,mos_in_r_array, n_core_inact_act_orb, list_core_inact_act,n_orb_max_basis)
  allocate(integrals_array(mo_num,mo_num))
  !$OMP DO              
   do l = 1, n_core_inact_act_orb! 2 

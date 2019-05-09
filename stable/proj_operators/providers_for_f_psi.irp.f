@@ -20,7 +20,7 @@ BEGIN_PROVIDER [double precision, V_kl_contracted_transposed, (n_points_final_gr
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,k,l,i,j,integrals_array) & 
- !$OMP SHARED (mo_num, n_points_final_grid, V_kl_contracted_transposed, mo_integrals_map,final_grid_points,mos_in_r_array)
+ !$OMP SHARED (mo_num, n_points_final_grid, V_kl_contracted_transposed, mo_integrals_map,final_grid_points,mos_in_r_array, n_orb_max_basis)
  allocate(integrals_array(mo_num,mo_num))
  !$OMP DO              
   do l = 1, mo_num ! 2 
