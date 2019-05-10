@@ -2,7 +2,7 @@
 &BEGIN_PROVIDER[double precision, inact_act_mos_in_r_array_transp,(n_points_final_grid,mo_num)]
  implicit none
  integer :: i,j,k
- do i = 1, n_inact_act
+ do i = 1, n_inact_act_orb
   j = list_inact_act(i) 
   do k = 1, n_points_final_grid
    inact_act_mos_in_r_array_transp(k,i) = mos_in_r_array_transp(k,j)
@@ -10,7 +10,7 @@
  enddo
 
  do k = 1, n_points_final_grid
-  do i = 1, n_inact_act
+  do i = 1, n_inact_act_orb
    inact_act_mos_in_r_array(i,k) = inact_act_mos_in_r_array_transp(k,i)
   enddo
  enddo
