@@ -6,6 +6,8 @@ program all_mu_of_r_corrections
  touch mu_of_r_potential 
  no_core_density = "no_core_dm"
  touch no_core_density
+ on_top_from_cas = .True.
+ touch on_top_from_cas
  call routine_print
 end
 
