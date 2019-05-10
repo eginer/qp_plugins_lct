@@ -65,7 +65,6 @@
  END_PROVIDER
 
 
-
  BEGIN_PROVIDER[double precision, e_h_pade_diag_coef,(n_states)]
  implicit none
  BEGIN_DOC
@@ -76,10 +75,7 @@
  m=order_derivative_ontop+1-n
  print*,"n =",n
  print*,"m =",m
-!n=2
-!m=1
-!print*,"n =",n
-!print*,"m =",m
+
  double precision :: denom,nume,x_loc
  double precision, allocatable :: matrix_alpha(:,:)
  double precision, allocatable :: vect_b_temp(:),vect_a(:),vect_b(:),c_pade(:)
@@ -144,3 +140,4 @@
  enddo  
 
  END_PROVIDER
+
