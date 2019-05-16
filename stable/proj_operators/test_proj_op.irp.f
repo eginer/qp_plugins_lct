@@ -16,7 +16,7 @@ program projected_operators
 ! call routine_valence
 ! call routine_core
 ! call routine_core_valence
-  call test_f
+  call test_f_hf_ao
 
 end
 
@@ -245,3 +245,29 @@ subroutine test_f
  print*,'accuc  = ',accuc 
  print*,'accu   = ',accu  
 end
+
+
+subroutine test_f_hf_ao
+ implicit none
+ integer :: ipoint,i
+ double precision :: accuex,accuerror,accuao,weight, r(3)
+ double precision :: integral_psi,two_bod,accu_beta
+ accuex      = 0.d0
+ accuao      = 0.d0
+ accuerror   = 0.d0
+ accu_beta   = 0.d0
+ do ipoint  = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(ipoint)
+  r(:) = final_grid_points(:,ipoint) 
+  call f_HF_valence_ab(r,r,integral_psi,two_bod)
+  accuex += integral_psi * weight
+  accuao += f_hf_ab_ao(ipoint) * weight 
+  print*,integral_psi,f_hf_ab_ao(ipoint),dabs(integral_psi - f_hf_ab_ao(ipoint))
+  accuerror += dabs(integral_psi - f_hf_ab_ao(ipoint)) * weight
+ enddo
+ print*,'accuex      = ',accuex
+ print*,'accuao      = ',accuao
+ print*,'accuerror   = ',accuerror
+end
+
+
