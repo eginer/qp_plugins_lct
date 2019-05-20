@@ -81,6 +81,25 @@
  print*,'Time to provide mu_of_r_psi_coal_vector = ',cpu1-cpu0
  END_PROVIDER 
 
+ BEGIN_PROVIDER [double precision, mu_of_r_hf_coal_vv_vector_ao, (n_points_final_grid) ]
+ implicit none 
+ integer :: i_point
+ double precision :: two_bod,local_potential
+ do i_point = 1, n_points_final_grid
+! local_potential = f_hf_ab_ao(i_point)
+! local_potential = f_hf_ab_ao_bis(i_point)
+  local_potential = f_hf_ab_ao_per_atom_vector(i_point)
+  two_bod = one_e_dm_alpha_at_r(i_point,1) * one_e_dm_beta_at_r(i_point,1)
+  if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
+    local_potential = 1.d+10
+  else 
+    local_potential = local_potential /  two_bod
+  endif
+  mu_of_r_hf_coal_vv_vector_ao(i_point) =  local_potential * dsqrt(dacos(-1.d0)) * 0.5d0
+ enddo
+
+ END_PROVIDER 
+
 
  BEGIN_PROVIDER [double precision, mu_of_r_hf_coal_vv_vector, (n_points_final_grid) ]
 &BEGIN_PROVIDER [double precision, mu_of_r_hf_coal_vv, (n_points_integration_angular,n_points_radial_grid,nucl_num) ]

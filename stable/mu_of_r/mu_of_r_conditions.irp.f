@@ -21,6 +21,8 @@
    mu_of_r_vector(i_point) =  mu_of_r_hf_coal_vector(i_point)
   else if(mu_of_r_potential.EQ."hf_valence_coallescence")then
    mu_of_r_vector(i_point) =  mu_of_r_hf_coal_vv_vector(i_point)
+  else if(mu_of_r_potential.EQ."hf_valence_coallescence_ao")then
+   mu_of_r_vector(i_point) =  mu_of_r_hf_coal_vv_vector_ao(i_point)
   else if(mu_of_r_potential.EQ."psi_coallescence")then
    mu_of_r_vector(i_point) =  mu_of_r_psi_coal_vector(i_point)
   else if(mu_of_r_potential.EQ."psi_cas_ful".or.mu_of_r_potential.EQ."psi_cas_truncated")then

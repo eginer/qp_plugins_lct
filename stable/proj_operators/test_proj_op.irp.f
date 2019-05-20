@@ -8,7 +8,7 @@ program projected_operators
  no_core_density = "no_core_dm"
  touch no_core_density
 
-  provide mo_two_e_integrals_jj
+! provide mo_two_e_integrals_jj
   provide mo_class
 ! call routine_v
 ! call routine_rho 
@@ -16,7 +16,10 @@ program projected_operators
 ! call routine_valence
 ! call routine_core
 ! call routine_core_valence
-  call test_f_hf_ao
+! call test_f_hf_ao
+! call test_f_hf_ao_per_atom
+! call test_ovlp
+  provide f_hf_ab_ao_per_atom
 
 end
 
@@ -249,7 +252,7 @@ end
 
 subroutine test_f_hf_ao
  implicit none
- integer :: ipoint,i
+ integer :: ipoint,i,inucl
  double precision :: accuex,accuerror,accuao,weight, r(3)
  double precision :: integral_psi,two_bod,accu_beta
  accuex      = 0.d0
@@ -262,7 +265,6 @@ subroutine test_f_hf_ao
   call f_HF_valence_ab(r,r,integral_psi,two_bod)
   accuex += integral_psi * weight
   accuao += f_hf_ab_ao(ipoint) * weight 
-  print*,integral_psi,f_hf_ab_ao(ipoint),dabs(integral_psi - f_hf_ab_ao(ipoint))
   accuerror += dabs(integral_psi - f_hf_ab_ao(ipoint)) * weight
  enddo
  print*,'accuex      = ',accuex
@@ -271,3 +273,35 @@ subroutine test_f_hf_ao
 end
 
 
+subroutine test_f_hf_ao_per_atom
+ implicit none
+ integer :: ipoint,i,inucl
+ double precision :: accuex,accuerror,accuao,weight, r(3)
+ double precision :: integral_psi,two_bod,accu_beta
+ accuex      = 0.d0
+ accuao      = 0.d0
+ accuerror   = 0.d0
+ accu_beta   = 0.d0
+ do inucl = 1, nucl_num
+  do ipoint  = 1, n_pts_per_atom(inucl)
+   weight = final_weight_at_r_vector_per_atom(ipoint,inucl)
+   r(:) = final_grid_points_per_atom(:,ipoint,inucl) 
+   call f_HF_valence_ab(r,r,integral_psi,two_bod)
+   accuex += integral_psi * weight
+   accuao += f_hf_ab_ao_per_atom(ipoint,inucl) * weight 
+   accuerror += dabs(integral_psi - f_hf_ab_ao_per_atom(ipoint,inucl)) * weight
+  enddo
+ enddo
+ print*,'accuex      = ',accuex
+ print*,'accuao      = ',accuao
+ print*,'accuerror   = ',accuerror
+end
+
+
+subroutine test_ovlp
+ implicit none
+ provide n_good_pairs_density_per_atom
+
+
+
+end
