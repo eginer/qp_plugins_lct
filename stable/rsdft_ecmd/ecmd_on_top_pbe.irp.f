@@ -89,6 +89,52 @@ subroutine give_epsilon_c_md_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps
    eps_c_md_on_top_PBE(istate)=e_PBE(istate)/(1.d0+beta(istate)*mu**3)
   enddo
  end
+
+
+subroutine give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
+  implicit none
+  double precision, intent(in)  :: mu , r(3), two_dm(N_states)
+  double precision, intent(out) :: eps_c_md_on_top_PBE(N_states)
+  double precision :: two_dm_in_r, pi, e_pbe(N_states),beta(N_states),on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: aos_array(ao_num), grad_aos_array(3,ao_num)
+  double precision :: rho_a(N_states),rho_b(N_states)
+  double precision :: grad_rho_a(3,N_states),grad_rho_b(3,N_states)
+  double precision :: grad_rho_a_2(N_states),grad_rho_b_2(N_states),grad_rho_a_b(N_states)
+  double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo,vrhoc,vrhoo,vsigmacc,vsigmaco,vsigmaoo
+  integer :: m, istate
+
+  pi = 4.d0 * datan(1.d0)
+
+  eps_c_md_on_top_PBE = 0.d0
+  call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,rho_a,rho_b, grad_rho_a, grad_rho_b, aos_array, grad_aos_array)
+  grad_rho_a_2 = 0.d0
+  grad_rho_b_2 = 0.d0
+  grad_rho_a_b = 0.d0
+  do istate = 1, N_states
+   do m = 1, 3
+    grad_rho_a_2(istate) += grad_rho_a(m,istate)*grad_rho_a(m,istate)
+    grad_rho_b_2(istate) += grad_rho_b(m,istate)*grad_rho_b(m,istate)
+    grad_rho_a_b(istate) += grad_rho_a(m,istate)*grad_rho_b(m,istate)
+   enddo
+  enddo
+  do istate = 1, N_states
+   ! convertion from (alpha,beta) formalism to (closed, open) formalism
+   call rho_ab_to_rho_oc(rho_a(istate),rho_b(istate),rhoo,rhoc)
+   call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
+   sigmaco = 0.d0
+   sigmaoo = 0.d0
+   double precision :: delta,two_dm_corr,rhoo_2
+   rhoo_2 = rhoo
+   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
+   if(rhoc*rhoc - 4.d0 * two_dm_corr .gt.0.d0)then
+    rhoo =  dsqrt(rhoc*rhoc - 4.d0 * two_dm_corr) ! effective spin polarization from the on-top pair density and total density
+   endif
+   call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
+   beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )
+   eps_c_md_on_top_PBE(istate)=e_PBE(istate)/(1.d0+beta(istate)*mu**3)
+  enddo
+ end
+ 
  
  double precision function on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
  implicit none
