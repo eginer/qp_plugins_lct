@@ -1,6 +1,6 @@
 ! DO NOT MODIFY BY HAND
 ! Created by $QP_ROOT/scripts/ezfio_interface/ei_handler.py
-! from file /home_lct/pradines/programs/qp2/src/mu_of_r_ints/EZFIO.cfg
+! from file /home/pradines/program/qp2TEST/qp2/src/mu_of_r_ints/EZFIO.cfg
 
 
 BEGIN_PROVIDER [ character*(32), io_mo_integrals_sr_mu_of_r  ]

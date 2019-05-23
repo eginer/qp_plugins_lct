@@ -25,7 +25,10 @@ program pade_functional
 ! call pote_test
 ! call pote_oredre_infinityyyyyy
 ! call pote_oredre_infinityyyyyy_pade
-  call pote_hartree_infiny
+! call pote_hartree_infiny
+! call pote_hartree_test_exp_mu_0
+  call two_points_pade_hartree_test
+! call tracer_d_E_H
 end
 
  subroutine pote
@@ -101,6 +104,21 @@ end
  end
 
 
+ subroutine pote_hartree_test_exp_mu_0
+ implicit none
+ print*,'****************************'
+ print*,'E_H^sr                        =',short_range_Hartree
+ print*,'****************************'
+ print*,'mu_erf                        =',mu_erf
+ print*,'regular_range_Hartree         =',regular_range_Hartree(1)
+ print*,'sr_hatree_energy_small_mu_tot =',sr_hatree_energy_small_mu_tot(1)
+ print*,'Contriub expension            =',sr_hatree_energy_small_mu_tot(1)-regular_range_Hartree(1)
+ print*,'****************************'
+ print*,'Pade test                     =',regular_range_Hartree(1) + e_h_pade_mu_0_diag_coef(1)
+ print*,'Pade contrib                  =',e_h_pade_mu_0_diag_coef(1)
+ end
+
+
  subroutine pote_oredre_infinityyyyyy
  implicit none
 
@@ -152,3 +170,87 @@ end
  print*,'n=2   :',c
  print*,'****************************'
  end
+
+
+
+ subroutine two_points_pade_hartree_test
+ implicit none
+ double precision :: two_pade_dh_4(n_states),d_EH_num,h,f_mu_1 
+!provide simpson_int_test
+ !rovide two_p_pade_h_3
+!provide two_point_pade_h_a_4
+ print*,'****************************'
+ print*,'Regular_range_Hartree         =',regular_range_Hartree(1)
+ print*,'E_H^sr                        =',short_range_Hartree
+ print*,'****************************'
+ print*,'mu_erf                        =',mu_erf
+!print*,"two_p_pade_h_3                =",two_p_pade_h_3(1)
+ print*,"two_p_pade_h_4                =",two_p_pade_h_4(1)
+!print*,"two_p_pade_h_5                =",two_p_pade_h_5(1)
+!print*,"two_p_pade_h_6                =",two_p_pade_h_6(1)
+!print*,"two_p_pade_h_7                =",two_p_pade_h_7(1)
+ print*,'****************************'
+!print*,'Abs error pade 3              =',short_range_Hartree-two_p_pade_h_3(1)
+ print*,'Abs error pade 4              =',short_range_Hartree-two_p_pade_h_4(1)
+!print*,'Abs error pade 5              =',short_range_Hartree-two_p_pade_h_5(1)
+!print*,'Abs error pade 6              =',short_range_Hartree-two_p_pade_h_6(1)
+!print*,'Abs error pade 7              =',short_range_Hartree-two_p_pade_h_7(1)
+ print*,'****************************'
+!print*,'Relat error pade 3            =',(short_range_Hartree-two_p_pade_h_3(1))/short_range_Hartree
+ print*,'Relat error pade 4            =',(short_range_Hartree-two_p_pade_h_4(1))/short_range_Hartree
+!print*,'Relat error pade 5            =',(short_range_Hartree-two_p_pade_h_5(1))/short_range_Hartree
+!print*,'Relat error pade 6            =',(short_range_Hartree-two_p_pade_h_6(1))/short_range_Hartree
+!print*,'Relat error pade 7            =',(short_range_Hartree-two_p_pade_h_7(1))/short_range_Hartree
+ print*,'****************************'
+!call give_two_p_pade_dh_4(mu_erf,two_pade_dh_4)
+!print*,'dE_H_2p_pade_4            =',two_pade_dh_4(1)
+
+!!!!!!!!!!!!!derive numeeeeriiiiqqquuuuuueeeeeee!!!
+!print*,'****************************'
+!h = 10.00
+!mu_erf = mu_erf + h
+!touch mu_erf
+!mu_erf_dft = mu_erf 
+!touch mu_erf_dft
+!print*,'mu_erf/mu_erf_dft                 =',mu_erf,'/',mu_erf_dft
+!call donner_E_H_sr(f_mu_1)
+!touch short_range_Hartree
+!print*,'mu_erf                        =',mu_erf
+!provide short_range_Hartree 
+!f_mu_1=short_range_Hartree(1)
+!d_EH_num =  
+
+!print*,'short_range_Hartree2  =',f_mu_1
+!print*,'****************************'
+
+ end
+
+
+ subroutine donner_E_H_sr(tmp)
+ implicit none
+ double precision, intent(out) :: tmp 
+ tmp=short_range_Hartree(1)
+ end
+
+ subroutine tracer_d_E_H
+ implicit none
+ integer :: istate,i,n
+ double precision :: mu,a,b,h,two_pade_dh_3(n_states),two_pade_dh_4(n_states),two_pade_dh_5(n_states),two_pade_dh_6(n_states),two_pade_dh_7(n_states)
+ b=40.d0
+ a = 0.001d0
+ n= 100000
+ h = (b - a)/dble(n)
+ 
+ mu = a
+ do i=1,n
+  mu += h 
+  call give_two_p_pade_dh_3(mu,two_pade_dh_3)
+  call give_two_p_pade_dh_4(mu,two_pade_dh_4)
+  call give_two_p_pade_dh_5(mu,two_pade_dh_5)
+  call give_two_p_pade_dh_6(mu,two_pade_dh_6)
+  call give_two_p_pade_dh_7(mu,two_pade_dh_7)
+  write(33,'(10(F16.10,X))')mu,two_pade_dh_3(1),two_pade_dh_4(1),two_pade_dh_5(1),two_pade_dh_6(1),two_pade_dh_7(1)
+ enddo
+
+
+end
