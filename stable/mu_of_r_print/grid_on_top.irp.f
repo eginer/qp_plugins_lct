@@ -18,7 +18,7 @@
  enddo
  end
 
- BEGIN_PROVIDER [double precision, core_inact_act_on_top_of_r_grid_mur,(n_points_final_grid,N_states) ]
+ BEGIN_PROVIDER [double precision, core_inact_act_on_top_of_r_grid_mur,(n_points_print_mur,N_states) ]
 &BEGIN_PROVIDER [double precision, wall_time_core_inact_act_on_top_of_r_grid_mur ]
  implicit none
  BEGIN_DOC
@@ -37,8 +37,8 @@
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (i_point,i_state) & 
- !$OMP SHARED(core_inact_act_on_top_of_r_grid_mur,n_points_final_grid,N_states)
- do i_point = 1, n_points_final_grid
+ !$OMP SHARED(core_inact_act_on_top_of_r_grid_mur,n_points_print_mur,N_states)
+ do i_point = 1, n_points_print_mur
   do i_state = 1, N_states
    core_inact_act_on_top_of_r_grid_mur(i_point,i_state) = core_inact_act_on_top_of_r_grid_mur_from_provider(i_point,i_state)
   enddo
