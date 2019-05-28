@@ -126,8 +126,16 @@ subroutine give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_
    double precision :: delta,two_dm_corr,rhoo_2
    rhoo_2 = rhoo
    two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
-   if(rhoc*rhoc - 4.d0 * two_dm_corr .gt.0.d0)then
+   if(rhoc*rhoc - 4.d0 * two_dm_corr .ge.0.d0)then
     rhoo =  dsqrt(rhoc*rhoc - 4.d0 * two_dm_corr) ! effective spin polarization from the on-top pair density and total density
+   else 
+    if(dabs(rhoc*rhoc).gt.1.d-10.and.dabs(two_dm_corr).gt.1.d-10)then
+     print*,'Imaginary effective spin polarization !'
+     print*,'r = '
+     print*,r
+     print*,rhoc*rhoc , 4.d0 * two_dm_corr
+    endif
+ 
    endif
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
    beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )
