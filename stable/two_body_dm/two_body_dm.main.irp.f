@@ -213,19 +213,39 @@ end
 
 subroutine test_on_top
  implicit none
- integer :: i,j
- double precision :: accu, on_top_of_r_from_provider,core_inact_act_on_top_of_r_from_provider 
- double precision :: accuex,accuc
+ integer :: i,j,k
+ double precision :: accu(3), on_top_of_r_from_provider,core_inact_act_on_top_of_r_from_provider,weight
+ double precision :: accuex,accuc,r(3),ontop_grad(3),dx,rp(3),rm(3),grad_manual(3)
+ double precision :: core_inact_act_on_top_of_r_func,on_top_p,on_top_m
  accuex = 0.d0
  accuc  = 0.d0
- accu = 0.d0
- do i = 1, n_points_final_grid
-  accuc += core_inact_act_on_top_of_r(i,1) * final_weight_at_r_vector(i) 
-  accuex += on_top_of_r_vector(i,1) * final_weight_at_r_vector(i)
-  accu += dabs(accuex - accuc) * final_weight_at_r_vector(i)
+ 
+!print*,'n_core_inact_act_orb = ',n_core_inact_act_orb
+!pause
+ do k = 3, 10
+  accu = 0.d0
+  dx = 10.d0**(-dble(k))
+  do i = 1, n_points_final_grid
+   r(:) = final_grid_points(:,i)
+   weight = final_weight_at_r_vector(i)
+   do j = 1, 3
+    rp = r
+    rm = r
+    rp(j) += dx
+    rm(j) -= dx
+    on_top_p = core_inact_act_on_top_of_r_func(rp,1)
+    on_top_m = core_inact_act_on_top_of_r_func(rm,1)
+    grad_manual(j) = (on_top_p - on_top_m)/(2.d0 * dx)
+   enddo
+   call give_core_inact_act_grad_on_top_of_r_from_provider(i,1,ontop_grad)
+   do j = 1, 3
+    accu(j) += dabs(ontop_grad(j) - grad_manual(j)) * weight
+   !print*,ontop_grad(j) , grad_manual(j)
+   enddo
+  enddo
+  print*,'dx = ',dx
+  print*,'accu = '
+  print*, accu 
  enddo
- print*,'accuex = ',accuex
- print*,'accuc  = ',accuc
- print*,'accu   = ',accu
 
 end

@@ -143,6 +143,44 @@ subroutine give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_
   enddo
  end
  
+subroutine give_epsilon_c_md_n_and_on_top_LYP_mu_corrected_from_two_dm(mu,r,two_dm,eps_c_md_on_top_LYP)
+  implicit none
+  double precision, intent(in)  :: mu , r(3), two_dm(N_states)
+  double precision, intent(out) :: eps_c_md_on_top_LYP(N_states)
+  double precision :: two_dm_in_r, pi, e_lyp(N_states),beta(N_states),on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: rho_a(N_states),rho_b(N_states),grad_rho_a_2(N_states),grad_rho_b_2(N_states),grad_rho_2(N_states),rho(N_states)
+  double precision :: ec_lyp_88
+  integer :: m, istate
+
+  pi = 4.d0 * datan(1.d0)
+
+  eps_c_md_on_top_LYP = 0.d0
+  call give_all_stuffs_in_r_for_lyp_88(r,rho,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
+  do istate = 1, N_states
+   ! convertion from (alpha,beta) formalism to (closed, open) formalism
+  !call rho_ab_to_rho_oc(rho_a(istate),rho_b(istate),rhoo,rhoc)
+  !call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
+  !sigmaco = 0.d0
+  !sigmaoo = 0.d0
+   double precision :: delta,two_dm_corr,rhoo_2
+  !rhoo_2 = rhoo
+   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
+  !if(rhoc*rhoc - 4.d0 * two_dm_corr .ge.0.d0)then
+  ! rhoo =  dsqrt(rhoc*rhoc - 4.d0 * two_dm_corr) ! effective spin polarization from the on-top pair density and total density
+  !else 
+  ! if(dabs(rhoc*rhoc).gt.1.d-10.and.dabs(two_dm_corr).gt.1.d-10)then
+  !  print*,'Imaginary effective spin polarization !'
+  !  print*,'r = '
+  !  print*,r
+  !  print*,rhoc*rhoc , 4.d0 * two_dm_corr
+  ! endif
+  !endif
+   e_lyp(istate) = ec_lyp_88(rho(istate),rho_a(istate),rho_b(istate),grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_2(istate))
+   beta(istate) = (3.d0*e_LYP(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )
+   eps_c_md_on_top_LYP(istate)=e_LYP(istate)/(1.d0+beta(istate)*mu**3)
+  enddo
+ end
+ 
  
  double precision function on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
  implicit none
