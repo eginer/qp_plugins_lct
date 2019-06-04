@@ -218,28 +218,33 @@ END_PROVIDER
  end
 
  BEGIN_PROVIDER [double precision, core_inact_act_on_top_of_r,(n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, grad_core_inact_act_on_top_of_r,(3,n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, wall_time_core_inact_act_on_top_of_r ]
  implicit none
  BEGIN_DOC
  ! on top pair density at each grid point computed using the full two-body density matrix 
  END_DOC
- integer :: i_point,i_state
+ integer :: i_point,i_state,i
  double precision :: wall_0,wall_1
- double precision :: core_inact_act_on_top_of_r_from_provider
+ double precision :: core_inact_act_on_top_of_r_from_provider,ontop_grad(4)
 
  print*,'providing the core_inact_act_on_top_of_r'
  i_point = 1
  provide core_inact_act_two_bod_alpha_beta_mo_physicist 
  i_state = 1
- core_inact_act_on_top_of_r(i_point,i_state) = core_inact_act_on_top_of_r_from_provider(i_point,i_state)
+ call give_core_inact_act_grad_on_top_of_r_from_provider(i_point,i_state,ontop_grad)
  call wall_time(wall_0)
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
- !$OMP PRIVATE (i_point,i_state) & 
- !$OMP SHARED(core_inact_act_on_top_of_r,n_points_final_grid,N_states)
+ !$OMP PRIVATE (i_point,i_state,ontop_grad) & 
+ !$OMP SHARED(core_inact_act_on_top_of_r,n_points_final_grid,N_states,grad_core_inact_act_on_top_of_r)
  do i_point = 1, n_points_final_grid
   do i_state = 1, N_states
-   core_inact_act_on_top_of_r(i_point,i_state) = core_inact_act_on_top_of_r_from_provider(i_point,i_state)
+   call give_core_inact_act_grad_on_top_of_r_from_provider(i_point,i_state,ontop_grad)
+   core_inact_act_on_top_of_r(i_point,i_state) = ontop_grad(4)
+   do i = 1, 3
+    grad_core_inact_act_on_top_of_r(i,i_point,i_state) = ontop_grad(i)
+   enddo
   enddo
  enddo
  !$OMP END PARALLEL DO

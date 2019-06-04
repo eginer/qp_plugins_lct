@@ -216,7 +216,7 @@ subroutine test_on_top
  integer :: i,j,k
  double precision :: accu(3), on_top_of_r_from_provider,core_inact_act_on_top_of_r_from_provider,weight
  double precision :: accuex,accuc,r(3),ontop_grad(3),dx,rp(3),rm(3),grad_manual(3)
- double precision :: core_inact_act_on_top_of_r_func,on_top_p,on_top_m
+ double precision :: core_inact_act_on_top_of_r_func,on_top_p,on_top_m,dm_a_m,dm_a_p,dm_b_m,dm_b_p,dm_a,dm_b
  accuex = 0.d0
  accuc  = 0.d0
  
@@ -233,13 +233,17 @@ subroutine test_on_top
     rm = r
     rp(j) += dx
     rm(j) -= dx
+   !call dm_dft_alpha_beta_at_r(rp,dm_a_p,dm_b_p)
+   !call dm_dft_alpha_beta_at_r(rm,dm_a_m,dm_b_m)
+   !grad_manual(j) = ( (dm_a_p+dm_b_p)**2 - (dm_a_m+dm_b_m)**2 )/(2.d0 * dx)
     on_top_p = core_inact_act_on_top_of_r_func(rp,1)
     on_top_m = core_inact_act_on_top_of_r_func(rm,1)
-    grad_manual(j) = (on_top_p - on_top_m)/(2.d0 * dx)
+    grad_manual(j) = ( on_top_p - on_top_m)/(2.d0 * dx)
    enddo
-   call give_core_inact_act_grad_on_top_of_r_from_provider(i,1,ontop_grad)
+!  call give_core_inact_act_grad_on_top_of_r_from_provider(i,1,ontop_grad)
    do j = 1, 3
-    accu(j) += dabs(ontop_grad(j) - grad_manual(j)) * weight
+!   accu(j) += dabs(one_e_grad_dm_squared_at_r(j,i,1) - grad_manual(j)) * weight
+    accu(j) += dabs(grad_core_inact_act_on_top_of_r(j,i,1) - grad_manual(j)) * weight
    !print*,ontop_grad(j) , grad_manual(j)
    enddo
   enddo
