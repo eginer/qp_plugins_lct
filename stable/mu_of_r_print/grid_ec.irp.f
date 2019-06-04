@@ -5,7 +5,7 @@
  END_DOC
  implicit none
  double precision ::  r(3)
- double precision :: weight,mu,pi
+ double precision :: mu,pi
  integer :: i,istate
  double precision,allocatable  :: eps_c_md_on_top_PBE(:),two_dm(:)
  pi = 4.d0 * datan(1.d0)
@@ -24,7 +24,7 @@
 
   call give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
   do istate = 1, N_states
-   E_c_md_mur_grid_n_and_on_top_PBE(i,istate) = eps_c_md_on_top_PBE(istate) 
+   E_c_md_mur_grid_n_and_on_top_PBE(istate,i) = eps_c_md_on_top_PBE(istate) 
   enddo
  enddo
  double precision :: wall1, wall0
@@ -39,7 +39,7 @@ BEGIN_PROVIDER [double precision, E_c_md_mur_grid_PBE, (N_states,n_points_print_
  END_DOC
  implicit none
  double precision ::  r(3)
- double precision :: weight,mu
+ double precision :: mu
  integer :: i,istate
  double precision,allocatable  :: eps_c_md_PBE(:)
 
@@ -56,7 +56,7 @@ BEGIN_PROVIDER [double precision, E_c_md_mur_grid_PBE, (N_states,n_points_print_
 
   call give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE)
   do istate = 1, N_states
-   E_c_md_mur_grid_PBE(i,istate) += eps_c_md_PBE(istate) * weight
+   E_c_md_mur_grid_PBE(istate,i) += eps_c_md_PBE(istate) 
   enddo
  enddo
  double precision :: wall1, wall0

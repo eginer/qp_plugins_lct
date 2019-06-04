@@ -18,8 +18,8 @@ program projected_operators
 ! call routine_core_valence
 ! call test_f_hf_ao
 ! call test_f_hf_ao_per_atom
-! call test_ovlp
-  provide f_hf_ab_ao_per_atom
+  call test_ovlp
+! provide f_hf_ab_ao_per_atom
 
 end
 
@@ -300,7 +300,7 @@ end
 
 subroutine test_ovlp
  implicit none
- provide n_good_pairs_density_per_atom
+ provide  final_weight_at_r_vector
 
 
 

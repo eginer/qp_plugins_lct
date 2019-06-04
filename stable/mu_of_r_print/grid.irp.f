@@ -9,6 +9,9 @@
    i_nucl_first = 2
    i_nucl_end   = 1
   endif
+ else 
+   i_nucl_first = 1
+   i_nucl_end   = 1
  endif
 
 END_PROVIDER 
