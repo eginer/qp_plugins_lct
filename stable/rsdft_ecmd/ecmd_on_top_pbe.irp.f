@@ -85,7 +85,7 @@ subroutine give_epsilon_c_md_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps
    call rho_ab_to_rho_oc(rho_a(istate),rho_b(istate),rhoo,rhoc)
    call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
-   beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm) )
+   beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) )
    eps_c_md_on_top_PBE(istate)=e_PBE(istate)/(1.d0+beta(istate)*mu**3)
   enddo
  end
@@ -125,7 +125,7 @@ subroutine give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_
    sigmaoo = 0.d0
    double precision :: delta,two_dm_corr,rhoo_2
    rhoo_2 = rhoo
-   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
+   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm)
    if(rhoc*rhoc - 4.d0 * two_dm_corr .ge.0.d0)then
     rhoo =  dsqrt(rhoc*rhoc - 4.d0 * two_dm_corr) ! effective spin polarization from the on-top pair density and total density
    else 
@@ -135,7 +135,7 @@ subroutine give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_
      print*,r
      print*,rhoc*rhoc , 4.d0 * two_dm_corr
     endif
- 
+    rhoo = 0.d0 
    endif
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
    beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )
@@ -164,7 +164,7 @@ subroutine give_epsilon_c_md_n_and_on_top_LYP_mu_corrected_from_two_dm(mu,r,two_
   !sigmaoo = 0.d0
    double precision :: delta,two_dm_corr,rhoo_2
   !rhoo_2 = rhoo
-   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
+   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm)
   !if(rhoc*rhoc - 4.d0 * two_dm_corr .ge.0.d0)then
   ! rhoo =  dsqrt(rhoc*rhoc - 4.d0 * two_dm_corr) ! effective spin polarization from the on-top pair density and total density
   !else 
@@ -182,9 +182,9 @@ subroutine give_epsilon_c_md_n_and_on_top_LYP_mu_corrected_from_two_dm(mu,r,two_
  end
  
  
- double precision function on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,r,istate,two_dm)
+ double precision function on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm)
  implicit none
- double precision, intent(in) :: mu,r(3),two_dm(N_states)
+ double precision, intent(in) :: mu,two_dm(N_states)
  integer, intent(in) :: istate
  double precision :: pi
  pi = 4.d0 * datan(1.d0)

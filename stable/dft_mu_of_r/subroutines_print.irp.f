@@ -20,9 +20,11 @@ subroutine print_contribution_dft_mu_of_r
  else if(mu_of_r_functional.EQ."basis_set_on_top_PBE")then
    provide Energy_c_md_n_and_on_top_PBE_mu_of_r Energy_c_md_on_top_PBE_mu_of_r Energy_c_md_PBE_mu_of_r Energy_c_md_mu_of_r_LDA Energy_c_md_n_and_on_top_LYP_mu_of_r
    write(*, '(A28,X,F16.10)') 'Energy ECMD PBE ontop  = ',Energy_c_md_on_top_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'Energy ECMD LYP ontop  = ',Energy_c_md_n_and_on_top_LYP_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD PBE ontop/total n = ',Energy_c_md_n_and_on_top_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD PBE ontop/eff spin= ',Energy_c_md_n_and_on_top_PBE_mu_of_r
    write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD PBE/eff spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'Energy ECMD LYP ontop  = ',Energy_c_md_n_and_on_top_LYP_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD LYP/eff spin dens = ',Energy_c_md_n_and_LYP_mu_of_r         
    print*,''
    write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_mu_of_r_LDA
  endif
