@@ -1,6 +1,6 @@
 ! DO NOT MODIFY BY HAND
 ! Created by $QP_ROOT/scripts/ezfio_interface/ei_handler.py
-! from file /home/scemama/qp2/src/mu_of_r/EZFIO.cfg
+! from file /home/emmanuel/programs/qp2/src/mu_of_r/EZFIO.cfg
 
 
 BEGIN_PROVIDER [ double precision, mu_of_r_array , (n_points_final_grid) ]

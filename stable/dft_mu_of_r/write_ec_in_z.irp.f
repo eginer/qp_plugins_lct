@@ -25,7 +25,7 @@ subroutine routine
  print*,'n_z_points_grid     = ',n_z_points_grid
  print*,'e_c_lda_val_hf_sum      = ',e_c_lda_val_hf_sum
  print*,'e_c_lda_ful_hf_sum      = ',e_c_lda_ful_hf_sum
- print*,'Energy_c_md_mu_of_r_LDA = ',Energy_c_md_mu_of_r_LDA
+ print*,'Energy_c_md_LDA_mu_of_r = ',Energy_c_md_LDA_mu_of_r
 
  provide ezfio_filename
  character*(128) :: output
@@ -94,7 +94,7 @@ subroutine routine_2
  integer :: i,j
  provide n_z_points_grid 
  print*,''
- print*,'Energy_c_md_mu_of_r_LDA       = ',Energy_c_md_mu_of_r_LDA
+ print*,'Energy_c_md_LDA_mu_of_r       = ',Energy_c_md_LDA_mu_of_r
  print*,'e_c_lda_hf_ful_grid_cyl_z_sum = ',e_c_lda_hf_ful_grid_cyl_z_sum
  print*,'elec_alpha_num_grid_cyl       = ',elec_alpha_num_grid_cyl
  print*,'elec_beta_num_grid_cyl        = ',elec_beta_num_grid_cyl
@@ -103,7 +103,7 @@ subroutine routine_2
  print*,''
  print*,'Valence quantities '
  print*,''
- print*,'Energy_c_md_mu_of_r_LDA_val   = ',Energy_c_md_mu_of_r_LDA_val
+ print*,'Energy_c_md_LDA_mu_of_r_val   = ',Energy_c_md_LDA_mu_of_r_val
  print*,'e_c_lda_hf_val_grid_cyl_z_sum = ',e_c_lda_hf_val_grid_cyl_z_sum
  print*,'elec_alpha_num_no_core_grid   = ',elec_alpha_num_no_core_grid_cyl
  print*,'elec_beta_num_grid_cyl        = ',elec_beta_num_no_core_grid_cyl

@@ -8,25 +8,42 @@ subroutine print_contribution_dft_mu_of_r
  print*,  ' MR DFT energy with pure correlation part for the DFT '
  if(mu_of_r_functional.EQ."basis_set_LDA")then
    print*, ''
-   write(*, '(A28,X,F16.10)') 'Energy_c_md_mu_of_r_LDA   = ',Energy_c_md_mu_of_r_LDA
+   write(*, '(A28,X,F16.10)') 'Energy_c_md_LDA_mu_of_r   = ',Energy_c_md_LDA_mu_of_r
    print*, ''
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  else if(mu_of_r_functional.EQ."basis_set_PBE")then
+   print*,''
+   print*,'Corrections using single determinant mu'
+   print*,''
+   write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_LDA_mu_of_r
+   print*,''
    write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
    print*,''
-   write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_mu_of_r_LDA
- else if(mu_of_r_functional.EQ."basis_set_on_top_PBE")then
-   provide Energy_c_md_n_and_on_top_PBE_mu_of_r Energy_c_md_on_top_PBE_mu_of_r Energy_c_md_PBE_mu_of_r Energy_c_md_mu_of_r_LDA Energy_c_md_n_and_on_top_LYP_mu_of_r
-   write(*, '(A28,X,F16.10)') 'Energy ECMD PBE ontop  = ',Energy_c_md_on_top_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD PBE ontop/eff spin= ',Energy_c_md_n_and_on_top_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD PBE/eff spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'Energy ECMD LYP ontop  = ',Energy_c_md_n_and_on_top_LYP_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD LYP/eff spin dens = ',Energy_c_md_n_and_LYP_mu_of_r         
+   write(*, '(A28,X,F16.10)') 'ECMD LYP               = ',Energy_c_md_LYP_mu_of_r               
+ else if(mu_of_r_functional.EQ."multi_det_basis_set_correction")then
+   provide Energy_c_md_PBE_mu_of_r  Energy_c_md_n_and_PBE_mu_of_r Energy_c_md_on_top_LYP_mu_of_r Energy_c_md_n_and_LYP_mu_of_r
+   provide Energy_c_md_on_top_PBE_mu_of_r 
    print*,''
-   write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_mu_of_r_LDA
+   print*,'Corrections using Multi determinant mu'
+   print*,''
+   print*,'Functionals with UEG ontop pair density at large mu'
+   print*,''
+   write(*, '(A28,X,F16.10)') 'ECMD LDA        regular    spin dens = ',Energy_c_md_LDA_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD LDA        effective  spin dens = ',Energy_c_md_n_and_LDA_mu_of_r
+   write(*, '(A35,X,F16.10)') 'ECMD PBE        regular    spin dens = ',Energy_c_md_PBE_mu_of_r
+   write(*, '(A35,X,F16.10)') 'ECMD PBE        effective  spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD LYP        regular    spin dens = ',Energy_c_md_LYP_mu_of_r               
+   write(*, '(A28,X,F16.10)') 'ECMD LYP        effective  spin dens = ',Energy_c_md_n_and_LYP_mu_of_r         
+   print*,''
+   print*,'Functionals with extrapolated exact ontop based on current wave function '
+   print*,''
+   write(*, '(A28,X,F16.10)') 'ECMD PBE/ontop  regular    spin dens = ',Energy_c_md_on_top_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD PBE/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_PBE_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD LYP/ontop  regular    spin dens = ',Energy_c_md_on_top_LYP_mu_of_r
+   write(*, '(A28,X,F16.10)') 'ECMD PBE/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_LYP_mu_of_r
+   print*,''
  endif
   if(.true.)then
    write(*, '(A28,X,F16.10)') 'mu_average for basis set  = ',mu_average
@@ -60,7 +77,7 @@ subroutine print_contribution_dft_mu_of_r_cc_cv_vv
 !else if(mu_of_r_functional.EQ."basis_set_PBE")then
    write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
    print*,''
-   write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_mu_of_r_LDA
+   write(*, '(A28,X,F16.10)') 'Energy ECMD LDA        = ',Energy_c_md_LDA_mu_of_r
 !endif
   if(.true.)then
    write(*, '(A28,X,F16.10)') 'mu_average for basis set  = ',mu_average

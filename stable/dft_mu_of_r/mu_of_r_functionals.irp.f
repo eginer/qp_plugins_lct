@@ -1,7 +1,7 @@
 
- BEGIN_PROVIDER [double precision, Energy_c_md_mu_of_r_LDA, (N_states)]
+ BEGIN_PROVIDER [double precision, Energy_c_md_LDA_mu_of_r, (N_states)]
  BEGIN_DOC
-! Energy_c_md_mu_of_r_LDA = multi-determinantal correlation functional with mu(r) , see equation 40 in J. Chem. Phys. 149, 194301 (2018); https://doi.org/10.1063/1.5052714
+! Energy_c_md_LDA_mu_of_r = multi-determinantal correlation functional with mu(r) , see equation 40 in J. Chem. Phys. 149, 194301 (2018); https://doi.org/10.1063/1.5052714
  END_DOC
  implicit none 
  integer :: i,istate 
@@ -9,10 +9,10 @@
  logical :: dospin
  double precision :: wall0,wall1,weight,mu
  dospin = .true. ! JT dospin have to be set to true for open shell
- print*,'Providing Energy_c_md_mu_of_r_LDA ...'
+ print*,'Providing Energy_c_md_LDA_mu_of_r ...'
  allocate(rho_a(N_states), rho_b(N_states), ec(N_states))
 
- Energy_c_md_mu_of_r_LDA = 0.d0
+ Energy_c_md_LDA_mu_of_r = 0.d0
  call wall_time(wall0)
  do i = 1, n_points_final_grid
   mu = mu_of_r_vector(i)
@@ -21,23 +21,22 @@
    rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
    rho_b(istate) = one_e_dm_beta_at_r(i,istate)
    call ESRC_MD_LDAERF (mu,rho_a(istate),rho_b(istate),dospin,ec(istate))
-!  write(33,'(100(F16.10,X))')i,rho_a,rho_b,mu,ec,weight
    if(isnan(ec(istate)))then
     print*,'ec is nan'
     stop
    endif
-   Energy_c_md_mu_of_r_LDA(istate) += weight * ec(istate)
+   Energy_c_md_LDA_mu_of_r(istate) += weight * ec(istate)
   enddo
  enddo
  call wall_time(wall1)
- print*,'Time for Energy_c_md_mu_of_r_LDA :',wall1-wall0
-
-
+ print*,'Time for Energy_c_md_LDA_mu_of_r :',wall1-wall0
  END_PROVIDER 
 
- BEGIN_PROVIDER [double precision, Energy_c_md_mu_of_r_LDA_val, (N_states)]
+
+
+ BEGIN_PROVIDER [double precision, Energy_c_md_LDA_mu_of_r_val, (N_states)]
  BEGIN_DOC
-! Energy_c_md_mu_of_r_LDA = multi-determinantal correlation functional with mu(r) , see equation 40 in J. Chem. Phys. 149, 194301 (2018); https://doi.org/10.1063/1.5052714
+! Energy_c_md_LDA_mu_of_r = multi-determinantal correlation functional with mu(r) , see equation 40 in J. Chem. Phys. 149, 194301 (2018); https://doi.org/10.1063/1.5052714
  END_DOC
  implicit none 
  integer :: i,istate 
@@ -45,10 +44,10 @@
  logical :: dospin
  double precision :: wall0,wall1,weight,mu
  dospin = .true. ! JT dospin have to be set to true for open shell
- print*,'Providing Energy_c_md_mu_of_r_LDA ...'
+ print*,'Providing Energy_c_md_LDA_mu_of_r ...'
  allocate(rho_a(N_states), rho_b(N_states), ec(N_states))
 
- Energy_c_md_mu_of_r_LDA_val = 0.d0
+ Energy_c_md_LDA_mu_of_r_val = 0.d0
  call wall_time(wall0)
  do i = 1, n_points_final_grid
   mu = mu_of_r_hf_coal_vv_vector(i)
@@ -62,11 +61,11 @@
     print*,'ec is nan'
     stop
    endif
-   Energy_c_md_mu_of_r_LDA_val(istate) += weight * ec(istate)
+   Energy_c_md_LDA_mu_of_r_val(istate) += weight * ec(istate)
   enddo
  enddo
  call wall_time(wall1)
- print*,'Time for Energy_c_md_mu_of_r_LDA :',wall1-wall0
+ print*,'Time for Energy_c_md_LDA_mu_of_r :',wall1-wall0
  END_PROVIDER 
 
  BEGIN_PROVIDER [double precision, Energy_c_md_on_top_PBE_mu_of_r_UEG, (N_states)]
@@ -119,6 +118,38 @@
 
  END_PROVIDER
 
+ BEGIN_PROVIDER [double precision, Energy_c_md_on_top_LYP_mu_of_r, (N_states)]
+ BEGIN_DOC
+  ! Energy_c_md_on_top_LYP_mu_of_r_UEG_vector = LYP-on_top multi determinant functional with exact on top extracted from the UEG using a mu(r) interaction 
+  ! Energy_c_md_on_top_LYP_mu_of_r_vector     = LYP-on_top multi determinant functional with exact on top extrapolated for large mu using a mu(r) interaction 
+  ! Energy_c_md_on_top_u_of_r_vector     = on_top multi determinant functional with exact on top extrapolated for large mu using a mu(r) interaction 
+ END_DOC
+ implicit none
+ double precision ::  r(3)
+ double precision :: weight,mu,pi
+ integer :: i,istate
+ double precision,allocatable  :: eps_c_md_on_top_LYP(:),two_dm(:)
+ pi = 4.d0 * datan(1.d0)
+
+ allocate(eps_c_md_on_top_LYP(N_states),two_dm(N_states))
+ Energy_c_md_on_top_LYP_mu_of_r = 0.d0
+  
+ print*,'Providing Energy_c_md_mu_of_r_LYP_on_top ...'
+ call wall_time(wall0)
+ do i = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(i)
+  mu = mu_of_r_vector(i)
+  call give_epsilon_lyp_ontop_provider(mu,i,eps_c_md_on_top_LYP)
+  do istate = 1, N_states
+   Energy_c_md_on_top_LYP_mu_of_r(istate) += eps_c_md_on_top_LYP(istate) * weight
+  enddo
+ enddo
+ double precision :: wall1, wall0
+ call wall_time(wall1)
+ print*,'Time for the Energy_c_md_on_top_LYP_mu_of_r:',wall1-wall0
+
+ END_PROVIDER
+
 
 
 BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
@@ -153,6 +184,37 @@ BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
  print*,'Time for the Energy_c_md_PBE_mu_of_r:',wall1-wall0
 
  END_PROVIDER
+
+BEGIN_PROVIDER [double precision, Energy_c_md_LYP_mu_of_r, (N_states)]
+ BEGIN_DOC
+  ! Energy_c_md_LYP_mu_of_r_vector           = LYP multi determinant functional with UEG on top for large mu using a mu(r) interaction (JT)
+ END_DOC
+ implicit none
+ double precision ::  r(3)
+ double precision :: weight,mu
+ integer :: i,istate
+ double precision,allocatable  :: eps_c_md_LYP(:)
+
+ allocate(eps_c_md_LYP(N_states))
+ Energy_c_md_LYP_mu_of_r = 0.d0
+  
+ print*,'Providing Energy_c_md_LYP_mu_of_r ...'
+ call wall_time(wall0)
+ do i = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(i)
+  mu = mu_of_r_vector(i)
+
+  call give_epsilon_lyp_provider(mu,i,eps_c_md_LYP)
+  do istate = 1, N_states
+   Energy_c_md_LYP_mu_of_r(istate) += eps_c_md_LYP(istate) * weight
+  enddo
+ enddo
+ double precision :: wall1, wall0
+ call wall_time(wall1)
+ print*,'Time for the Energy_c_md_LYP_mu_of_r:',wall1-wall0
+
+ END_PROVIDER
+
 
  BEGIN_PROVIDER [double precision, mu_average, (N_states)]
  implicit none 
