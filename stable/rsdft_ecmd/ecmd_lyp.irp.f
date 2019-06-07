@@ -20,6 +20,9 @@ subroutine give_epsilon_lyp_ontop_provider(mu,i_point,eps_c_md_ontop_LYP)
    rhoc = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) + one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
    rhoo = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) - one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
    ! gradients of the density 
+   grad_rho_a_2 = 0.D0
+   grad_rho_b_2 = 0.D0
+   grad_rho_a_b = 0.D0
    do m = 1, 3
     grad_rho_a_2 += one_e_dm_and_grad_alpha_in_r(m,i_point,istate)**2.d0
     grad_rho_b_2 += one_e_dm_and_grad_beta_in_r(m,i_point,istate) **2.d0
@@ -63,6 +66,9 @@ subroutine give_epsilon_lyp_provider(mu,i_point,eps_c_md_LYP)
    rhoc = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) + one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
    rhoo = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) - one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
    ! gradients of the effective spin density 
+   grad_rho_a_2 = 0.D0
+   grad_rho_b_2 = 0.D0
+   grad_rho_a_b = 0.D0
    do m = 1, 3
     grad_rho_a_2 += one_e_dm_and_grad_alpha_in_r(m,i_point,istate)**2.d0
     grad_rho_b_2 += one_e_dm_and_grad_beta_in_r(m,i_point,istate) **2.d0
