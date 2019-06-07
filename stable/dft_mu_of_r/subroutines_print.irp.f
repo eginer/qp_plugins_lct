@@ -21,28 +21,28 @@ subroutine print_contribution_dft_mu_of_r
    print*,''
    write(*, '(A28,X,F16.10)') 'Energy ECMD PBE        = ',Energy_c_md_PBE_mu_of_r
    print*,''
-   write(*, '(A28,X,F16.10)') 'ECMD LYP               = ',Energy_c_md_LYP_mu_of_r               
- else if(mu_of_r_functional.EQ."multi_det_basis_set_correction")then
+   write(*, '(A28,X,F16.10)') 'Energy ECMD LYP        = ',Energy_c_md_LYP_mu_of_r               
+ else if(mu_of_r_functional.EQ."basis_set_on_top_PBE")then
    provide Energy_c_md_PBE_mu_of_r  Energy_c_md_n_and_PBE_mu_of_r Energy_c_md_on_top_LYP_mu_of_r Energy_c_md_n_and_LYP_mu_of_r
-   provide Energy_c_md_on_top_PBE_mu_of_r 
+   provide Energy_c_md_on_top_PBE_mu_of_r Energy_c_md_n_and_on_top_PBE_mu_of_r Energy_c_md_on_top_LYP_mu_of_r Energy_c_md_n_and_on_top_LYP_mu_of_r
    print*,''
    print*,'Corrections using Multi determinant mu'
    print*,''
    print*,'Functionals with UEG ontop pair density at large mu'
    print*,''
-   write(*, '(A28,X,F16.10)') 'ECMD LDA        regular    spin dens = ',Energy_c_md_LDA_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD LDA        effective  spin dens = ',Energy_c_md_n_and_LDA_mu_of_r
-   write(*, '(A35,X,F16.10)') 'ECMD PBE        regular    spin dens = ',Energy_c_md_PBE_mu_of_r
-   write(*, '(A35,X,F16.10)') 'ECMD PBE        effective  spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD LYP        regular    spin dens = ',Energy_c_md_LYP_mu_of_r               
-   write(*, '(A28,X,F16.10)') 'ECMD LYP        effective  spin dens = ',Energy_c_md_n_and_LYP_mu_of_r         
+   write(*, '(A40,X,F16.10)') 'ECMD LDA        regular    spin dens = ',Energy_c_md_LDA_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD LDA        effective  spin dens = ',Energy_c_md_n_and_LDA_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD PBE        regular    spin dens = ',Energy_c_md_PBE_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD PBE        effective  spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD LYP        regular    spin dens = ',Energy_c_md_LYP_mu_of_r               
+   write(*, '(A40,X,F16.10)') 'ECMD LYP        effective  spin dens = ',Energy_c_md_n_and_LYP_mu_of_r         
    print*,''
    print*,'Functionals with extrapolated exact ontop based on current wave function '
    print*,''
-   write(*, '(A28,X,F16.10)') 'ECMD PBE/ontop  regular    spin dens = ',Energy_c_md_on_top_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD PBE/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_PBE_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD LYP/ontop  regular    spin dens = ',Energy_c_md_on_top_LYP_mu_of_r
-   write(*, '(A28,X,F16.10)') 'ECMD PBE/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_LYP_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD PBE/ontop  regular    spin dens = ',Energy_c_md_on_top_PBE_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD PBE/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_PBE_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD LYP/ontop  regular    spin dens = ',Energy_c_md_on_top_LYP_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD LYP/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_LYP_mu_of_r
    print*,''
  endif
   if(.true.)then
