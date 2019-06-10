@@ -8,25 +8,24 @@
  END_DOC
  provide core_inact_act_on_top_of_r 
  integer :: i_point,i_state,i
- double precision :: n2,m2
+ double precision :: n2,m2,thr
+ thr = 1.d-10
+ effective_spin_dm = 0.d0
+ grad_effective_spin_dm = 0.d0
  do i_state = 1, N_states
   do i_point = 1, n_points_final_grid
    n2 = (one_e_dm_and_grad_alpha_in_r(4,i_point,i_state)  + one_e_dm_and_grad_beta_in_r(4,i_point,i_state))
    ! density squared 
    n2 = n2 * n2 
-   if(n2 - 4.D0 * core_inact_act_on_top_of_r(i_point,i_state).gt.1.d-10)then
+   if(n2 - 4.D0 * core_inact_act_on_top_of_r(i_point,i_state).gt.thr)then
     effective_spin_dm(i_point,i_state) = dsqrt(n2 - 4.D0 * core_inact_act_on_top_of_r(i_point,i_state))
-    if(isnan(effective_spin_dm(i_point,i_state) ))then
+    if(isnan(effective_spin_dm(i_point,i_state)))then
      print*,'isnan(effective_spin_dm(i_point,i_state)' 
      stop
     endif
     m2 = effective_spin_dm(i_point,i_state) 
-    m2 = m2 * m2
-    m2 = 0.5d0 / m2 ! 1/(2 * (n(r)^2 - 4 * ontop(r)) )
-    if(isnan(m2))then
-     print*,'isnan(m2)' 
-     stop
-    endif
+    if(m2.lt.thr)cycle
+    m2 = 0.5d0 / m2 ! 1/(2 * sqrt(n(r)^2 - 4 * ontop(r)) )
     do i = 1, 3
      grad_effective_spin_dm(i,i_point,i_state) = m2 * ( one_e_grad_dm_squared_at_r(i,i_point,i_state) - 4.d0 * grad_core_inact_act_on_top_of_r(i,i_point,i_state) )
     enddo

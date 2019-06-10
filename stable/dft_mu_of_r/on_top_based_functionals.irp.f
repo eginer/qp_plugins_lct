@@ -129,11 +129,19 @@ subroutine give_epsilon_lyp_ontop_effective_spin_dens_provider(mu,i_point,eps_c_
     grad_rho_b_2 += grad_effective_beta_dm(m,i_point,istate) **2.d0
     grad_rho_a_b += grad_effective_alpha_dm(m,i_point,istate) * grad_effective_beta_dm(m,i_point,istate)
    enddo
+  !do m = 1, 3
+  ! grad_rho_a_2 += one_e_dm_and_grad_alpha_in_r(m,i_point,istate)**2.d0
+  ! grad_rho_b_2 += one_e_dm_and_grad_beta_in_r(m,i_point,istate) **2.d0
+  ! grad_rho_a_b += one_e_dm_and_grad_alpha_in_r(m,i_point,istate) * one_e_dm_and_grad_beta_in_r(m,i_point,istate)
+  !enddo
    grad_rho_2 = grad_rho_a_2 + grad_rho_b_2 + 2.D0 * grad_rho_a_b
 
    ! effective alpha and beta density
    rho_a = effective_alpha_dm(i_point,istate)
    rho_b = effective_beta_dm(i_point,istate)
+
+  !rho_a = one_e_dm_and_grad_alpha_in_r(4,i_point,istate)
+  !rho_b = one_e_dm_and_grad_beta_in_r(4,i_point,istate)
 
 
    e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
