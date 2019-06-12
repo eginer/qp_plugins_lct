@@ -33,9 +33,7 @@ subroutine give_epsilon_lyp_ontop_provider(mu,i_point,eps_c_md_ontop_LYP)
    rho_b = one_e_dm_and_grad_beta_in_r(4,i_point,istate)
 
 
-!  e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
-   double precision :: ec_lyp2
-   e_LYP = ec_lyp2(rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b)
+   e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
 
    two_dm = core_inact_act_on_top_of_r(i_point,istate) ! on top of the wave function 
    two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
