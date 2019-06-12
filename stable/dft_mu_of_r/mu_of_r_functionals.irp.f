@@ -174,7 +174,7 @@ BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
   weight=final_weight_at_r_vector(i)
   mu = mu_of_r_vector(i)
 
-  call give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE)
+  call give_epsilon_pbe_provider(mu,i,eps_c_md_PBE)
   do istate = 1, N_states
    Energy_c_md_PBE_mu_of_r(istate) += eps_c_md_PBE(istate) * weight
   enddo
@@ -203,6 +203,7 @@ BEGIN_PROVIDER [double precision, Energy_c_md_LYP_mu_of_r, (N_states)]
  do i = 1, n_points_final_grid
   weight=final_weight_at_r_vector(i)
   mu = mu_of_r_vector(i)
+! mu = mu_average(1)
 
   call give_epsilon_lyp_provider(mu,i,eps_c_md_LYP)
   do istate = 1, N_states

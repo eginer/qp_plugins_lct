@@ -123,3 +123,58 @@ subroutine give_epsilon_c_md_PBE_mu_grad_input(mu,rho_a,rho_b, grad_rho_a, grad_
  
 
  
+
+
+subroutine give_epsilon_pbe_provider(mu,i_point,eps_c_md_PBE)
+  implicit none
+  double precision, intent(in)  :: mu 
+  double precision, intent(out) :: eps_c_md_PBE(N_states)
+  integer, intent(in) :: i_point
+  double precision :: two_dm, pi, e_pbe,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: grad_rho_a(3),grad_rho_b(3)
+  double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
+  double precision :: rhoc,rhoo,ec_pbe_88
+  double precision :: delta,two_dm_corr,rho_a,rho_b
+  double precision :: grad_rho_2,denom,g0_UEG_mu_inf
+  double precision :: sigmacc,sigmaco,sigmaoo
+  integer :: m, istate
+
+  pi = 4.d0 * datan(1.d0)
+
+  eps_c_md_PBE = 0.d0
+  do istate = 1, N_states
+   ! total and spin density 
+   rhoc = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) + one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
+   rhoo = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) - one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
+   ! gradients of the effective spin density 
+   grad_rho_a_2 = 0.D0
+   grad_rho_b_2 = 0.D0
+   grad_rho_a_b = 0.D0
+   do m = 1, 3
+    grad_rho_a_2 += one_e_dm_and_grad_alpha_in_r(m,i_point,istate)**2.d0
+    grad_rho_b_2 += one_e_dm_and_grad_beta_in_r(m,i_point,istate) **2.d0
+    grad_rho_a_b += one_e_dm_and_grad_alpha_in_r(m,i_point,istate) * one_e_dm_and_grad_beta_in_r(m,i_point,istate)
+   enddo
+   sigmacc = grad_rho_a_2 + grad_rho_b_2 + 2.d0 * grad_rho_a_b
+   sigmaco = 0.d0
+   sigmaoo = 0.d0
+   rho_a = one_e_dm_and_grad_alpha_in_r(4,i_point,istate)
+   rho_b = one_e_dm_and_grad_beta_in_r(4,i_point,istate)
+
+   call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE)
+   if(mu == 0.d0) then
+    eps_c_md_PBE(istate)=e_PBE
+   else
+!   note: the on-top pair density is (1-zeta^2) rhoc^2 g0 = 4 rhoa * rhob * g0
+    denom = (-2.d0+dsqrt(2d0))*sqrt(2.d0*pi) * 4.d0*rho_a*rho_b*g0_UEG_mu_inf(rho_a,rho_b)
+    if (dabs(denom) > 1.d-12) then
+     beta = (3.d0*e_PBE)/denom
+     ! Ecmd functional with the UEG ontop pair density when mu -> infty 
+     ! and the usual PBE correlation energy when mu = 0
+     eps_c_md_PBE(istate)=e_PBE/(1.d0+beta*mu**3)
+    else
+     eps_c_md_PBE(istate)=0.d0
+    endif
+   endif
+  enddo
+end

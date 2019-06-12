@@ -9,7 +9,7 @@
  provide core_inact_act_on_top_of_r 
  integer :: i_point,i_state,i
  double precision :: n2,m2,thr
- thr = 1.d-10
+ thr = 1.d-14
  effective_spin_dm = 0.d0
  grad_effective_spin_dm = 0.d0
  do i_state = 1, N_states
@@ -24,7 +24,6 @@
      stop
     endif
     m2 = effective_spin_dm(i_point,i_state) 
-    if(m2.lt.thr)cycle
     m2 = 0.5d0 / m2 ! 1/(2 * sqrt(n(r)^2 - 4 * ontop(r)) )
     do i = 1, 3
      grad_effective_spin_dm(i,i_point,i_state) = m2 * ( one_e_grad_dm_squared_at_r(i,i_point,i_state) - 4.d0 * grad_core_inact_act_on_top_of_r(i,i_point,i_state) )
