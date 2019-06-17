@@ -7,16 +7,6 @@ BEGIN_PROVIDER [double precision, q_holl_peg ]
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, k_holl_peg]
- implicit none
- BEGIN_DOC
-! k parameter of J. Chem. Phys. 148, 164111 (2018), needed for the same spin correlation 
- END_DOC
- k_holl_peg = 1.76d0
-
-END_PROVIDER 
-
-
 double precision function lambda_rho(q,rho)
  implicit none
  double precision, intent(in) :: rho,q
@@ -31,19 +21,21 @@ double precision function V_ab_holl_peg(rho_in,on_top_in)
  END_DOC
  include 'utils/constants.include.F'
  double precision, intent(in) :: rho_in,on_top_in
- double precision             :: rho,on_top,thr
+ double precision             :: rho,on_top,thr_rho,thr_n2
  double precision :: lamb,lamb_2,inv_2lamb,inv_2lamb_2,dexp_inv_2lamb_2,lambda_rho
  double precision :: big_1,big_21,big_22,big_2,num,denom
  double precision :: smal_1,smal_2
+ thr_rho = 1.d-10
+ thr_n2  = 1.d-30
  V_ab_holl_peg = 0.d0
- rho = max(rho_in,thr) 
- on_top = max(on_top_in,thr) 
- if(rho.lt.thr)then
+ rho = max(rho_in,thr_rho) 
+ on_top = max(on_top_in,thr_n2) 
+ if(rho.lt.thr_rho)then
   return
  endif
  lamb              = lambda_rho(q_holl_peg,rho)
  lamb_2            = lamb * lamb 
- if(lamb.lt.thr)then
+ if(lamb.lt.thr_rho)then
   return
  endif
  inv_2lamb         = 0.5d0/lamb
@@ -61,7 +53,7 @@ double precision function V_ab_holl_peg(rho_in,on_top_in)
  smal_1            = 2.d0 * lamb * dexp_inv_2lamb_2
  smal_2            = sqpi * (1.d0 + 2.d0 * lamb_2) * (1.d0 + derf(inv_2lamb))
  denom             = lamb_2 * (smal_1 + smal_2)
- if(denom.gt.thr)then
+ if(denom.gt.thr_rho)then
   V_ab_holl_peg     = num/denom
  else
   return
