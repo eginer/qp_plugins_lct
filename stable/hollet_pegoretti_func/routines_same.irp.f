@@ -32,7 +32,7 @@ double precision function V_aa_holl_peg(l0)
  if(dabs(delta).lt.thr_delta)then
   return 
  endif
- delta4            = 4.d0 * delta4 
+ delta4            = 4.d0 * delta
  if(delta4.lt.thr_delta)then
   return 
  endif
