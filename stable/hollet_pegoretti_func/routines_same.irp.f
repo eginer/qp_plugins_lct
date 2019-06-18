@@ -44,11 +44,11 @@ double precision function V_aa_holl_peg(l0)
  dexp_inv_detla4_2 = dexp(-inv_detla4_2)
  ! first term 
  double precision :: big_1,big_21,big_22,big_2,numerator
- big_1             = sqpi3 * (delta * 16.d0 * delta_3) - 40.d0 * delta_2 - 1.d0
+ big_1             = sqpi3 * (delta + 16.d0 * delta_3) - 40.d0 * delta_2 - 1.d0
  big_1             = big_1 * delta4 * dexp_inv_detla4_2 
  
- big_21            = sqpi3 * (delta * 24.d0 * delta_3) - 48.d0 * (delta_2 + 4.d0 * delta_4) - 1.d0
- big_22            = sqpi * (1.d0 + derf(inv_delta4))
+ big_21            = sqpi  * (sqpi3 * (delta + 24.d0 * delta_3) - 48.d0 * (delta_2 + 4.d0 * delta_4) - 1.d0 )
+ big_22            = (1.d0 + derf(inv_delta4))
  big_2             = big_21 * big_22  
  numerator         = pi * l0 * (big_2 + big_1)
  double precision :: smal_1, smal_21, smal_22, smal_2, denom
@@ -57,4 +57,5 @@ double precision function V_aa_holl_peg(l0)
  smal_22           = 1.d0 + derf(inv_delta4)
  smal_2            = smal_22 * smal_21
  denom             = 3.d0 * delta_4 * ( smal_2 + smal_1  )
+ V_aa_holl_peg     = numerator/denom
 end
