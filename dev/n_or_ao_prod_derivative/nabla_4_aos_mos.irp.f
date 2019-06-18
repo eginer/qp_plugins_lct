@@ -12,7 +12,7 @@ subroutine give_all_aos_and_fourth_at_r(r,aos_array,aos_grad_array,aos_lapl_arra
 !
 !            : aos_3rd_direct_array(1,i) = Third partial derivative of the ao(i) evaluated at r by X (d^3ao(i)/dx^3)
 !
-!            : aos_4th_direct_array(1,i) = Fourth partial derivative of the ao(i) evaluated at r by X (d^4ao(i)/dx^4)
+!            : aos_3rd_direct_array(1,i) = Fourth partial derivative of the ao(i) evaluated at r by X (d^4ao(i)/dx^4)
  END_DOC
  double precision, intent(in) :: r(3)
  double precision, intent(out) :: aos_array(ao_num)
@@ -740,6 +740,34 @@ end
 
  end
 
+ subroutine give_nabla_2_at_r_act_mo(r,nabla_2_at_r_mo)
+ implicit none
+ BEGIN_DOC
+! blablablabla
+ END_DOC
+ double precision, intent(in) :: r(3)
+ double precision, intent(out) :: nabla_2_at_r_mo(mo_num,mo_num)
+
+ double precision :: nabla_2_at_r(3,ao_num,ao_num)
+ double precision :: nabla_2_tot_at_r(ao_num,ao_num)
+ integer :: j,k,m,n
+ call give_nabla_2_at_r(r,nabla_2_at_r,nabla_2_tot_at_r)
+
+ nabla_2_at_r_mo = 0.d0
+
+ do j = 1, elec_alpha_num
+  do k = 1, elec_alpha_num
+   do m = 1, ao_num
+    do n = 1, ao_num 
+     nabla_2_at_r_mo(k,j) += mo_coef(m,j)*mo_coef(n,k)* nabla_2_tot_at_r(n,m) 
+    enddo
+   enddo
+  enddo
+ enddo
+
+ end
+
+
  subroutine give_nabla_4_at_r_mo(r,nabla_4_at_r_mo)
  implicit none
  BEGIN_DOC
@@ -776,15 +804,10 @@ end
  integer :: i,j,k,m,n
  double precision :: tempo_matrix(mo_num,ao_num)
  mos_nabla_4_in_r_array_transp_2= 0.d0
- !$OMP PARALLEL DO &
- !$OMP DEFAULT (NONE)  &
- !$OMP SHARED  (mo_num,ao_num,mo_coef_transp,mo_coef,aos_nabla_4_in_r_array,mos_nabla_4_in_r_array_2,n_points_final_grid) & 
- !$OMP PRIVATE (i,tempo_matrix)
  do i = 1, n_points_final_grid
   call dgemm('N','N',mo_num,ao_num,ao_num,1.d0,mo_coef_transp,ao_num,aos_nabla_4_in_r_array(1,1,i),ao_num,0.d0,tempo_matrix,mo_num)
   call dgemm('N','N',mo_num,mo_num,ao_num,1.d0,tempo_matrix,mo_num,mo_coef,ao_num,0.d0,mos_nabla_4_in_r_array_2(1,1,i),mo_num)
  enddo
- !$OMP END PARALLEL DO
  END_PROVIDER
 
 
@@ -797,14 +820,9 @@ end
  integer :: i,j,k,m,n
  double precision :: tempo_matrix(mo_num,ao_num)
  mos_nabla_2_in_r_array_transp_2= 0.d0
- !$OMP PARALLEL DO &
- !$OMP DEFAULT (NONE)  &
- !$OMP SHARED  (mo_num,ao_num,mo_coef_transp,mo_coef,aos_nabla_2_in_r_array,mos_nabla_2_in_r_array_2,n_points_final_grid) & 
- !$OMP PRIVATE (i,tempo_matrix)
  do i = 1, n_points_final_grid
   call dgemm('N','N',mo_num,ao_num,ao_num,1.d0,mo_coef_transp,ao_num,aos_nabla_2_in_r_array(1,1,i),ao_num,0.d0,tempo_matrix,mo_num)
   call dgemm('N','N',mo_num,mo_num,ao_num,1.d0,tempo_matrix,mo_num,mo_coef,ao_num,0.d0,mos_nabla_2_in_r_array_2(1,1,i),mo_num)
  enddo
- !$OMP END PARALLEL DO
  END_PROVIDER
 

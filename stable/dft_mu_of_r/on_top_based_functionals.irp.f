@@ -141,9 +141,7 @@ subroutine give_epsilon_lyp_ontop_effective_spin_dens_provider(mu,i_point,eps_c_
    rho_a = effective_alpha_dm(i_point,istate)
    rho_b = effective_beta_dm(i_point,istate)
 
-!  e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
-   double precision :: ec_lyp2
-   e_LYP = ec_lyp2(rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b)
+   e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
 
    two_dm = core_inact_act_on_top_of_r(i_point,istate) ! on top of the wave function 
    two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
@@ -196,9 +194,7 @@ subroutine give_epsilon_lyp_effective_spin_dens_provider(mu,i_point,eps_c_md_LYP
    rho_b = effective_beta_dm(i_point,istate)
 
 
-!  e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
-   double precision :: ec_lyp2
-   e_LYP = ec_lyp2(rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b)
+   e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
 
    if(mu == 0.d0) then
     eps_c_md_LYP(istate)=e_LYP
