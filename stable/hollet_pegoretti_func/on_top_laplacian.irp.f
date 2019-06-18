@@ -7,7 +7,7 @@ double precision function on_top_aa_lapl(i_point)
  r(3)= final_grid_points(3,i_point)
  call give_nabla_2_at_r_mo(r,nabla_2_at_r_mo)
  
- double precision :: direct,exchange,lapl_ii,lapl_ij
+ double precision :: direct,exchange,lapl_jj,lapl_ij
  integer :: i,j 
  direct   = 0.d0
  exchange = 0.d0
