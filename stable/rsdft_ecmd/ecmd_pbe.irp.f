@@ -162,6 +162,9 @@ subroutine give_epsilon_pbe_provider(mu,i_point,eps_c_md_PBE)
    rho_b = one_e_dm_and_grad_beta_in_r(4,i_point,istate)
 
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE)
+   if(e_PBE.gt.0.d0)then
+    print*,'PBE gt 0 with regular dens'
+   endif
    if(mu == 0.d0) then
     eps_c_md_PBE(istate)=e_PBE
    else

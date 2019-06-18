@@ -32,6 +32,7 @@ subroutine routine
    mu           = cas_full_mu_of_r_grid_mur_psi_coal_vector(i)
    ontop_extrap = extrapolated_core_inact_act_on_top_grid_mur(i,1)
    ontop_ueg    = UEG_on_top_grid_mur(i,1)
+   !                                     1      2          3   4    5       6          7           8
    write(i_unit_output,'(100(F16.10,X))')z,ec_pbe_ontop,ec_pbe,mu,ontop,ontop_extrap,ontop_ueg,(dm_a+dm_b)
   enddo
 end

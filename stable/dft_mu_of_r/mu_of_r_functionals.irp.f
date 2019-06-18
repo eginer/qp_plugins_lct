@@ -151,6 +151,39 @@
  END_PROVIDER
 
 
+ BEGIN_PROVIDER [double precision, Energy_c_md_on_top_SCAN_mu_of_r, (N_states)]
+ BEGIN_DOC
+  ! Energy_c_md_on_top_SCAN_mu_of_r_UEG_vector = SCAN-on_top multi determinant functional with exact on top extracted from the UEG using a mu(r) interaction 
+  ! Energy_c_md_on_top_SCAN_mu_of_r_vector     = SCAN-on_top multi determinant functional with exact on top extrapolated for large mu using a mu(r) interaction 
+  ! Energy_c_md_on_top_u_of_r_vector     = on_top multi determinant functional with exact on top extrapolated for large mu using a mu(r) interaction 
+ END_DOC
+ implicit none
+ double precision ::  r(3)
+ double precision :: weight,mu,pi
+ integer :: i,istate
+ double precision,allocatable  :: eps_c_md_on_top_SCAN(:),two_dm(:)
+ pi = 4.d0 * datan(1.d0)
+
+ allocate(eps_c_md_on_top_SCAN(N_states),two_dm(N_states))
+ Energy_c_md_on_top_SCAN_mu_of_r = 0.d0
+  
+ print*,'Providing Energy_c_md_mu_of_r_SCAN_on_top ...'
+ call wall_time(wall0)
+ do i = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(i)
+  mu = mu_of_r_vector(i)
+  call give_epsilon_scan_ontop_provider(mu,i,eps_c_md_on_top_SCAN)
+  do istate = 1, N_states
+   Energy_c_md_on_top_SCAN_mu_of_r(istate) += eps_c_md_on_top_SCAN(istate) * weight
+  enddo
+ enddo
+ double precision :: wall1, wall0
+ call wall_time(wall1)
+ print*,'Time for the Energy_c_md_on_top_SCAN_mu_of_r:',wall1-wall0
+
+ END_PROVIDER
+
+
 
 BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
  BEGIN_DOC
@@ -184,6 +217,40 @@ BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
  print*,'Time for the Energy_c_md_PBE_mu_of_r:',wall1-wall0
 
  END_PROVIDER
+
+BEGIN_PROVIDER [double precision, Energy_c_md_SCAN_mu_of_r, (N_states)]
+ BEGIN_DOC
+  ! Energy_c_md_SCAN_mu_of_r_vector           = SCAN multi determinant functional with UEG on top for large mu using a mu(r) interaction (JT)
+ END_DOC
+ implicit none
+ double precision ::  r(3)
+ double precision :: weight,mu
+ integer :: i,istate
+ double precision,allocatable  :: eps_c_md_SCAN(:)
+
+ allocate(eps_c_md_SCAN(N_states))
+ Energy_c_md_SCAN_mu_of_r = 0.d0
+  
+ print*,'Providing Energy_c_md_SCAN_mu_of_r ...'
+ call wall_time(wall0)
+ do i = 1, n_points_final_grid
+  r(1) = final_grid_points(1,i)
+  r(2) = final_grid_points(2,i)
+  r(3) = final_grid_points(3,i)
+  weight=final_weight_at_r_vector(i)
+  mu = mu_of_r_vector(i)
+
+  call give_epsilon_scan_provider(mu,i,eps_c_md_SCAN)
+  do istate = 1, N_states
+   Energy_c_md_SCAN_mu_of_r(istate) += eps_c_md_SCAN(istate) * weight
+  enddo
+ enddo
+ double precision :: wall1, wall0
+ call wall_time(wall1)
+ print*,'Time for the Energy_c_md_SCAN_mu_of_r:',wall1-wall0
+
+ END_PROVIDER
+
 
 BEGIN_PROVIDER [double precision, Energy_c_md_LYP_mu_of_r, (N_states)]
  BEGIN_DOC
