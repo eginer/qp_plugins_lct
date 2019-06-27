@@ -217,11 +217,6 @@ subroutine new_two_body_dm_nstates_openmp_work_$N_int(big_array_aa,big_array_bb,
          c_2(l) = u_t(l,k_a)
         enddo
         call off_diagonal_double_to_two_body_ab_dm(tmp_det,tmp_det2,c_1,c_2,big_array_ab,dim1,dim2,dim3,dim4)
-       !call get_s2(tmp_det,tmp_det2,$N_int,sij)
-       !do l=1,N_st
-       !  v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,l_a)
-       !  s_t(l,k_a) = s_t(l,k_a) + sij * u_t(l,l_a)
-       !enddo
       enddo
 
     enddo
@@ -382,7 +377,10 @@ subroutine new_two_body_dm_nstates_openmp_work_$N_int(big_array_aa,big_array_bb,
        c_1(l) = u_t(l,l_a)
        c_2(l) = u_t(l,k_a)
       enddo
+      ! increment the alpha/beta  part for single excitations 
       call off_diagonal_single_to_two_body_ab_dm(tmp_det, tmp_det2,c_1,c_2,big_array_ab,dim1,dim2,dim3,dim4)
+      ! increment the beta /beta  part for single excitations 
+      call off_diagonal_single_to_two_body_bb_dm(tmp_det, tmp_det2,c_1,c_2,big_array_bb,dim1,dim2,dim3,dim4)
     enddo
 
     ! Compute Hij for all beta doubles
@@ -401,7 +399,7 @@ subroutine new_two_body_dm_nstates_openmp_work_$N_int(big_array_aa,big_array_bb,
        c_1(l) = u_t(l,l_a)
        c_2(l) = u_t(l,k_a)
       enddo
-!     call off_diagonal_double_to_two_body_bb_dm(tmp_det,psi_det_alpha_unique(1, lrow),c_1,c_2,big_array_aa,dim1,dim2,dim3,dim4)
+      call off_diagonal_double_to_two_body_bb_dm(tmp_det(1,2),psi_det_alpha_unique(1, lcol),c_1,c_2,big_array_bb,dim1,dim2,dim3,dim4)
       ASSERT (l_a <= N_det)
 
      !do l=1,N_st
