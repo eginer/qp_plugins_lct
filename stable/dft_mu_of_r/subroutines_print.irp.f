@@ -36,6 +36,7 @@ subroutine print_contribution_dft_mu_of_r
    write(*, '(A40,X,F16.10)') 'ECMD PBE        effective  spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
    write(*, '(A40,X,F16.10)') 'ECMD SCAN       regular    spin dens = ',Energy_c_md_SCAN_mu_of_r               
    write(*, '(A40,X,F16.10)') 'ECMD SCAN       effective  spin dens = ',Energy_c_md_n_and_SCAN_mu_of_r         
+   write(*, '(A40,X,F16.10)') 'ECMD HOLPEG     regular    spin dens = ',Energy_c_md_holpeg_mu_of_r
    print*,''
    print*,'Functionals with extrapolated exact ontop based on current wave function '
    print*,''

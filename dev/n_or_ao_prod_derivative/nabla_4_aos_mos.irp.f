@@ -746,7 +746,7 @@ end
 ! blablablabla
  END_DOC
  double precision, intent(in) :: r(3)
- double precision, intent(out) :: nabla_2_at_r_mo(mo_num,mo_num)
+ double precision, intent(out) :: nabla_2_at_r_mo(n_act_orb,n_act_orb)
 
  double precision :: nabla_2_at_r(3,ao_num,ao_num)
  double precision :: nabla_2_tot_at_r(ao_num,ao_num)
@@ -755,11 +755,11 @@ end
 
  nabla_2_at_r_mo = 0.d0
 
- do j = 1, elec_alpha_num
-  do k = 1, elec_alpha_num
+ do j = 1, n_act_orb
+  do k = 1, n_act_orb
    do m = 1, ao_num
     do n = 1, ao_num 
-     nabla_2_at_r_mo(k,j) += mo_coef(m,j)*mo_coef(n,k)* nabla_2_tot_at_r(n,m) 
+     nabla_2_at_r_mo(k,j) += mo_coef(m,list_act(j))*mo_coef(n,list_act(k))* nabla_2_tot_at_r(n,m) 
     enddo
    enddo
   enddo

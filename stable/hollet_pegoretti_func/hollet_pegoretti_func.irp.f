@@ -1,4 +1,17 @@
 program hollet_pegoretti_func
+ implicit none
+ read_wf = .true.
+ touch read_wf
+ no_core_density = "no_core_dm"
+ touch no_core_density
+ on_top_from_cas = .True.
+ touch on_top_from_cas
+
+ call routine
+
+end
+ 
+subroutine routine
   implicit none
   BEGIN_DOC
 ! TODO : Put the documentation of the program here

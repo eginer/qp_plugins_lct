@@ -1,7 +1,7 @@
 double precision function on_top_aa_lapl(i_point)
  implicit none
  integer, intent(in) :: i_point
- double precision :: r(3),nabla_2_at_r_mo(mo_num,mo_num)
+ double precision :: r(3),nabla_2_at_r_mo(n_act_orb,n_act_orb)
  r(1)= final_grid_points(1,i_point) 
  r(2)= final_grid_points(2,i_point) 
  r(3)= final_grid_points(3,i_point)
@@ -25,7 +25,7 @@ end
 double precision function on_top_bb_lapl(i_point)
  implicit none
  integer, intent(in) :: i_point
- double precision :: r(3),nabla_2_at_r_mo(mo_num,mo_num)
+ double precision :: r(3),nabla_2_at_r_mo(n_act_orb,n_act_orb)
  r(1)= final_grid_points(1,i_point) 
  r(2)= final_grid_points(2,i_point) 
  r(3)= final_grid_points(3,i_point)
