@@ -268,7 +268,7 @@ subroutine test_on_top_act
  do i = 1, n_points_final_grid
   weight = final_weight_at_r_vector(i)
   old = core_inact_act_on_top_of_r(i,1)
-  new = core_inact_act_on_top_of_r_new(i) 
+  new = core_inact_act_on_top_of_r_new(i,1) 
   accu_tot(1) += old * weight
   accu_tot(2) += new * weight
   accu += dabs(old - new) * weight
