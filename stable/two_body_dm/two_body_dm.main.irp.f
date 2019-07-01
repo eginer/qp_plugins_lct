@@ -5,7 +5,10 @@ program two_body_dm
   END_DOC
  read_wf = .True.
  touch read_wf
- call test_on_top
+ no_core_density = "no_core_dm"
+ touch no_core_density
+
+ call test_on_top_act
 !call comp_test
 !touch two_bod_alpha_beta_mo_physicist
  
@@ -251,5 +254,27 @@ subroutine test_on_top
   print*,'accu = '
   print*, accu 
  enddo
+
+end
+
+subroutine test_on_top_act
+ implicit none
+ integer :: i
+ double precision :: r(3), weight, accu,old,new
+ double precision :: pure_act_on_top_of_r
+ double precision :: accu_tot(2)
+ accu  = 0.d0
+ accu_tot = 0.d0
+ do i = 1, n_points_final_grid
+  weight = final_weight_at_r_vector(i)
+  old = core_inact_act_on_top_of_r(i,1)
+  new = core_inact_act_on_top_of_r_new(i) 
+  accu_tot(1) += old * weight
+  accu_tot(2) += new * weight
+  accu += dabs(old - new) * weight
+ enddo
+ print*,'accu        = ',accu
+ print*,'accu_tot(1) = ',accu_tot(1)
+ print*,'accu_tot(2) = ',accu_tot(2)
 
 end
