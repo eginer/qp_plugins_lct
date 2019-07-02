@@ -106,7 +106,7 @@ END_PROVIDER
       phi_j = act_mos_in_r_array(j,ipoint)
       do i = 1, n_act_orb
        phi_i = act_mos_in_r_array(i,ipoint)
-       !                                                       1 2 1 2
+       !                                                            1 2 1 2
        pure_act_on_top_of_r += all_states_act_two_rdm_alpha_beta_mo(i,j,k,l,istate) * phi_i * phi_j * phi_k * phi_l
      enddo
     enddo
@@ -135,10 +135,10 @@ END_PROVIDER
   print*,'USING THE VALENCE ONLY TWO BODY DENSITY'
   no_core = .True.
  endif
-!!$OMP PARALLEL DO &
-!!$OMP DEFAULT (NONE)  &
-!!$OMP PRIVATE (i_point,core_inact_dm,istate,pure_act_on_top_of_r) & 
-!!$OMP SHARED(core_inact_act_on_top_of_r_new,n_points_final_grid,inact_density,core_density,one_e_act_density_beta,one_e_act_density_alpha,no_core,N_states)
+ !$OMP PARALLEL DO &
+ !$OMP DEFAULT (NONE)  &
+ !$OMP PRIVATE (i_point,core_inact_dm,istate,pure_act_on_top_of_r) & 
+ !$OMP SHARED(core_inact_act_on_top_of_r_new,n_points_final_grid,inact_density,core_density,one_e_act_density_beta,one_e_act_density_alpha,no_core,N_states)
  do i_point = 1, n_points_final_grid
   do istate = 1, N_states
    call pure_act_on_top_of_r_all_states(i_point,istate,pure_act_on_top_of_r)
@@ -147,11 +147,10 @@ END_PROVIDER
    else 
     core_inact_dm = (inact_density(i_point) + core_density(i_point))
    endif
-   print*,pure_act_on_top_of_r,core_inact_dm,one_e_act_density_beta(i_point,istate), one_e_act_density_alpha(i_point,istate)
    core_inact_act_on_top_of_r_new(i_point,istate) = pure_act_on_top_of_r + core_inact_dm * (one_e_act_density_beta(i_point,istate) + one_e_act_density_alpha(i_point,istate)) + core_inact_dm*core_inact_dm
   enddo
  enddo
-!!$OMP END PARALLEL DO
+ !$OMP END PARALLEL DO
  call wall_time(wall_1)
  print*,'provided the core_inact_act_on_top_of_r_new'
  print*,'Time to provide :',wall_1 - wall_0

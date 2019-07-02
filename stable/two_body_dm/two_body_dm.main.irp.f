@@ -267,7 +267,10 @@ subroutine test_on_top_act
  accu_tot = 0.d0
  do i = 1, n_points_final_grid
   weight = final_weight_at_r_vector(i)
+  call pure_act_on_top_of_r_all_states(i,1,pure_act_on_top_of_r)
   old = core_inact_act_on_top_of_r(i,1)
+! new = pure_act_on_top_of_r
+! print*,'new = ',new
   new = core_inact_act_on_top_of_r_new(i,1) 
   accu_tot(1) += old * weight
   accu_tot(2) += new * weight
