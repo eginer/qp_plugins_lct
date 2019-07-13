@@ -1,4 +1,6 @@
  BEGIN_PROVIDER [double precision, two_bod_alpha_beta_mo, (mo_num,mo_num,mo_num,mo_num,N_states)]
+&BEGIN_PROVIDER [double precision, two_bod_alpha_alpha_mo, (mo_num,mo_num,mo_num,mo_num,N_states)]
+&BEGIN_PROVIDER [double precision, two_bod_beta_beta_mo, (mo_num,mo_num,mo_num,mo_num,N_states)]
  implicit none
  BEGIN_DOC
  !  two_bod_alpha_beta(i,j,k,l) = <Psi| a^{dagger}_{j,alpha} a^{dagger}_{l,beta} a_{k,beta} a_{i,alpha} | Psi>
@@ -13,11 +15,41 @@
  dim3 = mo_num
  dim4 = mo_num
  two_bod_alpha_beta_mo = 0.d0
+ two_bod_alpha_alpha_mo= 0.d0
+ two_bod_beta_beta_mo  = 0.d0
  print*,'providing two_bod_alpha_beta ...'
  call wall_time(cpu_0)
- call two_body_dm_nstates_openmp(two_bod_alpha_beta_mo,dim1,dim2,dim3,dim4,psi_coef,size(psi_coef,2),size(psi_coef,1))
+!call two_body_dm_nstates_openmp(two_bod_alpha_beta_mo,dim1,dim2,dim3,dim4,psi_coef,size(psi_coef,2),size(psi_coef,1))
+ call new_two_body_dm_nstates_openmp(two_bod_alpha_alpha_mo,two_bod_beta_beta_mo,two_bod_alpha_beta_mo,dim1,dim2,dim3,dim4,psi_coef,size(psi_coef,2),size(psi_coef,1))
  call wall_time(cpu_1)
  print*,'two_bod_alpha_beta provided in',dabs(cpu_1-cpu_0)
+
+ integer :: ii,jj,i,j,k,l
+ if(no_core_density .EQ. "no_core_dm")then
+  print*,'USING THE VALENCE ONLY TWO BODY DENSITY'
+
+  do ii = 1, n_core_orb ! 1 
+   i = list_core(ii) 
+   do j = 1, mo_num ! 2 
+    do k = 1, mo_num  ! 1 
+     do l = 1, mo_num ! 2 
+      !                     2 2 1 1
+      two_bod_alpha_beta_mo(l,j,k,i,:) = 0.d0
+      two_bod_alpha_beta_mo(j,l,k,i,:) = 0.d0
+      two_bod_alpha_beta_mo(l,j,i,k,:) = 0.d0
+      two_bod_alpha_beta_mo(j,l,i,k,:) = 0.d0
+
+      two_bod_alpha_beta_mo(k,i,l,j,:) = 0.d0
+      two_bod_alpha_beta_mo(k,i,j,l,:) = 0.d0
+      two_bod_alpha_beta_mo(i,k,l,j,:) = 0.d0
+      two_bod_alpha_beta_mo(i,k,j,l,:) = 0.d0
+     enddo
+    enddo
+   enddo
+  enddo
+
+
+ endif
 
  END_PROVIDER 
 
@@ -479,7 +511,7 @@
  enddo
  end
 
- subroutine diagonal_contrib_to_all_two_body_dm(det_1,c_1,big_array_ab,big_array_aa,big_array_bb,dim1,dim2,dim3,dim4)
+ subroutine diagonal_contrib_to_all_two_body_dm(det_1,c_1,big_array_aa,big_array_bb,big_array_ab,dim1,dim2,dim3,dim4)
  use bitmasks
  implicit none
  integer, intent(in) :: dim1,dim2,dim3,dim4
@@ -506,16 +538,16 @@
    enddo 
    do j = 1, n_occ_ab(1)
     h2 = occ(j,1)
-    big_array_aa(h1,h2,h1,h2,istate) -= c_1_bis 
-    big_array_aa(h1,h1,h2,h2,istate) += c_1_bis 
+    big_array_aa(h1,h1,h2,h2,istate) += 0.5d0 * c_1_bis 
+    big_array_aa(h1,h2,h2,h1,istate) -= 0.5d0 * c_1_bis 
    enddo
   enddo
   do i = 1, n_occ_ab(2)
    h1 = occ(i,2)
    do j = 1, n_occ_ab(2)
     h2 = occ(j,2)
-    big_array_bb(h1,h1,h2,h2,istate) += c_1_bis 
-    big_array_bb(h1,h2,h1,h2,istate) -= c_1_bis 
+    big_array_bb(h1,h1,h2,h2,istate) += 0.5d0 * c_1_bis 
+    big_array_bb(h1,h2,h2,h1,istate) -= 0.5d0 * c_1_bis 
    enddo
   enddo
  enddo
@@ -579,3 +611,121 @@
   enddo
  endif
  end
+
+ subroutine off_diagonal_single_to_two_body_aa_dm(det_1,det_2,c_1,c_2,big_array,dim1,dim2,dim3,dim4)
+ use bitmasks
+ implicit none
+ integer, intent(in) :: dim1,dim2,dim3,dim4
+ double precision, intent(inout) :: big_array(dim1,dim2,dim3,dim4,N_states)
+ integer(bit_kind), intent(in)  :: det_1(N_int,2),det_2(N_int,2)
+ double precision, intent(in)   :: c_1(N_states),c_2(N_states)
+ integer                        :: occ(N_int*bit_kind_size,2)
+ integer                        :: n_occ_ab(2)
+ integer :: i,j,h1,h2,istate,p1
+ integer                        :: exc(0:2,2,2)
+ double precision               :: phase
+ call bitstring_to_list_ab(det_1, occ, n_occ_ab, N_int)
+ call get_single_excitation(det_1,det_2,exc,phase,N_int)
+ if (exc(0,1,1) == 1) then
+  ! Mono alpha
+  h1 = exc(1,1,1)
+  p1 = exc(1,2,1)
+  do istate = 1, N_states
+   do i = 1, n_occ_ab(1)
+    h2 = occ(i,1)
+    big_array(h1,p1,h2,h2,istate) += 0.5d0 * c_1(istate) * c_2(istate) * phase
+    big_array(h1,h2,h2,p1,istate) -= 0.5d0 * c_1(istate) * c_2(istate) * phase
+
+    big_array(h2,h2,h1,p1,istate) += 0.5d0 * c_1(istate) * c_2(istate) * phase
+    big_array(h2,p1,h1,h2,istate) -= 0.5d0 * c_1(istate) * c_2(istate) * phase
+    enddo 
+  enddo
+ else 
+  return
+ endif
+ end
+
+ subroutine off_diagonal_single_to_two_body_bb_dm(det_1,det_2,c_1,c_2,big_array,dim1,dim2,dim3,dim4)
+ use bitmasks
+ implicit none
+ integer, intent(in) :: dim1,dim2,dim3,dim4
+ double precision, intent(inout) :: big_array(dim1,dim2,dim3,dim4,N_states)
+ integer(bit_kind), intent(in)  :: det_1(N_int,2),det_2(N_int,2)
+ double precision, intent(in)   :: c_1(N_states),c_2(N_states)
+ integer                        :: occ(N_int*bit_kind_size,2)
+ integer                        :: n_occ_ab(2)
+ integer :: i,j,h1,h2,istate,p1
+ integer                        :: exc(0:2,2,2)
+ double precision               :: phase
+ call bitstring_to_list_ab(det_1, occ, n_occ_ab, N_int)
+ call get_single_excitation(det_1,det_2,exc,phase,N_int)
+ if (exc(0,1,1) == 1) then
+  return
+ else
+  ! Mono beta
+  h1 =  exc(1,1,2)
+  p1 =  exc(1,2,2)
+  do istate = 1, N_states
+   do i = 1, n_occ_ab(2)
+    h2 = occ(i,2)
+    big_array(h1,p1,h2,h2,istate) += 0.5d0 * c_1(istate) * c_2(istate) * phase
+    big_array(h1,h2,h2,p1,istate) -= 0.5d0 * c_1(istate) * c_2(istate) * phase
+
+    big_array(h2,h2,h1,p1,istate) += 0.5d0 * c_1(istate) * c_2(istate) * phase
+    big_array(h2,p1,h1,h2,istate) -= 0.5d0 * c_1(istate) * c_2(istate) * phase
+    enddo 
+  enddo
+ endif
+ end
+
+
+ subroutine off_diagonal_double_to_two_body_aa_dm(det_1,det_2,c_1,c_2,big_array,dim1,dim2,dim3,dim4)
+ use bitmasks
+ implicit none
+ integer, intent(in) :: dim1,dim2,dim3,dim4
+ double precision, intent(inout) :: big_array(dim1,dim2,dim3,dim4,N_states)
+ integer(bit_kind), intent(in)  :: det_1(N_int),det_2(N_int)
+ double precision, intent(in)   :: c_1(N_states),c_2(N_states)
+ integer :: i,j,h1,h2,p1,p2,istate
+ integer                        :: exc(0:2,2)
+ double precision               :: phase
+ call get_double_excitation_spin(det_1,det_2,exc,phase,N_int)
+ h1 =exc(1,1)
+ h2 =exc(2,1)
+ p1 =exc(1,2)
+ p2 =exc(2,2)
+!print*,'h1,p1,h2,p2',h1,p1,h2,p2,c_1(istate) * phase * c_2(istate)
+ do istate = 1, N_states
+  big_array(h1,p1,h2,p2,istate) += 0.5d0 * c_1(istate) * phase * c_2(istate)
+  big_array(h1,p2,h2,p1,istate) -= 0.5d0 * c_1(istate) * phase * c_2(istate)
+
+  big_array(h2,p2,h1,p1,istate) += 0.5d0 * c_1(istate) * phase * c_2(istate)
+  big_array(h2,p1,h1,p2,istate) -= 0.5d0 * c_1(istate) * phase * c_2(istate)
+ enddo
+ end
+
+ subroutine off_diagonal_double_to_two_body_bb_dm(det_1,det_2,c_1,c_2,big_array,dim1,dim2,dim3,dim4)
+ use bitmasks
+ implicit none
+ integer, intent(in) :: dim1,dim2,dim3,dim4
+ double precision, intent(inout) :: big_array(dim1,dim2,dim3,dim4,N_states)
+ integer(bit_kind), intent(in)  :: det_1(N_int),det_2(N_int)
+ double precision, intent(in)   :: c_1(N_states),c_2(N_states)
+ integer :: i,j,h1,h2,p1,p2,istate
+ integer                        :: exc(0:2,2)
+ double precision               :: phase
+ call get_double_excitation_spin(det_1,det_2,exc,phase,N_int)
+ h1 =exc(1,1)
+ h2 =exc(2,1)
+ p1 =exc(1,2)
+ p2 =exc(2,2)
+!print*,'h1,p1,h2,p2',h1,p1,h2,p2,c_1(istate) * phase * c_2(istate)
+ do istate = 1, N_states
+  big_array(h1,p1,h2,p2,istate) += 0.5d0 * c_1(istate) * phase * c_2(istate)
+  big_array(h1,p2,h2,p1,istate) -= 0.5d0 * c_1(istate) * phase * c_2(istate)
+
+  big_array(h2,p2,h1,p1,istate) += 0.5d0 * c_1(istate) * phase * c_2(istate)
+  big_array(h2,p1,h1,p2,istate) -= 0.5d0 * c_1(istate) * phase * c_2(istate)
+ enddo
+ end
+

@@ -153,3 +153,38 @@ BEGIN_PROVIDER [double precision, integral_r1r2_f_HF_aa]
  call wall_time(wall1)
  print*,'Time to provide integral_r1r2_f_HF_aa = ',wall1 - wall0
 END_PROVIDER 
+
+BEGIN_PROVIDER [double precision, integral_r1r2_f_HF_ab]
+ implicit none
+ integer :: ipoint,jpoint
+ integer :: k,l 
+ double precision :: wall0,wall1,weight1,weight2,r1(3),r2(3),f_HF_aa,integral_psi,two_bod
+ provide two_bod_alpha_beta_mo_physicist 
+ print*,'Providing  integral_r1r2_f_HF_ab ..... '
+ call wall_time(wall0)
+ integral_r1r2_f_HF_ab = 0.d0
+ !$OMP PARALLEL        &
+ !$OMP DEFAULT (NONE)  &
+ !$OMP PRIVATE (ipoint,jpoint,k,l,weight1,weight2,r1,r2,integral_psi,two_bod) & 
+ !$OMP SHARED  (mo_num, n_points_final_grid, final_weight_at_r_vector,integral_r1r2_f_HF_ab,final_grid_points)
+ !$OMP DO              
+ do ipoint = 1, n_points_final_grid
+  weight1=final_weight_at_r_vector(ipoint)
+  r1(1) = final_grid_points(1,ipoint)
+  r1(2) = final_grid_points(2,ipoint)
+  r1(3) = final_grid_points(3,ipoint)
+  do jpoint = 1, n_points_final_grid
+   r2(1) = final_grid_points(1,jpoint)
+   r2(2) = final_grid_points(2,jpoint)
+   r2(3) = final_grid_points(3,jpoint)
+   weight2=final_weight_at_r_vector(jpoint)
+   call f_HF_ab(r1,r2,integral_psi,two_bod)
+   integral_r1r2_f_HF_ab += weight1 * weight2 * integral_psi
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+ call wall_time(wall1)
+ print*,'Time to provide integral_r1r2_f_HF_ab = ',wall1 - wall0
+END_PROVIDER 
+

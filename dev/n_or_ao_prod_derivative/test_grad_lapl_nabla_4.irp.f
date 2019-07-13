@@ -11,7 +11,57 @@ program pouet
 !call test_nabla_4_ao_product_sous_parties
 !call test_ao_to_mo_nabla4
 !call test_nabla2_4_at_r
+ call test_grad_density
 end
+
+subroutine test_grad_density_2
+ implicit none
+ integer :: i,j,k,l,m,n,istate
+ double precision :: r(3),rdx_plus(3),rdx_minus(3)
+ double precision :: grad_num_a(N_states,3),grad_num_b(N_states,3)
+ double precision :: dm_a_r(N_states),dm_b_r(N_states)
+ double precision :: dm_a_r_p(N_states),dm_b_r_p(N_states)
+ double precision :: dm_a_r_m(N_states),dm_b_r_m(N_states)
+ double precision :: dr,accu(N_states,3),accu_tot(N_states),accu_tot_ana(N_states)
+ print*,'\\\\\\\\\\\\\\\\\'
+ print*,' '
+ print*,'dr,error grad'
+ do n = 3, 9
+  dr = 10d0**(-n)
+  r = 0d0
+  accu = 0d0
+  accu_tot = 0.d0
+  accu_tot_ana = 0.d0
+  do i = 1, n_points_final_grid
+   r(1) = final_grid_points(1,i)
+   r(2) = final_grid_points(2,i)
+   r(3) = final_grid_points(3,i)
+   do m = 1,3
+    rdx_plus = r
+    rdx_plus(m) = r(m) + dr
+    rdx_minus = r
+    rdx_minus(m) = r(m) - dr
+    call dm_dft_alpha_beta_at_r(r,dm_a_r,dm_b_r)
+    call dm_dft_alpha_beta_at_r(rdx_plus,dm_a_r_p,dm_b_r_p)
+    call dm_dft_alpha_beta_at_r(rdx_minus,dm_a_r_m,dm_b_r_m)
+    do istate = 1, N_states
+     grad_num_a(istate,m) = 0.5d0 * ( dm_a_r_p(istate) - dm_a_r_m(istate) )/ dr
+     grad_num_b(istate,m) = 0.5d0 * ( dm_b_r_p(istate) - dm_b_r_m(istate) )/ dr
+     accu(istate,m) += (grad_num_a(istate,m)**2 + grad_num_b(istate,m)**2 )  * final_weight_at_r_vector(i)
+     accu_tot(istate) += (grad_num_a(istate,m)**2 + grad_num_b(istate,m)**2 )* final_weight_at_r_vector(i)
+     accu_tot_ana(istate) += ( one_e_dm_and_grad_alpha_in_r(m,i,istate)**2 + one_e_dm_and_grad_beta_in_r(m,i,istate)**2 )* final_weight_at_r_vector(i)
+    enddo
+   enddo
+
+
+  enddo
+  print*,'dr = ',dr
+  write(*,'(5(F16.10,x))')accu_tot(:)
+  write(*,'(5(F16.10,x))')accu_tot_ana(:)
+ !write(33,'(100(F16.10,X))'),dr,accu(1),accu(2),accu(3),accu_2(1),accu_2(2),accu_2(3)
+ enddo
+end
+
 
 
 subroutine test_grad_lapl_mo

@@ -740,6 +740,34 @@ end
 
  end
 
+ subroutine give_nabla_2_at_r_act_mo(r,nabla_2_at_r_mo)
+ implicit none
+ BEGIN_DOC
+! blablablabla
+ END_DOC
+ double precision, intent(in) :: r(3)
+ double precision, intent(out) :: nabla_2_at_r_mo(n_act_orb,n_act_orb)
+
+ double precision :: nabla_2_at_r(3,ao_num,ao_num)
+ double precision :: nabla_2_tot_at_r(ao_num,ao_num)
+ integer :: j,k,m,n
+ call give_nabla_2_at_r(r,nabla_2_at_r,nabla_2_tot_at_r)
+
+ nabla_2_at_r_mo = 0.d0
+
+ do j = 1, n_act_orb
+  do k = 1, n_act_orb
+   do m = 1, ao_num
+    do n = 1, ao_num 
+     nabla_2_at_r_mo(k,j) += mo_coef(m,list_act(j))*mo_coef(n,list_act(k))* nabla_2_tot_at_r(n,m) 
+    enddo
+   enddo
+  enddo
+ enddo
+
+ end
+
+
  subroutine give_nabla_4_at_r_mo(r,nabla_4_at_r_mo)
  implicit none
  BEGIN_DOC

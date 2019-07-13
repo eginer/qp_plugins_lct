@@ -1,9 +1,9 @@
-BEGIN_PROVIDER [ double precision, psi_energy_bielec_aa, (N_states) ]
+BEGIN_PROVIDER [ double precision, psi_energy_two_e_aa, (N_states) ]
   implicit none
   BEGIN_DOC
 ! <Psi | W_{ee}_{alpha/alpha} | Psi>
   END_DOC
-  call u_0_H_u_0_aa(psi_energy_bielec_aa,psi_coef,N_det,psi_det,N_int,N_states,psi_det_size)
+  call u_0_H_u_0_aa(psi_energy_two_e_aa,psi_coef,N_det,psi_det,N_int,N_states,psi_det_size)
 END_PROVIDER
 
 

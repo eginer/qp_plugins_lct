@@ -14,6 +14,11 @@ H = H_apply("just_mono_no_selection",do_double_exc=False)
 print H
 
 
+s = H_apply("just_1h_1p")
+s.set_selection_pt2("epstein_nesbet_2x2")
+s.filter_only_1h1p()
+print s
+
 
 END_SHELL
 
