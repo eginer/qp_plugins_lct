@@ -21,7 +21,8 @@ program pade_functional
   io_ao_integrals_kinetic = "None"
   touch io_ao_integrals_kinetic 
 
-  call pote_oredre_Hartree
+ !call pote_oredre_Hartree
+  call tracer_d_E_H 
 end
 
 
@@ -43,3 +44,25 @@ end
 
  end
 
+ subroutine tracer_d_E_H
+ implicit none
+ integer :: istate,i,n
+ double precision :: mu,a,b,h,two_pade_dh_3(n_states),two_pade_dh_4(n_states),two_pade_dh_5(n_states),two_pade_dh_6(n_states),two_pade_dh_7(n_states)
+ b=40.d0
+ a = 0.001d0
+ n= 100000
+ h = (b - a)/dble(n)
+ 
+ mu = a
+ do i=1,n
+  mu += h 
+  call give_two_p_pade_dh_3(mu,two_pade_dh_3)
+  call give_two_p_pade_dh_4(mu,two_pade_dh_4)
+  call give_two_p_pade_dh_5(mu,two_pade_dh_5)
+  call give_two_p_pade_dh_6(mu,two_pade_dh_6)
+  call give_two_p_pade_dh_7(mu,two_pade_dh_7)
+  write(33,'(10(F16.10,X))')mu,two_pade_dh_3(1),two_pade_dh_4(1),two_pade_dh_5(1),two_pade_dh_6(1),two_pade_dh_7(1)
+ enddo
+
+
+end

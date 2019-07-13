@@ -11,6 +11,10 @@ program pade_functional
   touch io_mo_two_e_integrals
   io_ao_two_e_integrals = "None"
   touch io_ao_two_e_integrals
+  io_mo_two_e_integrals_erf = "None"
+  touch io_mo_two_e_integrals_erf
+  io_ao_two_e_integrals_erf = "None"
+  touch io_ao_two_e_integrals_erf
  
   io_mo_integrals_e_n = "None"
   touch io_mo_integrals_e_n
@@ -29,6 +33,7 @@ program pade_functional
 ! call pote_hartree_test_exp_mu_0
   call two_points_pade_hartree_test
 ! call tracer_d_E_H
+!call pote_test
 end
 
  subroutine pote
@@ -160,22 +165,14 @@ end
 
  subroutine pote_test   
  implicit none
- double precision :: a, b, c
- a=e_hx_sr_exp0(1)/mu_erf **2.d0 - e_hx_sr_by_order_exp(1,0)
- b=e_hx_sr_exp1(1)/mu_erf **4.d0 - e_hx_sr_by_order_exp(1,1)
- c= e_hx_sr_exp2(1)/mu_erf **6.d0 - e_hx_sr_by_order_exp(1,2)
- print*,'****************************'
- print*,'n=0   :',a
- print*,'n=1   :',b
- print*,'n=2   :',c
- print*,'****************************'
+ provide simpson_int_test
  end
 
 
 
  subroutine two_points_pade_hartree_test
  implicit none
- double precision :: two_pade_dh_4(n_states),d_EH_num,h,f_mu_1 
+ double precision :: two_pade_dh_4(n_states),d_EH_num,h,f_mu_1,f_mu_2 
 !provide simpson_int_test
  !rovide two_p_pade_h_3
 !provide two_point_pade_h_a_4
@@ -206,22 +203,40 @@ end
 !print*,'dE_H_2p_pade_4            =',two_pade_dh_4(1)
 
 !!!!!!!!!!!!!derive numeeeeriiiiqqquuuuuueeeeeee!!!
-!print*,'****************************'
-!h = 10.00
-!mu_erf = mu_erf + h
-!touch mu_erf
-!mu_erf_dft = mu_erf 
-!touch mu_erf_dft
-!print*,'mu_erf/mu_erf_dft                 =',mu_erf,'/',mu_erf_dft
-!call donner_E_H_sr(f_mu_1)
-!touch short_range_Hartree
-!print*,'mu_erf                        =',mu_erf
-!provide short_range_Hartree 
-!f_mu_1=short_range_Hartree(1)
-!d_EH_num =  
+ print*,'****************************'
+ call give_two_p_pade_dh_4(mu_erf,two_pade_dh_4)
 
-!print*,'short_range_Hartree2  =',f_mu_1
-!print*,'****************************'
+
+ h = 0.000000001
+ call clear_mo_erf_map
+ call clear_ao_erf_map
+ mu_erf = mu_erf + h
+ touch mu_erf
+ mu_erf_dft = mu_erf 
+ touch mu_erf_dft
+!print*,'mu_erf/mu_erf_dft                 =',mu_erf,'/',mu_erf_dft
+!integer :: get_ao_erf_map_size
+!print*,'size AO map = ',get_ao_erf_map_size(ao_integrals_erf_map)
+ call donner_E_H_sr(f_mu_1)
+
+ call clear_mo_erf_map
+ call clear_ao_erf_map
+ mu_erf = mu_erf - 2.d0 * h
+ touch mu_erf
+ mu_erf_dft = mu_erf 
+ touch mu_erf_dft
+!print*,'mu_erf/mu_erf_dft                 =',mu_erf,'/',mu_erf_dft
+!integer :: get_ao_erf_map_size
+!print*,'size AO map = ',get_ao_erf_map_size(ao_integrals_erf_map)
+ call donner_E_H_sr(f_mu_2)
+ print*,'f(x+h),f(x-h)',f_mu_1,f_mu_2
+ d_EH_num = (f_mu_1 - f_mu_2)/(2.d0 * h) 
+
+ print*,'d_EH_num     =',two_pade_dh_4(1) 
+ print*,'d_EH pade 4  =',d_EH_num
+ print*,'Abs error d_Eh           =',d_EH_num-two_pade_dh_4(1)
+ print*,'Relat error d_Eh         =',(d_EH_num-two_pade_dh_4(1))/d_EH_num
+ print*,'****************************'
 
  end
 
@@ -230,6 +245,10 @@ end
  implicit none
  double precision, intent(out) :: tmp 
  tmp=short_range_Hartree(1)
+ print*,''
+ print*,'sr Hratree dans la subrouteen',tmp
+ print*,'mu_erf  = ',mu_erf
+ print*,''
  end
 
  subroutine tracer_d_E_H

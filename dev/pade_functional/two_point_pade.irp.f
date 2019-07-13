@@ -393,113 +393,180 @@
  
  trapez= h*(((a)**(-2.d0)+(b)**(-2.d0))*0.5d0 + part_trapez)
 
+ double precision :: integral, error
+ double precision, allocatable :: listx(:), listy(:)
+ allocate(listx(n),listy(n))
+
+  do i=1,n
+   listx(i) = a+dble(i)*h
+   listy(i) = (a+(dble(i))*h)**(-2.d0) 
+  enddo
+
+  call DsplIntegr (listx, listy, n , a, b, integral, error)
+
+
  print*,"simpson        =",approx
  print*,"exact          =",exact 
  print*,"Trapez         =",trapez
+ print*,"JULIEN         =",integral
  print*,"error simpson  =",approx-exact
- print*,"error Trapez   =",approx-trapez
+ print*,"error Trapez   =",trapez-exact
+ print*,"error Julien   =",integral -exact
  print*,"b-2     =",(b)**(-2.d0)
-!do istate = 1, n_states
 
-!enddo
+
  END_PROVIDER
 
 
 
- BEGIN_PROVIDER[double precision, two_p_pade_h_3,(n_states)]
-&BEGIN_PROVIDER[double precision, two_p_pade_h_4,(n_states)]
-&BEGIN_PROVIDER[double precision, two_p_pade_h_5,(n_states)]
-&BEGIN_PROVIDER[double precision, two_p_pade_h_6,(n_states)]
-&BEGIN_PROVIDER[double precision, two_p_pade_h_7,(n_states)]
+!BEGIN_PROVIDER[double precision, two_p_pade_h_3,(n_states)]
+!BEGIN_PROVIDER[double precision, two_p_pade_h_4,(n_states)]
+!BEGIN_PROVIDER[double precision, two_p_pade_h_5,(n_states)]
+!BEGIN_PROVIDER[double precision, two_p_pade_h_6,(n_states)]
+!BEGIN_PROVIDER[double precision, two_p_pade_h_7,(n_states)]
+!implicit none
+!integer :: istate,i,n
+!double precision :: a,b,h,part1,part2,mu,mu_c,f_b,f_a,two_pade_dh_3(n_states)
+!double precision :: part1_4,part2_4,f_b_4,f_a_4,two_pade_dh_4(n_states)
+!double precision :: part1_5,part2_5,f_b_5,f_a_5,two_pade_dh_5(n_states)
+!double precision :: part1_6,part2_6,f_b_6,f_a_6,two_pade_dh_6(n_states)
+!double precision :: part1_7,part2_7,f_b_7,f_a_7,two_pade_dh_7(n_states)
+!b=10000.d0
+!a = mu_erf
+!n= 10000000 
+
+!b=1.d0
+!a =sqrt(mu_erf**2.d0/(1.d0+mu_erf**2.d0))
+!n= 10000000
+
+!h = (b - a)/dble(n)
+
+!do istate = 1, n_states
+!!part1 = 0.d0
+!!part2 = 0.d0
+
+! part1_4 = 0.d0
+! part2_4 = 0.d0
+
+!!part1_5 = 0.d0
+!!part2_5 = 0.d0
+
+!!part1_6 = 0.d0
+!!part2_6 = 0.d0
+
+!!part1_7 = 0.d0
+!!part2_7 = 0.d0
+
+! do i=1,n/2-1
+!  mu = a+(2.d0*dble(i))*h
+!  mu_c =sqrt(mu**2.d0/(1+mu**2.d0))
+!! call give_two_p_pade_dh_3(mu,two_pade_dh_3)
+!  call give_two_p_pade_dh_4(mu_c,two_pade_dh_4)
+!! call give_two_p_pade_dh_5(mu,two_pade_dh_5)
+!! call give_two_p_pade_dh_6(mu,two_pade_dh_6)
+!! call give_two_p_pade_dh_7(mu,two_pade_dh_7)
+!! part1 += two_pade_dh_3(istate) 
+!  part1_4 += two_pade_dh_4(istate)*(1.d0-mu_c**2.d0)**(-3.d0/2.d0) 
+!! part1_5 += two_pade_dh_5(istate) 
+!! part1_6 += two_pade_dh_6(istate) 
+!! part1_7 += two_pade_dh_7(istate) 
+! enddo
+!
+! do i=1,n/2
+!  mu=a+(2.d0*dble(i)-1.d0)*h
+!  mu_c =sqrt(mu**2.d0/(1+mu**2.d0))
+!! call give_two_p_pade_dh_3(mu,two_pade_dh_3)
+!  call give_two_p_pade_dh_4(mu_c,two_pade_dh_4)
+!! call give_two_p_pade_dh_5(mu,two_pade_dh_5)
+!! call give_two_p_pade_dh_6(mu,two_pade_dh_6)
+!! call give_two_p_pade_dh_7(mu,two_pade_dh_7)
+!! part2 += two_pade_dh_3(istate) 
+!  part2_4 += two_pade_dh_4(istate)*(1.d0-mu_c**2.d0)**(-3.d0/2.d0)
+!! part2_5 += two_pade_dh_5(istate) 
+!! part2_6 += two_pade_dh_6(istate) 
+!! part2_7 += two_pade_dh_7(istate) 
+! enddo
+! 
+!  mu=a
+!  mu_c =sqrt(mu**2.d0/(1+mu**2.d0))
+!! call give_two_p_pade_dh_3(mu,two_pade_dh_3)
+!  call give_two_p_pade_dh_4(mu_c,two_pade_dh_4)
+!! call give_two_p_pade_dh_5(mu,two_pade_dh_5)
+!! call give_two_p_pade_dh_6(mu,two_pade_dh_6)
+!! call give_two_p_pade_dh_7(mu,two_pade_dh_7)
+!! f_a=two_pade_dh_3(istate)
+!  f_a_4=two_pade_dh_4(istate)*(1.d0-mu_c**2.d0)**(-3.d0/2.d0)
+!! f_a_5=two_pade_dh_5(istate)
+!! f_a_6=two_pade_dh_6(istate)
+!! f_a_7=two_pade_dh_7(istate)
+
+!  mu=b
+!  mu_c =sqrt(mu**2.d0/(1+mu**2.d0))
+!! call give_two_p_pade_dh_3(mu,two_pade_dh_3)
+!  call give_two_p_pade_dh_4(mu_c,two_pade_dh_4)
+!! call give_two_p_pade_dh_5(mu,two_pade_dh_5)
+!! call give_two_p_pade_dh_6(mu,two_pade_dh_6)
+!! call give_two_p_pade_dh_7(mu,two_pade_dh_7)
+!! f_b=two_pade_dh_3(istate)
+!  f_b_4=two_pade_dh_4(istate)*(1.d0-mu_c**2.d0)**(-3.d0/2.d0)
+!! f_b_5=two_pade_dh_5(istate)
+!! f_b_6=two_pade_dh_6(istate)
+!! f_b_7=two_pade_dh_7(istate)
+
+!
+!!two_p_pade_h_3(istate) = -(h/3.d0)*(f_a+f_b+2.d0*part1 + 4.d0*part2 )
+! two_p_pade_h_4(istate) = -(h/3.d0)*(f_a_4+f_b_4+2.d0*part1_4 + 4.d0*part2_4 )
+!!two_p_pade_h_5(istate) = -(h/3.d0)*(f_a_5+f_b_5+2.d0*part1_5 + 4.d0*part2_5 )
+!!two_p_pade_h_6(istate) = -(h/3.d0)*(f_a_6+f_b_6+2.d0*part1_6 + 4.d0*part2_6 )
+!!two_p_pade_h_7(istate) = -(h/3.d0)*(f_a_7+f_b_7+2.d0*part1_7 + 4.d0*part2_7 )
+!
+!!print*,"two_p_pade_h_3 =",two_p_pade_h_3(istate)
+!!print*,"f_b            =",f_b
+!enddo
+!END_PROVIDER
+
+
+
+ BEGIN_PROVIDER[double precision, two_p_pade_h_4,(n_states)]
  implicit none
  integer :: istate,i,n
- double precision :: a,b,h,part1,part2,mu,f_b,f_a,two_pade_dh_3(n_states)
+ double precision :: a,b,h,part1,part2,mu,mu_c,f_b,f_a,two_pade_dh_3(n_states)
  double precision :: part1_4,part2_4,f_b_4,f_a_4,two_pade_dh_4(n_states)
- double precision :: part1_5,part2_5,f_b_5,f_a_5,two_pade_dh_5(n_states)
- double precision :: part1_6,part2_6,f_b_6,f_a_6,two_pade_dh_6(n_states)
- double precision :: part1_7,part2_7,f_b_7,f_a_7,two_pade_dh_7(n_states)
- b=10000.d0
- a = mu_erf
- n= 10000000 
+ double precision :: integral, error
+
+
+ b=0.99999999d0
+ a =sqrt(mu_erf**2.d0/(1.d0+mu_erf**2.d0))
+!b=10000.d0
+!a =mu_erf
+ n= 10000000
+ double precision, allocatable :: listx(:), listy(:)
+ allocate(listx(n),listy(n))
 
  h = (b - a)/dble(n)
 
  do istate = 1, n_states
-  part1 = 0.d0
-  part2 = 0.d0
 
-  part1_4 = 0.d0
-  part2_4 = 0.d0
+ !do i=1,n
+ ! mu = a+dble(i)*h
+ ! call give_two_p_pade_dh_4(mu,two_pade_dh_4)
+ ! listx(i) = mu
+ ! listy(i) = two_pade_dh_4(istate)
+ !enddo
 
-  part1_5 = 0.d0
-  part2_5 = 0.d0
-
-  part1_6 = 0.d0
-  part2_6 = 0.d0
-
-  part1_7 = 0.d0
-  part2_7 = 0.d0
-
-  do i=1,n/2-1
-   mu = a+(2.d0*dble(i))*h
-   call give_two_p_pade_dh_3(mu,two_pade_dh_3)
-   call give_two_p_pade_dh_4(mu,two_pade_dh_4)
-   call give_two_p_pade_dh_5(mu,two_pade_dh_5)
-   call give_two_p_pade_dh_6(mu,two_pade_dh_6)
-   call give_two_p_pade_dh_7(mu,two_pade_dh_7)
-   part1 += two_pade_dh_3(istate) 
-   part1_4 += two_pade_dh_4(istate) 
-   part1_5 += two_pade_dh_5(istate) 
-   part1_6 += two_pade_dh_6(istate) 
-   part1_7 += two_pade_dh_7(istate) 
+  do i=1,n
+   mu = a+dble(i)*h
+   mu_c =sqrt(mu**2.d0/(1-mu**2.d0))
+   call give_two_p_pade_dh_4(mu_c,two_pade_dh_4)
+   listx(i) = mu
+   listy(i) = two_pade_dh_4(istate)*(1.d0-mu**2.d0)**(-3.d0/2.d0)
   enddo
- 
-  do i=1,n/2
-   mu=a+(2.d0*dble(i)-1.d0)*h
-   call give_two_p_pade_dh_3(mu,two_pade_dh_3)
-   call give_two_p_pade_dh_4(mu,two_pade_dh_4)
-   call give_two_p_pade_dh_5(mu,two_pade_dh_5)
-   call give_two_p_pade_dh_6(mu,two_pade_dh_6)
-   call give_two_p_pade_dh_7(mu,two_pade_dh_7)
-   part2 += two_pade_dh_3(istate) 
-   part2_4 += two_pade_dh_4(istate) 
-   part2_5 += two_pade_dh_5(istate) 
-   part2_6 += two_pade_dh_6(istate) 
-   part2_7 += two_pade_dh_7(istate) 
-  enddo
-  
-   mu=a
-   call give_two_p_pade_dh_3(mu,two_pade_dh_3)
-   call give_two_p_pade_dh_4(mu,two_pade_dh_4)
-   call give_two_p_pade_dh_5(mu,two_pade_dh_5)
-   call give_two_p_pade_dh_6(mu,two_pade_dh_6)
-   call give_two_p_pade_dh_7(mu,two_pade_dh_7)
-   f_a=two_pade_dh_3(istate)
-   f_a_4=two_pade_dh_4(istate)
-   f_a_5=two_pade_dh_5(istate)
-   f_a_6=two_pade_dh_6(istate)
-   f_a_7=two_pade_dh_7(istate)
 
-   mu=b
-   call give_two_p_pade_dh_3(mu,two_pade_dh_3)
-   call give_two_p_pade_dh_4(mu,two_pade_dh_4)
-   call give_two_p_pade_dh_5(mu,two_pade_dh_5)
-   call give_two_p_pade_dh_6(mu,two_pade_dh_6)
-   call give_two_p_pade_dh_7(mu,two_pade_dh_7)
-   f_b=two_pade_dh_3(istate)
-   f_b_4=two_pade_dh_4(istate)
-   f_b_5=two_pade_dh_5(istate)
-   f_b_6=two_pade_dh_6(istate)
-   f_b_7=two_pade_dh_7(istate)
 
+  call DsplIntegr (listx, listy, n , a, b, integral, error)
  
-  two_p_pade_h_3(istate) = -(h/3.d0)*(f_a+f_b+2.d0*part1 + 4.d0*part2 )
-  two_p_pade_h_4(istate) = -(h/3.d0)*(f_a_4+f_b_4+2.d0*part1_4 + 4.d0*part2_4 )
-  two_p_pade_h_5(istate) = -(h/3.d0)*(f_a_5+f_b_5+2.d0*part1_5 + 4.d0*part2_5 )
-  two_p_pade_h_6(istate) = -(h/3.d0)*(f_a_6+f_b_6+2.d0*part1_6 + 4.d0*part2_6 )
-  two_p_pade_h_7(istate) = -(h/3.d0)*(f_a_7+f_b_7+2.d0*part1_7 + 4.d0*part2_7 )
- 
-! print*,"two_p_pade_h_3 =",two_p_pade_h_3(istate)
-  print*,"f_b            =",f_b
+  two_p_pade_h_4(istate) = -integral 
+
+
  enddo
  END_PROVIDER
