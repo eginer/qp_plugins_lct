@@ -102,7 +102,8 @@ end
  Energy_c_md_mu_of_r_LDA_rsdft = 0.d0
  call wall_time(wall0)
  do i = 1, n_points_final_grid
-  mu = min(mu_erf,mu_of_r_hf_coal_vector_ecmd(i))
+ !mu = min(mu_erf,mu_of_r_hf_coal_vector_ecmd(i))
+  mu = mu_of_r_hf_coal_vector_ecmd(i)
   weight=final_weight_at_r_vector(i)
   do istate = 1, N_states
    rho_a(istate) = one_e_dm_alpha_at_r(i,istate)
@@ -145,7 +146,8 @@ end
   r(3) = final_grid_points(3,i)
   weight=final_weight_at_r_vector(i)
   two_dm(:) = on_top_of_r_vector(i,:)
-  mu = min(mu_erf,mu_of_r_hf_coal_vector_ecmd(i))
+ !mu = min(mu_erf,mu_of_r_hf_coal_vector_ecmd(i))
+  mu = mu_of_r_hf_coal_vector_ecmd(i)
 
   call give_epsilon_c_md_on_top_PBE_mu_corrected_UEG_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
   do istate = 1, N_states
