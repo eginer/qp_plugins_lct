@@ -73,128 +73,10 @@
  end
 
 
-!ubroutine give_epsilon_pbe_effective_spin_dens_provider_barth(mu,i_point,eps_c_md_PBE)
-!implicit none
-!double precision, intent(in)  :: mu 
-!double precision, intent(out) :: eps_c_md_PBE(N_states)
-!integer, intent(in) :: i_point
-!double precision :: two_dm, pi, beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
-!double precision :: grad_rho_a(3),grad_rho_b(3)
-!double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
-!double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo
-!double precision :: delta,two_dm_corr,rho_a,rho_b,denom,e_PBE
-!double precision :: g0_UEG_mu_inf
-!integer :: m, istate
-
-!pi = 4.d0 * datan(1.d0)
-
-!eps_c_md_PBE = 0.d0
-!do istate = 1, N_states
-! ! total density 
-! rhoc = one_e_dm_and_grad_alpha_in_r(4,i_point,istate) + one_e_dm_and_grad_beta_in_r(4,i_point,istate) 
-! ! effective spin density 
-! rhoo = effective_spin_dm(i_point,istate)
-! rho_a  = effective_alpha_dm(i_point,istate)
-! rho_b  = effective_beta_dm(i_point,istate)
-! grad_rho_a_2 = 0.D0
-! grad_rho_b_2 = 0.D0
-! grad_rho_a_b = 0.D0
-! ! gradients of the effective spin density 
-! do m = 1, 3
-!  grad_rho_a_2 += one_e_dm_and_grad_alpha_in_r(m,i_point,istate)**2.d0
-!  grad_rho_b_2 += one_e_dm_and_grad_beta_in_r(m,i_point,istate) **2.d0
-!  grad_rho_a_b += one_e_dm_and_grad_alpha_in_r(m,i_point,istate) * one_e_dm_and_grad_beta_in_r(m,i_point,istate)
-! enddo
-! sigmacc = grad_rho_a_2 + grad_rho_b_2 + 2.d0 * grad_rho_a_b
-! sigmaco = 0.d0
-! sigmaoo = 0.d0
-! ! Note EG: for the pbe correlation energy, we don't need the gradients of the effective spin density 
-! !          as it reduces to the usual square of the gradient of the total density 
-! call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE) !  PBE correlation energy with effective spin density 
-! if(e_PBE.gt.0.d0)then
-!  print*,'PBE gt 0 with effective dens'
-! endif
-! if(mu == 0.d0) then
-!  eps_c_md_PBE(istate)=e_PBE
-! else
-! !note: the on-top pair density is (1-zeta^2) rhoc^2 g0 = 4 rhoa * rhob * g0
-!  denom = (-2.d0+dsqrt(2d0))*sqrt(2.d0*pi) * 4.d0*rho_a*rho_b*g0_UEG_mu_inf(rho_a,rho_b)
-!  if (dabs(denom) > 1.d-12) then
-!   beta = (3.d0*e_PBE)/denom
-!   ! Ecmd functional with the UEG ontop pair density when mu -> infty 
-!   ! and the usual PBE correlation energy when mu = 0
-!   eps_c_md_PBE(istate)=e_PBE/(1.d0+beta*mu**3)
-!  else
-!   eps_c_md_PBE(istate)=0.d0
-!  endif
-! endif
-!enddo
-!nd
-
-
-!ubroutine give_beta_Ec_pbeueg_test(mu,rhoa,rhob,grad_rho_a,grad_rho_b,epsilon_c_pbeueg_bart1,epsilon_c_pbeueg_bart2,beta_test,beta_test2)
-!BEGIN_DOC
-! ! Epsilon_c,md^srPBE and Beta function (eq 14a and 14b of ref J.Chem.Lett 2019, 2931-2937) 
-!END_DOC
-!implicit none
-!double precision, intent(in)  :: mu,rhoa(N_states),rhob(N_states),grad_rho_a(3,N_states),grad_rho_b(3,N_states)
-!double precision, intent(out) :: epsilon_c_pbeueg_bart1(N_states),epsilon_c_pbeueg_bart2(N_states),beta_test(N_states),beta_test2(N_states)
-!integer :: istate,m 
-!double precision :: grad_rho_a_2(N_states),grad_rho_b_2(N_states),grad_rho_a_b(N_states),e_PBE(N_states)
-!double precision :: wignerseitz_radius,xi,rhot,rs,f_pbeueg,f_pbeueg2,c_beta,pi,rhoc,rhoo,sigmacc,sigmaco,sigmaoo
-!pi=dacos(-1.d0) 
-!c_beta=3.d0/(2.d0*sqrt(pi)*(1.d0-sqrt(2.d0)))
-
-!grad_rho_a_2 = 0.d0
-!grad_rho_b_2 = 0.d0
-!grad_rho_a_b = 0.d0
-!do istate = 1, N_states
-! do m = 1, 3
-!  grad_rho_a_2(istate) += grad_rho_a(m,istate)*grad_rho_a(m,istate)
-!  grad_rho_b_2(istate) += grad_rho_b(m,istate)*grad_rho_b(m,istate)
-!  grad_rho_a_b(istate) += grad_rho_a(m,istate)*grad_rho_b(m,istate)
-! enddo
-!enddo
-
-!do istate = 1, N_states
-! !convertion from (alpha,beta) formalism to (closed, open) formalism
-! rhot=rhoa(istate)+rhob(istate)
-! rs = wignerseitz_radius(rhot)
-! xi= (rhoa(istate)-rhob(istate))/(rhot)
-
-! call rho_ab_to_rho_oc(rhoa(istate),rhob(istate),rhoo,rhoc)
-! call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
-! call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
-
-! double precision :: denom1,denom2,g0_UEG_mu_inf,g0f
-
-!  denom1 = (-2.d0+dsqrt(2d0))*sqrt(2.d0*pi) * 4.d0*rhoa(istate)*rhob(istate)*g0_UEG_mu_inf(rhoa(istate),rhob(istate))
-!  denom2 = rhot**2.d0 * f_pbeueg(rs,xi) / c_beta
-
-!  if (dabs(denom1) > 1.d-12) then
-!   beta_test(istate) = (3.d0*e_PBE(istate))/denom1
-!   epsilon_c_pbeueg_bart1(istate)=e_PBE(istate)/(1.d0+beta_test(istate)*mu**3)
-!  else
-!   beta_test(istate)=1.d20
-!   epsilon_c_pbeueg_bart1(istate)=0.d0
-!  endif
-
-!  if (dabs(denom2) > 1.d-12) then
-!   beta_test2(istate) = e_PBE(istate)/denom2
-!   epsilon_c_pbeueg_bart2(istate)=e_PBE(istate)/(1.d0+beta_test2(istate)*mu**3)
-!  else
-!   beta_test2(istate)=1.d20
-!   epsilon_c_pbeueg_bart2(istate)=0.d0
-!  endif
-
-! endif
-!enddo
-!end
-
 
 subroutine give_Ec_pbeueg_test(mu,rhoa,rhob,grad_rho_a,grad_rho_b,epsilon_c_pbeueg_bart1,epsilon_c_pbeueg_bart2,beta_test,beta_test2)
  BEGIN_DOC
-  ! Epsilon_c,md^srPBE and Beta function (eq 14a and 14b of ref J.Chem.Lett 2019, 2931-2937) 
+  ! Epsilon_c,md^srPBE and Beta function (eq 14a and 14b of ref J.Chem.Lett 2019, 2931-2937) test version 
  END_DOC
  implicit none
  double precision, intent(in)  :: rhoa(N_states),rhob(N_states),grad_rho_a(3,N_states),grad_rho_b(3,N_states),mu
@@ -354,7 +236,6 @@ subroutine give_d_Ec_pbeueg_rho(r,mu,d_ec_pbeueg_rhoa,d_ec_pbeueg_rhob)
   beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
 
   if ((dabs((1.d0+beta(istate)*mu**3.d0)**2.d0) > 1.d-12) .AND. (dabs((rhot**2.d0*f_pbeueg(rs,xi))) > 1.d-12) ) then
- !if (dabs((1.d0+beta(istate)*mu**3.d0)**2.d0) > 1.d-12) then
    beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
    d_ec_pbeueg_rhoa(istate) = (vc_rho_a*(1.d0+beta(istate)*mu**3.d0)-e_PBE*(d_beta_rhoa(istate)*mu**3.d0))/((1.d0+beta(istate)*mu**3.d0)**2.d0)
    d_ec_pbeueg_rhob(istate) = (vc_rho_b*(1.d0+beta(istate)*mu**3.d0)-e_PBE*(d_beta_rhob(istate)*mu**3.d0))/((1.d0+beta(istate)*mu**3.d0)**2.d0) 
@@ -393,7 +274,6 @@ subroutine d_beta_pbeueg_d_ec_pbe(rhoa,rhob,d_beta_ec)
  enddo
 
  end
-
 
 
 subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_grad_n_alpha,d_ec_pbeueg_d_grad_n_beta)
@@ -443,30 +323,7 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
 
   if ((dabs((1.d0+beta(istate)*mu**3.d0)**2.d0) > 1.d-12) .AND. (dabs((rhot**2.d0*f_pbeueg(rs,xi))) > 1.d-12) ) then
    call d_beta_pbeueg_d_ec_pbe(rhoa,rhob,d_beta_ec) 
-  !beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
    d_ec_pbeueg_d_ec_pbe(istate) = ((1.d0+beta(istate)*mu**3.d0)-e_PBE*(d_beta_ec(istate)*mu**3.d0))/((1.d0+beta(istate)*mu**3.d0)**2.d0)
-
-  !if (isnan(d_ec_pbeueg_d_ec_pbe(istate))) then
-  ! double precision :: g0f
-  ! print*,'****************************************'
-  ! print*,'Nan'
-  ! print*,'**NUMERATEUR****************************'
-  ! print*,'mu                                   =',mu
-  ! print*,'1.d0+beta(istate)*mu**3.d0           =',1.d0+beta(istate)*mu**3.d0
-  ! print*,'e_PBE*(d_beta_ec(istate)*mu**3.d0)   =',e_PBE*(d_beta_ec(istate)*mu**3.d0)
-  ! print*,'e_PBE                                =',e_PBE
-  ! print*,'**DENOMINATEUR**************************'
-  ! print*,'1.d0+beta(istate)*mu**3.d0)**2.d0    =',(1.d0+beta(istate)*mu**3.d0)**2.d0
-  ! print*,'beta(istate)                         =',beta(istate)
-  ! print*,'rhot**2.d0*f_pbeueg(rs,xi)           =',rhot**2.d0*f_pbeueg(rs,xi)
-  ! print*,'rhot**2.d0                           =',rhot**2.d0
-  ! print*,'f_pbeueg(rs,xi)                      =',f_pbeueg(rs,xi)
-  ! print*,'         rs                          =',rs
-  ! print*,'(1d0-xi**2)                          =',(1d0-xi**2) 
-  ! print*,'g0f(rs)                              =',g0f(rs)
-  ! print*,'r                               =',r(1),r(2),r(3)
-  !endif
-   
   else
    d_ec_pbeueg_d_ec_pbe(istate) = 0.d0
   endif
@@ -474,21 +331,7 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
   do m = 1, 3
    d_ec_pbeueg_d_grad_n_alpha(m,istate) = d_ec_pbeueg_d_ec_pbe(istate)*( 2.d0*vc_grad_rho_a_2(istate)*grad_rho_a(m,istate) +  vc_grad_rho_a_b(istate)  * grad_rho_b(m,istate) )
    d_ec_pbeueg_d_grad_n_beta(m,istate)  = d_ec_pbeueg_d_ec_pbe(istate)*( 2.d0*vc_grad_rho_b_2(istate)*grad_rho_b(m,istate) +  vc_grad_rho_a_b(istate)  * grad_rho_a(m,istate) )
-
-  !if (isnan(d_ec_pbeueg_d_grad_n_alpha(m,istate))) then
-  ! print*,'****************************************'
-  ! print*,'Nan grad'
-  ! print*,'d_ec_pbeueg_d_grad_n_alpha      =',d_ec_pbeueg_d_grad_n_alpha(m,istate)
-  ! print*,'d_ec_pbeueg_d_ec_pbe(istate)    =',d_ec_pbeueg_d_ec_pbe(istate)
-  ! print*,'vc_grad_rho_a_2(istate)         =',vc_grad_rho_a_2(istate)
-  ! print*,'grad_rho_a                      =',grad_rho_a(m,istate)
-  ! print*,'vc_grad_rho_a_b(istate)         =',vc_grad_rho_a_b(istate)
-  ! print*,'grad_rho_b(m,istate)            =',grad_rho_b(m,istate)
-  ! print*,'r                               =',r(1),r(2),r(3)
-  !endif
-
   enddo
-
  enddo
  end
 
@@ -498,9 +341,7 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
 &BEGIN_PROVIDER[double precision, aos_dsr_vc_beta_pbe_ueg_w   ,  (ao_num,n_points_final_grid,N_states)]
  implicit none
  BEGIN_DOC
-
-  !Derivative of the epsilon_{c,md}^{sr,PBE} function (eq 14a of ref J.Chem.Lett 2019, 2931-2937) with respect to e_c^pbe and with respect to grad(n_{alpha}) 
-  aos_sr_vxc_alpha_pbe_ueg_w(j,i) = ao_i(r_j) * (v^x_alpha(r_j) + v^c_alpha(r_j)) * W(r_j)
+  ! Intermediate quantities for the calculation of the vc potentials for the PBE UEG functional
  END_DOC
  integer :: istate,i,j,m
  double precision :: r(3)
@@ -531,21 +372,6 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
      aos_dsr_vc_alpha_pbe_ueg_w(j,i,istate) += weight * d_ec_pbeueg_d_grad_n_alpha(m,istate) * aos_grad_in_r_array_transp_xyz(m,j,i)
      aos_dsr_vc_beta_pbe_ueg_w (j,i,istate) += weight * d_ec_pbeueg_d_grad_n_beta(m,istate)  * aos_grad_in_r_array_transp_xyz(m,j,i)
     enddo
-    !if (isnan(aos_dsr_vc_alpha_pbe_ueg_w(j,i,istate))) then
-    ! print*,'****************************************'
-    ! print*,'Nan grad'
-    ! print*,'aos_dsr_vc_alpha_pbe_ueg_w       =',aos_dsr_vc_alpha_pbe_ueg_w(j,i,istate)
-    ! print*,'r / weight                       =',final_grid_points(1,i),final_grid_points(2,i),final_grid_points(3,i),'/',weight
-    ! print*,'ao num                           =',j
-    !endif
-
-    !if (isnan(aos_sr_vc_alpha_pbe_ueg_w(j,i,istate))) then
-    ! print*,'****************************************'
-    ! print*,'Nan scal'
-    ! print*,'aos_dsr_vc_alpha_pbe_ueg_w       =',aos_dsr_vc_alpha_pbe_ueg_w(j,i,istate)
-    ! print*,'r / weight                       =',final_grid_points(1,i),final_grid_points(2,i),final_grid_points(3,i),'/',weight
-    ! print*,'ao num                           =',j
-    !endif
 
    enddo
   enddo
@@ -559,7 +385,7 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
  implicit none
  integer                        :: istate
    BEGIN_DOC
-   ! intermediate quantity for the calculation of the vxc potentials for the GGA functionals  related to the scalar part of the potential 
+   ! Intermediate quantities for the calculation of the vc potentials related to the scalar part for the PBE UEG functional
    END_DOC
    pot_sr_scal_c_alpha_ao_pbe_ueg = 0.d0
    pot_sr_scal_c_beta_ao_pbe_ueg = 0.d0
@@ -589,7 +415,7 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, pot_sr_grad_c_beta_ao_pbe_ueg,(ao_num,ao_num,N_states)]
    implicit none
    BEGIN_DOC
-   ! intermediate quantity for the calculation of the vc potentials for the GGA functionals  related to the gradienst of the density and orbitals 
+   ! Intermediate quantity for the calculation of the vc potentials for the PBA UEG functional related to the gradienst of the density and orbitals 
    END_DOC
    integer                        :: istate
    double precision               :: wall_1,wall_2
@@ -636,7 +462,7 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, potential_c_beta_mo_sr_pbe_ueg, (mo_num,mo_num,N_states)]
  implicit none
  BEGIN_DOC
-! general providers for the alpha/beta correlation potentials on the MO basis
+! Providers for the alpha/beta correlation potentials of the PBE UEG on the MO basis
  END_DOC
  integer :: istate
  do istate = 1, N_states
@@ -658,12 +484,7 @@ END_PROVIDER
 END_PROVIDER
 
 
-
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Verif a fat mu!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Potential used only for tests !!!!!!!!!!!!!!!!
 
  
 subroutine give_d_Ec_pbeueg_rho_grand_mu(r,mu,d_ec_pbeueg_grandmu_rhoa,d_ec_pbeueg_grandmu_rhob)
