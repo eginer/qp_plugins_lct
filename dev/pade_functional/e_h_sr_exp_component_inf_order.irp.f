@@ -62,6 +62,32 @@
   enddo
  enddo  
 
+!character*(128) :: output
+!integer :: i_unit_output,getUnitAndOpen
+!provide ezfio_filename 
+!integer :: n_mu
+!double precision:: mu_loc,e_h_sr_tot_exp_loc 
+!print*,trim(ezfio_filename)
+!character*(128) :: filename
+!write (filename, "(I1)")order_derivative_ontop
+
+!output=trim(ezfio_filename)//'.big_mu_exp_order_'//trim(filename)
+!output=trim(output)
+!print*,'output = ',trim(output)
+!i_unit_output = getUnitAndOpen(output,'w')
+
+!do istate = 1, n_states
+! do n_mu = 1,100
+!  mu_loc=0.0001+dble(n_mu)*0.1  
+!  e_h_sr_tot_exp_loc = 0.d0
+!  do n = 0, order_derivative_ontop      
+!   e_h_sr_tot_exp_loc += coeff_H_exp(n,istate)/(mu_loc**(2.d0*dble(n)+2.d0))
+!  enddo
+!  write(i_unit_output,'(10(F16.10,X))')mu_loc,e_h_sr_tot_exp_loc
+! enddo
+!enddo  
+
+
  END_PROVIDER
 
 
@@ -120,7 +146,7 @@
     vect_a(i) += c_pade(i-j)*vect_b(j)
    enddo
   enddo
- 
+
   x_loc=1/(mu_erf**2.d0) 
  
   nume = 0.d0
