@@ -7,11 +7,12 @@ program write_integrals_for_dft_ecmd_lda
  mu_of_r_potential = "hf_valence_coallescence"
  touch mu_of_r_potential
  call truc_a_faire_lda
+!call truc_a_faire_lda_old_school
  call truc_a_faire_pbeueg    
 end
 
 
- subroutine truc_a_faire_lda 
+ subroutine truc_a_faire_lda_old_school 
  implicit none
  integer :: i,istate
  double precision :: r(3)
@@ -54,9 +55,25 @@ end
    accu_3 += sr_vc_a*homo**2.d0*final_weight_at_r_vector(i)
  
   enddo
-  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta | HOMO >          =',accu
-  print*,'< HOMO | dE_c,md/dn_alpha | HOMO >                       =',accu_2
-  print*,'< HOMO | dE_c/dn_alpha | HOMO >                          =',accu_3
+
+
+  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta | HOMO >          =',accu,'/', potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate) + potential_deltarho_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate) + potential_e_c_lda_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c,md/dn_alpha | HOMO >                       =',accu_2 ,'/', potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c/dn_alpha | HOMO >                          =',accu_3,'/',potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+ enddo
+ end
+
+
+ subroutine truc_a_faire_lda   
+ implicit none
+ integer :: istate
+ print*,'\\\\\\\\\\\\\\\\\'
+
+ do istate = 1, n_states
+  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta | HOMO >          =',potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate) + potential_deltarho_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate) + potential_e_c_lda_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c,md/dn_alpha | HOMO >                       =',potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c/dn_alpha | HOMO >                          =',potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+
  enddo
 end
 

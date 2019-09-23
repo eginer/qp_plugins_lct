@@ -602,3 +602,9 @@ END_PROVIDER
    enddo
 
 END_PROVIDER
+
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 2nd order pot Scalar Part!!!! 
