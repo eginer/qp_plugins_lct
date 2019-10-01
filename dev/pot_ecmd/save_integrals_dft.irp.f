@@ -31,6 +31,23 @@ subroutine save_one_e_effective_potential_ecmd_lda
  
 end
 
+
+ subroutine save_one_e_effective_potential_ecmd_pbe_ueg
+ implicit none
+ BEGIN_DOC 
+ !used to save the effective_one_e_potential into the one-body integrals in the ezfio folder
+ !this effective_one_e_potential is computed with the current density 
+ !and will couple the WFT with DFT for the next regular WFT calculation
+ END_DOC
+ call ezfio_set_mo_one_e_ints_mo_integrals_e_n(effective_one_e_potential_without_kin_ecmd_pbe_ueg)
+ call ezfio_set_mo_one_e_ints_mo_integrals_kinetic(mo_kinetic_integrals)
+  
+ print *,  'Effective DFT(Ec,md PBE UEG) potential is written on disk on the mo_ne_integral integrals'
+ call ezfio_set_mo_one_e_ints_io_mo_integrals_e_n("Read")
+ 
+ end
+
+
 !ubroutine save_erf_bi_elec_integrals_mo
 !implicit none
 !integer :: i,j,k,l
@@ -63,6 +80,12 @@ subroutine write_all_integrals_for_mrdft_ecmd_lda
 
 end
 
+
+subroutine write_all_integrals_for_mrdft_ecmd_pbe_ueg
+ implicit none
+ call save_one_e_effective_potential_ecmd_pbe_ueg
+
+end
 
 !ubroutine save_erf_mu_of_r_bi_elec_integrals_mo
 !implicit none

@@ -743,6 +743,9 @@ double precision function delta_4(rs,xi)
  double precision :: d_total_deltarho_rhoa,d_total_deltarho_rhob , e_c,vc_a,vc_b
  double precision, allocatable :: aos_array(:), r(:),rhoa(:),rhob(:)
  allocate(aos_array(ao_num),r(3),rhoa(N_states),rhob(N_states))
+ double precision :: threshold
+ threshold = 1d-15
+
  do istate = 1, N_states
   do i = 1, n_points_final_grid
    r(1) = final_grid_points(1,i)
@@ -752,6 +755,7 @@ double precision function delta_4(rs,xi)
    weight=final_weight_at_r_vector(i)
    call dm_dft_alpha_beta_and_all_aos_at_r(r,rhoa(istate),rhob(istate),aos_array)
    call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,vc_a,vc_b)
+   if(dabs(rhoa(istate)+rhob(istate)).lt.threshold) cycle 
    do j = 1, ao_num
     aos_deltarho_w_alpha(i,j,istate) = d_total_deltarho_rhoa(rhoa(istate),rhob(istate),mu)*aos_array(j)*weight
     aos_deltarho_w_beta(i,j,istate)  = d_total_deltarho_rhob(rhoa(istate),rhob(istate),mu)*aos_array(j)*weight

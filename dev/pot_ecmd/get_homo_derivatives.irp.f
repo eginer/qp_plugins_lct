@@ -67,12 +67,44 @@ end
  subroutine truc_a_faire_lda   
  implicit none
  integer :: istate
- print*,'\\\\\\\\\\\\\\\\\'
+ double precision :: homo1,homo2,homo3
+ double precision :: lumo1,lumo2,lumo3
+
+ print*,' '
+ print*,' '
+ print*,'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
+ print*,'\\\\\\\\\\\\\\\\\WARNING: only for close shell\\\\\\\\\\\\\\\\\'
+ print*,'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
 
  do istate = 1, n_states
-  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta | HOMO >          =',potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate) + potential_deltarho_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate) + potential_e_c_lda_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate)
-  print*,'< HOMO | dE_c,md/dn_alpha | HOMO >                       =',potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
-  print*,'< HOMO | dE_c/dn_alpha | HOMO >                          =',potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'************************HOMO*************************************'
+  homo1 = potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate) + potential_deltarho_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate) + potential_e_c_lda_ecmd_beta_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta | HOMO >          =',homo1
+
+  homo2 = potential_deltarho_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c,md/dn_alpha | HOMO >                       =',homo2
+
+  homo3 = potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c/dn_alpha | HOMO >                          =',homo3
+  print*,' '
+  print*,' '
+  print*,'***********************LUMO**************************************'
+  lumo1 = potential_deltarho_ecmd_alpha_mo(elec_alpha_num+1,elec_alpha_num+1,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num+1,elec_alpha_num+1,istate) + potential_deltarho_ecmd_beta_mo(elec_alpha_num+1,elec_alpha_num+1,istate) + potential_e_c_lda_ecmd_beta_mo(elec_alpha_num+1,elec_alpha_num+1,istate)
+  print*,'< LUMO | dE_c,md/dn_alpha+dE_c/dn_beta | LUMO >          =',lumo1
+
+  lumo2 = potential_deltarho_ecmd_alpha_mo(elec_alpha_num+1,elec_alpha_num+1,istate)+ potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num+1,elec_alpha_num+1,istate)
+  print*,'< LUMO | dE_c,md/dn_alpha | LUMO >                       =',lumo2
+
+  lumo3 = potential_e_c_lda_ecmd_alpha_mo(elec_alpha_num+1,elec_alpha_num+1,istate)
+  print*,'< LUMO | dE_c/dn_alpha | LUMO >                          =',lumo3
+  print*,' '
+  print*,' '
+  print*,'LUMO-HOMO'
+  print*,'< LUMO | dE_c,md/dn_alpha+dE_c/dn_beta | LUMO > - < HOMO | dE_c,md/dn_alpha+dE_c/dn_beta | HOMO >         =',lumo1 - homo1
+  print*,'< LUMO | dE_c,md/dn_alpha | LUMO > - < HOMO | dE_c,md/dn_alpha | HOMO >                                   =',lumo2 - homo2
+  print*,'< LUMO | dE_c/dn_alpha | LUMO > - < HOMO | dE_c/dn_alpha | HOMO >                                         =',lumo3 - homo3
+
+
 
  enddo
 end
@@ -81,10 +113,34 @@ end
  subroutine truc_a_faire_pbeueg
  implicit none
  integer :: istate
- print*,'\\\\\\\\\\\\\\\\\'
+ double precision :: homo1,homo2
+ double precision :: lumo1,lumo2
+ print*,' '
+ print*,' '
+ print*,'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
+ print*,'\\\\\\\\\\\\\\\\\WARNING: only for close shell\\\\\\\\\\\\\\\\\'
+ print*,'\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
 
  do istate = 1, n_states
-  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta PBE UEG | HOMO >          =',potential_c_alpha_mo_sr_pbe_ueg(elec_alpha_num,elec_alpha_num,istate) + potential_c_beta_mo_sr_pbe_ueg(elec_alpha_num,elec_alpha_num,istate)
-  print*,'< HOMO | dE_c,md/dn_alpha PBE UEG | HOMO >                       =',potential_c_alpha_mo_sr_pbe_ueg(elec_alpha_num,elec_alpha_num,istate)
+  print*,'************************HOMO*************************************'
+  homo1 = potential_c_alpha_mo_sr_pbe_ueg(elec_alpha_num,elec_alpha_num,istate) + potential_c_beta_mo_sr_pbe_ueg(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c,md/dn_alpha+dE_c/dn_beta PBE UEG | HOMO >          =',homo1
+
+  homo2 = potential_c_alpha_mo_sr_pbe_ueg(elec_alpha_num,elec_alpha_num,istate)
+  print*,'< HOMO | dE_c,md/dn_alpha PBE UEG | HOMO >                       =',homo2
+  print*,' '
+  print*,' '
+  print*,'***********************LUMO**************************************'
+  lumo1 = potential_c_alpha_mo_sr_pbe_ueg(elec_alpha_num+1,elec_alpha_num+1,istate) + potential_c_beta_mo_sr_pbe_ueg(elec_alpha_num+1,elec_alpha_num+1,istate)
+  print*,'< LUMO | dE_c,md/dn_alpha+dE_c/dn_beta PBE UEG | LUMO >          =',lumo1
+
+  lumo2 = potential_c_alpha_mo_sr_pbe_ueg(elec_alpha_num+1,elec_alpha_num+1,istate)
+  print*,'< LUMO | dE_c,md/dn_alpha PBE UEG | LUMO >                       =',lumo2
+  print*,' '
+  print*,' '
+  print*,'LUMO-HOMO'
+  print*,'< LUMO | dE_c,md/dn_alpha+dE_c/dn_beta PBE UEG | LUMO > - < HOMO | dE_c,md/dn_alpha+dE_c/dn_beta PBE UEG | HOMO >   =',lumo1-homo1
+  print*,'< LUMO | dE_c,md/dn_alpha PBE UEG | LUMO > - < HOMO | dE_c,md/dn_alpha PBE UEG | HOMO >                             =',lumo2-homo2
+
  enddo
 end
