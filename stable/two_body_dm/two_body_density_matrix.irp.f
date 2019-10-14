@@ -73,7 +73,8 @@
     do k = 1, mo_num
      do l = 1, mo_num
       !                               1 2 1 2                                 1 1 2 2 
-      two_bod_alpha_beta_mo_physicist(l,k,i,j,istate) = two_bod_alpha_beta_mo(i,l,j,k,istate)
+!     two_bod_alpha_beta_mo_physicist(l,k,i,j,istate) = two_bod_alpha_beta_mo(i,l,j,k,istate)
+      two_bod_alpha_beta_mo_physicist(l,k,i,j,istate) = all_states_act_two_rdm_alpha_beta_mo(l,k,j,i,istate)
      enddo
     enddo
    enddo

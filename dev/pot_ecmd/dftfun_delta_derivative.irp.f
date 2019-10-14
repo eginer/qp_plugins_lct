@@ -686,46 +686,52 @@ double precision function delta_4(rs,xi)
  return
  end
 
-!BEGIN_PROVIDER [double precision, potential_deltarho_ecmd_alpha_ao,(ao_num,ao_num,N_states)]
-!BEGIN_PROVIDER [double precision, potential_deltarho_ecmd_beta_ao,(ao_num,ao_num,N_states)]
-!BEGIN_PROVIDER [double precision, potential_e_c_lda_ecmd_alpha_ao,(ao_num,ao_num,N_states)]
-!BEGIN_PROVIDER [double precision, potential_e_c_lda_ecmd_beta_ao,(ao_num,ao_num,N_states)]
+!BEGIN_PROVIDER [double precision, potential_deltarho_ecmd_alpha_ao_0,(ao_num,ao_num,N_states)]
+!BEGIN_PROVIDER [double precision, potential_deltarho_ecmd_beta_ao_0,(ao_num,ao_num,N_states)]
+!BEGIN_PROVIDER [double precision, potential_e_c_lda_ecmd_alpha_ao_0,(ao_num,ao_num,N_states)]
+!BEGIN_PROVIDER [double precision, potential_e_c_lda_ecmd_beta_ao_0,(ao_num,ao_num,N_states)]
 !implicit none
-!integer :: j,k,l,m,n,istate
+!integer :: i,j,k,l,m,n,istate
 !double precision :: mu,weight
 !double precision :: d_total_deltarho_rhoa,d_total_deltarho_rhob , e_c,vc_a,vc_b
 !double precision, allocatable :: aos_array(:), r(:),rhoa(:),rhob(:)
 !allocate(aos_array(ao_num),r(3),rhoa(N_states),rhob(N_states))
-!potential_deltarho_ecmd_alpha_ao = 0d0
-!potential_deltarho_ecmd_beta_ao = 0d0
-!potential_e_c_lda_ecmd_alpha_ao = 0d0
-!potential_e_c_lda_ecmd_beta_ao = 0d0
+!potential_deltarho_ecmd_alpha_ao_0 = 0d0
+!potential_deltarho_ecmd_beta_ao_0 = 0d0
+!potential_e_c_lda_ecmd_alpha_ao_0 = 0d0
+!potential_e_c_lda_ecmd_beta_ao_0 = 0d0
 
 !double precision :: wall_1,wall_2
 !call wall_time(wall_1)
 !do istate = 1, N_states
-! do j = 1, nucl_num
-!  do k = 1, n_points_radial_grid  -1
-!   do l = 1, n_points_integration_angular
-!    r(1) = grid_points_per_atom(1,l,k,j)
-!    r(2) = grid_points_per_atom(2,l,k,j)
-!    r(3) = grid_points_per_atom(3,l,k,j)
-!    weight=final_weight_functions_at_grid_points(l,k,j)
-!    mu = mu_of_r(l,k,j) 
-!    call dm_dft_alpha_beta_and_all_aos_at_r(r,rhoa(istate),rhob(istate),aos_array)
-!    call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,vc_a,vc_b)
-!    
-!    do m = 1, ao_num
-!     do n = 1, ao_num 
-!      potential_deltarho_ecmd_alpha_ao(n,m,istate) += d_total_deltarho_rhoa(rhoa(istate),rhob(istate),mu)*aos_array(m)*aos_array(n)*weight 
-!      potential_deltarho_ecmd_beta_ao(n,m,istate)  += d_total_deltarho_rhob(rhoa(istate),rhob(istate),mu)*aos_array(m)*aos_array(n)*weight
-!      potential_e_c_lda_ecmd_alpha_ao(n,m,istate)  += vc_a*aos_array(m)*aos_array(n)*weight
-!      potential_e_c_lda_ecmd_beta_ao(n,m,istate)   += vc_b*aos_array(m)*aos_array(n)*weight
-!     enddo
-!    enddo
+!!do i = 1, n_points_final_grid
+! do i = 100, 100 
+!  r(1) = final_grid_points(1,i)
+!  r(2) = final_grid_points(2,i)
+!  r(3) = final_grid_points(3,i)
+!  weight = final_weight_at_r_vector(i)
+!  mu = mu_of_r_vector(i)
+!! mu = 5.d0 
+!! mu = 0.5d0
+!  rhoa(istate) = one_e_dm_alpha_at_r(i,istate)
+!  rhob(istate) = one_e_dm_beta_at_r(i,istate)
+! !call dm_dft_alpha_beta_and_all_aos_at_r(r,rhoa(istate),rhob(istate),aos_array)
+!  call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,vc_a,vc_b)
 
+!  
+!  do m = 1, ao_num
+!   do n = 1, ao_num 
+!   !potential_deltarho_ecmd_alpha_ao_0(n,m,istate) += d_total_deltarho_rhoa(rhoa(istate),rhob(istate),mu)*aos_in_r_array(m,i)*aos_in_r_array(n,i)*weight 
+!   !potential_deltarho_ecmd_beta_ao_0(n,m,istate)  += d_total_deltarho_rhob(rhoa(istate),rhob(istate),mu)*aos_in_r_array(m,i)*aos_in_r_array(n,i)*weight
+!   !potential_e_c_lda_ecmd_alpha_ao_0(n,m,istate)  += vc_a*aos_in_r_array(m,i)*aos_in_r_array(n,i)*weight
+!   !potential_e_c_lda_ecmd_beta_ao_0(n,m,istate)   += vc_b*aos_in_r_array(m,i)*aos_in_r_array(n,i)*weight
+!    potential_deltarho_ecmd_alpha_ao_0(n,m,istate) += d_total_deltarho_rhoa(rhoa(istate),rhob(istate),mu) * weight * aos_in_r_array(m,i)*aos_in_r_array(n,i) 
+!    potential_deltarho_ecmd_beta_ao_0(n,m,istate)  += d_total_deltarho_rhoa(rhoa(istate),rhob(istate),mu) * weight ! * aos_in_r_array(m,i)*aos_in_r_array(n,i)*weight
+!    potential_e_c_lda_ecmd_alpha_ao_0(n,m,istate)  += weight * aos_in_r_array(m,i)*aos_in_r_array(n,i) 
+!    potential_e_c_lda_ecmd_beta_ao_0(n,m,istate)   += vc_b * weight ! * aos_in_r_array(m,i)*aos_in_r_array(n,i)*weight
 !   enddo
 !  enddo
+
 ! enddo
 !enddo
 !call wall_time(wall_2)
@@ -752,7 +758,12 @@ double precision function delta_4(rs,xi)
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
    mu =mu_of_r_vector(i)
+  !mu = 1.d-9
+  !mu = 0.5d0
    weight=final_weight_at_r_vector(i)
+
+   rhoa(istate) = one_e_dm_alpha_at_r(i,istate)
+   rhob(istate) = one_e_dm_beta_at_r(i,istate)
    call dm_dft_alpha_beta_and_all_aos_at_r(r,rhoa(istate),rhob(istate),aos_array)
    call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,vc_a,vc_b)
    if(dabs(rhoa(istate)+rhob(istate)).lt.threshold) cycle 
