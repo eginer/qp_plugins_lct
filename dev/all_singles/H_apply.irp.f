@@ -19,6 +19,21 @@ s.set_selection_pt2("epstein_nesbet_2x2")
 s.filter_only_1h1p()
 print s
 
+s = H_apply("just_1p")
+s.set_selection_pt2("epstein_nesbet_2x2")
+s.filter_only_1p()
+print s
+
+s = H_apply("just_1h")
+s.set_selection_pt2("epstein_nesbet_2x2")
+s.filter_only_1h()
+print s
+
+s = H_apply("just_2p")
+s.set_selection_pt2("epstein_nesbet_2x2")
+s.filter_only_2p()
+print s
+
 
 END_SHELL
 
