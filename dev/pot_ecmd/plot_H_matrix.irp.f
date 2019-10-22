@@ -4,6 +4,7 @@ program pouet
  touch read_wf
  !call print_matrix_without_pot_dft
   call print_matrix_with_pot 
+  call print_mu_of_r
 end
 
 
@@ -121,28 +122,27 @@ subroutine print_matrix_with_pot
  print*,'*********pot ecmd LDA component ao basis ******'
  print*,'*********Delta alpha***************************'
 
-!do i = 1, ao_num 
-!  write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_alpha_ao_0(i,:,1) )
-!enddo
+ do i = 1, ao_num 
+   write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_alpha_ao_0(i,:,1) )
+ enddo
+ print*,' '
+ print*,'*********Delta beta********'
 
-!print*,' '
-!print*,'*********Delta beta********'
+ do i = 1, ao_num 
+   write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_beta_ao_0(i,:,1))
+ enddo
 
-!do i = 1, ao_num 
-!  write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_beta_ao_0(i,:,1))
-!enddo
+ print*,' '
+ print*,'*********E_c alpha********'
+ do i = 1, ao_num 
+   write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_alpha_ao_0(i,:,1) )
+ enddo
 
-!print*,' '
-!print*,'*********E_c alpha********'
-!do i = 1, ao_num 
-!  write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_alpha_ao_0(i,:,1) )
-!enddo
-
-!print*,' '
-!print*,'*********E_c beta********'
-!do i = 1, ao_num 
-!  write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_beta_ao_0(i,:,1) )
-!enddo
+ print*,' '
+ print*,'*********E_c beta********'
+ do i = 1, ao_num 
+   write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_beta_ao_0(i,:,1) )
+ enddo
 
 
 
@@ -153,6 +153,55 @@ subroutine print_matrix_with_pot
 
  do i = 1, ao_num 
    write(*,"(100(F10.5,x))")(potential_c_alpha_ao_lda(i,:,1))
+ enddo
+
+end
+
+
+
+subroutine print_mu_of_r               
+ implicit none
+ integer :: i
+ double precision :: r1(3),delta,local_potential,two_bod,mu_airbnb
+ double precision :: rhoa,rhob,e_c,vc_a,vc_b
+ double precision :: aos_array(ao_num) 
+
+ r1(1) = 0.0d0
+ r1(2) = 0.0d0
+ r1(3) = -3.0d0
+ delta= (3.0d0 - r1(3))/10000 
+
+ integer ::k,j,l
+ do i = 1, n_act_orb
+  do j = 1, n_act_orb
+   do k = 1, n_act_orb 
+    do l = 1, n_act_orb
+     print*,'<l,k|j,i> = ',l,k,j,i
+     print*,two_bod_alpha_beta_mo_physicist(l,k,j,i,1)
+    enddo
+   enddo
+  enddo
+ enddo
+ stop
+ do i = 1,10000 
+  r1(3) += delta  
+ 
+ !call f_HF_ab(r1,r1,local_potential,two_bod)
+  call f_PSI_ab_routine(r1,r1,local_potential,two_bod)
+  if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
+    local_potential = 1.d+10
+  else 
+    local_potential = local_potential /  two_bod
+  endif
+  mu_airbnb =  local_potential * dsqrt(dacos(-1.d0)) * 0.5d0
+
+  call dm_dft_alpha_beta_and_all_aos_at_r(r1,rhoa,rhob,aos_array)
+  call ec_lda_sr(mu_airbnb,rhoa,rhob,e_c,vc_a,vc_b)
+
+  write(33,*)r1(3),mu_airbnb,rhoa,e_c,vc_a
+  write(44,*)r1(3),mu_airbnb,local_potential*two_bod,two_bod
+ !write(44,*)r1(3),mu_airbnb,rhob,e_c,vc_b
+ 
  enddo
 
 end
