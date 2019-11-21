@@ -1,35 +1,18 @@
 program DFT_Utils_ECMD
-  implicit none
-  BEGIN_DOC
-! TODO
-  END_DOC
-  print*,'Energy_c_md_PBE_mu_vector = ',Energy_c_md_PBE_mu_vector
- !read_wf = .True.
- !touch read_wf
+ implicit none
+ read_wf = .true.
+ touch read_wf
+ no_core_density = "no_core_dm"
+ touch no_core_density
+ io_mo_one_e_integrals = "None"
+ touch io_mo_one_e_integrals 
+ io_mo_integrals_e_n = "None"
+ touch io_mo_integrals_e_n 
+ io_ao_integrals_e_n = "None"
+ touch io_ao_integrals_e_n 
+ call print_ecmd_var_energy_barth 
 
- !io_mo_one_e_integrals = "None"
- !touch io_mo_one_e_integrals  
- !io_mo_two_e_integrals = "None"
- !touch io_mo_two_e_integrals
- !io_ao_two_e_integrals = "None"
- !touch io_ao_two_e_integrals
- !io_mo_two_e_integrals_erf = "None" 
- !touch io_mo_two_e_integrals_erf
- !io_ao_two_e_integrals_erf = "None" 
- !touch io_ao_two_e_integrals_erf
- 
- !io_mo_integrals_e_n = "None"
- !touch io_mo_integrals_e_n
- !io_mo_integrals_kinetic = "None"
- !touch io_mo_integrals_kinetic 
- !io_ao_integrals_e_n = "None"
- !touch io_ao_integrals_e_n 
- !io_ao_integrals_kinetic = "None"
- !touch io_ao_integrals_kinetic 
-
- !call print_ecmd_var_energy
-  call print_ecmd_var_energy_barth
-  
+!call print_z_dipole_moment_only  
 end
 
 
