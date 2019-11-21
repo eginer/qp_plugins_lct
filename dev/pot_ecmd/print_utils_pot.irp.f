@@ -15,13 +15,13 @@
   print*, 'TOTAL ENERGY LDA                  = ',psi_energy + Energy_c_md_LDA + nuclear_repulsion
   print*, 'TOTAL ENERGY mu_of_r LDA  rsdft   = ',psi_energy + Energy_c_md_mu_of_r_LDA_rsdft  + nuclear_repulsion 
   print*, 'TOTAL ENERGY mu_of_r LDA          = ',psi_energy + Energy_c_md_LDA_mu_of_r  + nuclear_repulsion 
-  print*, 'TOTAL ENERGY mu_of_r PBE UEG      = ',psi_energy + Energy_c_md_on_top_PBE_mu_of_r_UEG + nuclear_repulsion 
+  print*, 'TOTAL ENERGY mu_of_r PBE UEG      = ',psi_energy + Energy_c_md_PBE_mu_of_r + nuclear_repulsion 
   print*, ''
   print*, ''
   print*, 'Component of the energy ....'
   print*, 'psi_energy                        = ',psi_energy
   print*, 'nuclear_repulsion                 = ',nuclear_repulsion
-  print*, 'Energy_c_md_on_top_PBE_mu_of_r_UEG = ',Energy_c_md_on_top_PBE_mu_of_r_UEG 
+ !print*, 'Energy_c_md_on_top_PBE_mu_of_r_UEG = ',Energy_c_md_on_top_PBE_mu_of_r_UEG 
   print*, 'mu_average                         = ',mu_average                         
   print*, ''
   print*, 'YOLOOOOLLLOOO'

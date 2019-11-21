@@ -3,9 +3,9 @@ program DFT_Utils_ECMD
   BEGIN_DOC
 ! TODO
   END_DOC
-  print*,'Energy_c_md_PBE_mu_vector = ',Energy_c_md_PBE_mu_vector
- !read_wf = .True.
- !touch read_wf
+! print*,'Energy_c_md_PBE_mu_vector = ',Energy_c_md_PBE_mu_vector
+  read_wf = .True.
+  touch read_wf
 
  !io_mo_one_e_integrals = "None"
  !touch io_mo_one_e_integrals  
