@@ -5,6 +5,7 @@ program pouet
  !call print_matrix_without_pot_dft
   call print_matrix_with_pot 
   call print_mu_of_r
+ !call print_wee_HF
 end
 
 
@@ -115,77 +116,149 @@ subroutine print_matrix_with_pot
    write(*,"(100(F10.5,x))")Hamilpot(i,:)
  enddo
 
+!On passe en 2x2
+ double precision :: Hamil0_2(2,2),Hamil_2(2,2),Hamilpot_2(2,2)
 
- print*,' '
- print*,' '
+ Hamil0_2(1,1) = 0.5d0 * (Hamil0(1,1)+Hamil0(2,2)) + Hamil0(1,2)
+ Hamil_2(1,1) = 0.5d0 * (Hamil(1,1)+Hamil(2,2)) + Hamil(1,2)
+ Hamilpot_2(1,1) = 0.5d0 * (Hamilpot(1,1)+Hamilpot(2,2)) + Hamilpot(1,2)
 
- print*,'*********pot ecmd LDA component ao basis ******'
- print*,'*********Delta alpha***************************'
 
- do i = 1, ao_num 
-   write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_alpha_ao_0(i,:,1) )
+ Hamil0_2(1,2) = 0.5d0 * (Hamil0(1,3)+Hamil0(1,4)+Hamil0(2,3)+Hamil0(2,4)) 
+ Hamil_2(1,2) = 0.5d0 * (Hamil(1,3)+Hamil(1,4)+Hamil(2,3)+Hamil(2,4)) 
+ Hamilpot_2(1,2) = 0.5d0 * (Hamilpot(1,3)+Hamilpot(1,4)+Hamilpot(2,3)+Hamilpot(2,4))
+
+ Hamil0_2(2,1)    = Hamil0_2(1,2) 
+ Hamil_2(2,1)     = Hamil_2(1,2)
+ Hamilpot_2(2,1)  = Hamilpot_2(1,2)
+
+
+ Hamil0_2(2,2) = 0.5d0 * (Hamil0(3,3)+Hamil0(4,4)) + Hamil0(3,4)
+ Hamil_2(2,2) = 0.5d0 * (Hamil(3,3)+Hamil(4,4)) + Hamil(3,4)
+ Hamilpot_2(2,2) = 0.5d0 * (Hamilpot(3,3)+Hamilpot(4,4)) + Hamilpot(3,4)
+
+
+ print*,'**************LDA ecmd***********'
+ print*,'*********H without pot DFT********'
+
+ do i = 1,2 
+   write(*,"(100(F10.5,x))")Hamil0_2(i,:)
  enddo
- print*,' '
- print*,'*********Delta beta********'
 
- do i = 1, ao_num 
-   write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_beta_ao_0(i,:,1))
+
+ print*,' '
+ print*,'*********H with pot DFT********'
+
+ do i = 1, 2 
+   write(*,"(100(F10.5,x))")Hamil_2(i,:)
  enddo
 
  print*,' '
- print*,'*********E_c alpha********'
- do i = 1, ao_num 
-   write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_alpha_ao_0(i,:,1) )
- enddo
+ print*,'*********only pot DFT********'
 
- print*,' '
- print*,'*********E_c beta********'
- do i = 1, ao_num 
-   write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_beta_ao_0(i,:,1) )
+ do i = 1, 2 
+   write(*,"(100(F10.5,x))")Hamilpot_2(i,:)
  enddo
 
 
+ print*,'t naked =',Hamil0_2(1,2)
+ print*,'t DFT   =',Hamilpot_2(1,2)
+ print*,'t tot   =',Hamil_2(1,2)
 
- print*,' '
- print*,' '
- print*,' '
- print*,'*********REF: e_C alpha ********'
+!print*,' '
+!print*,' '
 
- do i = 1, ao_num 
-   write(*,"(100(F10.5,x))")(potential_c_alpha_ao_lda(i,:,1))
- enddo
+!print*,'*********pot ecmd LDA component ao basis ******'
+!print*,'*********Delta alpha***************************'
+
+!do i = 1, ao_num 
+!  write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_alpha_ao_0(i,:,1) )
+!enddo
+!print*,' '
+!print*,'*********Delta beta********'
+
+!do i = 1, ao_num 
+!  write(*,"(100(F10.5,x))")(potential_deltarho_ecmd_beta_ao_0(i,:,1))
+!enddo
+
+!print*,' '
+!print*,'*********E_c alpha********'
+!do i = 1, ao_num 
+!  write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_alpha_ao_0(i,:,1) )
+!enddo
+
+!print*,' '
+!print*,'*********E_c beta********'
+!do i = 1, ao_num 
+!  write(*,"(100(F10.5,x))")(potential_e_c_lda_ecmd_beta_ao_0(i,:,1) )
+!enddo
+
+
+
+!print*,' '
+!print*,' '
+!print*,' '
+!print*,'*********REF: e_C alpha ********'
+
+!do i = 1, ao_num 
+!  write(*,"(100(F10.5,x))")(potential_c_alpha_ao_lda(i,:,1))
+!enddo
 
 end
 
+subroutine rho_alpha_diag_ext(r,rho_alpha_diag,rho_alpha_ext)        
+ implicit none
+ double precision, intent(in)  :: r(3)
+ double precision, intent(out) :: rho_alpha_diag,rho_alpha_ext 
+ integer :: i,j
+ double precision :: mos_array(mo_num)
+ rho_alpha_diag = 0.d0
+ rho_alpha_ext = 0.d0
+ call give_all_mos_at_r(r,mos_array)
+
+ do i = 1, n_act_orb
+  do j = 1, n_act_orb
+   if(i.eq.j)then
+    rho_alpha_diag += one_e_dm_mo_alpha(list_act(i),list_act(i),1) * mos_array(list_act(i)) ** 2.d0 
+   else 
+    rho_alpha_ext  += one_e_dm_mo_alpha(list_act(i),list_act(j),1) * mos_array(list_act(i)) * mos_array(list_act(j))
+   endif
+  enddo
+ enddo
+
+end
 
 
 subroutine print_mu_of_r               
  implicit none
  integer :: i
  double precision :: r1(3),delta,local_potential,two_bod,mu_airbnb
- double precision :: rhoa,rhob,e_c,vc_a,vc_b
+ double precision :: rhoa,rhob,e_c,vc_a,vc_b,vdelta_a
  double precision :: aos_array(ao_num) 
+ double precision :: d_total_deltarho_rhoa 
+ double precision :: rho_alpha_diag,rho_alpha_ext 
 
  r1(1) = 0.0d0
  r1(2) = 0.0d0
  r1(3) = -3.0d0
  delta= (3.0d0 - r1(3))/10000 
 
- integer ::k,j,l
- do i = 1, n_act_orb
-  do j = 1, n_act_orb
-   do k = 1, n_act_orb 
-    do l = 1, n_act_orb
-     print*,'<l,k|j,i> = ',l,k,j,i
-     print*,two_bod_alpha_beta_mo_physicist(l,k,j,i,1)
-    enddo
-   enddo
-  enddo
- enddo
- stop
+!integer ::k,j,l
+!do i = 1, n_act_orb
+! do j = 1, n_act_orb
+!  do k = 1, n_act_orb 
+!   do l = 1, n_act_orb
+!    print*,'<l,k|j,i> = ',l,k,j,i
+!    print*,two_bod_alpha_beta_mo_physicist(l,k,j,i,1)
+!   enddo
+!  enddo
+! enddo
+!enddo
+
  do i = 1,10000 
   r1(3) += delta  
  
+  call dm_dft_alpha_beta_and_all_aos_at_r(r1,rhoa,rhob,aos_array)
  !call f_HF_ab(r1,r1,local_potential,two_bod)
   call f_PSI_ab_routine(r1,r1,local_potential,two_bod)
   if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
@@ -197,11 +270,36 @@ subroutine print_mu_of_r
 
   call dm_dft_alpha_beta_and_all_aos_at_r(r1,rhoa,rhob,aos_array)
   call ec_lda_sr(mu_airbnb,rhoa,rhob,e_c,vc_a,vc_b)
+  vdelta_a = d_total_deltarho_rhoa(rhoa,rhob,mu_airbnb)
+  
+  call rho_alpha_diag_ext(r1,rho_alpha_diag,rho_alpha_ext)
 
-  write(33,*)r1(3),mu_airbnb,rhoa,e_c,vc_a
-  write(44,*)r1(3),mu_airbnb,local_potential*two_bod,two_bod
+
+
+  write(33,*)r1(3),mu_airbnb,e_c,vc_a,vdelta_a
+  write(44,*)r1(3),rhoa,rho_alpha_diag,rho_alpha_ext
+  write(55,*)r1(3),mu_airbnb,local_potential*two_bod,two_bod
  !write(44,*)r1(3),mu_airbnb,rhob,e_c,vc_b
  
  enddo
 
 end
+
+
+subroutine print_wee_HF         
+ implicit none
+ double precision :: r1(3),r2(3),delta,local_potential,two_bod
+
+ r1(1) = nucl_coord(1,1)
+ r1(2) = nucl_coord(1,2) 
+ r1(3) = nucl_coord(1,3) 
+
+ r2(1) = nucl_coord(2,1)
+ r2(2) = nucl_coord(2,2) 
+ r2(3) = nucl_coord(2,3) 
+
+ call f_HF_ab(r1,r2,local_potential,two_bod)
+ print*,'Wee_eff print = ', local_potential/two_bod
+
+end
+

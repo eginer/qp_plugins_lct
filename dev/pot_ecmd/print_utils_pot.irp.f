@@ -72,3 +72,15 @@
  call cpu_time(cpu1)
  print*,'Time for the z_dipole_moment integration :',cpu1-cpu0
 END_PROVIDER
+
+
+
+
+ subroutine print_z_dipole_moment_only
+ implicit none
+  print*, ''
+  print*, ''
+  print*,  '****************************************'
+  print*, 'z_dipole_moment                  = ',z_dipole_moment
+  print*,  '****************************************'
+ end

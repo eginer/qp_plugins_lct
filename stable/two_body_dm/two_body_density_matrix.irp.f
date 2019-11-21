@@ -63,18 +63,23 @@
  !  
  END_DOC
  integer :: i,j,k,l,istate
+ integer :: ii,jj,kk,ll
  double precision :: cpu_0,cpu_1
  two_bod_alpha_beta_mo_physicist = 0.d0
  print*,'providing two_bod_alpha_beta_mo_physicist ...'
  call wall_time(cpu_0)
  do istate = 1, N_states 
-  do i = 1, mo_num
-   do j = 1, mo_num
-    do k = 1, mo_num
-     do l = 1, mo_num
+  do ii = 1, n_act_orb
+   i = list_act(ii)
+   do jj = 1, n_act_orb
+    j = list_act(jj)
+    do kk = 1, n_act_orb
+     k = list_act(kk)
+     do ll = 1, n_act_orb
+      l = list_act(ll)
       !                               1 2 1 2                                 1 1 2 2 
 !     two_bod_alpha_beta_mo_physicist(l,k,i,j,istate) = two_bod_alpha_beta_mo(i,l,j,k,istate)
-      two_bod_alpha_beta_mo_physicist(l,k,i,j,istate) = all_states_act_two_rdm_alpha_beta_mo(l,k,j,i,istate)
+      two_bod_alpha_beta_mo_physicist(l,k,i,j,istate) = all_states_act_two_rdm_alpha_beta_mo(l,k,i,j,istate)
      enddo
     enddo
    enddo
