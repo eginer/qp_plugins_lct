@@ -42,6 +42,7 @@ subroutine print_contribution_dft_mu_of_r
    print*,''
    write(*, '(A40,X,F16.10)') 'ECMD PBE/ontop  regular    spin dens = ',Energy_c_md_on_top_PBE_mu_of_r
    write(*, '(A40,X,F16.10)') 'ECMD PBE/ontop  effective  spin dens = ',Energy_c_md_n_and_on_top_PBE_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD PBE/ontop  NO         spin dens = ',Energy_c_md_no_spin_dens_and_on_top_PBE_mu_of_r
 !  write(*, '(A40,X,F16.10)') 'ECMD SCAN/ontop regular    spin dens = ',Energy_c_md_on_top_SCAN_mu_of_r
 !  write(*, '(A40,X,F16.10)') 'ECMD SCAN/ontop effective  spin dens = ',Energy_c_md_n_and_on_top_SCAN_mu_of_r
    print*,''
