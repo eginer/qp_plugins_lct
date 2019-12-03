@@ -97,6 +97,29 @@ double precision function cos_x12_int(m)
 end
 
 
+double precision function cos_x14_int(m)
+ implicit none
+ BEGIN_DOC
+! int(-m*pi;+m*pi) x^12 cos(x) 
+ END_DOC
+ include 'constants.include.F'
+ integer, intent(in) :: m
+ double precision :: dm,dm2,pi2,pi4,dm4,pi6,dm6,pi8,dm8
+ dm = dble(m)
+ dm2=dm*dm
+ pi2=pi*pi
+ pi4=pi2*pi2
+ dm4=dm2*dm2
+ pi6=pi4*pi2
+ dm6=dm4*dm2
+ pi8=pi4*pi4
+ dm8=dm4*dm4
+ cos_x14_int = 28.d0 * pi * dm * (pi6*pi6 * dm6*dm6 - 156.d0 *pi6*pi4* dm6*dm4 + 17160.d0 * pi8 * dm8 - 1235520.d0*pi6*dm6 + 51891840.d0*pi4*dm4 - 1037836800.d0 * pi2*dm2 + 6227020800.d0)*dcos(pi*dm)
+
+end
+
+
+
 double precision function num_int_cos_pol(m,n,nx)
  implicit none
  integer, intent(in) :: m,nx,n
@@ -118,4 +141,39 @@ double precision function num_int_cos_pol(m,n,nx)
   x += dx
  enddo
  num_int_cos_pol *= dx
+end
+
+double precision function int_xn_cos_m(m,n)
+ implicit none
+ BEGIN_DOC
+! int(-m*pi;+m*pi) x^n cos(x) 
+ END_DOC
+ integer, intent(in) :: m,n
+ double precision :: cos_x2_int,cos_x4_int,cos_x6_int,cos_x8_int,cos_x10_int,cos_x12_int,cos_x14_int
+ if(n.gt.14)then
+  print*,'int_xn_cos_m is defined only for n up to 14'
+  print*,'you called it for n = ',n
+  stop
+ endif
+ int_xn_cos_m = 0.d0 
+ if (iand(n,1).eq.0)then 
+  if(n==0)then
+   int_xn_cos_m = 0.d0
+  else if(n==2)then
+   int_xn_cos_m = cos_x2_int(m)
+  else if(n==4)then
+   int_xn_cos_m = cos_x4_int(m)
+  else if(n==6)then
+   int_xn_cos_m = cos_x6_int(m)
+  else if(n==8)then
+   int_xn_cos_m = cos_x8_int(m)
+  else if(n==10)then
+   int_xn_cos_m = cos_x10_int(m)
+  else if(n==12)then
+   int_xn_cos_m = cos_x12_int(m)
+  else if(n==14)then
+   int_xn_cos_m = cos_x14_int(m)
+  endif
+ endif
+
 end

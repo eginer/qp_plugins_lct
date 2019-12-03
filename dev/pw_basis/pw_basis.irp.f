@@ -6,6 +6,36 @@ program pw_basis
 !  provide pw_eigval
 !  call routine_2
 !   provide n_delta_k_uniq
+
+ include 'constants.include.F'
+  double precision :: alpha,integral,integral_num,error
+  double precision :: xmax
+  integer :: m,nx,i
+  double precision :: taylor_gauss,cos_x2_int
+  m = 2
+  xmax = dble(m)*pi
+  alpha = 0.01d0
+!  call int_gauss_cos(m,alpha,integral,error) 
+
+  integer :: n
+  double precision :: x
+  double precision :: pol(0:1),int_xn_cos_m
+  do n = 1, 7
+   call int_gauss_cos(m,n,alpha,integral,error)
+   print*, 'n = ',n
+   print*,'integral',integral
+   do i = 8,8
+    nx = 10**i
+    call num_int_gauss_cos(m,alpha,integral_num,nx)
+    print*,nx,(integral_num-integral)
+   enddo
+   print*,''
+  enddo
+  stop
+! call pouet
+end
+subroutine pouet
+ implicit none
  double precision :: integral_exact,integral_num
  double precision :: cos_x2_int,cos_x4_int,cos_x6_int,cos_x8_int,cos_x10_int,cos_x12_int,num_int_cos_pol
  integer :: n,i,nx,m
@@ -13,26 +43,27 @@ program pw_basis
  print*,''
  print*,''
  m = 1
- n = 12
+ n = 2
  print*,'m,n',m,n
  do i = 5,7
   nx = 10**i
   integral_num   = num_int_cos_pol(m,n,nx)
-  integral_exact = cos_x12_int(m)
+  integral_exact = cos_x2_int(m)
   print*,''
   print*,nx
   print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
  enddo
+ stop
 
  print*,''
  print*,''
  m = 2
- n = 12
+ n = 2
  print*,'m,n',m,n
  do i = 5,7
   nx = 10**i
   integral_num   = num_int_cos_pol(m,n,nx)
-  integral_exact = cos_x12_int(m)
+  integral_exact = cos_x2_int(m)
   print*,''
   print*,nx
   print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
@@ -41,12 +72,12 @@ program pw_basis
  print*,''
  print*,''
  m = 3
- n = 12
+ n = 2
  print*,'m,n',m,n
  do i = 5,7
   nx = 10**i
   integral_num   = num_int_cos_pol(m,n,nx)
-  integral_exact = cos_x12_int(m)
+  integral_exact = cos_x2_int(m)
   print*,''
   print*,nx
   print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
@@ -55,12 +86,12 @@ program pw_basis
  print*,''
  print*,''
  m = 4
- n = 12
+ n = 2
  print*,'m,n',m,n
  do i = 5,7
   nx = 10**i
   integral_num   = num_int_cos_pol(m,n,nx)
-  integral_exact = cos_x12_int(m)
+  integral_exact = cos_x2_int(m)
   print*,''
   print*,nx
   print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)

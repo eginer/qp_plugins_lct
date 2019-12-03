@@ -30,3 +30,29 @@
  
  end
  
+
+ subroutine int_gauss_cos(m,n,alpha,integral,error)
+  implicit none
+!  BEGIN_DOC
+!  computes the following integral 
+! 
+!  \int(-m*pi;+m*pi)  exp(-alpha x^2) * cos(x)
+!
+!  using the Taylor expansion of the gaussian up to order 2*n
+!  END_DOC
+  integer, intent(in) :: m,n
+  double precision, intent(in) :: alpha
+  double precision, intent(out):: integral
+  double precision :: error,int_xn_cos_m
+
+ integer :: i
+ double precision :: pol(0:n),tmp
+ call taylor_gauss_pol(alpha,n,pol)
+ integral = 0.d0
+ do i = 1, n
+  tmp = int_xn_cos_m(m,2*i)
+  integral += pol(i) * tmp 
+  error = pol(i) * tmp 
+ enddo
+
+end
