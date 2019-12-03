@@ -6,18 +6,64 @@ program pw_basis
 !  provide pw_eigval
 !  call routine_2
 !   provide n_delta_k_uniq
- double precision :: L,alpha,integral_exact,integral_num
- integer :: n,i,nx
+ double precision :: integral_exact,integral_num
+ double precision :: cos_x2_int,cos_x4_int,cos_x6_int,cos_x8_int,cos_x10_int,cos_x12_int,num_int_cos_pol
+ integer :: n,i,nx,m
  include 'constants.include.F'
- L = 1.d0
- alpha = 1.d0
- n = 0
- do i = 1, 6
+ print*,''
+ print*,''
+ m = 1
+ n = 12
+ print*,'m,n',m,n
+ do i = 5,7
   nx = 10**i
-  call num_int_gauss_pol(n,L,alpha,integral_num,nx)
-  call exact_int_gauss_pol(n,L,alpha,integral_exact)
-!  print*,nx,integral_exact,integral_num
-  print*,nx,dabs(integral_exact-integral_num),dabs(integral_exact-integral_num)/dabs(integral_exact)
+  integral_num   = num_int_cos_pol(m,n,nx)
+  integral_exact = cos_x12_int(m)
+  print*,''
+  print*,nx
+  print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
+ enddo
+
+ print*,''
+ print*,''
+ m = 2
+ n = 12
+ print*,'m,n',m,n
+ do i = 5,7
+  nx = 10**i
+  integral_num   = num_int_cos_pol(m,n,nx)
+  integral_exact = cos_x12_int(m)
+  print*,''
+  print*,nx
+  print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
+ enddo
+
+ print*,''
+ print*,''
+ m = 3
+ n = 12
+ print*,'m,n',m,n
+ do i = 5,7
+  nx = 10**i
+  integral_num   = num_int_cos_pol(m,n,nx)
+  integral_exact = cos_x12_int(m)
+  print*,''
+  print*,nx
+  print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
+ enddo
+
+ print*,''
+ print*,''
+ m = 4
+ n = 12
+ print*,'m,n',m,n
+ do i = 5,7
+  nx = 10**i
+  integral_num   = num_int_cos_pol(m,n,nx)
+  integral_exact = cos_x12_int(m)
+  print*,''
+  print*,nx
+  print*,integral_exact,integral_num,dabs(integral_exact-integral_num)/dabs(integral_exact)
  enddo
 ! complex*8 :: z
 ! z = dcmplx(1.d0,1.d0)

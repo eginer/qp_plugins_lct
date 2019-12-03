@@ -19,7 +19,7 @@
   dx = domain/dble(nx)
   integral = 0.d0
   x = x_min
-  do i = 1, nx
+  do i = 1, nx+1
    x += dx
    integral += x**n * dexp(-alpha * x*x) 
   enddo
