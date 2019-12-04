@@ -119,6 +119,30 @@ double precision function cos_x14_int(m)
 end
 
 
+double precision function cos_x16_int(m)
+ implicit none
+ BEGIN_DOC
+! int(-m*pi;+m*pi) x^12 cos(x) 
+ END_DOC
+ include 'constants.include.F'
+ integer, intent(in) :: m
+ double precision :: dm,dm2,pi2,pi4,dm4,pi6,dm6,pi8,dm8,pi10,dm10
+ dm = dble(m)
+ dm2=dm*dm
+ pi2=pi*pi
+ pi4=pi2*pi2
+ dm4=dm2*dm2
+ pi6=pi4*pi2
+ dm6=dm4*dm2
+ pi8=pi4*pi4
+ dm8=dm4*dm4
+ pi10=pi4*pi6
+ dm10=dm4*dm6
+ cos_x16_int = 32.d0 * pi * dm * (pi8*pi6 * dm8*dm6 - 210.d0 *pi6*pi6* dm6*dm6 + 32760.d0 * pi10 * dm10 - 3603600.d0*pi8*dm8 + 259459200.d0*pi6*dm6 - 10897286400.d0 * pi4*dm4 + 217945728000.d0 * pi2*dm2 + 1307674368000.d0)*dcos(pi*dm)
+
+end
+
+
 
 double precision function num_int_cos_pol(m,n,nx)
  implicit none
@@ -132,7 +156,9 @@ double precision function num_int_cos_pol(m,n,nx)
  dm = dble(m)
  dn = dble(n)
  domain = pi*dm
+ print*,'nx =',nx
  dx = 2.d0*domain/dble(nx+1)
+ print*,'dx = ',dx
  x_min = -domain
  x = x_min
  num_int_cos_pol = 0.d0
