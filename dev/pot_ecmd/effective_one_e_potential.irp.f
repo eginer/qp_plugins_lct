@@ -71,7 +71,7 @@
                                    + potential_e_c_lda_ecmd_alpha_mo(i,j,i_state) + potential_e_c_lda_ecmd_beta_mo(i,j,i_state)   )
     effective_one_e_potential_without_kin_ecmd_lda(i,j,i_state) =  mo_integrals_n_e(i,j)  &
                                    + 0.5d0 * (potential_deltarho_ecmd_alpha_mo(i,j,i_state) + potential_deltarho_ecmd_beta_mo(i,j,i_state)  &
-                                   + potential_e_c_lda_ecmd_alpha_mo(i,j,i_state) + potential_e_c_lda_ecmd_beta_mo(i,j,i_state)   ) 
+                                   +          potential_e_c_lda_ecmd_alpha_mo(i,j,i_state) + potential_e_c_lda_ecmd_beta_mo(i,j,i_state)   ) 
    enddo
   enddo
  enddo

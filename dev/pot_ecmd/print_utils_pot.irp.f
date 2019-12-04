@@ -13,7 +13,7 @@
  !print*, 'TOTAL ENERGY mu_of_r PBE   = ',psi_energy + Energy_c_md_on_top_PBE_mu_of_r_rsdft  + nuclear_repulsion 
   print*, '********* FOR LDA Calculation*****'
   print*, 'TOTAL ENERGY LDA                  = ',psi_energy + Energy_c_md_LDA + nuclear_repulsion
-  print*, 'TOTAL ENERGY mu_of_r LDA  rsdft   = ',psi_energy + Energy_c_md_mu_of_r_LDA_rsdft  + nuclear_repulsion 
+! print*, 'TOTAL ENERGY mu_of_r LDA  rsdft   = ',psi_energy + Energy_c_md_mu_of_r_LDA_rsdft  + nuclear_repulsion 
   print*, 'TOTAL ENERGY mu_of_r LDA          = ',psi_energy + Energy_c_md_LDA_mu_of_r  + nuclear_repulsion 
   print*, 'TOTAL ENERGY mu_of_r PBE UEG      = ',psi_energy + Energy_c_md_PBE_mu_of_r + nuclear_repulsion 
   print*, ''

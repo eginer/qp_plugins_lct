@@ -3,7 +3,7 @@ program pouet
  read_wf = .True.
  touch read_wf
  !call print_matrix_without_pot_dft
-  call print_matrix_with_pot 
+ !call print_matrix_with_pot 
   call print_mu_of_r
  !call print_wee_HF
 end
@@ -233,15 +233,15 @@ subroutine print_mu_of_r
  implicit none
  integer :: i
  double precision :: r1(3),delta,local_potential,two_bod,mu_airbnb
- double precision :: rhoa,rhob,e_c,vc_a,vc_b,vdelta_a
+ double precision :: rhoa,rhob,e_c,vc_a,vc_b,vdelta_a,vdelta_b
  double precision :: aos_array(ao_num) 
- double precision :: d_total_deltarho_rhoa 
+ double precision :: d_total_deltarho_rhoa,d_total_deltarho_rhob 
  double precision :: rho_alpha_diag,rho_alpha_ext 
 
  r1(1) = 0.0d0
  r1(2) = 0.0d0
- r1(3) = -3.0d0
- delta= (3.0d0 - r1(3))/10000 
+ r1(3) = -4.0d0
+ delta= (7.0d0 - r1(3))/500 
 
 !integer ::k,j,l
 !do i = 1, n_act_orb
@@ -255,12 +255,12 @@ subroutine print_mu_of_r
 ! enddo
 !enddo
 
- do i = 1,10000 
+ do i = 1,500
   r1(3) += delta  
  
   call dm_dft_alpha_beta_and_all_aos_at_r(r1,rhoa,rhob,aos_array)
- !call f_HF_ab(r1,r1,local_potential,two_bod)
-  call f_PSI_ab_routine(r1,r1,local_potential,two_bod)
+  call f_HF_ab(r1,r1,local_potential,two_bod)
+ !call f_PSI_ab_routine(r1,r1,local_potential,two_bod)
   if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
     local_potential = 1.d+10
   else 
@@ -271,14 +271,17 @@ subroutine print_mu_of_r
   call dm_dft_alpha_beta_and_all_aos_at_r(r1,rhoa,rhob,aos_array)
   call ec_lda_sr(mu_airbnb,rhoa,rhob,e_c,vc_a,vc_b)
   vdelta_a = d_total_deltarho_rhoa(rhoa,rhob,mu_airbnb)
+  vdelta_b = d_total_deltarho_rhob(rhoa,rhob,mu_airbnb)
   
   call rho_alpha_diag_ext(r1,rho_alpha_diag,rho_alpha_ext)
 
 
 
-  write(33,*)r1(3),mu_airbnb,e_c,vc_a,vdelta_a
-  write(44,*)r1(3),rhoa,rho_alpha_diag,rho_alpha_ext
-  write(55,*)r1(3),mu_airbnb,local_potential*two_bod,two_bod
+  write(33,*)r1(3),e_c,vc_a,vdelta_a,vc_b,vdelta_b
+ !write(33,*)r1(3),mu_airbnb,e_c,vc_a,vdelta_a
+  write(44,*)r1(3),rhoa,rhob,rho_alpha_diag,rho_alpha_ext
+ !write(44,*)r1(3),rhoa,rho_alpha_diag,rho_alpha_ext
+ !write(55,*)r1(3),mu_airbnb,local_potential*two_bod,two_bod
  !write(44,*)r1(3),mu_airbnb,rhob,e_c,vc_b
  
  enddo
@@ -286,20 +289,5 @@ subroutine print_mu_of_r
 end
 
 
-subroutine print_wee_HF         
- implicit none
- double precision :: r1(3),r2(3),delta,local_potential,two_bod
 
- r1(1) = nucl_coord(1,1)
- r1(2) = nucl_coord(1,2) 
- r1(3) = nucl_coord(1,3) 
-
- r2(1) = nucl_coord(2,1)
- r2(2) = nucl_coord(2,2) 
- r2(3) = nucl_coord(2,3) 
-
- call f_HF_ab(r1,r2,local_potential,two_bod)
- print*,'Wee_eff print = ', local_potential/two_bod
-
-end
 
