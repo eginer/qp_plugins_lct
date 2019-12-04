@@ -41,7 +41,7 @@ END_PROVIDER
   print*, ''
  !write(*, '(A22,X,F16.10)') 'Approx eigenvalue   = ',electronic_energy_mr_dft+nuclear_repulsion + Trace_v_Hxc - (short_range_Hartree + energy_x + energy_c)
  !write(*, '(A22,X,F16.10)') 'Trace_v_xc          = ',Trace_v_xc
- !write(*, '(A22,X,F16.10)') 'Trace_v_Hxc         = ',Trace_v_Hxc
+  write(*, '(A22,X,F16.10)') 'Trace_v_Hxc         = ',Trace_v_Hxc
  
  !write(*, '(A22,X,F16.10)') '<Psi| H | Psi>      = ',psi_energy
  !write(*, '(A22,X,F16.10)') 'psi_energy_two_e    = ',psi_energy_two_e

@@ -118,6 +118,8 @@
 
  END_PROVIDER
 
+
+
  BEGIN_PROVIDER [double precision, Energy_c_md_on_top_LYP_mu_of_r, (N_states)]
  BEGIN_DOC
   ! Energy_c_md_on_top_LYP_mu_of_r_UEG_vector = LYP-on_top multi determinant functional with exact on top extracted from the UEG using a mu(r) interaction 

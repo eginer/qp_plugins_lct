@@ -1,4 +1,4 @@
-program DFT_Utils_ECMD
+program write_integrals_for_dft_ecmd_pbe_ueg
  implicit none
  read_wf = .true.
  touch read_wf
@@ -10,9 +10,10 @@ program DFT_Utils_ECMD
  touch io_mo_integrals_e_n 
  io_ao_integrals_e_n = "None"
  touch io_ao_integrals_e_n 
- call print_ecmd_var_energy_barth 
+ call write_all_integrals_for_mrdft_ecmd_pbe_ueg
 
-!call print_z_dipole_moment_only  
+ !call print_contribution_dft_mu_of_r 
+  call print_ecmd_var_energy_barth
 end
 
 
