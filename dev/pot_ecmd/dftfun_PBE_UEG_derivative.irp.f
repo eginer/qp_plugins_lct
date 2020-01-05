@@ -233,7 +233,11 @@ subroutine give_d_Ec_pbeueg_rho(r,mu,d_ec_pbeueg_rhoa,d_ec_pbeueg_rhob)
   call v_rho_oc_to_v_rho_ab(vrhoo,vrhoc,vc_rho_a,vc_rho_b)
   call d_beta_pbeueg_rho(rhoa,rhob,grad_rho_a,grad_rho_b,d_beta_rhoa,d_beta_rhob)
 
-  beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
+  if(dabs(rhot**2.d0*f_pbeueg(rs,xi)).gt.1.d-15)then
+   beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
+  else
+   beta(istate)=1.d+10
+  endif
 
   if ((dabs((1.d0+beta(istate)*mu**3.d0)**2.d0) > 1.d-12) .AND. (dabs((rhot**2.d0*f_pbeueg(rs,xi))) > 1.d-12) ) then
    beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
@@ -319,7 +323,11 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
 
   call v_grad_rho_oc_to_v_grad_rho_ab(vsigmaoo,vsigmacc,vsigmaco,vc_grad_rho_a_2(istate),vc_grad_rho_b_2(istate),vc_grad_rho_a_b(istate))
 
-  beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
+  if(dabs(rhot**2.d0*f_pbeueg(rs,xi)).gt.1.d-10)then
+   beta(istate)=c_beta*e_PBE/(rhot**2.d0*f_pbeueg(rs,xi))
+  else
+   beta(istate)=1.d+10
+  endif
 
   if ((dabs((1.d0+beta(istate)*mu**3.d0)**2.d0) > 1.d-12) .AND. (dabs((rhot**2.d0*f_pbeueg(rs,xi))) > 1.d-12) ) then
    call d_beta_pbeueg_d_ec_pbe(rhoa,rhob,d_beta_ec) 

@@ -119,6 +119,35 @@
  END_PROVIDER
 
 
+ BEGIN_PROVIDER [double precision, Energy_c_md_zero_spin_PBE_UEG_mu_of_r, (N_states)]
+ BEGIN_DOC
+  ! PBE-based functional with UEG-based on-top but with a ZERO SPIN DENSITY for both the PBE and the on-top 
+ END_DOC
+ implicit none
+ double precision :: weight,mu
+ integer :: i,istate
+ double precision,allocatable  :: eps_c_md_PBE(:)
+
+ allocate(eps_c_md_PBE(N_states))
+ Energy_c_md_zero_spin_PBE_UEG_mu_of_r = 0.d0
+  
+ print*,'Providing Energy_c_md_n_and_PBE_mu_of_r ...'
+ call wall_time(wall0)
+ do i = 1, n_points_final_grid
+  weight=final_weight_at_r_vector(i)
+  mu = mu_of_r_vector(i)
+  call give_epsilon_pbe_zero_spin_dens_provider(mu,i,eps_c_md_PBE)
+  do istate = 1, N_states
+   Energy_c_md_zero_spin_PBE_UEG_mu_of_r (istate) += eps_c_md_PBE(istate) * weight
+  enddo
+ enddo
+ double precision :: wall1, wall0
+ call wall_time(wall1)
+ print*,'Time for the Energy_c_md_zero_spin_PBE_UEG_mu_of_r :',wall1-wall0
+
+ END_PROVIDER
+
+
  BEGIN_PROVIDER [double precision, Energy_c_md_n_and_on_top_LYP_mu_of_r, (N_states)]
  BEGIN_DOC
   ! Energy_c_md_n_and_on_top_LYP_mu_of_r = LYP-on_top multi determinant functional with exact on top extrapolated for large mu using a mu(r) interaction and spin polarization computed only with on-top and total density

@@ -34,6 +34,7 @@ subroutine print_contribution_dft_mu_of_r
    write(*, '(A40,X,F16.10)') 'ECMD LDA        effective  spin dens = ',Energy_c_md_n_and_LDA_mu_of_r
    write(*, '(A40,X,F16.10)') 'ECMD PBE        regular    spin dens = ',Energy_c_md_PBE_mu_of_r
    write(*, '(A40,X,F16.10)') 'ECMD PBE        effective  spin dens = ',Energy_c_md_n_and_PBE_mu_of_r
+   write(*, '(A40,X,F16.10)') 'ECMD PBE        NO         spin dens = ',Energy_c_md_zero_spin_PBE_UEG_mu_of_r
 !  write(*, '(A40,X,F16.10)') 'ECMD SCAN       regular    spin dens = ',Energy_c_md_SCAN_mu_of_r               
 !  write(*, '(A40,X,F16.10)') 'ECMD SCAN       effective  spin dens = ',Energy_c_md_n_and_SCAN_mu_of_r         
 !  write(*, '(A40,X,F16.10)') 'ECMD HOLPEG     regular    spin dens = ',Energy_c_md_holpeg_mu_of_r

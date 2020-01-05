@@ -88,7 +88,7 @@ BEGIN_PROVIDER [double precision, core_inact_act_V_kl_contracted_transposed, (n_
     do ipoint = 1, n_points_final_grid
      do j = 1, n_orb_max_basis ! condition on mo_num in order to ensure the correct CBS limit 
       do i = 1, n_orb_max_basis ! 
-                                        !1 2                     1 2 
+                                                       !1 2                     1 2 
        core_inact_act_V_kl_contracted_transposed(ipoint,k,l) += integrals_array(i,j) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
       enddo
      enddo
