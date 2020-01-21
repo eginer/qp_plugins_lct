@@ -5,7 +5,28 @@ program on_top_density
   END_DOC
   read_wf = .True.
   touch read_wf
-  call routine
+!  call routine
+  call print_on_top
+end
+
+subroutine print_on_top
+ implicit none
+ double precision :: zmax,dz,r(3),on_top_in_r,total_density
+ integer :: nz,i,istate
+ zmax = 5.d0
+ nz = 1000
+ dz = zmax / dble(nz)
+ r(:) = 0.d0 
+ r(3) = -zmax * 0.5d0 
+ istate = 1
+ do i = 1, nz
+  call give_on_top_in_r_one_state(r,istate,on_top_in_r)
+  call give_cas_density_in_r(r,total_density)
+  write(33,*)r(3),on_top_in_r,total_density
+  r(3) += dz
+ enddo
+
+
 end
 
 subroutine routine

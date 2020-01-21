@@ -34,6 +34,9 @@ s.set_selection_pt2("epstein_nesbet_2x2")
 s.filter_only_2p()
 print s
 
+s = H_apply("just_mono_pert_z_dip",do_double_exc=False)
+s.set_perturbation("epstein_nesbet_z_dipole")
+print s
 
 END_SHELL
 

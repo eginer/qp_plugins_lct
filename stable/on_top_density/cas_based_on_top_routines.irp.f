@@ -122,3 +122,47 @@ end
 
  end
 
+subroutine give_cas_density_in_r(r,total_density)
+ implicit none
+ double precision, intent(in) :: r(3)
+ double precision, intent(out):: total_density(N_states)
+ BEGIN_DOC
+! total_density(i) = density of the cas wave function
+ END_DOC
+ integer :: i,j,istate
+ double precision :: mos_array(mo_num),core_density_in_r,inact_density_in_r,act_density_in_r(2,N_states)
+ call give_all_mos_at_r(r,mos_array)
+
+ core_density_in_r = 0.d0
+ do i = 1, n_core_orb
+  j = list_core(i)
+  core_density_in_r += mos_array(j) * mos_array(j) 
+ enddo
+
+ inact_density_in_r = 0.d0
+ do i = 1, n_inact_orb
+  j = list_inact(i)
+  inact_density_in_r += mos_array(j) * mos_array(j)
+ enddo
+
+ double precision, allocatable :: act_mos(:)
+ double precision :: tmp
+ allocate(act_mos(n_act_orb))
+ do i = 1, n_act_orb
+  j = list_act(i)
+  act_mos(i) = mos_array(j)
+ enddo
+
+ act_density_in_r = 0.d0
+ do istate = 1, N_states
+  do i = 1, n_act_orb
+   do j = 1, n_act_orb
+    tmp = act_mos(i) * act_mos(j) 
+    act_density_in_r(1,istate) += tmp * one_e_act_dm_alpha_mo_for_dft(j,i,istate) 
+    act_density_in_r(2,istate) += tmp * one_e_act_dm_beta_mo_for_dft(j,i,istate) 
+   enddo
+  enddo
+  total_density(istate) = 2.d0 * (core_density_in_r + inact_density_in_r) + act_density_in_r(1,istate) + act_density_in_r(2,istate)
+ enddo
+
+end
