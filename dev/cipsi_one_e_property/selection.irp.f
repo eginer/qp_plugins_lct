@@ -745,7 +745,6 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         pt2(istate) = pt2(istate) + e_pert
         norm(istate) = norm(istate) + coef * coef
         call i_H_j_eff_pot(det,det,one_prop_pot_a_provider,one_prop_pot_b_provider,mo_num,N_int,ojj)
-!        print*,'coef,ojj',coef,ojj
         variance(istate) += coef * coef * ojj 
         integer :: degree0
         call get_excitation_degree(ref_bitmask,det,degree0,N_int)

@@ -16,12 +16,12 @@
 &BEGIN_PROVIDER [double precision, z_max]
  implicit none
 !cucl2
- z_min = 0.d0
- z_max = 10.d0
+ z_min = -5.d0
+ z_max = 8.d0
 !BH
 !z_min = -4.d0
 !z_max = 7.d0
- delta_z = 0.05d0
+ delta_z = 0.005d0
 END_PROVIDER
 
 BEGIN_PROVIDER [integer, N_z_pts]
@@ -86,10 +86,6 @@ BEGIN_PROVIDER [double precision, integrated_rho_tot_all_points, (N_z_pts)]
  integer :: i,j,k,l,i_z,h
  double precision :: z,function_integrated_delta_rho,c_k,c_j,n_i_h,accu
  integrated_rho_tot_all_points = 0.d0
-!!$OMP PARALLEL DO DEFAULT(none) &
-!!$OMP PRIVATE(i,h,j,k,c_j,c_k,n_i_h,i_z) &
-!!$OMP SHARED(mo_num,ao_num,mo_coef, &
-!!$OMP   ao_integrated_delta_rho_all_points,one_e_spin_density_mo,integrated_delta_rho_all_points,N_z_pts)          
  do i_z = 1, N_z_pts
   do i = 1, mo_num
     do h = 1, mo_num

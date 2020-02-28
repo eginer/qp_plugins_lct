@@ -28,10 +28,16 @@ subroutine routine
     i += 1
     print*,'-----------------------'
     print*,'i = ',i
+    print*,'1p'
+    print*,'N_det_generators = ',N_det_generators
     call H_apply_just_1p(pt2, norm_pert, H_pert_diag,  N_st)
     call diagonalize_CI
+    print*,'1h'
+    print*,'N_det_generators = ',N_det_generators
     call H_apply_just_1h(pt2, norm_pert, H_pert_diag,  N_st)
     call diagonalize_CI
+    print*,'1h1p'
+    print*,'N_det_generators = ',N_det_generators
     call H_apply_just_1h_1p(pt2, norm_pert, H_pert_diag,  N_st)
     call diagonalize_CI
     print*,'N_det = ',N_det
