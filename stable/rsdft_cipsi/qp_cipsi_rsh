@@ -20,7 +20,7 @@ Usage:
 
 Options:
   -m, --mu=<positive real>              range separation parameter (default=0.5)
-  -f, --func=<UPPER CASE STRING>        range separated functional (default=PBE)
+  -f, --func=<LOWER CASE STRING>        range separated functional (default=pbe)
   -n, --ndetmax=<positive integer>      max number of determinants in the CIPSI wf (default=1.e6)
   -p, --pt2max=<positive real>          max value of the PT2 correction (default=1.e-3)
   -t, --thresh=<positive real>          threshold on the convergence of the variational energy (default=1.e-10)
@@ -184,21 +184,24 @@ qp  set  density_for_dft    damping_for_rs_dft      $damp
 
 if [[ $readints = "False" ]]; then
 # write the effective Hamiltonian containing long-range interaction and short-range effective potential to be diagonalized in a self-consistent way
-  qp run write_effective_rsdft_hamiltonian | tee ${ezfio}_rsdft-0
+  echo "#" iter evar old     evar new    deltae      threshold  > ${ezfio}_data_rsdft
+  qp run write_effective_rsdft_hamiltonian | tee ${ezfio}/rsdft-0
+  EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/rsdft-0 | cut -d "=" -f 2`
 # save the RS-KS one-e density for the damping on the density 
   qp run save_one_e_dm 
 
   qp  set  density_for_dft    density_for_dft         "damping_rs_dft"
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
 
-  for i in {1..3}
+
+  for i in {1..100}
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
      qp run fci  | tee ${ezfio}/fci-$i
      EV=0
 
-     echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}_data_conv_${i}
+     echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}/data_conv_${i}
      for j in {1..100}
      do
         # write the new effective Hamiltonian with the damped density (and the current density to be damped with the next density)
@@ -211,14 +214,24 @@ if [[ $readints = "False" ]]; then
         DE=`echo "${EV_new} - ${EV}" | bc`
         DEabs=`echo "print abs(${DE})" | python `
         CONV=`echo "print ${DEabs} < ${thresh}" | python`
-        echo $j $EV $EV_new $DE $thresh >> ${ezfio}_data_conv_${i}
+        echo $j $EV $EV_new $DE $thresh >> ${ezfio}/data_conv_${i}
         if [ "$CONV" = "True" ]; then
           break
         fi
         EV=$EV_new
       done
      
-      qp run  write_effective_rsdft_hamiltonian | tee ${ezfio}_rsdft-${i}-final
+      qp run  write_effective_rsdft_hamiltonian | tee ${ezfio}/rsdft-${i}-final
+      EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/rsdft-${i}-final | cut -d "=" -f 2`
+      # checking the convergence
+      DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
+      DEabs=`echo "print abs(${DE})" | python `
+      CONV=`echo "print ${DEabs} < ${thresh}" | python`
+      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${ezfio}_data_rsdft
+      if [ "$CONV" = "True" ]; then
+        break
+      fi
+      EV_macro=$EV_new_macro
      
 #     qp set determinants read_wf "True"
      
@@ -230,13 +243,15 @@ if [[ $readints = "False" ]]; then
 
 else 
 
+  echo "#" iter evar old     evar new    deltae      threshold  > ${ezfio}_data_rsdft
 # write the effective Hamiltonian containing long-range interaction and short-range effective potential to be diagonalized in a self-consistent way
   qp run write_erf_and_regular_ints 
   for file in consolidated_idx consolidated_key consolidated_value
    do 
     cp ${ezfio}/work/mo_ints_regular_$file ${ezfio}/work/mo_ints_$file
    done
-  qp run write_rsdft_h_read_ints | tee ${ezfio}_rsdft-0
+  qp run write_rsdft_h_read_ints | tee ${ezfio}/rsdft-0
+  EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/rsdft-0 | cut -d "=" -f 2`
 # save the RS-KS one-e density for the damping on the density 
   qp run save_one_e_dm 
 
@@ -244,7 +259,7 @@ else
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
   qp  set  density_for_dft    damping_for_rs_dft      0.75
 
-  for i in {1..3}
+  for i in {1..1000}
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
@@ -256,7 +271,7 @@ else
      qp run fci  | tee ${ezfio}/fci-$i
      EV=0
 
-     echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}_data_conv_${i}
+     echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}/data_conv_${i}
      for j in {1..100}
      do
         # save the regular integrals into the two-elec file
@@ -289,7 +304,7 @@ else
          damp=$dampsave
         fi
         CONV=`echo "print ${DEabs} < ${thresh}" | python`
-        echo $j $EV $EV_new $DE $thresh >> ${ezfio}_data_conv_${i}
+        echo $j $EV $EV_new $DE $thresh >> ${ezfio}/data_conv_${i}
         if [ "$CONV" = "True" ]; then
           break
         fi
@@ -301,14 +316,18 @@ else
        do 
         cp ${ezfio}/work/mo_ints_regular_$file ${ezfio}/work/mo_ints_$file
        done
-      qp run  write_rsdft_h_read_ints | tee ${ezfio}_rsdft-${i}-final
+      qp run  write_rsdft_h_read_ints | tee ${ezfio}/rsdft-${i}-final
+      EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/rsdft-${i}-final | cut -d "=" -f 2`
+      # checking the convergence
+      DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
+      DEabs=`echo "print abs(${DE})" | python `
+      CONV=`echo "print ${DEabs} < ${thresh}" | python`
+      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${ezfio}_data_rsdft
+      if [ "$CONV" = "True" ]; then
+        break
+      fi
+      EV_macro=$EV_new_macro
      
-#     qp set determinants read_wf "True"
-     
-#     qp run fci | tee ${ezfio}_FCI_final.out_$ndetmax
-#     
-#     qp run print_rsdft_variational_energy  | tee ${ezfio}_printdft_final.out_$ndetmax
-    
   done
 
 

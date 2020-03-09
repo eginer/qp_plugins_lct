@@ -1,0 +1,21 @@
+#!/bin/bash                                                                                                                                  
+QP_ROOT=~/programs/qp2/
+source ${QP_ROOT}/quantum_package.rc
+
+file_xyz=H2.xyz
+basis=aug-cc-pvdz
+ezfio=H2
+
+#start with a RHF calculation
+qp create_ezfio -b $basis -o $ezfio $file_xyz 
+qp run scf 
+
+#define the main options : mu, functional, number of determinants, max pt2 and reading or not two-elec integrals (to save time)
+mu=0.5 
+fun=pbe
+ndet=1000
+pt2=0.
+readint=False
+
+# run the rsdft script
+qp_cipsi_rsh  -m $mu  -f $fun  -n $ndet  -p $pt2 $ezfio  -r $readint 
