@@ -58,7 +58,7 @@ subroutine routine
   r(2) = final_grid_points(2,i_point)
   r(3) = final_grid_points(3,i_point)
   do istate = 1, N_states
-   prov_dm = core_inact_act_on_top_of_r_new(i_point,istate)
+   prov_dm = core_inact_act_on_top_of_r(i_point,istate)
    call give_on_top_in_r_one_state(r,istate,on_top_in_r)
    accu(istate) += dabs(prov_dm - on_top_in_r) * final_weight_at_r_vector(i_point)
    accu_2(istate) += prov_dm * final_weight_at_r_vector(i_point)
