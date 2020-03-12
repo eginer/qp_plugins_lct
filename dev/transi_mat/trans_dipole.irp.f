@@ -211,3 +211,15 @@ END_PROVIDER
 
 
 END_PROVIDER 
+
+
+BEGIN_PROVIDER [double precision, oscillator_strength, (N_states)]
+ implicit none
+ integer :: istate
+ oscillator_strength = 0.d0
+ do istate = 2, N_states
+  oscillator_strength(istate) = 2.d0/3.d0 * dabs(CI_energy(1) - CI_energy(istate)) * & 
+            ( trans_dipole_x(1,istate)**2.d0 + trans_dipole_y(1,istate)**2.d0 + trans_dipole_z(1,istate)**2.d0 )
+ enddo
+
+END_PROVIDER 
