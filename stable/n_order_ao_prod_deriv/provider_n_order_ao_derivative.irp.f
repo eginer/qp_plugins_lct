@@ -87,7 +87,6 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
 
  exp_part_derivative = 0.d0
 
-!print*,' order_der_loc_dasn la sub =',order_der
 
  do m=1,ao_prim_num(ao_num_local)
   beta = ao_expo_ordered_transp(m,ao_num_local)
@@ -107,13 +106,6 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
   d_z_f(2) = (-2.d0 *beta)
 
   if(order_der(1) .gt. 0 .and. order_der(2) .gt. 0 .and. order_der(3) .gt. 0)then
-  !d_h(2,1,1)= (-2.d0 *beta*dx) * dexp(-beta*r2)
-  !d_h(1,2,1)= (-2.d0 *beta*dy) * dexp(-beta*r2)
-  !d_h(1,1,2)= (-2.d0 *beta*dz) * dexp(-beta*r2)
-  !d_h(1,2,2)= (-2.d0 *beta*dy)*(-2.d0 *beta*dz) * dexp(-beta*r2)
-  !d_h(2,2,1)= (-2.d0 *beta*dx)*(-2.d0 *beta*dy) * dexp(-beta*r2)
-  !d_h(2,1,2)= (-2.d0 *beta*dx)*(-2.d0 *beta*dz) * dexp(-beta*r2)
-  !d_h(2,2,2)= (-2.d0 *beta*dx)* (-2.d0 *beta*dy) * (-2.d0 *beta*dz) * dexp(-beta*r2)
    do c=1,order_der(3)
     do b=1,order_der(2)
      do a=1,order_der(1)
@@ -130,9 +122,6 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
   else if (order_der(1) .gt. 0 .and. order_der(2) .gt. 0 .and. order_der(3) .eq. 0)then
    d_h(1,0,0)= d_x_f(1) * d_h(0,0,0)
    d_h(0,1,0)= d_y_f(1) * d_h(0,0,0)
-  !d_h(1,1,0)= d_x_f(1) * d_y_f(1) * d_h(0,0,0) 
-  !d_h(2,1,0)= d_y_f(1)*(d_x_f(1)*d_h(1,0,0)+ d_x_f(2)*d_h(0,0,0)) 
-  !d_h(2,1,0)= d_y_f(1)*((d_x_f(1)**2.d0)*d_h(0,0,0)+ d_x_f(2)*d_h(0,0,0)) 
    do b=1,order_der(2)
     do a=1,order_der(1)
      do l=0,b-1
@@ -146,9 +135,6 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
   else if (order_der(1) .gt. 0 .and. order_der(2) .eq. 0 .and. order_der(3) .gt. 0)then
    d_h(1,0,0)= d_x_f(1) * d_h(0,0,0)
    d_h(0,0,1)= d_z_f(1) * d_h(0,0,0)
-  !d_h(2,1,1)= (-2.d0 *beta*dx) * dexp(-beta*r2)
-  !d_h(1,1,2)= (-2.d0 *beta*dz) * dexp(-beta*r2)
-  !d_h(2,1,2)= (-2.d0 *beta*dx)*(-2.d0 *beta*dz) * dexp(-beta*r2)
    do c=1,order_der(3)
     do a=1,order_der(1)
      do i=0,c-1
@@ -161,9 +147,6 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
   else if (order_der(1) .eq. 0 .and. order_der(2) .gt. 0 .and. order_der(3) .gt.0) then
    d_h(0,1,0)= d_y_f(1) * d_h(0,0,0)
    d_h(0,0,1)= d_z_f(1) * d_h(0,0,0)
-  !d_h(1,2,1)= (-2.d0 *beta*dy) * dexp(-beta*r2)
-  !d_h(1,1,2)= (-2.d0 *beta*dz) * dexp(-beta*r2)
-  !d_h(1,2,2)= (-2.d0 *beta*dy)*(-2.d0 *beta*dz) * dexp(-beta*r2)
    do c=1,order_der(3)
     do b=1,order_der(2)
      do i=0,c-1
@@ -174,22 +157,18 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
     enddo
    enddo
   else if (order_der(1) .gt. 0 .and. order_der(2) .eq. 0 .and. order_der(3) .eq. 0)then
-  !d_h(2,1,1)= (-2.d0 *beta*dx) * dexp(-beta*r2)
- ! print*,'je passe ici'
    do a=1,order_der(1)
     do k=0,a-1
      d_h(a,0,0) += binom_func(a-1,k)*d_x_f(k+1)*d_h(a-1-k,0,0)
     enddo
    enddo 
   else if (order_der(1) .eq. 0 .and. order_der(2) .gt. 0 .and. order_der(3) .eq. 0)then
-  !d_h(1,2,1)= (-2.d0 *beta*dy) * dexp(-beta*r2)
    do b=1,order_der(2)
     do l=0,b-1
      d_h(0,b,0) += binom_func(b-1,l)*d_y_f(l+1)*d_h(0,b-1-l,0)
     enddo
    enddo
   else if (order_der(1) .eq. 0 .and. order_der(2) .eq. 0 .and. order_der(3) .gt. 0)then
-  !d_h(1,1,2)= (-2.d0 *beta*dz) * dexp(-beta*r2)
    do c=1,order_der(3)
     do i=0,c-1
      d_h(0,0,c) += binom_func(c-1,i)*d_z_f(i+1)*d_h(0,0,c-1-i)
@@ -198,7 +177,6 @@ subroutine n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_d
   endif
  
   exp_part_derivative += ao_coef_normalized_ordered_transp(m,ao_num_local) * d_h(order_der(1),order_der(2),order_der(3)) 
- !print*,'exp_part_derivative  =',exp_part_derivative
 
 
  enddo
@@ -243,17 +221,8 @@ subroutine n_order_partial_derivative_ao(r,ao_num_local,order_der,ao_part_deriva
     order_der_loc_exp(2)= l
     order_der_loc_exp(3)= m
 
-   !print*,' order_der_loc =',order_der
-   !print*,' order_der_loc_exp =',order_der_loc_exp
-     
     call n_order_partial_derivative_ao_polynomial_part(r,ao_num_local,order_der_loc_pol,pol_part_derivative)
     call n_order_partial_derivative_ao_exponential_part(r,ao_num_local,order_der_loc_exp,exp_part_derivative) 
-   !print*,'*******'
-   !print*,'order_der_loc_pol',order_der_loc_pol(1),order_der_loc_pol(2),order_der_loc_pol(3)
-   !print*,'order_der_loc_exp',order_der_loc_exp(1),order_der_loc_exp(2),order_der_loc_exp(3)
-   !print*,'pol_part_derivative',pol_part_derivative
-   !print*,'exp_part_derivative',exp_part_derivative
-   !print*,'binome tot',binom_func(order_der(3),m)* binom_func(order_der(1),k) * binom_func(order_der(2),l) 
     ao_part_derivative += binom_func(order_der(1),k) * binom_func(order_der(2),l) * binom_func(order_der(3),m) * pol_part_derivative * exp_part_derivative
    !print*,'ao_part_derivative  =',ao_part_derivative
    enddo
@@ -303,19 +272,10 @@ subroutine n_order_partial_derivative_ao_product(r,ao_num_local_1,ao_num_local_2
     order_der_loc_2(2)= l
     order_der_loc_2(3)= m
 
-   !print*,' order_der_loc =',order_der
-   !print*,' order_der_loc_exp =',order_der_loc_exp
  
     call n_order_partial_derivative_ao(r,ao_num_local_1,order_der_loc_1,ao_part_derivative_1) 
     call n_order_partial_derivative_ao(r,ao_num_local_2,order_der_loc_2,ao_part_derivative_2) 
-   !print*,'*******'
-   !print*,'order_der_loc_pol',order_der_loc_pol(1),order_der_loc_pol(2),order_der_loc_pol(3)
-   !print*,'order_der_loc_exp',order_der_loc_exp(1),order_der_loc_exp(2),order_der_loc_exp(3)
-   !print*,'pol_part_derivative',pol_part_derivative
-   !print*,'exp_part_derivative',exp_part_derivative
-   !print*,'binome tot',binom_func(order_der(3),m)* binom_func(order_der(1),k) * binom_func(order_der(2),l) 
     ao_part_derivative += binom_func(order_der(1),k) * binom_func(order_der(2),l) * binom_func(order_der(3),m) * ao_part_derivative_1* ao_part_derivative_2 
-   !print*,'ao_part_derivative  =',ao_part_derivative
    enddo
   enddo
  enddo
