@@ -2,12 +2,15 @@
  subroutine act_on_top_on_grid_pt(ipoint,istate,pure_act_on_top_of_r)
  implicit none
  BEGIN_DOC
- ! pure_act_on_top_of_r returns the purely ACTIVE part of the STATE AVERAGED on top pair density
+ ! act_on_top_on_grid_pt returns the purely ACTIVE part of the on top pair density
+ !
+ ! at the grid point ipoint, for the state istate
  END_DOC
  integer, intent(in) :: ipoint,istate
  double precision, intent(out) :: pure_act_on_top_of_r
  double precision :: phi_i,phi_j,phi_k,phi_l
  integer :: i,j,k,l
+ ASSERT (istate <= N_states)
 
  pure_act_on_top_of_r = 0.d0
   do l = 1, n_act_orb
@@ -27,7 +30,7 @@
  end
 
 
- BEGIN_PROVIDER [double precision, core_inact_act_on_top_of_r,(n_points_final_grid,N_states) ]
+ BEGIN_PROVIDER [double precision, total_cas_on_top_density,(n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
  ! on top pair density at each grid point of a CAS-BASED wf
@@ -35,36 +38,34 @@
  integer :: i_point,istate
  double precision :: wall_0,wall_1,core_inact_dm,pure_act_on_top_of_r
  logical :: no_core
- print*,'providing the core_inact_act_on_top_of_r'
+ print*,'providing the total_cas_on_top_density'
  ! for parallelization
  provide inact_density core_density one_e_act_density_beta one_e_act_density_alpha
  i_point = 1
  istate = 1
  call act_on_top_on_grid_pt(i_point,istate,pure_act_on_top_of_r)
  call wall_time(wall_0)
- no_core = .False.
- if(no_core_density .EQ. "no_core_dm")then
+ if(no_core_density)then
   print*,'USING THE VALENCE ONLY TWO BODY DENSITY'
-  no_core = .True.
  endif
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (i_point,core_inact_dm,istate,pure_act_on_top_of_r) & 
- !$OMP SHARED(core_inact_act_on_top_of_r,n_points_final_grid,inact_density,core_density,one_e_act_density_beta,one_e_act_density_alpha,no_core,N_states)
+ !$OMP SHARED(total_cas_on_top_density,n_points_final_grid,inact_density,core_density,one_e_act_density_beta,one_e_act_density_alpha,N_states,no_core_density)
  do i_point = 1, n_points_final_grid
   do istate = 1, N_states
    call act_on_top_on_grid_pt(i_point,istate,pure_act_on_top_of_r)
-   if(no_core) then
+   if(no_core_density) then
     core_inact_dm = inact_density(i_point) 
    else 
     core_inact_dm = (inact_density(i_point) + core_density(i_point))
    endif
-   core_inact_act_on_top_of_r(i_point,istate) = pure_act_on_top_of_r + core_inact_dm * (one_e_act_density_beta(i_point,istate) + one_e_act_density_alpha(i_point,istate)) + core_inact_dm*core_inact_dm
+   total_cas_on_top_density(i_point,istate) = pure_act_on_top_of_r + core_inact_dm * (one_e_act_density_beta(i_point,istate) + one_e_act_density_alpha(i_point,istate)) + core_inact_dm*core_inact_dm
   enddo
  enddo
  !$OMP END PARALLEL DO
  call wall_time(wall_1)
- print*,'provided the core_inact_act_on_top_of_r'
+ print*,'provided the total_cas_on_top_density'
  print*,'Time to provide :',wall_1 - wall_0
 
  END_PROVIDER 

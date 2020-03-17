@@ -217,9 +217,9 @@ end
 subroutine test_on_top
  implicit none
  integer :: i,j,k
- double precision :: accu(3), on_top_of_r_from_provider,core_inact_act_on_top_of_r_from_provider,weight
+ double precision :: accu(3), on_top_of_r_from_provider,total_cas_on_top_density_from_provider,weight
  double precision :: accuex,accuc,r(3),ontop_grad(3),dx,rp(3),rm(3),grad_manual(3)
- double precision :: core_inact_act_on_top_of_r_func,on_top_p,on_top_m,dm_a_m,dm_a_p,dm_b_m,dm_b_p,dm_a,dm_b
+ double precision :: total_cas_on_top_density_func,on_top_p,on_top_m,dm_a_m,dm_a_p,dm_b_m,dm_b_p,dm_a,dm_b
  accuex = 0.d0
  accuc  = 0.d0
  
@@ -239,14 +239,14 @@ subroutine test_on_top
     call dm_dft_alpha_beta_at_r(rp,dm_a_p,dm_b_p)
     call dm_dft_alpha_beta_at_r(rm,dm_a_m,dm_b_m)
     grad_manual(j) = ( (dm_a_p+dm_b_p)**2 - (dm_a_m+dm_b_m)**2 )/(2.d0 * dx)
-!   on_top_p = core_inact_act_on_top_of_r_func(rp,1)
-!   on_top_m = core_inact_act_on_top_of_r_func(rm,1)
+!   on_top_p = total_cas_on_top_density_func(rp,1)
+!   on_top_m = total_cas_on_top_density_func(rm,1)
 !   grad_manual(j) = ( on_top_p - on_top_m)/(2.d0 * dx)
    enddo
 !  call give_core_inact_act_grad_on_top_of_r_from_provider(i,1,ontop_grad)
    do j = 1, 3
     accu(j) += dabs(one_e_grad_dm_squared_at_r(j,i,1) - grad_manual(j)) * weight
-!   accu(j) += dabs(grad_core_inact_act_on_top_of_r(j,i,1) - grad_manual(j)) * weight
+!   accu(j) += dabs(grad_total_cas_on_top_density(j,i,1) - grad_manual(j)) * weight
    !print*,ontop_grad(j) , grad_manual(j)
    enddo
   enddo
@@ -268,10 +268,10 @@ subroutine test_on_top_act
  do i = 1, n_points_final_grid
   weight = final_weight_at_r_vector(i)
   call pure_act_on_top_of_r_all_states(i,1,pure_act_on_top_of_r)
-  old = core_inact_act_on_top_of_r(i,1)
+  old = total_cas_on_top_density(i,1)
 ! new = pure_act_on_top_of_r
 ! print*,'new = ',new
-  new = core_inact_act_on_top_of_r_new(i,1) 
+  new = total_cas_on_top_density_new(i,1) 
   accu_tot(1) += old * weight
   accu_tot(2) += new * weight
   accu += dabs(old - new) * weight

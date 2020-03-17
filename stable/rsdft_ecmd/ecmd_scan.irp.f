@@ -87,7 +87,7 @@ subroutine give_epsilon_scan_ontop_provider(mu,i_point,eps_c_md_ontop_SCAN)
     write(*,'(100(F10.5,X))')rho_a,rho_b,tau,grad_rho_2
    endif
 
-   two_dm = core_inact_act_on_top_of_r(i_point,istate) ! on top of the wave function 
+   two_dm = total_cas_on_top_density(i_point,istate) ! on top of the wave function 
    two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
    if(dabs(( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )).lt.1.d-12)cycle
    beta = dabs((3.d0*e_SCAN)/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr ))

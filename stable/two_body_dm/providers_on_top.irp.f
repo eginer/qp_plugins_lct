@@ -9,7 +9,7 @@
  if(on_top_from_cas)then
   do i_point = 1, n_points_final_grid
    do i_state = 1, N_states
-    on_top_of_r_vector(i_point,i_state) = core_inact_act_on_top_of_r_new(i_point,i_state)
+    on_top_of_r_vector(i_point,i_state) = total_cas_on_top_density_new(i_point,i_state)
    enddo
   enddo
   return

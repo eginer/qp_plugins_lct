@@ -13,17 +13,17 @@
  print*,'providing the cas_full_mu_of_r_psi_coal_vector ...'
  call wall_time(cpu0)
  if(.True.)then
-  provide core_inact_act_on_top_of_r 
+  provide total_cas_on_top_density 
   provide core_inact_act_f_psi_ab
  endif
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (i_point,r,local_potential) & 
- !$OMP SHARED (n_points_final_grid,cas_full_mu_of_r_psi_coal_vector,core_inact_act_f_psi_ab,core_inact_act_on_top_of_r) 
+ !$OMP SHARED (n_points_final_grid,cas_full_mu_of_r_psi_coal_vector,core_inact_act_f_psi_ab,total_cas_on_top_density) 
  do i_point = 1, n_points_final_grid
-  local_potential = core_inact_act_f_psi_ab(i_point) / core_inact_act_on_top_of_r(i_point,1)
-  if(core_inact_act_on_top_of_r(i_point,1).gt.1.d-12.and.core_inact_act_f_psi_ab(i_point).gt.1.d-12)then
-   local_potential = core_inact_act_f_psi_ab(i_point)/core_inact_act_on_top_of_r(i_point,1)
+  local_potential = core_inact_act_f_psi_ab(i_point) / total_cas_on_top_density(i_point,1)
+  if(total_cas_on_top_density(i_point,1).gt.1.d-12.and.core_inact_act_f_psi_ab(i_point).gt.1.d-12)then
+   local_potential = core_inact_act_f_psi_ab(i_point)/total_cas_on_top_density(i_point,1)
   else 
    local_potential = 1.d+10
   endif

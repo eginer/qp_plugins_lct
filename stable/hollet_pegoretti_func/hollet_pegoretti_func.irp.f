@@ -27,7 +27,7 @@ subroutine routine
   accu_bb = 0.d0
   do i_point = 1, n_points_final_grid
    weight = final_weight_at_r_vector(i_point)
-   on_top = core_inact_act_on_top_of_r(i_point,1)
+   on_top = total_cas_on_top_density(i_point,1)
    rho    = one_e_dm_alpha_at_r(i_point,1) + one_e_dm_beta_at_r(i_point,1)
    v      = V_ab_holl_peg(rho,on_top)
    accu_ab += weight * v

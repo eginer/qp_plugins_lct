@@ -6,7 +6,7 @@
 ! effective spin density obtained from the total density and on-top pair density
 ! see equation (6) of Phys. Chem. Chem. Phys., 2015, 17, 22412--22422 | 22413
  END_DOC
- provide core_inact_act_on_top_of_r 
+ provide total_cas_on_top_density 
  integer :: i_point,i_state,i
  double precision :: n2,m2,thr
  thr = 1.d-14
@@ -17,8 +17,8 @@
    n2 = (one_e_dm_and_grad_alpha_in_r(4,i_point,i_state)  + one_e_dm_and_grad_beta_in_r(4,i_point,i_state))
    ! density squared 
    n2 = n2 * n2 
-   if(n2 - 4.D0 * core_inact_act_on_top_of_r(i_point,i_state).gt.thr)then
-    effective_spin_dm(i_point,i_state) = dsqrt(n2 - 4.D0 * core_inact_act_on_top_of_r(i_point,i_state))
+   if(n2 - 4.D0 * total_cas_on_top_density(i_point,i_state).gt.thr)then
+    effective_spin_dm(i_point,i_state) = dsqrt(n2 - 4.D0 * total_cas_on_top_density(i_point,i_state))
     if(isnan(effective_spin_dm(i_point,i_state)))then
      print*,'isnan(effective_spin_dm(i_point,i_state)' 
      stop
@@ -26,7 +26,7 @@
     m2 = effective_spin_dm(i_point,i_state) 
     m2 = 0.5d0 / m2 ! 1/(2 * sqrt(n(r)^2 - 4 * ontop(r)) )
     do i = 1, 3
-     grad_effective_spin_dm(i,i_point,i_state) = m2 * ( one_e_grad_dm_squared_at_r(i,i_point,i_state) - 4.d0 * grad_core_inact_act_on_top_of_r(i,i_point,i_state) )
+     grad_effective_spin_dm(i,i_point,i_state) = m2 * ( one_e_grad_dm_squared_at_r(i,i_point,i_state) - 4.d0 * grad_total_cas_on_top_density(i,i_point,i_state) )
     enddo
    else
     effective_spin_dm(i_point,i_state) = 0.d0
@@ -47,7 +47,7 @@ END_PROVIDER
 ! effective_alpha_dm(r_i) = 1/2 * (effective_spin_dm(r_i) + n(r_i))
 ! effective_beta_dm(r_i) = 1/2 * (-effective_spin_dm(r_i) + n(r_i))
  END_DOC
- provide core_inact_act_on_top_of_r 
+ provide total_cas_on_top_density 
  integer :: i_point,i_state,i
  double precision :: n,grad_n
  do i_state = 1, N_states

@@ -28,7 +28,7 @@ subroutine routine
    call dm_dft_alpha_beta_at_r(grid_points_mur(1,i),dm_a,dm_b)
    ec_pbe_ontop = E_c_md_mur_grid_n_and_on_top_PBE(1,i)
    ec_pbe       = E_c_md_mur_grid_PBE(1,i)
-   ontop        = core_inact_act_on_top_of_r_grid_mur(i,1)
+   ontop        = total_cas_on_top_density_grid_mur(i,1)
    mu           = cas_full_mu_of_r_grid_mur_psi_coal_vector(i)
    ontop_extrap = extrapolated_core_inact_act_on_top_grid_mur(i,1)
    ontop_ueg    = UEG_on_top_grid_mur(i,1)

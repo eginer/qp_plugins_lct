@@ -19,7 +19,7 @@
   r(1) = grid_points_mur(1,i)
   r(2) = grid_points_mur(2,i)
   r(3) = grid_points_mur(3,i)
-  two_dm(:) = core_inact_act_on_top_of_r_grid_mur(i,:)
+  two_dm(:) = total_cas_on_top_density_grid_mur(i,:)
   mu = cas_full_mu_of_r_grid_mur_psi_coal_vector(i)
 
   call give_epsilon_c_md_n_and_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
