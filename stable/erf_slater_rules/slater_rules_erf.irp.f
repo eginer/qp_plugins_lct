@@ -224,3 +224,41 @@ subroutine i_H_j_double_alpha_beta_erf(key_i,key_j,Nint,hij)
 end
 
 
+ BEGIN_PROVIDER [ double precision, ref_bitmask_energy_erf ]
+&BEGIN_PROVIDER [ double precision, bi_elec_ref_bitmask_energy_erf ]
+  use bitmasks
+  implicit none
+  BEGIN_DOC
+  ! Energy with the LONG RANGE INTERACTION of the reference bitmask used in Slater rules
+  END_DOC
+  
+  integer                        :: occ(N_int*bit_kind_size,2)
+  integer                        :: i,j
+  
+  call bitstring_to_list(ref_bitmask(1,1), occ(1,1), i, N_int)
+  call bitstring_to_list(ref_bitmask(1,2), occ(1,2), i, N_int)
+  
+  
+  ref_bitmask_energy_erf = 0.d0
+  bi_elec_ref_bitmask_energy_erf = 0.d0
+  
+  do j= 1, elec_alpha_num
+    do i = j+1, elec_alpha_num
+      bi_elec_ref_bitmask_energy_erf += mo_two_e_int_erf_jj_anti(occ(i,1),occ(j,1))
+      ref_bitmask_energy_erf += mo_two_e_int_erf_jj_anti(occ(i,1),occ(j,1))
+    enddo
+  enddo
+  
+  do j= 1, elec_beta_num
+    do i = j+1, elec_beta_num
+      bi_elec_ref_bitmask_energy_erf += mo_two_e_int_erf_jj_anti(occ(i,2),occ(j,2))
+      ref_bitmask_energy_erf += mo_two_e_int_erf_jj_anti(occ(i,2),occ(j,2))
+    enddo
+    do i= 1, elec_alpha_num
+      bi_elec_ref_bitmask_energy_erf += mo_two_e_int_erf_jj(occ(i,1),occ(j,2))
+      ref_bitmask_energy_erf += mo_two_e_int_erf_jj(occ(i,1),occ(j,2))
+    enddo
+  enddo
+  
+END_PROVIDER
+

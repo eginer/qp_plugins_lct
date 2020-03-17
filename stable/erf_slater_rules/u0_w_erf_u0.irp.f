@@ -1,3 +1,19 @@
+
+BEGIN_PROVIDER [ double precision, psi_energy_erf, (N_states) ]
+  use bitmasks
+  implicit none
+  BEGIN_DOC
+  ! psi_energy_erf = <Psi|W_{ee}^{lr}|Psi>/<Psi|Psi>
+  !
+  END_DOC
+  integer :: i
+  call u_0_H_u_0_erf(psi_energy_erf,psi_coef,N_det,psi_det,N_int,N_states,psi_det_size)
+  do i=N_det+1,N_states
+    psi_energy_erf(i) = 0.d0
+  enddo
+END_PROVIDER
+
+
 subroutine u_0_H_u_0_erf(e_0,u_0,n,keys_tmp,Nint,N_st,sze)
   use bitmasks
   implicit none
@@ -102,7 +118,7 @@ subroutine H_S2_u_0_erf_nstates_openmp_work(v_t,s_t,u_t,N_st,sze,istart,iend,ish
   double precision, intent(out)  :: v_t(N_st,sze), s_t(N_st,sze) 
 
   
-  PROVIDE ref_bitmask_energy_erf N_int short_range_Hartree
+  PROVIDE ref_bitmask_energy_erf N_int 
 
   select case (N_int)
     case (1)

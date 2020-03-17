@@ -2,6 +2,7 @@
 QP_ROOT=~/programs/qp2/
 source ${QP_ROOT}/quantum_package.rc
 
+#### Assumes that an "xyz" file exists for H2 
 file_xyz=H2.xyz
 basis=aug-cc-pvdz
 ezfio=H2

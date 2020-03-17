@@ -21,6 +21,5 @@ program DFT_Utils_two_body_main
  density_for_dft = "WFT" 
  touch density_for_dft 
  call print_variational_energy_dft
- 
 
 end
