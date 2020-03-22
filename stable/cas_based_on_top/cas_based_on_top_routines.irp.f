@@ -78,7 +78,7 @@ end
       do i = 1, n_act_orb
        phi_i = act_mos(i)
        !                                                       1 2 1 2
-       act_on_top += all_states_act_two_rdm_alpha_beta_mo(i,j,k,l,istate) * tmp * phi_i
+       act_on_top += act_2_rdm_ab_mo(i,j,k,l,istate) * tmp * phi_i
      enddo
     enddo
    enddo
@@ -96,7 +96,7 @@ end
  ! note that if no_core_density .EQ. .True., all core contributions are excluded
  END_DOC
  double precision, allocatable :: mos_array(:)
- provide all_states_act_two_rdm_alpha_beta_mo one_e_act_dm_alpha_mo_for_dft one_e_act_dm_beta_mo_for_dft
+ provide act_2_rdm_ab_mo one_e_act_dm_alpha_mo_for_dft one_e_act_dm_beta_mo_for_dft
  allocate(mos_array(mo_num))
  call give_all_mos_at_r(r,mos_array)
 

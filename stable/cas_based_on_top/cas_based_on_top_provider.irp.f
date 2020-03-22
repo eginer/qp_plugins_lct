@@ -21,8 +21,8 @@
       phi_j = act_mos_in_r_array(j,ipoint)
       do i = 1, n_act_orb
        phi_i = act_mos_in_r_array(i,ipoint)
-       !                                                            1 2 1 2
-       pure_act_on_top_of_r += all_states_act_two_rdm_alpha_beta_mo(i,j,k,l,istate) * phi_i * phi_j * phi_k * phi_l
+       !                                       1 2 1 2
+       pure_act_on_top_of_r += act_2_rdm_ab_mo(i,j,k,l,istate) * phi_i * phi_j * phi_k * phi_l
      enddo
     enddo
    enddo
@@ -33,7 +33,11 @@
  BEGIN_PROVIDER [double precision, total_cas_on_top_density,(n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
- ! on top pair density at each grid point of a CAS-BASED wf
+ ! on top pair density :: n2(r,r) at each of the Becke's grid point of a CAS-BASED wf
+ !
+ ! Contains all core/inact/act contribution.
+ !
+ ! !!!!! WARNING !!!!! If no_core_density then you REMOVE ALL CONTRIBUTIONS COMING FROM THE CORE ORBITALS 
  END_DOC
  integer :: i_point,istate
  double precision :: wall_0,wall_1,core_inact_dm,pure_act_on_top_of_r
