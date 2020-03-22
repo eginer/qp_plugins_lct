@@ -88,3 +88,38 @@ END_PROVIDER
  enddo
 
 END_PROVIDER 
+
+ BEGIN_PROVIDER[double precision, core_inact_act_mos_in_r_array, (n_core_inact_act_orb,n_points_final_grid)]
+&BEGIN_PROVIDER[double precision, core_inact_act_mos_in_r_array_transp,(n_points_final_grid,n_core_inact_act_orb)]
+ implicit none
+ integer :: i,j,k
+ do i = 1, n_core_inact_act_orb
+  j = list_core_inact_act(i) 
+  do k = 1, n_points_final_grid
+   core_inact_act_mos_in_r_array_transp(k,i) = mos_in_r_array_transp(k,j)
+  enddo
+ enddo
+
+ do k = 1, n_points_final_grid
+  do i = 1, n_core_inact_act_orb
+   core_inact_act_mos_in_r_array(i,k) = core_inact_act_mos_in_r_array_transp(k,i)
+  enddo
+ enddo
+
+END_PROVIDER 
+
+ BEGIN_PROVIDER[double precision, core_inact_act_mos_grad_in_r_array, (3,n_core_inact_act_orb,n_points_final_grid)]
+ implicit none
+ integer :: i,j,k,l
+ do i = 1, n_core_inact_act_orb
+  j = list_core_inact_act(i) 
+  do k = 1, n_points_final_grid
+   do l = 1, 3
+    core_inact_act_mos_grad_in_r_array(l,i,k) = mos_grad_in_r_array(j,k,l)
+   enddo
+  enddo
+ enddo
+
+END_PROVIDER 
+
+

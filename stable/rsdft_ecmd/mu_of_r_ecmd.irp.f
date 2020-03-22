@@ -145,7 +145,7 @@ end
   r(2) = final_grid_points(2,i)
   r(3) = final_grid_points(3,i)
   weight=final_weight_at_r_vector(i)
-  two_dm(:) = on_top_of_r_vector(i,:)
+  two_dm(:) = total_cas_on_top_density(i,:)
  !mu = min(mu_erf,mu_of_r_hf_coal_vector_ecmd(i))
   mu = mu_of_r_hf_coal_vector_ecmd(i)
 

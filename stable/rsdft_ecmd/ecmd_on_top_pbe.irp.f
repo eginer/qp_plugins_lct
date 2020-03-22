@@ -17,7 +17,7 @@
   r(2) = final_grid_points(2,i)
   r(3) = final_grid_points(3,i)
   weight = final_weight_at_r_vector(i)
-  two_dm(:) = on_top_of_r_vector(i,:)
+  two_dm(:) = total_cas_on_top_density(i,:)
   call give_epsilon_c_md_on_top_PBE_mu_corrected_UEG_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
   do istate = 1, N_states
    Energy_c_md_on_top_PBE_mu_UEG_vector(istate) += eps_c_md_on_top_PBE(istate) * weight
@@ -44,7 +44,7 @@
   r(2) = final_grid_points(2,i)
   r(3) = final_grid_points(3,i)
   weight = final_weight_at_r_vector(i)
-  two_dm(:) = on_top_of_r_vector(i,:)
+  two_dm(:) = total_cas_on_top_density(i,:)
   call give_epsilon_c_md_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
   do istate = 1, N_states
    Energy_c_md_on_top_PBE_mu_vector(istate) += eps_c_md_on_top_PBE(istate) * weight
