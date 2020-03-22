@@ -34,6 +34,7 @@ subroutine routine_test_cas_based_on_top_density
  enddo
  print*,'difference between provider and routine = ',accu
  print*,'integral of the on-top                  = ',accu_2
+ print*,'integral_on_top                         = ',integral_on_top(:)
 end
 
 subroutine write_on_top_in_real_space
