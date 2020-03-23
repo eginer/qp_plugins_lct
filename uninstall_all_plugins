@@ -1,0 +1,6 @@
+source ../../quantum_package.rc 
+list=`qp plugins list -i | cut -d " " -f 1`
+for i in $list
+ do
+  qp plugins uninstall $i
+ done

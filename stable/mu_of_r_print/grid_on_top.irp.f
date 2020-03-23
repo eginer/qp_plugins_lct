@@ -58,12 +58,12 @@
  ! on top pair density at each grid point computed using the full two-body density matrix 
  END_DOC
  integer :: i_point,i_state
- double precision :: two_dm,mu,on_top_two_dm_in_r_mu_corrected_from_two_dm
+ double precision :: two_dm,mu,mu_correction_of_on_top
  do i_point = 1, n_points_print_mur
   do i_state = 1, N_states
    two_dm = total_cas_on_top_density_grid_mur(i_point,i_state) 
    mu = cas_full_mu_of_r_grid_mur_psi_coal_vector(i_point)
-   extrapolated_core_inact_act_on_top_grid_mur(i_point,i_state) = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,i_state,two_dm)
+   extrapolated_core_inact_act_on_top_grid_mur(i_point,i_state) = mu_correction_of_on_top(mu,i_state,two_dm)
   enddo
  enddo
  END_PROVIDER 

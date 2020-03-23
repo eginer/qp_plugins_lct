@@ -1,33 +1,17 @@
- BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_vector, (N_states)]
- BEGIN_DOC
-  ! Give the Ec_md energy with a large mu behaviour in function of the UEG on top pair density coupled to the PBE correlation energy at mu=0
-  ! Ec_md_PBE = Int epsilon_c_PBE_mu=0 / ( 1 + beta*mu**3 ) = Int eps_c_md_PBE  with beta chosen to recover the UEG large mu behaviour (JT)
- END_DOC
- implicit none
- double precision ::  r(3)
- double precision :: weight,mu
- integer :: i,istate
- double precision,allocatable  :: eps_c_md_PBE(:)
- allocate(eps_c_md_PBE(N_states))
- mu = mu_erf_dft
- Energy_c_md_PBE_mu_vector = 0.d0
-  
- do i = 1, n_points_final_grid
-  r(1) = final_grid_points(1,i)
-  r(2) = final_grid_points(2,i)
-  r(3) = final_grid_points(3,i)
-  weight = final_weight_at_r_vector(i)
-  call give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE)
-  do istate = 1, N_states
-   Energy_c_md_PBE_mu_vector(istate) += eps_c_md_PBE(istate) * weight
-  enddo
- enddo
- END_PROVIDER
 
-
-
-subroutine give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE) ! JT
+subroutine ecmd_pbe_ueg_at_r(mu,r,eps_c_md_PBE) ! JT
   implicit none
+  BEGIN_DOC
+! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 
+!
+! !!! WARNING !!! This is the total integrand of Eq. (13), which is e_cmd * n
+!
+! such a function is based on the exact behaviour of the Ecmd at large mu 
+!
+! but with the exact on-top estimated with that of the UEG
+!
+! You enter with r(3), you get out with eps_c_md_PBE(1:N_states)
+  END_DOC
   double precision, intent(in)  :: mu , r(3)
   double precision, intent(out) :: eps_c_md_PBE(N_states)
   double precision :: pi, e_PBE, beta
@@ -76,8 +60,21 @@ subroutine give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE) ! JT
  
 
  
-subroutine give_epsilon_c_md_PBE_mu_grad_input(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE) ! EG
+subroutine eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE) ! EG
   implicit none
+  BEGIN_DOC
+! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 
+!
+! !!! WARNING !!! This is the total integrand of Eq. (13), which is e_cmd * n
+!
+! such a function is based on the exact behaviour of the Ecmd at large mu 
+!
+! but with the exact on-top estimated with that of the UEG
+!
+! You enter with the alpha/beta density and density gradients 
+!
+! You get out with eps_c_md_PBE(1:N_states)
+  END_DOC
   double precision, intent(in)  :: mu , rho_a(N_states),rho_b(N_states), grad_rho_a(3,N_states),grad_rho_b(3,N_states)
   double precision, intent(out) :: eps_c_md_PBE(N_states)
   double precision :: pi, e_PBE, beta
@@ -125,12 +122,25 @@ subroutine give_epsilon_c_md_PBE_mu_grad_input(mu,rho_a,rho_b, grad_rho_a, grad_
  
 
 
-subroutine give_epsilon_pbe_provider(mu,i_point,eps_c_md_PBE)
+subroutine eps_c_md_PBE_at_grid_pt(mu,i_point,eps_c_md_PBE)
   implicit none
+  BEGIN_DOC
+! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 
+!
+! !!! WARNING !!! This is the total integrand of Eq. (13), which is e_cmd * n
+!
+! such a function is based on the exact behaviour of the Ecmd at large mu 
+!
+! but with the exact on-top estimated with that of the UEG
+!
+! You enter with the alpha/beta density and density gradients 
+!
+! You get out with eps_c_md_PBE(1:N_states)
+  END_DOC
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_PBE(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_pbe,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_pbe,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,ec_pbe_88

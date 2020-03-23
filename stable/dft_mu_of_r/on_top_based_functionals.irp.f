@@ -4,7 +4,7 @@ subroutine give_epsilon_pbe_ontop_effective_spin_dens_provider(mu,i_point,eps_c_
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_on_top_PBE(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE
@@ -38,7 +38,7 @@ subroutine give_epsilon_pbe_ontop_effective_spin_dens_provider(mu,i_point,eps_c_
    endif
    double precision :: delta,two_dm_corr
    two_dm = total_cas_on_top_density(i_point,istate) ! on top of the wave function 
-   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
+   two_dm_corr = mu_correction_of_on_top(mu,istate,two_dm) ! extrapolated "exact" on top
    if(dabs(( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )).lt.1.d-12)cycle
    beta = (3.d0*e_PBE)/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr ) 
    ! Ecmd functional with the extrapolated exact on top when mu -> infty 
@@ -53,7 +53,7 @@ subroutine give_epsilon_pbe_effective_spin_dens_provider(mu,i_point,eps_c_md_PBE
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_PBE(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo
@@ -112,7 +112,7 @@ subroutine give_epsilon_pbe_zero_spin_dens_provider(mu,i_point,eps_c_md_PBE)
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_PBE(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,sigmacc,sigmaco,sigmaoo
@@ -173,7 +173,7 @@ subroutine give_epsilon_lyp_ontop_effective_spin_dens_provider(mu,i_point,eps_c_
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_ontop_LYP(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_lyp,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_lyp,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,ec_lyp_88
@@ -205,7 +205,7 @@ subroutine give_epsilon_lyp_ontop_effective_spin_dens_provider(mu,i_point,eps_c_
    e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
 
    two_dm = total_cas_on_top_density(i_point,istate) ! on top of the wave function 
-   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
+   two_dm_corr = mu_correction_of_on_top(mu,istate,two_dm) ! extrapolated "exact" on top
 
    if(dabs(( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )).lt.1.d-12)cycle
 
@@ -224,7 +224,7 @@ subroutine give_epsilon_lyp_effective_spin_dens_provider(mu,i_point,eps_c_md_LYP
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_LYP(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_lyp,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_lyp,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,ec_lyp_88
@@ -281,7 +281,7 @@ subroutine give_epsilon_scan_effective_spin_dens_provider(mu,i_point,eps_c_md_SC
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_SCAN(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_scan,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_scan,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,grad_rho_2
   double precision :: ec_scan,tau
@@ -334,7 +334,7 @@ subroutine give_epsilon_scan_ontop_effective_spin_dens_provider(mu,i_point,eps_c
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_ontop_SCAN(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_scan,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_scan,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,grad_rho_2
   double precision :: ec_scan,tau
@@ -366,7 +366,7 @@ subroutine give_epsilon_scan_ontop_effective_spin_dens_provider(mu,i_point,eps_c
    endif
 
    two_dm = total_cas_on_top_density(i_point,istate) ! on top of the wave function 
-   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
+   two_dm_corr = mu_correction_of_on_top(mu,istate,two_dm) ! extrapolated "exact" on top
    if(dabs(( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )).lt.1.d-12)cycle
    beta = dabs((3.d0*e_SCAN)/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr ))
    ! Ecmd functional with the extrapolated exact on top when mu -> infty 

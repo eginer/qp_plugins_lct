@@ -4,7 +4,7 @@ subroutine give_epsilon_lyp_ontop_provider(mu,i_point,eps_c_md_ontop_LYP)
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_ontop_LYP(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_lyp,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_lyp,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: rhoc,rhoo,ec_lyp_88
@@ -36,7 +36,7 @@ subroutine give_epsilon_lyp_ontop_provider(mu,i_point,eps_c_md_ontop_LYP)
    e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
 
    two_dm = total_cas_on_top_density(i_point,istate) ! on top of the wave function 
-   two_dm_corr = on_top_two_dm_in_r_mu_corrected_from_two_dm(mu,istate,two_dm) ! extrapolated "exact" on top
+   two_dm_corr = mu_correction_of_on_top(mu,istate,two_dm) ! extrapolated "exact" on top
    if(dabs(( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )).lt.1.d-12)cycle
    beta = dabs((3.d0*e_LYP)/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr ))
    ! Ecmd functional with the extrapolated exact on top when mu -> infty 
@@ -51,7 +51,7 @@ subroutine give_epsilon_lyp_provider(mu,i_point,eps_c_md_LYP)
   double precision, intent(in)  :: mu 
   double precision, intent(out) :: eps_c_md_LYP(N_states)
   integer, intent(in) :: i_point
-  double precision :: two_dm, pi, e_lyp,beta,on_top_two_dm_in_r_mu_corrected_from_two_dm
+  double precision :: two_dm, pi, e_lyp,beta,mu_correction_of_on_top
   double precision :: grad_rho_a(3),grad_rho_b(3)
   double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision :: ec_lyp_88

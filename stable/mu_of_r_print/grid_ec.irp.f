@@ -54,7 +54,7 @@ BEGIN_PROVIDER [double precision, E_c_md_mur_grid_PBE, (N_states,n_points_print_
   r(3) = grid_points_mur(3,i)
   mu = cas_full_mu_of_r_grid_mur_psi_coal_vector(i)
 
-  call give_epsilon_c_md_PBE_mu(mu,r,eps_c_md_PBE)
+  call ecmd_pbe_ueg_at_r(mu,r,eps_c_md_PBE)
   do istate = 1, N_states
    E_c_md_mur_grid_PBE(istate,i) += eps_c_md_PBE(istate) 
   enddo

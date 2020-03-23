@@ -26,7 +26,7 @@
     m2 = effective_spin_dm(i_point,i_state) 
     m2 = 0.5d0 / m2 ! 1/(2 * sqrt(n(r)^2 - 4 * ontop(r)) )
     do i = 1, 3
-     grad_effective_spin_dm(i,i_point,i_state) = m2 * ( one_e_grad_dm_squared_at_r(i,i_point,i_state) - 4.d0 * grad_total_cas_on_top_density(i,i_point,i_state) )
+     grad_effective_spin_dm(i,i_point,i_state) = m2 * ( one_e_stuff_for_pbe(i,i_point,i_state) - 4.d0 * grad_total_cas_on_top_density(i,i_point,i_state) )
     enddo
    else
     effective_spin_dm(i_point,i_state) = 0.d0

@@ -102,7 +102,7 @@
   do istate = 1, N_states
    Energy_c_md_on_top_PBE_mu_of_r_UEG(istate) += eps_c_md_on_top_PBE(istate) * weight
   enddo
-  call give_epsilon_c_md_on_top_PBE_mu_corrected_from_two_dm(mu,r,two_dm,eps_c_md_on_top_PBE)
+  call ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
   do istate = 1, N_states
    Energy_c_md_on_top_PBE_mu_of_r(istate) += eps_c_md_on_top_PBE(istate) * weight
   enddo
@@ -209,7 +209,7 @@ BEGIN_PROVIDER [double precision, Energy_c_md_PBE_mu_of_r, (N_states)]
   weight=final_weight_at_r_vector(i)
   mu = mu_of_r_vector(i)
 
-  call give_epsilon_pbe_provider(mu,i,eps_c_md_PBE)
+  call eps_c_md_PBE_at_grid_pt(mu,i,eps_c_md_PBE)
   do istate = 1, N_states
    Energy_c_md_PBE_mu_of_r(istate) += eps_c_md_PBE(istate) * weight
   enddo

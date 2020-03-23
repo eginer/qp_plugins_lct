@@ -3,7 +3,7 @@ program DFT_Utils_ECMD
   BEGIN_DOC
 ! TODO
   END_DOC
- !print*,'Energy_c_md_PBE_mu_vector = ',Energy_c_md_PBE_mu_vector
+ !print*,'ecmd_pbe_ueg_prov = ',ecmd_pbe_ueg_prov
   read_wf = .True.
   touch read_wf
 

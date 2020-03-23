@@ -15,6 +15,11 @@ end
 
 
 double precision function g0_UEG_mu_inf(rho_a,rho_b)
+ BEGIN_DOC
+! Pair distribution function g0(n_alpha,n_beta) of the Colombic UEG 
+!
+! Taken from Eq. (46)  P. Gori-Giorgi and A. Savin, Phys. Rev. A 73, 032506 (2006).
+ END_DOC
  implicit none
  double precision, intent(in) :: rho_a,rho_b
  double precision :: rho,pi,x
@@ -41,9 +46,14 @@ end
 
 double precision function g0_UEG_mu(mu,rho_a,rho_b)
  implicit none
+ BEGIN_DOC
+! Pair distribution function g0(n_alpha,n_beta) of the UEG interacting with the long range interaction erf(mu r12)/r12
+!
+! Taken from P. Gori-Giorgi and A. Savin, Phys. Rev. A 73, 032506 (2006).
+ END_DOC
  double precision, intent(in) :: rho_a,rho_b,mu
  double precision :: zeta,pi,rho,x,alpha
- double precision :: B, C, D, E, d2, rs, ahd, h, kf
+ double precision :: B, C, D, E, d2, rs, ahd, h_func, kf
  pi = 4d0 * datan(1d0)
  rho = rho_a+rho_b
  alpha = (4d0/(9d0*pi))**(1d0/3d0)
@@ -56,14 +66,14 @@ double precision function g0_UEG_mu(mu,rho_a,rho_b)
  rs = (3d0 / (4d0*pi*rho))**(1d0/3d0) ! JT: serious bug fixed 20/03/19
  kf = (alpha*rs)**(-1d0)
  zeta = mu / kf
- x = -d2*rs*h(zeta)/ahd 
- g0_UEG_mu = (exp(x)/2d0) * (1d0- B*(h(zeta)/ahd)*rs + C*((h(zeta)**2d0)/(ahd**2d0))*(rs**2d0) + D*((h(zeta)**3d0)/(ahd**3d0))*(rs**3d0) + E*((h(zeta)**4d0)/(ahd**4d0))*(rs**4d0) )
+ x = -d2*rs*h_func(zeta)/ahd 
+ g0_UEG_mu = (exp(x)/2d0) * (1d0- B*(h_func(zeta)/ahd)*rs + C*((h_func(zeta)**2d0)/(ahd**2d0))*(rs**2d0) + D*((h_func(zeta)**3d0)/(ahd**3d0))*(rs**3d0) + E*((h_func(zeta)**4d0)/(ahd**4d0))*(rs**4d0) )
  
 end
 
 
 
-double precision function h(zeta)
+double precision function h_func(zeta)
  implicit none
  double precision, intent(in) :: zeta
  double precision :: pi
@@ -77,7 +87,7 @@ double precision function h(zeta)
  a2 = ahd * b3
  b2 = (a1 - (b3*alpha/sqrt(pi)))/ahd
 
- h = (a1*zeta**2d0 + a2*zeta**3d0) / (1d0 + b1*zeta + b2*zeta**2d0 + b3*zeta**3d0)
+ h_func = (a1*zeta**2d0 + a2*zeta**3d0) / (1d0 + b1*zeta + b2*zeta**2d0 + b3*zeta**3d0)
 end
 
 

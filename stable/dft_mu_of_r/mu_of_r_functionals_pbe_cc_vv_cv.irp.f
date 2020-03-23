@@ -23,7 +23,7 @@ BEGIN_PROVIDER [double precision, e_cmd_mu_of_r_pbe_vv, (N_states)]
   rho_b(:) = one_e_dm_no_core_and_grad_beta_in_r(4,i,:)
   grad_rho_a(1:3,:) = one_e_dm_no_core_and_grad_alpha_in_r(1:3,i,:)
   grad_rho_b(1:3,:) = one_e_dm_no_core_and_grad_beta_in_r(1:3,i,:)
-  call give_epsilon_c_md_PBE_mu_grad_input(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE)
+  call eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE)
   do istate = 1, N_states
    e_cmd_mu_of_r_pbe_vv(istate) += eps_c_md_PBE(istate) * weight
   enddo
@@ -59,7 +59,7 @@ BEGIN_PROVIDER [double precision, e_cmd_mu_of_r_pbe_cc, (N_states)]
   rho_b(:) = one_e_dm_no_core_and_grad_beta_in_r(4,i,:)
   grad_rho_a(1:3,:) = one_e_dm_no_core_and_grad_alpha_in_r(1:3,i,:)
   grad_rho_b(1:3,:) = one_e_dm_no_core_and_grad_beta_in_r(1:3,i,:)
-  call give_epsilon_c_md_PBE_mu_grad_input(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE)
+  call eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE)
   do istate = 1, N_states
    e_cmd_mu_of_r_pbe_cc(istate) += eps_c_md_PBE(istate) * weight
   enddo

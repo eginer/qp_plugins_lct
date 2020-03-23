@@ -447,7 +447,7 @@ subroutine test_epsilon_ueg
   r(3) = final_grid_points(3,i)
   call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,rhoa,rhob, grad_rho_a, grad_rho_b, aos_array, grad_aos_array)
   weight=final_weight_at_r_vector(i)
-  call give_epsilon_pbe_provider(mu,i,eps_c_md_PBE)
+  call eps_c_md_PBE_at_grid_pt(mu,i,eps_c_md_PBE)
  !call give_epsilon_pbe_effective_spin_dens_provider_barth(mu,i,eps_c_md_PBE_2)
   call give_Ec_pbeueg_test(mu,rhoa,rhob,grad_rho_a,grad_rho_b,epsilon_c_pbeueg_bart,epsilon_c_pbeueg_bartg0f,beta_test,beta_test2) 
   do istate = 1, N_states
