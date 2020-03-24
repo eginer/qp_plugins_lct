@@ -24,7 +24,7 @@ BEGIN_PROVIDER [integer, list_core_orb_for_hf, (n_core_orb_for_hf)]
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, integrals_for_core_hf_pot, (mo_num,mo_num,n_max_valence_orb_for_hf,n_max_valence_orb_for_hf)]
+BEGIN_PROVIDER [double precision, integrals_for_core_hf_pot, (mo_num,mo_num,n_max_occ_val_orb_for_hf,n_max_occ_val_orb_for_hf)]
  implicit none
  integer :: i_i,i_j,i,j,i_m,i_n,m,n
  double precision :: get_two_e_integral

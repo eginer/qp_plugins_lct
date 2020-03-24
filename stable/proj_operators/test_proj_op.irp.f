@@ -46,7 +46,7 @@ subroutine routine_core_valence
  !'alpha core + beta val'
  do i = 1, n_core_orb
   i_i = list_core(i)
-  do j = 1, n_valence_orb_for_hf(2)
+  do j = 1, n_occ_val_orb_for_hf(2)
    j_j = list_valence_orb_for_hf(j,2)
    accu_2 += mo_two_e_integrals_jj(j_j,i_i)
   enddo
@@ -55,7 +55,7 @@ subroutine routine_core_valence
  !'beta  core + alpha val'
  do i = 1, n_core_orb
   i_i = list_core(i)
-  do j = 1, n_valence_orb_for_hf(1)
+  do j = 1, n_occ_val_orb_for_hf(1)
    j_j = list_valence_orb_for_hf(j,1)
    accu_2 += mo_two_e_integrals_jj(j_j,i_i)
   enddo
@@ -141,9 +141,9 @@ subroutine routine_valence
  print*,'accu_val             = ',accu_val
  double precision :: accu_2
  accu_2 = 0.d0
- do i = 1, n_valence_orb_for_hf(1)
+ do i = 1, n_occ_val_orb_for_hf(1)
   i_i = list_valence_orb_for_hf(i,1)
-  do j = 1, n_valence_orb_for_hf(2)
+  do j = 1, n_occ_val_orb_for_hf(2)
    j_j = list_valence_orb_for_hf(j,2)
    accu_2 += mo_two_e_integrals_jj(j_j,i_i)
   enddo

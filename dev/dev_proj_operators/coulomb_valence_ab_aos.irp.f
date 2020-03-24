@@ -2,7 +2,7 @@ BEGIN_PROVIDER [double precision, rho_alpha_hf_ao, (ao_num,ao_num)]
  implicit none 
  integer :: i,j,k,ii
  rho_alpha_hf_ao = 0.d0
- do i = 1, n_valence_orb_for_hf(1)
+ do i = 1, n_occ_val_orb_for_hf(1)
   ii = list_valence_orb_for_hf(i,1)
   do j = 1, ao_num
    do k = 1, ao_num
@@ -44,7 +44,7 @@ BEGIN_PROVIDER [double precision, rho_beta_hf_ao, (ao_num,ao_num)]
  implicit none 
  integer :: i,j,k,ii
  rho_beta_hf_ao = 0.d0
- do i = 1, n_valence_orb_for_hf(2)
+ do i = 1, n_occ_val_orb_for_hf(2)
   ii = list_valence_orb_for_hf(i,2)
   do j = 1, ao_num
    do k = 1, ao_num

@@ -1,11 +1,11 @@
 
-BEGIN_PROVIDER [double precision, integrals_for_core_valence_hf_pot, (mo_num,mo_num,n_max_valence_orb_for_hf,n_max_valence_orb_for_hf)]
+BEGIN_PROVIDER [double precision, integrals_for_core_valence_hf_pot, (mo_num,mo_num,n_max_occ_val_orb_for_hf,n_max_occ_val_orb_for_hf)]
  implicit none
  integer :: i_i,i_j,i,j,i_m,i_n,m,n
  double precision :: get_two_e_integral
  do i_m = 1, n_core_orb_for_hf! electron 1 
   m = list_core_orb_for_hf(i_m)
-  do i_n = 1, n_max_valence_orb_for_hf ! electron 2 
+  do i_n = 1, n_max_occ_val_orb_for_hf ! electron 2 
    n = list_valence_orb_for_hf(i_n,1)
    do i_i = 1, mo_num ! electron 1 
     i = i_i 
@@ -38,12 +38,12 @@ subroutine f_HF_core_valence_ab(r1,r2,integral_psi,two_bod)
  double precision, allocatable  :: mos_array_valence_hf_r2(:)
  call give_all_mos_at_r(r1,mos_array_r1) 
  call give_all_mos_at_r(r2,mos_array_r2) 
- allocate(mos_array_core_hf_r1( n_core_orb_for_hf ), mos_array_valence_hf_r2( n_max_valence_orb_for_hf ))
+ allocate(mos_array_core_hf_r1( n_core_orb_for_hf ), mos_array_valence_hf_r2( n_max_occ_val_orb_for_hf ))
  do i = 1, n_core_orb_for_hf
   mos_array_core_hf_r1(i) = mos_array_r1(list_core_orb_for_hf(i))
  enddo
 
- do i = 1, n_max_valence_orb_for_hf
+ do i = 1, n_max_occ_val_orb_for_hf
   j = list_valence_orb_for_hf(i,1)
   mos_array_valence_hf_r2(i) = mos_array_r2(j)
  enddo
@@ -51,7 +51,7 @@ subroutine f_HF_core_valence_ab(r1,r2,integral_psi,two_bod)
  integral_psi = 0.d0
  two_bod = 0.d0
  do k = 1, n_core_orb_for_hf ! electron 1 alpha 
-  do l = 1, n_valence_orb_for_hf(2) ! electron 2 beta 
+  do l = 1, n_occ_val_orb_for_hf(2) ! electron 2 beta 
    two_bod += mos_array_core_hf_r1(k) * mos_array_core_hf_r1(k) & 
             * mos_array_valence_hf_r2(l) * mos_array_valence_hf_r2(l)
    do i = 1, mo_num
@@ -68,7 +68,7 @@ subroutine f_HF_core_valence_ab(r1,r2,integral_psi,two_bod)
  
  
  do k = 1, n_core_orb_for_hf ! electron 1 beta 
-  do l = 1, n_valence_orb_for_hf(1) ! electron 2 alpha 
+  do l = 1, n_occ_val_orb_for_hf(1) ! electron 2 alpha 
    two_bod += mos_array_core_hf_r1(k) * mos_array_core_hf_r1(k) & 
             * mos_array_valence_hf_r2(l) * mos_array_valence_hf_r2(l)
    do i = 1, mo_num
@@ -109,7 +109,7 @@ subroutine integral_f_HF_core_valence_ab(r1,integral_psi)
 
  integral_psi = 0.d0
  do k = 1, n_core_orb_for_hf ! electron 1 alpha 
-  do l = 1, n_valence_orb_for_hf(2) ! electron 2 beta 
+  do l = 1, n_occ_val_orb_for_hf(2) ! electron 2 beta 
    do i = 1, mo_num
      j = list_valence_orb_for_hf(l,2)
      !                                          v c v c
@@ -121,7 +121,7 @@ subroutine integral_f_HF_core_valence_ab(r1,integral_psi)
  enddo
 
  do k = 1, n_core_orb_for_hf ! electron 1 alpha 
-  do l = 1, n_valence_orb_for_hf(1) ! electron 2 beta 
+  do l = 1, n_occ_val_orb_for_hf(1) ! electron 2 beta 
    do i = 1, mo_num
      j = list_valence_orb_for_hf(l,1)
      !                                          v c v c
