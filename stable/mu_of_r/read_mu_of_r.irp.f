@@ -1,5 +1,5 @@
 
-BEGIN_PROVIDER [double precision, mu_of_r_read , (n_points_final_grid)]
+BEGIN_PROVIDER [double precision, mu_of_r_read , (n_points_final_grid,N_states)]
  implicit none
   double precision, allocatable  :: buffer(:,:)
   logical                        :: exists

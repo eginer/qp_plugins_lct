@@ -33,21 +33,21 @@ BEGIN_PROVIDER [double precision, full_occ_2_rdm_cntrctd, (n_core_inact_act_orb,
   do k = 1, n_core_inact_act_orb
    do l = 1, n_core_inact_act_orb
     do ipoint = 1, n_points_final_grid
-     full_occ_2_rdm_cntrctd(k,l,ipoint,istate) = full_occ_2_rdm_cntrctd_transposed(ipoint,k,l,istate)
+     full_occ_2_rdm_cntrctd(k,l,ipoint,istate) = full_occ_2_rdm_cntrctd_trans(ipoint,k,l,istate)
     enddo
    enddo
   enddo
  enddo
- free full_occ_2_rdm_cntrctd_transposed 
+ free full_occ_2_rdm_cntrctd_trans 
 END_PROVIDER 
 
 
 
 
-BEGIN_PROVIDER [double precision, full_occ_2_rdm_cntrctd_transposed, (n_points_final_grid,n_core_inact_act_orb,n_core_inact_act_orb,N_states)]
+BEGIN_PROVIDER [double precision, full_occ_2_rdm_cntrctd_trans, (n_points_final_grid,n_core_inact_act_orb,n_core_inact_act_orb,N_states)]
  implicit none
  BEGIN_DOC
-! full_occ_2_rdm_cntrctd_transposed(ipoint,k,l,istate) = \sum_{ij} \Gamma_{ij}^{kl}  phi_i(r_ipoint) phi_j(r_ipoint) 
+! full_occ_2_rdm_cntrctd_trans(ipoint,k,l,istate) = \sum_{ij} \Gamma_{ij}^{kl}  phi_i(r_ipoint) phi_j(r_ipoint) 
 !
 ! where \Gamma_{ij}^{kl}(istate)  = <Psi_{istate}| a^{\dagger}_{i \alpha} a^{\dagger}_{j \beta} a_{l \beta} a_{k \alpha} |Psi_{istate}>
 !
@@ -59,13 +59,13 @@ BEGIN_PROVIDER [double precision, full_occ_2_rdm_cntrctd_transposed, (n_points_f
  double precision, allocatable :: mos_array_r(:),r(:)
  provide full_occ_2_rdm_ab_mo
  double precision :: wall0,wall1
- print*,'Providing  full_occ_2_rdm_cntrctd_transposed ..... '
+ print*,'Providing  full_occ_2_rdm_cntrctd_trans ..... '
  call wall_time(wall0)
- full_occ_2_rdm_cntrctd_transposed = 0.d0
+ full_occ_2_rdm_cntrctd_trans = 0.d0
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,k,l,i,j,istate) & 
- !$OMP SHARED  (n_core_inact_act_orb, n_points_final_grid, full_occ_2_rdm_cntrctd_transposed, final_grid_points,full_occ_2_rdm_ab_mo,core_inact_act_mos_in_r_array,N_states )
+ !$OMP SHARED  (n_core_inact_act_orb, n_points_final_grid, full_occ_2_rdm_cntrctd_trans, final_grid_points,full_occ_2_rdm_ab_mo,core_inact_act_mos_in_r_array,N_states )
  !$OMP DO              
  do istate = 1, N_states
   do l = 1, n_core_inact_act_orb ! 2 
@@ -74,7 +74,7 @@ BEGIN_PROVIDER [double precision, full_occ_2_rdm_cntrctd_transposed, (n_points_f
      do j = 1, n_core_inact_act_orb
       do i = 1, n_core_inact_act_orb
                                            !                                 1 2 1 2 
-       full_occ_2_rdm_cntrctd_transposed(ipoint,k,l,istate) += full_occ_2_rdm_ab_mo(i,j,k,l,istate) * core_inact_act_mos_in_r_array(j,ipoint) * core_inact_act_mos_in_r_array(i,ipoint)
+       full_occ_2_rdm_cntrctd_trans(ipoint,k,l,istate) += full_occ_2_rdm_ab_mo(i,j,k,l,istate) * core_inact_act_mos_in_r_array(j,ipoint) * core_inact_act_mos_in_r_array(i,ipoint)
       enddo
      enddo
     enddo
@@ -84,7 +84,7 @@ BEGIN_PROVIDER [double precision, full_occ_2_rdm_cntrctd_transposed, (n_points_f
  !$OMP END DO
  !$OMP END PARALLEL
  call wall_time(wall1)
- print*,'Time to provide full_occ_2_rdm_cntrctd_transposed = ',wall1 - wall0
+ print*,'Time to provide full_occ_2_rdm_cntrctd_trans = ',wall1 - wall0
 
 END_PROVIDER 
 
