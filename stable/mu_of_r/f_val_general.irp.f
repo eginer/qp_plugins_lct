@@ -42,16 +42,18 @@ END_PROVIDER
 !
  END_DOC 
  integer :: ipoint
- double precision :: wall0,wall1
+ double precision :: wall0,wall1,r(3),f_HF_val_ab,two_bod_dens
  f_psi_hf_ab = 0.d0
  r = 0.d0
  ! To initialize parallelization
  call f_HF_valence_ab(r,r,f_HF_val_ab,two_bod_dens)
+
  call wall_time(wall0)
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,r,f_HF_val_ab,two_bod_dens) & 
- !$OMP SHARED  (n_points_final_grid,f_psi_hf_ab,on_top_psi_hf)
+ !$OMP SHARED  (n_points_final_grid,f_psi_hf_ab,on_top_psi_hf,final_grid_points)
+ !$OMP DO              
   do ipoint = 1, n_points_final_grid
    r(1)   = final_grid_points(1,ipoint)
    r(2)   = final_grid_points(2,ipoint)
