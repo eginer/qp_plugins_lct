@@ -85,6 +85,7 @@ BEGIN_PROVIDER [integer, list_basis_orb, (n_basis_orb)]
  ! This determines the space \mathcal{B} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931−2937
  !
  ! It corresponds to all MOs except those defined as "deleted" 
+ END_DOC
  integer :: i
  do i = 1, n_all_but_del_orb
    list_basis_orb(i) = list_all_but_del_orb(i)
@@ -135,8 +136,8 @@ subroutine f_HF_valence_ab(r1,r2,f_HF_val_ab,two_bod_dens)
  integer :: i,j,m,n,i_m,i_n
  integer :: i_i,i_j
  double precision :: mo_two_e_integral
- double precision :: mos_array_r1(:)
- double precision :: mos_array_r2(:)
+ double precision, allocatable :: mos_array_r1(:)
+ double precision, allocatable :: mos_array_r2(:)
  double precision, allocatable  :: mos_array_valence_r1(:),mos_array_valence_r2(:)
  double precision, allocatable  :: mos_array_valence_hf_r1(:),mos_array_valence_hf_r2(:)
  double precision :: get_two_e_integral

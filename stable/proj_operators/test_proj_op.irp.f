@@ -5,7 +5,10 @@ program projected_operators
   END_DOC
   read_wf = .True.
   touch read_wf
+  ! You specify that you want to avoid any contribution from 
+  ! orbitals coming from core 
   no_core_density = .True.
   touch no_core_density
-  call routine_valence_hf
+  print*,'Using Valence Only functions'
+  call test_f_HF_valence_ab
 end
