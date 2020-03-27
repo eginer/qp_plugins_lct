@@ -11,4 +11,5 @@ program projected_operators
   touch no_core_density
   print*,'Using Valence Only functions'
   call test_f_HF_valence_ab
+  call routine_full_mos
 end
