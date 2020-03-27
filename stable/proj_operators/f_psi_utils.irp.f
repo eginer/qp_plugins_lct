@@ -1,36 +1,3 @@
-
-BEGIN_PROVIDER [double precision, full_occ_f_psi_ab, (n_points_final_grid,N_states)]
- implicit none
-!
-! Function f_{\Psi^B}(r,r) of Eq. (22) of J. Chem. Phys. 149, 194301 (2018) on each point of the grid and for all states
-! 
- integer :: ipoint,k,l,istate 
- double precision :: wall0,wall1
- provide full_occ_2_rdm_ab_mo 
- print*,'Providing  full_occ_f_psi_ab ..... '
- call wall_time(wall0)
- provide core_inact_act_V_kl_contracted full_occ_2_rdm_cntrctd
- !$OMP PARALLEL        &
- !$OMP DEFAULT (NONE)  &
- !$OMP PRIVATE (ipoint,k,l,istate) & 
- !$OMP SHARED  (n_core_inact_act_orb, n_points_final_grid, full_occ_2_rdm_cntrctd, core_inact_act_V_kl_contracted, full_occ_f_psi_ab,N_states)
- !$OMP DO              
- do istate = 1, N_states
-  do ipoint = 1, n_points_final_grid
-   full_occ_f_psi_ab(ipoint,istate) = 0.d0
-   do l = 1, n_core_inact_act_orb ! 2 
-    do k = 1, n_core_inact_act_orb ! 1
-     full_occ_f_psi_ab(ipoint,istate) += core_inact_act_V_kl_contracted(k,l,ipoint) * full_occ_2_rdm_cntrctd(k,l,ipoint,istate)
-    enddo
-   enddo
-  enddo
- enddo
- !$OMP END DO
- !$OMP END PARALLEL
- call wall_time(wall1)
- print*,'Time to provide full_occ_f_psi_ab = ',wall1 - wall0
-END_PROVIDER 
-
 BEGIN_PROVIDER [double precision, core_inact_act_V_kl_contracted, (n_core_inact_act_orb,n_core_inact_act_orb,n_points_final_grid)]
  implicit none
  BEGIN_DOC
