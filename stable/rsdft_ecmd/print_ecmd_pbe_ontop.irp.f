@@ -28,7 +28,6 @@ program DFT_Utils_ECMD
   touch io_ao_integrals_kinetic 
 
   call print_ecmd_var_energy
- !call print_ecmd_var_energy_barth
 end
 
 
