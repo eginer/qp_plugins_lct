@@ -75,7 +75,7 @@ subroutine eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_
 !
 ! You get out with eps_c_md_PBE(1:N_states)
   END_DOC
-  double precision, intent(in)  :: mu , rho_a(N_states),rho_b(N_states), grad_rho_a(3,N_states),grad_rho_b(3,N_states)
+  double precision, intent(in)  :: mu(N_states) , rho_a(N_states),rho_b(N_states), grad_rho_a(3,N_states),grad_rho_b(3,N_states)
   double precision, intent(out) :: eps_c_md_PBE(N_states)
   double precision :: pi, e_PBE, beta
   double precision :: aos_array(ao_num), grad_aos_array(3,ao_num)
@@ -103,14 +103,14 @@ subroutine eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_
    call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2(istate),grad_rho_b_2(istate),grad_rho_a_b(istate),sigmaoo,sigmacc,sigmaco)
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE)
 
-   if(mu == 0.d0) then
+   if(mu(istate) == 0.d0) then
     eps_c_md_PBE(istate)=e_PBE
    else
 !   note: the on-top pair density is (1-zeta^2) rhoc^2 g0 = 4 rhoa * rhob * g0
     denom = (-2.d0+sqrt(2d0))*sqrt(2.d0*pi) * 4.d0*rho_a(istate)*rho_b(istate)*g0_UEG_mu_inf(rho_a(istate),rho_b(istate)) 
     if (dabs(denom) > 1.d-12) then
      beta = (3.d0*e_PBE)/denom
-     eps_c_md_PBE(istate)=e_PBE/(1.d0+beta*mu**3)
+     eps_c_md_PBE(istate)=e_PBE/(1.d0+beta*mu(istate)**3)
     else
      eps_c_md_PBE(istate)=0.d0
     endif
@@ -191,3 +191,4 @@ subroutine eps_c_md_PBE_at_grid_pt(mu,i_point,eps_c_md_PBE)
    endif
   enddo
 end
+
