@@ -1,14 +1,28 @@
  BEGIN_PROVIDER [double precision, ecmd_large_mu, (N_states)]
  BEGIN_DOC
-  ! Give the Ec_md energy with a good large mu behaviour in function of the on top pair density.
-  ! Ec_md_on_top = (alpha/mu**3) * int n2(r,r) dr  where alpha = sqrt(2pi)*(-2+sqrt(2)) 
+  ! Eq. (23) of JCP, 150, 084103 (2019) : 
+  ! Ec_md energy at large mu behaviour in function of the on top pair density.
+  !
+  ! ecmd_large_mu = (alpha/mu**3) * int n2(r,r) dr  where alpha = sqrt(2pi)*(-2+sqrt(2)) 
+  !
+  ! n2(r,r) is supposed to be the exact on-top pair density 
+  ! 
+  ! Here we use the extrapolated on-top pair density based on the asymptotic expansion at large mu
+  !
+  ! of P. Gori-Giorgi and A. Savin, Phys. Rev. A73, 032506 (2006)
  END_DOC
  implicit none 
  integer :: istate
- double precision :: pi,mu
+ double precision :: pi,mu,on_top_extrap,alpha
  mu = mu_erf_dft
  pi = 4.d0 * datan(1.d0)
- ecmd_large_mu = ((-2.d0+sqrt(2.d0))*sqrt(2.d0*pi)/(3.d0*(mu**3)))*integral_on_top/(1.d0 + 2.d0 / (dsqrt(pi)*mu ))
- END_PROVIDER
 
+ ! Eq. 29 of JCP extrapolation between the on-top pair density at mu and the exact one
+ ! the factor "2" comes from a difference of normalization of the two-body density in the JCP paper and QP2
+ on_top_extrap = 2.d0 * integral_on_top/(1.d0 + 2.d0 / (dsqrt(pi)*mu ))
+ ! constant in the large mu behaviour
+ alpha = (-2.d0+sqrt(2.d0))*sqrt(2.d0*pi)/(3.d0)
+ ! alpha / mu^3 \int n2(r,r)
+ ecmd_large_mu = alpha / (mu**3) * on_top_extrap
+ END_PROVIDER
 

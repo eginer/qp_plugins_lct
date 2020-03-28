@@ -1,5 +1,5 @@
 
-subroutine ecmd_pbe_ueg_at_r(mu,r,eps_c_md_PBE) ! JT
+subroutine ecmd_pbe_ueg_at_r(mu,r,eps_c_md_PBE) 
   implicit none
   BEGIN_DOC
 ! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 

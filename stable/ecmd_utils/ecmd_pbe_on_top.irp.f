@@ -44,7 +44,8 @@ subroutine ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
    ! correction of the on-top pair density according to Eq. (29) 
    on_top_corrected = mu_correction_of_on_top(mu,two_dm)
 
-   ! quantity of Eq. (27)
+   ! quantity of Eq. (27) with a factor two according to the difference of normalization 
+   ! between the on-top of the JCP paper and that of QP2
    beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0* on_top_corrected)
 
    ! quantity of Eq. (26)
@@ -60,7 +61,7 @@ subroutine ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
 !
 ! P. Gori-Giorgi and A. Savin, Phys. Rev. A73, 032506 (2006)
 !
-! This is used in J. Chem. Phys.150, 084103 (2019); Eq. (26). 
+! This is used in J. Chem. Phys.150, 084103 (2019); Eq. (29). 
  END_DOC
  double precision, intent(in) :: mu,on_top
  double precision :: pi

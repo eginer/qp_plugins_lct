@@ -3,7 +3,7 @@
  BEGIN_DOC
  ! Corelation energy for the multi determinent short range LDA. PRB 73 155111 2006
  !
- ! Depends 
+ ! Depends on the total density and spin polarization
  END_DOC
  integer :: ipoint,istate 
  double precision, allocatable :: aos_array(:), r(:), rho_a(:), rho_b(:), ec(:)

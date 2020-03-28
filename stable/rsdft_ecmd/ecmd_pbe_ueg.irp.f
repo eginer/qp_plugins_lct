@@ -1,8 +1,17 @@
 
  BEGIN_PROVIDER [double precision, ecmd_pbe_ueg_prov, (N_states)]
  BEGIN_DOC
-  ! Give the Ec_md energy with a large mu behaviour in function of the UEG on top pair density coupled to the PBE correlation energy at mu=0
-  ! Ec_md_PBE = Int epsilon_c_PBE_mu=0 / ( 1 + beta*mu**3 ) = Int eps_c_md_PBE  with beta chosen to recover the UEG large mu behaviour (JT)
+!
+! Ecmd functional using the on-top pair density of the UEG. 
+! 
+! Obtained with the functional originally introduced in JCP, 150, 084103 1-10 (2019) which interpolates between 
+! 
+!    +) the large mu behaviour in cst/(\mu^3) \int dr on-top(r) where on-top(r) is supposed to be the exact on-top of the system
+!
+!    +) mu= 0 with the usal ec_pbe(rho_a,rho_b,grad_rho_a,grad_rho_b) 
+!
+! Here the approximation to the exact on-top is done through the UEG
+!
  END_DOC
  implicit none
  double precision :: weight

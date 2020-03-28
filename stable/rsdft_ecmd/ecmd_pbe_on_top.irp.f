@@ -1,7 +1,18 @@
  BEGIN_PROVIDER [double precision, ecmd_pbe_on_top_at_mu, (N_states)]
  BEGIN_DOC
-  ! Give the Ec_md energy with a good large mu behaviour in function of the on top pair density with mu correction based on the on-top of the UEG coupled to the PBE correlation energy at mu=0
-  ! Ec_md_on_top_PBE = Int epsilon_c_PBE_mu=0 / ( 1 + beta*mu**3 ) = Int eps_c_md_on_top_PBE  with beta chosen to recover the good large mu behaviour of the Energy_c_md_on_top functional
+!
+! Ecmd functional defined in Eq. (25) of JCP, 150, 084103 1-10 (2019) 
+! 
+! Such a functional is built by interpolating between two regimes : 
+! 
+!    +) the large mu behaviour in cst/(\mu^3) \int dr on-top(r) where on-top(r) is supposed to be the exact on-top of the system
+!
+!    +) mu= 0 with the usal ec_pbe(rho_a,rho_b,grad_rho_a,grad_rho_b) 
+!
+! Here the approximation to the exact on-top is done through the assymptotic expansion (in \mu) of the exact on-top pair density (see Eq. 29)
+! 
+! Such an asymptotic expansion was introduced in P. Gori-Giorgi and A. Savin, Phys. Rev. A73, 032506 (2006)
+!
  END_DOC
  implicit none
  double precision :: weight
@@ -20,8 +31,9 @@
    grad_rho_a(1:3) = one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) = one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
    
-!  We take the extrpolated on-top pair density * 2 because of normalization
+!  We take the extrapolated on-top pair density (Eq. 29)
    on_top = total_cas_on_top_density(ipoint,istate)
+!  Multiplied by 2 because of difference of normalizations between the on_top of QP2 and that of JCP, 150, 084103 1-10 (2019)
    on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
 
    call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top_extrap,eps_c_md_on_top_PBE)
