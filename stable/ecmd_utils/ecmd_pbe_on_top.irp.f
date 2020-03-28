@@ -9,7 +9,7 @@ subroutine ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
 !
 ! by Eq. (26), which includes the correction of the on-top pair density of Eq. (29). 
   END_DOC
-  double precision, intent(in)  :: mu , r(3), two_dm(N_states)
+  double precision, intent(in)  :: mu , r(3), two_dm
   double precision, intent(out) :: eps_c_md_on_top_PBE(N_states)
   double precision :: two_dm_in_r, pi, e_pbe(N_states),beta(N_states),mu_correction_of_on_top
   double precision :: aos_array(ao_num), grad_aos_array(3,ao_num)
@@ -42,7 +42,7 @@ subroutine ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
    call ec_pbe_only(0.d0,rhoc,rhoo,sigmacc,sigmaco,sigmaoo,e_PBE(istate))
 
    ! correction of the on-top pair density according to Eq. (29) 
-   on_top_corrected = mu_correction_of_on_top(mu,istate,two_dm)
+   on_top_corrected = mu_correction_of_on_top(mu,two_dm)
 
    ! quantity of Eq. (27)
    beta(istate) = (3.d0*e_PBE(istate))/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0* on_top_corrected)
@@ -53,7 +53,7 @@ subroutine ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
  end
 
  
- double precision function mu_correction_of_on_top(mu,istate,two_dm)
+ double precision function mu_correction_of_on_top(mu,on_top)
  implicit none
  BEGIN_DOC
 ! mu-based correction to the on-top pair density provided by the assymptotic expansion of 
@@ -62,11 +62,10 @@ subroutine ec_md_on_top_PBE_mu_corrected(mu,r,two_dm,eps_c_md_on_top_PBE)
 !
 ! This is used in J. Chem. Phys.150, 084103 (2019); Eq. (26). 
  END_DOC
- double precision, intent(in) :: mu,two_dm(N_states)
- integer, intent(in) :: istate
+ double precision, intent(in) :: mu,on_top
  double precision :: pi
  pi = 4.d0 * datan(1.d0)
- mu_correction_of_on_top = two_dm(istate)  / ( 1.d0 + 2.d0/(dsqrt(pi)*mu) )
+ mu_correction_of_on_top = on_top  / ( 1.d0 + 2.d0/(dsqrt(pi)*mu) )
  mu_correction_of_on_top = max(mu_correction_of_on_top ,1.d-15)
  end
 

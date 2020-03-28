@@ -106,6 +106,7 @@ BEGIN_PROVIDER [double precision, full_occ_v_kl_cntrctd, (n_points_final_grid,n_
   k = 1
   l = 1
   call get_mo_two_e_integrals_ij(k,l,mo_num,integrals_array,mo_integrals_map) 
+  provide mos_in_r_array
  deallocate(integrals_array)
  double precision :: wall0,wall1
  call wall_time(wall0)
@@ -115,7 +116,7 @@ BEGIN_PROVIDER [double precision, full_occ_v_kl_cntrctd, (n_points_final_grid,n_
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,kk,ll,k,l,i,j,integrals_array) & 
- !$OMP SHARED (mo_num, n_points_final_grid, full_occ_v_kl_cntrctd, mo_integrals_map,final_grid_points,core_inact_act_mos_in_r_array, n_core_inact_act_orb, list_core_inact_act,n_orb_max_basis)
+ !$OMP SHARED (mo_num, n_points_final_grid, full_occ_v_kl_cntrctd, mo_integrals_map,final_grid_points,mos_in_r_array, n_core_inact_act_orb, list_core_inact_act,n_orb_max_basis)
  allocate(integrals_array(mo_num,mo_num))
  !$OMP DO              
   do l = 1, n_core_inact_act_orb! 2 
@@ -127,7 +128,7 @@ BEGIN_PROVIDER [double precision, full_occ_v_kl_cntrctd, (n_points_final_grid,n_
      do j = 1, n_orb_max_basis ! condition on mo_num in order to ensure the correct CBS limit 
       do i = 1, n_orb_max_basis ! 
                                                        !1 2                     1 2 
-       full_occ_v_kl_cntrctd(ipoint,k,l) += integrals_array(i,j) * core_inact_act_mos_in_r_array(j,ipoint) * core_inact_act_mos_in_r_array(i,ipoint)
+       full_occ_v_kl_cntrctd(ipoint,k,l) += integrals_array(i,j) * mos_in_r_array(j,ipoint) * mos_in_r_array(i,ipoint)
       enddo
      enddo
     enddo

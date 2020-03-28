@@ -36,7 +36,7 @@ subroutine give_epsilon_lyp_ontop_provider(mu,i_point,eps_c_md_ontop_LYP)
    e_LYP = ec_lyp_88(rhoc,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2)
 
    two_dm = total_cas_on_top_density(i_point,istate) ! on top of the wave function 
-   two_dm_corr = mu_correction_of_on_top(mu,istate,two_dm) ! extrapolated "exact" on top
+   two_dm_corr = mu_correction_of_on_top(mu,two_dm) ! extrapolated "exact" on top
    if(dabs(( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr )).lt.1.d-12)cycle
    beta = dabs((3.d0*e_LYP)/( (-2.d0+sqrt(2d0))*sqrt(2.d0*pi)*2.d0*two_dm_corr ))
    ! Ecmd functional with the extrapolated exact on top when mu -> infty 
