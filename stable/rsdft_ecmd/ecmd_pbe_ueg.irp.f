@@ -6,9 +6,9 @@
  END_DOC
  implicit none
  double precision ::  r(3)
- double precision :: weight,mu
+ double precision :: weight
  integer :: i,istate
- double precision,allocatable  :: eps_c_md_PBE(:)
+ double precision,allocatable  :: eps_c_md_PBE(:),mu(:)
  allocate(eps_c_md_PBE(N_states))
  mu = mu_erf_dft
  ecmd_pbe_ueg_prov = 0.d0
