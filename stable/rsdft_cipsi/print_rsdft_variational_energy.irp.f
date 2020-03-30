@@ -9,12 +9,12 @@ program DFT_Utils_two_body_main
  io_ao_two_e_integrals = "None"
  touch io_ao_two_e_integrals
 
- io_mo_integrals_e_n = "None"
- touch io_mo_integrals_e_n
+ io_mo_integrals_n_e = "None"
+ touch io_mo_integrals_n_e
  io_mo_integrals_kinetic = "None"
  touch io_mo_integrals_kinetic 
- io_ao_integrals_e_n = "None"
- touch io_ao_integrals_e_n 
+ io_ao_integrals_n_e = "None"
+ touch io_ao_integrals_n_e 
  io_ao_integrals_kinetic = "None"
  touch io_ao_integrals_kinetic 
 

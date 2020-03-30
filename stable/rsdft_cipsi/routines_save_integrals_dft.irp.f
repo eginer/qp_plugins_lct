@@ -7,15 +7,15 @@ subroutine save_one_e_effective_potential
 ! and will couple the WFT with DFT for the next regular WFT calculation
  END_DOC
 
- call ezfio_set_mo_one_e_ints_mo_integrals_e_n(effective_one_e_potential_without_kin)
+ call ezfio_set_mo_one_e_ints_mo_integrals_n_e(effective_one_e_potential_without_kin)
  call ezfio_set_mo_one_e_ints_mo_integrals_kinetic(mo_kinetic_integrals)
 
- call ezfio_set_ao_one_e_ints_ao_integrals_e_n(ao_effective_one_e_potential_without_kin)
+ call ezfio_set_ao_one_e_ints_ao_integrals_n_e(ao_effective_one_e_potential_without_kin)
  call ezfio_set_ao_one_e_ints_ao_integrals_kinetic(ao_kinetic_integrals)
 
- call ezfio_set_mo_one_e_ints_io_mo_integrals_e_n("Read")
+ call ezfio_set_mo_one_e_ints_io_mo_integrals_n_e("Read")
  call ezfio_set_mo_one_e_ints_io_mo_integrals_kinetic("Read")
- call ezfio_set_ao_one_e_ints_io_ao_integrals_e_n("Read")
+ call ezfio_set_ao_one_e_ints_io_ao_integrals_n_e("Read")
  call ezfio_set_ao_one_e_ints_io_ao_integrals_kinetic("Read")
 
  print *,  'Effective DFT potential is written on disk on the one electron integrals on the AO/MO basis'
