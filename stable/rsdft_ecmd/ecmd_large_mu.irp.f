@@ -16,13 +16,15 @@
  double precision :: pi,mu,on_top_extrap,alpha
  mu = mu_erf_dft
  pi = 4.d0 * datan(1.d0)
+ alpha = (-2.d0+sqrt(2.d0))*sqrt(2.d0*pi)/(3.d0)
 
+ do istate = 1, N_states
  ! Eq. 29 of JCP extrapolation between the on-top pair density at mu and the exact one
  ! the factor "2" comes from a difference of normalization of the two-body density in the JCP paper and QP2
- on_top_extrap = 2.d0 * integral_on_top/(1.d0 + 2.d0 / (dsqrt(pi)*mu ))
- ! constant in the large mu behaviour
- alpha = (-2.d0+sqrt(2.d0))*sqrt(2.d0*pi)/(3.d0)
- ! alpha / mu^3 \int n2(r,r)
- ecmd_large_mu = alpha / (mu**3) * on_top_extrap
+  on_top_extrap = 2.d0 * integral_on_top(istate)/(1.d0 + 2.d0 / (dsqrt(pi)*mu ))
+  ! constant in the large mu behaviour
+  ! alpha / mu^3 \int n2(r,r)
+  ecmd_large_mu(istate) = alpha / (mu**3) * on_top_extrap
+ enddo
  END_PROVIDER
 

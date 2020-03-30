@@ -7,8 +7,8 @@ program basis_correction
   touch read_wf
   no_core_density = .True.
   touch no_core_density
-  call print_basis_correction
-!  call print_e_b
+!  call print_basis_correction
+  call print_e_b
 end
 
 subroutine print_e_b

@@ -6,38 +6,40 @@ BEGIN_PROVIDER [double precision, ecmd_pbe_ueg_eff_xi_mu_of_r, (N_states)]
  !
  ! Based on the PBE-on-top functional (see Eqs. 26, 27 of J. Chem. Phys.150, 084103 (2019); doi: 10.1063/1.5082638)
  !
- ! but it replaces the approximation of the exact on-top pair density by the on-top of the UEG 
+ ! and replaces the approximation of the exact on-top pair density by the exact on-top of the UEG 
  !
- ! and uses the effective spin polarization (depending on the on-top density) as spin polarization in the PBE functional. 
+ ! !!!! BUT !!!! with an EFFECTIVE SPIN POLARIZATION DEPENDING ON THE ON-TOP PAIR DENSITY 
  !
  ! See P. Perdew, A. Savin, and K. Burke, Phys. Rev. A 51, 4531 (1995). for original Ref., and Eq. 29 in ???????????
  END_DOC
  implicit none
  double precision :: weight,density
  integer :: ipoint,istate
- double precision,allocatable  :: eps_c_md_PBE(:),mu(:),rho_a(:),rho_b(:),grad_rho_a(:,:),grad_rho_b(:,:)
+ double precision :: eps_c_md_PBE,mu,rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),g0_UEG_mu_inf,on_top
 
- allocate(eps_c_md_PBE(N_states),mu(N_states),rho_a(N_states),rho_b(N_states),grad_rho_a(3,N_states),grad_rho_b(3,N_states))
  ecmd_pbe_ueg_eff_xi_mu_of_r = 0.d0
   
  print*,'Providing ecmd_pbe_ueg_eff_xi_mu_of_r ...'
  call wall_time(wall0)
- do ipoint = 1, n_points_final_grid
-  weight=final_weight_at_r_vector(ipoint)
+ do istate = 1, N_states
+  do ipoint = 1, n_points_final_grid
+   weight=final_weight_at_r_vector(ipoint)
+   mu = mu_of_r_prov(ipoint,istate)
 
-  do istate = 1, N_states
    density =  one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)  + one_e_dm_and_grad_beta_in_r(4,ipoint,istate) 
-   rho_a(istate) = 0.5d0 * (density + effective_spin_dm(ipoint,istate))
-   rho_b(istate) = 0.5d0 * (density - effective_spin_dm(ipoint,istate))
-   grad_rho_a(1:3,istate) = one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
-   grad_rho_b(1:3,istate) = one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
-   mu(istate) = mu_of_r_prov(ipoint,istate)
-  enddo
+   ! We use the effective spin density to define rho_a/rho_b
+   rho_a = 0.5d0 * (density + effective_spin_dm(ipoint,istate))
+   rho_b = 0.5d0 * (density - effective_spin_dm(ipoint,istate))
 
-  call eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE)
+   grad_rho_a(1:3) = one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
+   grad_rho_b(1:3) = one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
 
-  do istate = 1, N_states
-   ecmd_pbe_ueg_eff_xi_mu_of_r(istate) += eps_c_md_PBE(istate) * weight
+!  We take the on-top pair density of the UEG which is (1-zeta^2) rhoc^2 g0 = 4 rhoa * rhob * g0
+!  with the effective rho_a and rho_b 
+   on_top = 4.d0 * rho_a * rho_b * g0_UEG_mu_inf(rho_a,rho_b)   
+
+   call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top,eps_c_md_PBE)
+   ecmd_pbe_ueg_eff_xi_mu_of_r(istate) += eps_c_md_PBE * weight
   enddo
  enddo
  double precision :: wall1, wall0
@@ -53,7 +55,7 @@ END_PROVIDER
  !
  ! corresponds to equation 40 in J. Chem. Phys. 149, 194301 (2018); https://doi.org/10.1063/1.5052714 
  !
- ! BUT with an effective spin polarization depending on the on-top pair density 
+ ! !!!! BUT !!!! with an EFFECTIVE SPIN POLARIZATION DEPENDING ON THE ON-TOP PAIR DENSITY 
  ! 
  ! See P. Perdew, A. Savin, and K. Burke, Phys. Rev. A 51, 4531 (1995). for original Ref., and Eq. 29 in ???????????
  END_DOC
