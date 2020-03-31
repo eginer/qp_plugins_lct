@@ -4,14 +4,17 @@ program pouet
 !call test_grad_lapl_ao
 !call test_grad_lapl_mo
 !call test_fourth_ao
- call test_fourth_ao_cross 
+! call test_fourth_ao_cross 
 !call test_lapl_ao_product
 !call test_nabla_4_ao_product
 !call test_nabla_3_ao_product
 !call test_nabla_4_ao_product_sous_parties
 !call test_ao_to_mo_nabla4
 !call test_nabla2_4_at_r
- call test_grad_density
+! call test_grad_density
+! call test_ao_to_mo_nabla4
+! call test_lapl_ao_product
+ call test_nabla2_4_at_r
 end
 
 subroutine test_grad_density_2
@@ -753,17 +756,17 @@ end
   r(1)= final_grid_points(1,k) 
   r(2)= final_grid_points(2,k) 
   r(3)= final_grid_points(3,k)
-! call give_nabla_2_at_r_mo(r,nabla_2_at_r_mo)
-  call give_nabla_4_at_r_mo(r,nabla_4_at_r_mo)
+ call give_nabla_2_at_r_mo(r,nabla_2_at_r_mo)
+!  call give_nabla_4_at_r_mo(r,nabla_4_at_r_mo)
 
   do j = 1, mo_num
    do i = 1, mo_num
-!   accu_num_2 += nabla_2_at_r_mo(i,j)-mos_nabla_2_in_r_array(i,j,k) 
-    accu_num_4 += nabla_4_at_r_mo(i,j)-mos_nabla_4_in_r_array(i,j,k)
+    accu_num_2 += dabs(nabla_2_at_r_mo(i,j)-mos_nabla_2_in_r_array_2(i,j,k) ) * final_weight_at_r_vector(k) 
+!    accu_num_4 += nabla_4_at_r_mo(i,j)-mos_nabla_4_in_r_array(i,j,k)
    enddo
   enddo
  enddo
 
-!print*,'error n2  =',accu_num_2
- print*,'error n4  =',accu_num_4
+print*,'error n2  =',accu_num_2
+! print*,'error n4  =',accu_num_4
 end
