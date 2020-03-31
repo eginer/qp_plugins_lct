@@ -1,4 +1,4 @@
- subroutine give_core_inact_act_grad_on_top_of_r_from_provider(ipoint,istate,ontop_grad)
+ subroutine give_on_top_gradient(ipoint,istate,ontop_grad)
  implicit none
  BEGIN_DOC
  ! on top pair density and its gradient evaluated at a given point of the grid 
@@ -48,7 +48,7 @@
  i_point = 1
  provide full_occ_2_rdm_ab_mo 
  i_state = 1
- call give_core_inact_act_grad_on_top_of_r_from_provider(i_point,i_state,ontop_grad)
+ call give_on_top_gradient(i_point,i_state,ontop_grad)
  call wall_time(wall_0)
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
@@ -56,7 +56,7 @@
  !$OMP SHARED(grad_total_cas_on_top_density,n_points_final_grid,N_states)
  do i_point = 1, n_points_final_grid
   do i_state = 1, N_states
-   call give_core_inact_act_grad_on_top_of_r_from_provider(i_point,i_state,ontop_grad)
+   call give_on_top_gradient(i_point,i_state,ontop_grad)
    do i = 1, 4
     grad_total_cas_on_top_density(i,i_point,i_state) = ontop_grad(i)
    enddo

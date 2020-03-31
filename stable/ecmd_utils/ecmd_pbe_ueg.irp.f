@@ -2,7 +2,7 @@
 subroutine ecmd_pbe_ueg_at_r(mu,r,eps_c_md_PBE) 
   implicit none
   BEGIN_DOC
-! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 
+! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931   2937 
 !
 ! !!! WARNING !!! This is the total integrand of Eq. (13), which is e_cmd * n
 !
@@ -63,7 +63,7 @@ subroutine ecmd_pbe_ueg_at_r(mu,r,eps_c_md_PBE)
 subroutine eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_c_md_PBE) ! EG
   implicit none
   BEGIN_DOC
-! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 
+! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931   2937 
 !
 ! !!! WARNING !!! This is the total integrand of Eq. (13), which is e_cmd * n
 !
@@ -125,7 +125,7 @@ subroutine eps_c_md_PBE_from_density(mu,rho_a,rho_b, grad_rho_a, grad_rho_b,eps_
 subroutine eps_c_md_PBE_at_grid_pt(mu,i_point,eps_c_md_PBE)
   implicit none
   BEGIN_DOC
-! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931−2937 
+! provides the integrand of Eq. (13) of Phys.Chem.Lett.2019, 10, 2931   2937 
 !
 ! !!! WARNING !!! This is the total integrand of Eq. (13), which is e_cmd * n
 !

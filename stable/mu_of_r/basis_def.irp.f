@@ -21,7 +21,7 @@ END_PROVIDER
  !
  ! This is typically elec_alpha_num - n_core_orb for alpha electrons and elec_beta_num - n_core_orb for beta electrons
  !
- ! This determines the size of the space \mathcal{A} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931−2937
+ ! This determines the size of the space \mathcal{A} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931   2937
  END_DOC
  integer :: i
  n_occ_val_orb_for_hf = 0
@@ -53,7 +53,7 @@ BEGIN_PROVIDER [integer, list_valence_orb_for_hf, (n_max_occ_val_orb_for_hf,2)]
  !
  ! This corresponds to ALL OCCUPIED orbitals in the HF wave function, except those defined as "core" 
  !
- ! This determines the space \mathcal{A} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931−2937
+ ! This determines the space \mathcal{A} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931   2937
  END_DOC
  integer :: i,j
  j = 0
@@ -85,7 +85,7 @@ BEGIN_PROVIDER [integer, n_basis_orb]
  BEGIN_DOC
  ! Defines the number of orbitals you will use to explore the basis set 
  !
- ! This determines the size of the space \mathcal{B} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931−2937
+ ! This determines the size of the space \mathcal{B} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931   2937
  !
  ! It corresponds to all MOs except those defined as "deleted" 
  END_DOC
@@ -97,7 +97,7 @@ BEGIN_PROVIDER [integer, list_basis_orb, (n_basis_orb)]
  BEGIN_DOC
  ! Defines the set of orbitals you will use to explore the basis set 
  !
- ! This determines the space \mathcal{B} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931−2937
+ ! This determines the space \mathcal{B} of Eqs. (15-16) of Phys.Chem.Lett.2019, 10, 2931   2937
  !
  ! It corresponds to all MOs except those defined as "deleted" 
  END_DOC
