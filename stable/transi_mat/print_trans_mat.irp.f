@@ -58,5 +58,33 @@ subroutine routine
  write(50,'(i5)')    NV
  write(50,'(F7.3)')  (Fock_matrix_diag_mo(i),i=elec_alpha_num+1,elec_alpha_num + NV)
  close(50)
+
+
+ OPEN(unit=70,file='x_dipole_mo.dat',status='unknown',form='formatted')
+ write(70,'(i5)')  mo_num 
+ do i = 1, mo_num
+  do j = 1, mo_num
+   write(70,'(2(I3,X),F16.10)')j,i,mo_dipole_x(j,i)
+  enddo
+ enddo
+ close(70)
+
+ OPEN(unit=90,file='y_dipole_mo.dat',status='unknown',form='formatted')
+ write(90,'(i5)')  mo_num 
+ do i = 1, mo_num
+  do j = 1, mo_num
+   write(90,'(2(I3,X),F16.10)')j,i,mo_dipole_y(j,i)
+  enddo
+ enddo
+ close(90)
+
+ OPEN(unit=80,file='z_dipole_mo.dat',status='unknown',form='formatted')
+ write(80,'(i5)')  mo_num 
+ do i = 1, mo_num
+  do j = 1, mo_num
+   write(80,'(2(I3,X),F16.10)')j,i,mo_dipole_z(j,i)
+  enddo
+ enddo
+ close(80)
  
 end
