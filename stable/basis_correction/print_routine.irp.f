@@ -55,6 +55,7 @@ subroutine print_basis_correction
     write(*, '(A29,X,I3,X,A3,X,F16.10)') '  ECMD PBE-UEG       , state ',istate,' = ',ecmd_pbe_ueg_mu_of_r(istate)
    enddo
    print*,'********************************************'
+   print*,'********************************************'
    print*,'Functionals using the effective spin polarization depending on the on-top pair density'
    print*,'Usually better in the presence of strong correlation'
    print*,'********************************************'
@@ -68,6 +69,7 @@ subroutine print_basis_correction
     write(*, '(A29,X,I3,X,A3,X,F16.10)') '  ECMD PBE-UEG-eff-Xi, state ',istate,' = ',ecmd_pbe_ueg_eff_xi_mu_of_r(istate)
    enddo
    print*,''
+   print*,'********************************************'
    print*,'********************************************'
    print*,'+) PBE-on-top Ecmd functional : (??????? REF-SCF ??????????)' 
    print*,'PBE at mu=0, extrapolated ontop pair density at large mu, usual spin-polarization'

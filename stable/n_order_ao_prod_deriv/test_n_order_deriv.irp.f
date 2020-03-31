@@ -1218,7 +1218,7 @@ subroutine test_nabla2_4_at_r
 
   do j = 1, mo_num
    do i = 1, mo_num
-    accu_num_2 += dabs(nabla_2_at_r_mo(i,j)-mos_nabla_2_in_r_array_2(i,j,k) ) * final_weight_at_r_vector(k) 
+    accu_num_2 += dabs(nabla_2_at_r_mo(i,j)-mos_nabla_2_in_r_array(i,j,k) ) * final_weight_at_r_vector(k) 
    enddo
   enddo
  enddo
