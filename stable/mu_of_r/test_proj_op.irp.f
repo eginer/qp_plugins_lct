@@ -14,10 +14,7 @@ program projected_operators
   print*,'Using Valence Only functions'
 !  call test_f_HF_valence_ab
 !  call routine_full_mos
-call pouet
+!   call test_f_ii_valence_ab
+   call test_f_ia_valence_ab
 end
 
-subroutine pouet
- 
-   provide mu_of_r_prov
-end

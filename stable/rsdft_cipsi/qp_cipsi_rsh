@@ -20,7 +20,7 @@ Usage:
 
 Options:
   -m, --mu=<positive real>              range separation parameter (default=0.5)
-  -f, --func=<LOWER CASE STRING>        range separated functional (default=pbe)
+  -f, --func=<LOWER CASE STRING>        range separated functional (default=sr_pbe)
   -n, --ndetmax=<positive integer>      max number of determinants in the CIPSI wf (default=1.e6)
   -p, --pt2max=<positive real>          max value of the PT2 correction (default=1.e-3)
   -t, --thresh=<positive real>          threshold on the convergence of the variational energy (default=1.e-10)
@@ -125,8 +125,8 @@ if [[ ! -d $ezfio ]]; then
 fi
 # define the exchange / correlation functionals to be used in RS-DFT calculation
 if [[ -z $functional ]]; then
- echo "you did not specify the \$functional parameter, it will be set to PBE by default (run --help for explanations)"
- functional="pbe"
+ echo "you did not specify the \$functional parameter, it will be set to sr_pbe by default (run --help for explanations)"
+ functional="sr_pbe"
 fi
 echo "FUNCTIONAL for RS-DFT:  "$functional
 # splitting of the interaction to be used in RS-DFT calculation 

@@ -1,17 +1,4 @@
 
-BEGIN_PROVIDER [ integer, n_orb_max_basis  ]
-  implicit none
-  BEGIN_DOC
-! maximum number of MOs to define the basis set
-  END_DOC
-  logical                        :: has
- if(mu_of_r_potential.EQ."cas_truncated")then
-  n_orb_max_basis = n_core_inact_act_orb
- else 
-  n_orb_max_basis = mo_num
- endif
-
-END_PROVIDER
 
  BEGIN_PROVIDER [integer, n_occ_val_orb_for_hf,(2)]
 &BEGIN_PROVIDER [integer, n_max_occ_val_orb_for_hf]
@@ -92,7 +79,7 @@ BEGIN_PROVIDER [integer, n_basis_orb]
  n_basis_orb = n_all_but_del_orb
 END_PROVIDER 
 
-BEGIN_PROVIDER [integer, list_basis_orb, (n_basis_orb)]
+BEGIN_PROVIDER [integer, list_basis, (n_basis_orb)]
  implicit none
  BEGIN_DOC
  ! Defines the set of orbitals you will use to explore the basis set 
@@ -103,8 +90,17 @@ BEGIN_PROVIDER [integer, list_basis_orb, (n_basis_orb)]
  END_DOC
  integer :: i
  do i = 1, n_all_but_del_orb
-   list_basis_orb(i) = list_all_but_del_orb(i)
+   list_basis(i) = list_all_but_del_orb(i)
  enddo
 END_PROVIDER 
 
-
+BEGIN_PROVIDER [double precision, basis_mos_in_r_array, (n_basis_orb,n_points_final_grid)]
+ implicit none
+ integer :: ipoint,i,ii
+ do ipoint = 1, n_points_final_grid
+  do i = 1, n_basis_orb 
+   ii = list_basis(i)
+   basis_mos_in_r_array(i,ipoint) = mos_in_r_array(ii,ipoint)
+  enddo
+ enddo
+END_PROVIDER 

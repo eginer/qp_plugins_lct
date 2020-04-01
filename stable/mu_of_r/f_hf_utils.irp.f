@@ -5,7 +5,7 @@ BEGIN_PROVIDER [double precision, two_e_int_hf_f, (n_basis_orb,n_basis_orb,n_max
 ! 
 ! needed to compute the function f_{HF}(r_1,r_2) 
 !
-! two_e_int_hf_f(j,i,n,m) = < j i | n m > where all orbitals belong to "list_basis_orb"
+! two_e_int_hf_f(j,i,n,m) = < j i | n m > where all orbitals belong to "list_basis"
  END_DOC
  integer :: orb_i,orb_j,i,j,orb_m,orb_n,m,n
  double precision :: get_two_e_integral
@@ -14,9 +14,9 @@ BEGIN_PROVIDER [double precision, two_e_int_hf_f, (n_basis_orb,n_basis_orb,n_max
   do orb_n = 1, n_max_occ_val_orb_for_hf! electron 2 
    n = list_valence_orb_for_hf(orb_n,1)
    do orb_i = 1, n_basis_orb ! electron 1 
-    i = list_basis_orb(orb_i)
+    i = list_basis(orb_i)
     do orb_j = 1, n_basis_orb ! electron 2 
-     j = list_basis_orb(orb_j)
+     j = list_basis(orb_j)
      !              2       1     2     1
      two_e_int_hf_f(orb_j,orb_i,orb_n,orb_m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
     enddo
@@ -43,8 +43,8 @@ subroutine f_HF_valence_ab(r1,r2,f_HF_val_ab,two_bod_dens)
  double precision :: mo_two_e_integral
  double precision, allocatable :: mos_array_r1(:)
  double precision, allocatable :: mos_array_r2(:)
- double precision, allocatable  :: mos_array_valence_r1(:),mos_array_valence_r2(:)
- double precision, allocatable  :: mos_array_valence_hf_r1(:),mos_array_valence_hf_r2(:)
+ double precision, allocatable :: mos_array_valence_r1(:),mos_array_valence_r2(:)
+ double precision, allocatable :: mos_array_valence_hf_r1(:),mos_array_valence_hf_r2(:)
  double precision :: get_two_e_integral
  allocate(mos_array_valence_r1(n_basis_orb) , mos_array_valence_r2(n_basis_orb), mos_array_r1(mo_num), mos_array_r2(mo_num))
  allocate(mos_array_valence_hf_r1(n_occ_val_orb_for_hf(1)) , mos_array_valence_hf_r2(n_occ_val_orb_for_hf(2)) )
@@ -61,8 +61,8 @@ subroutine f_HF_valence_ab(r1,r2,f_HF_val_ab,two_bod_dens)
 
  ! You extract the orbitals belonging to the space \mathcal{B}
  do i_m = 1, n_basis_orb 
-  mos_array_valence_r1(i_m) = mos_array_r1(list_basis_orb(i_m))
-  mos_array_valence_r2(i_m) = mos_array_r2(list_basis_orb(i_m))
+  mos_array_valence_r1(i_m) = mos_array_r1(list_basis(i_m))
+  mos_array_valence_r2(i_m) = mos_array_r2(list_basis(i_m))
  enddo
 
 
@@ -117,7 +117,7 @@ subroutine integral_f_HF_valence_ab(r1,int_f_HF_val_ab)
   mos_array_valence_hf_r1(i_m) = mos_array_r1(list_valence_orb_for_hf(i_m,1))
  enddo
  do i_m = 1, n_basis_orb 
-  mos_array_valence_r1(i_m) = mos_array_r1(list_basis_orb(i_m))
+  mos_array_valence_r1(i_m) = mos_array_r1(list_basis(i_m))
  enddo
 
  int_f_HF_val_ab = 0.d0
