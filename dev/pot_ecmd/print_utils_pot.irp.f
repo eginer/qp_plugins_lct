@@ -7,16 +7,16 @@
  print*,'/////////////////////////'
   print*,  '****************************************'
   print*,'///////////////////'
-  print*, 'TOTAL ENERGY mu_of_r LDA          = ',psi_energy + Energy_c_md_LDA_mu_of_r  + nuclear_repulsion 
-  print*, 'TOTAL ENERGY mu_of_r PBE UEG      = ',psi_energy + Energy_c_md_PBE_mu_of_r + nuclear_repulsion 
+  print*, 'TOTAL ENERGY mu_of_r LDA          = ',psi_energy + ecmd_lda_mu_of_r        + nuclear_repulsion 
+  print*, 'TOTAL ENERGY mu_of_r PBE UEG      = ',psi_energy + ecmd_pbe_ueg_mu_of_r    + nuclear_repulsion 
   print*, ''
   print*, ''
   print*, 'Component of the energy ....'
   print*, 'psi_energy                        = ',psi_energy
   print*, 'nuclear_repulsion                 = ',nuclear_repulsion
-  print*, 'Energy_c_md_PBE_mu_of_r           = ',Energy_c_md_PBE_mu_of_r
-  print*, 'Energy_c_md_LDA_mu_of_r           = ',Energy_c_md_LDA_mu_of_r
-  print*, 'mu_average                        = ',mu_average                         
+  print*, '   ecmd_pbe_ueg_mu_of_r           = ',ecmd_pbe_ueg_mu_of_r   
+  print*, '   ecmd_lda_mu_of_r               = ',ecmd_lda_mu_of_r
+  print*, 'mu_average                        = ',mu_average_prov                    
   print*, ''
   print*, 'YOLOOOOLLLOOO'
  

@@ -259,7 +259,7 @@ subroutine print_mu_of_r
   r1(3) += delta  
  
   call dm_dft_alpha_beta_and_all_aos_at_r(r1,rhoa,rhob,aos_array)
-  call f_HF_ab(r1,r1,local_potential,two_bod)
+  call f_HF_valence_ab(r1,r1,local_potential,two_bod)
  !call f_PSI_ab_routine(r1,r1,local_potential,two_bod)
   if(two_bod.le.1.d-12.or.local_potential.le.0.d0.or.local_potential * two_bod.lt.0.d0)then
     local_potential = 1.d+10

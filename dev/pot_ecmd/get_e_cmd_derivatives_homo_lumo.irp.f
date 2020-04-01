@@ -2,7 +2,7 @@ program write_integrals_for_dft_ecmd_lda
  implicit none
  read_wf = .true.
  touch read_wf
- no_core_density = "no_core_dm"
+ no_core_density = .True.
  touch no_core_density
  mu_of_r_potential = "hf_valence_coallescence"
  touch mu_of_r_potential
@@ -42,10 +42,10 @@ end
    r(1) = final_grid_points(1,i)
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
-   mu = mu_of_r_vector(i)
+   mu = mu_of_r_prov(i,istate)
 
-   rhoa(istate) = one_e_dm_alpha_at_r(i,istate)
-   rhob(istate) = one_e_dm_beta_at_r(i,istate)
+   rhoa(istate) = one_e_dm_and_grad_alpha_in_r(4,i,istate)
+   rhob(istate) = one_e_dm_and_grad_beta_in_r(4,i,istate)
    call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,sr_vc_a,sr_vc_b)
    call give_all_mos_at_r(r,mos_array)
    homo = mos_in_r_array_transp(i,elec_alpha_num)

@@ -364,7 +364,7 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
    r(1) = final_grid_points(1,i)
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
-   mu = mu_of_r_vector(i)
+   mu = mu_of_r_prov(i,istate)
    weight = final_weight_at_r_vector(i)
 
    call give_d_Ec_pbeueg_rho(r,mu,d_ec_pbeueg_rhoa,d_ec_pbeueg_rhob)
@@ -545,7 +545,7 @@ subroutine give_d_Ec_pbeueg_rho_grand_mu(r,mu,d_ec_pbeueg_grandmu_rhoa,d_ec_pbeu
    r(1) = final_grid_points(1,i)
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
-   mu = mu_of_r_vector(i)
+   mu = mu_of_r_prov(i,istate)
   !mu = mu_erf_dft 
    weight = final_weight_at_r_vector(i)
 

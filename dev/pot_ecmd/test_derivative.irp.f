@@ -34,17 +34,6 @@ end
 
 
 
-subroutine test_delta  
- implicit none
- integer :: i,j,k,l,m,n
- print*,'*****************$******************'
- print*,'ECMD LDA standart =',Energy_c_md_LDA
- print*,'ECMD LDA mu_of_r  =',Energy_c_md_LDA_mu_of_r 
- print*,'ECMD LDA barth    =',Energy_c_md_LDA_barth
- print*,'*****************$******************'
-end
-
-
 subroutine test_delta_derivative
  implicit none
  integer :: i,j,k,l,m,n

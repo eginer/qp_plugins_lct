@@ -709,11 +709,9 @@ double precision function delta_4(rs,xi)
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
    weight = final_weight_at_r_vector(i)
-   mu = mu_of_r_vector(i)
+   mu = mu_of_r_prov(i,istate)
  ! mu = 5.d0 
  ! mu = 0.5d0
-  !rhoa(istate) = one_e_dm_alpha_at_r(i,istate)
-  !rhob(istate) = one_e_dm_beta_at_r(i,istate)
    call dm_dft_alpha_beta_and_all_aos_at_r(r,rhoa(istate),rhob(istate),aos_array)
    call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,vc_a,vc_b)
 
@@ -774,11 +772,11 @@ double precision function delta_4(rs,xi)
    r(1) = final_grid_points(1,i)
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
-   mu =mu_of_r_vector(i)
+   mu =mu_of_r_prov(i,istate)
    weight=final_weight_at_r_vector(i)
 
-   rhoa(istate) = one_e_dm_alpha_at_r(i,istate)
-   rhob(istate) = one_e_dm_beta_at_r(i,istate)
+   rhoa(istate) = one_e_dm_and_grad_alpha_in_r(4,i,istate)
+   rhob(istate) = one_e_dm_and_grad_beta_in_r(4,i,istate)
    call dm_dft_alpha_beta_and_all_aos_at_r(r,rhoa(istate),rhob(istate),aos_array)
    call ec_lda_sr(mu,rhoa(istate),rhob(istate),e_c,vc_a,vc_b)
    if(dabs(rhoa(istate)+rhob(istate)).lt.threshold) cycle 

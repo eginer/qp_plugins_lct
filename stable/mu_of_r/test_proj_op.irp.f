@@ -9,7 +9,15 @@ program projected_operators
   ! orbitals coming from core 
   no_core_density = .True.
   touch no_core_density
+  mu_of_r_potential = "cas_ful"
+  touch mu_of_r_potential 
   print*,'Using Valence Only functions'
-  call test_f_HF_valence_ab
-  call routine_full_mos
+!  call test_f_HF_valence_ab
+!  call routine_full_mos
+call pouet
+end
+
+subroutine pouet
+ 
+   provide mu_of_r_prov
 end
