@@ -124,9 +124,9 @@ BEGIN_PROVIDER [double precision, full_occ_v_kl_cntrctd, (n_points_final_grid,n_
    do k = 1, n_core_inact_act_orb ! 1 
     kk = list_core_inact_act(k)
     call get_mo_two_e_integrals_ij(kk,ll,mo_num,integrals_array,mo_integrals_map) 
-    do j = 1, n_basis_orb ! condition on mo_num in order to ensure the correct CBS limit 
+    do j = 1, n_basis_orb 
      jj = list_basis(j)
-     do i = 1, n_basis_orb ! 
+     do i = 1, n_basis_orb 
       ii = list_basis(i)
       integrals_basis(i,j) = integrals_array(ii,jj)
      enddo

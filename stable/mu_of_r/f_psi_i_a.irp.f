@@ -1,4 +1,4 @@
-subroutine f_ii_valence_ab(r1,r2,f_ii_val_ab,two_bod_dens)
+subroutine give_f_ii_val_ab(r1,r2,f_ii_val_ab,two_bod_dens)
  implicit none
  BEGIN_DOC
 ! part of f_{\Psi^B}(r_1,r_2) from purely inactive orbitals 
@@ -112,7 +112,7 @@ subroutine give_f_ia_val_ab(r1,r2,f_ia_val_ab,two_bod_dens,istate)
    do b = 1, n_act_orb 
     rho = one_e_act_dm_beta_mo_for_dft(b,a,istate) + one_e_act_dm_alpha_mo_for_dft(b,a,istate) 
     two_bod_dens += mos_array_inact_r1(i) * mos_array_inact_r1(i) * mos_array_act_r2(a) * mos_array_act_r2(b) * rho
-    rho_tilde(i,a) += rho * mos_array_inact_r1(i) * mos_array_act_r2(a)
+    rho_tilde(i,a) += rho * mos_array_inact_r1(i) * mos_array_act_r2(b)
    enddo
   enddo
  enddo
@@ -123,10 +123,10 @@ subroutine give_f_ia_val_ab(r1,r2,f_ia_val_ab,two_bod_dens,istate)
  allocate( integrals_array(mo_num,mo_num) )
  v_tilde = 0.d0
  do a = 1, n_act_orb 
-!  orb_a = list_act(a)
+  orb_a = list_act(a)
   do i = 1, n_inact_orb
    v_tilde(i,a) = 0.d0
-!   orb_i = list_inact(i)
+   orb_i = list_inact(i)
 !   call get_mo_two_e_integrals_ij(orb_i,orb_a,mo_num,integrals_array,mo_integrals_map) 
    do m = 1, n_basis_orb
     do n = 1, n_basis_orb
@@ -218,8 +218,8 @@ subroutine give_f_aa_val_ab(r1,r2,f_aa_val_ab,two_bod_dens,istate)
  enddo
 
  do a = 1, n_act_orb
-  do i = 1, n_act_orb
-   f_aa_val_ab += v_tilde(i,a) * rho_tilde(i,a)
+  do b = 1, n_act_orb
+   f_aa_val_ab += v_tilde(b,a) * rho_tilde(b,a)
   enddo
  enddo
 end
@@ -234,7 +234,7 @@ BEGIN_PROVIDER [double precision, two_e_int_aa_f, (n_basis_orb,n_basis_orb,n_act
 ! two_e_int_aa_f(j,i,n,m) = < j i | n m > where all orbitals belong to "list_basis"
  END_DOC
  integer :: orb_i,orb_j,i,j,orb_m,orb_n,m,n
- double precision :: integrals_array(mo_num,mo_num)
+ double precision :: integrals_array(mo_num,mo_num),get_two_e_integral
  do orb_m = 1, n_act_orb ! electron 1 
   m = list_act(orb_m)
   do orb_n = 1, n_act_orb ! electron 2 
@@ -245,8 +245,8 @@ BEGIN_PROVIDER [double precision, two_e_int_aa_f, (n_basis_orb,n_basis_orb,n_act
     do orb_j = 1, n_basis_orb ! electron 2 
      j = list_basis(orb_j)
      !              2       1     2     1
-!     two_e_int_aa_f(orb_j,orb_i,orb_n,orb_m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
-     two_e_int_aa_f(orb_j,orb_i,orb_n,orb_m) = integrals_array(i,j) 
+     two_e_int_aa_f(orb_j,orb_i,orb_n,orb_m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
+!     two_e_int_aa_f(orb_j,orb_i,orb_n,orb_m) = integrals_array(j,i) 
     enddo
    enddo
   enddo
@@ -258,12 +258,12 @@ BEGIN_PROVIDER [double precision, two_e_int_ia_f, (n_basis_orb,n_basis_orb,n_ina
  BEGIN_DOC
 ! list of two-electron integrals (built with the MOs belonging to the \mathcal{B} space) 
 ! 
-! needed to compute the function f_{ii}(r_1,r_2) 
+! needed to compute the function f_{ia}(r_1,r_2) 
 !
 ! two_e_int_aa_f(j,i,n,m) = < j i | n m > where all orbitals belong to "list_basis"
  END_DOC
  integer :: orb_i,orb_j,i,j,orb_m,orb_n,m,n
- double precision :: integrals_array(mo_num,mo_num)
+ double precision :: integrals_array(mo_num,mo_num),get_two_e_integral
  do orb_m = 1, n_act_orb ! electron 1 
   m = list_act(orb_m)
   do orb_n = 1, n_inact_orb ! electron 2 
@@ -275,7 +275,7 @@ BEGIN_PROVIDER [double precision, two_e_int_ia_f, (n_basis_orb,n_basis_orb,n_ina
      j = list_basis(orb_j)
      !              2       1     2     1
 !     two_e_int_ia_f(orb_j,orb_i,orb_n,orb_m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
-     two_e_int_ia_f(orb_j,orb_i,orb_n,orb_m) = integrals_array(i,j) 
+     two_e_int_ia_f(orb_j,orb_i,orb_n,orb_m) = integrals_array(j,i) 
     enddo
    enddo
   enddo
@@ -292,17 +292,19 @@ BEGIN_PROVIDER [double precision, two_e_int_ii_f, (n_basis_orb,n_basis_orb,n_ina
 ! two_e_int_ii_f(j,i,n,m) = < j i | n m > where all orbitals belong to "list_basis"
  END_DOC
  integer :: orb_i,orb_j,i,j,orb_m,orb_n,m,n
- double precision :: get_two_e_integral
+ double precision :: get_two_e_integral,integrals_array(mo_num,mo_num)
  do orb_m = 1, n_inact_orb ! electron 1 
   m = list_inact(orb_m)
   do orb_n = 1, n_inact_orb ! electron 2 
    n = list_inact(orb_n)
+   call get_mo_two_e_integrals_ij(m,n,mo_num,integrals_array,mo_integrals_map) 
    do orb_i = 1, n_basis_orb ! electron 1 
     i = list_basis(orb_i)
     do orb_j = 1, n_basis_orb ! electron 2 
      j = list_basis(orb_j)
      !              2       1     2     1
-     two_e_int_ii_f(orb_j,orb_i,orb_n,orb_m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
+!     two_e_int_ii_f(orb_j,orb_i,orb_n,orb_m) = get_two_e_integral(m,n,i,j,mo_integrals_map) 
+     two_e_int_ii_f(orb_j,orb_i,orb_n,orb_m) = integrals_array(j,i) 
     enddo
    enddo
   enddo

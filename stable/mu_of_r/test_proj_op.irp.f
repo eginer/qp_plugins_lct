@@ -16,5 +16,6 @@ program projected_operators
 !  call routine_full_mos
 !   call test_f_ii_valence_ab
    call test_f_ia_valence_ab
+  call test_f_ii_ia_aa_valence_ab
 end
 

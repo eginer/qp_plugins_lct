@@ -112,7 +112,7 @@ subroutine test_f_ii_valence_ab
   r1(3)   = final_grid_points(3,ipoint)
   r2 = r1
   call f_HF_valence_ab(r1,r2,f_HF_val_ab,two_bod_dens_hf)
-  call f_ii_valence_ab(r1,r2,f_ii_val_ab,two_bod_dens_ii)
+  call give_f_ii_val_ab(r1,r2,f_ii_val_ab,two_bod_dens_ii)
   accu_f += dabs(f_HF_val_ab - f_ii_val_ab) * weight
   accu_n2+= dabs(two_bod_dens_hf - two_bod_dens_ii) * weight
   accu_f_on_top += dabs(two_bod_dens_hf) * weight
@@ -129,9 +129,7 @@ end
 subroutine test_f_ia_valence_ab
  implicit none
  BEGIN_DOC
-! routine to test the function f_ii(r1,r2) 
-!
-! it should be the same that f_HF(r1,r2) only for inactive orbitals 
+! routine to test the function f_ii(r1,r2), f_ia(r1,r2) and f_aa(r1,r2)
  END_DOC
  integer :: ipoint,istate
  double precision :: accu_f, accu_n2, weight, r1(3),r2(3)
@@ -149,13 +147,47 @@ subroutine test_f_ia_valence_ab
   r1(2)   = final_grid_points(2,ipoint)
   r1(3)   = final_grid_points(3,ipoint)
   r2 = r1
-  call f_ii_valence_ab(r1,r2,f_ii_val_ab,two_bod_dens_ii)
+  call give_f_ii_val_ab(r1,r2,f_ii_val_ab,two_bod_dens_ii)
   call give_f_ia_val_ab(r1,r2,f_ia_val_ab,two_bod_dens_ia,istate)
   call give_f_aa_val_ab(r1,r2,f_aa_val_ab,two_bod_dens_aa,istate)
-  f_ref = f_psi_cas_ab(ipoint,istate)
+  f_ref = f_psi_cas_ab_old(ipoint,istate)
   f_comp = f_ii_val_ab + f_ia_val_ab + f_aa_val_ab
   on_top_ref = total_cas_on_top_density(ipoint,istate)
   on_top_comp= two_bod_dens_ii + two_bod_dens_ia + two_bod_dens_aa 
+  accu_f += dabs(f_ref - f_comp) * weight
+  accu_n2+= dabs(on_top_ref - on_top_comp) * weight
+  accu += f_ref * weight
+ enddo
+ print*,'**************************'
+ print*,''
+ print*,'accu_f  = ',accu_f
+ print*,'accu_n2 = ',accu_n2
+ print*,''
+ print*,'accu    = ',accu
+
+end
+
+subroutine test_f_ii_ia_aa_valence_ab
+ implicit none
+ BEGIN_DOC
+! routine to test the function f_Psi(r1,r2) based on core/inactive/active orbitals 
+ END_DOC
+ integer :: ipoint,istate
+ double precision :: accu_f, accu_n2, weight, r1(3),r2(3)
+ double precision :: accu_f_on_top
+ double precision :: f_ref,f_comp,on_top_ref,on_top_comp
+ double precision :: f_ii_val_ab,two_bod_dens_ii,f_ia_val_ab,two_bod_dens_ia,f_aa_val_ab,two_bod_dens_aa
+ double precision :: accu
+ accu_f  = 0.d0
+ accu_n2 = 0.d0
+ accu = 0.d0
+ istate = 1
+ do ipoint  = 1, n_points_final_grid
+  weight  = final_weight_at_r_vector(ipoint)
+  f_ref = f_psi_cas_ab(ipoint,istate)
+  f_comp = f_psi_cas_ab_old(ipoint,istate)
+  on_top_ref = total_cas_on_top_density(ipoint,istate)
+  on_top_comp= n2_for_mu_of_r(ipoint,istate)
   accu_f += dabs(f_ref - f_comp) * weight
   accu_n2+= dabs(on_top_ref - on_top_comp) * weight
   accu += f_ref * weight
