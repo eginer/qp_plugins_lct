@@ -30,7 +30,7 @@ subroutine f_HF_valence_ab(r1,r2,f_HF_val_ab,two_bod_dens)
  BEGIN_DOC
 ! f_HF_val_ab(r1,r2) = function f_{\Psi^B}(X_1,X_2) of Eq. (22) of J. Chem. Phys. 149, 194301 (2018) 
 ! 
-! for alpha beta spins and an HF wave function and excluding the "core" orbitals (see Eq. 16a of Phys.Chem.Lett.2019, 10, 2931−2937)
+! for alpha beta spins and an HF wave function and excluding the "core" orbitals (see Eq. 16a of Phys.Chem.Lett.2019, 10, 2931   2937)
 ! 
 ! two_bod_dens = on-top pair density of the HF wave function 
 !
@@ -95,7 +95,7 @@ subroutine integral_f_HF_valence_ab(r1,int_f_HF_val_ab)
 ! 
 ! where f_{\Psi^B}(r_1,r_2) is defined by Eq. (22) of J. Chem. Phys. 149, 194301 (2018) 
 !
-! for alpha beta spins and an HF wave function and excluding the "core" orbitals (see Eq. 16a of Phys.Chem.Lett.2019, 10, 2931−2937)
+! for alpha beta spins and an HF wave function and excluding the "core" orbitals (see Eq. 16a of Phys.Chem.Lett.2019, 10, 2931   2937)
 !
 ! Such function can be used to test if the f_HF_val_ab(r_1,r_2) is correctly built. 
 ! 

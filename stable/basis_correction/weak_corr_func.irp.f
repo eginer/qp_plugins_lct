@@ -40,7 +40,7 @@ BEGIN_PROVIDER [double precision, ecmd_pbe_ueg_mu_of_r, (N_states)]
  BEGIN_DOC
  ! ecmd_pbe_ueg_mu_of_r = multi-determinantal Ecmd within the PBE-UEG approximation with mu(r) ,
  ! 
- ! see Eqs. 13-14b in Phys.Chem.Lett.2019, 10, 2931−2937; https://pubs.acs.org/doi/10.1021/acs.jpclett.9b01176
+ ! see Eqs. 13-14b in Phys.Chem.Lett.2019, 10, 2931   2937;  https://pubs.acs.org/doi/10.1021/acs.jpclett.9b01176
  !
  ! Based on the PBE-on-top functional (see Eqs. 26, 27 of J. Chem. Phys.150, 084103 (2019); doi: 10.1063/1.5082638)
  !

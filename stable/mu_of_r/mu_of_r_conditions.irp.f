@@ -104,7 +104,7 @@
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,f_psi,on_top,w_psi,istate) & 
- !$OMP ShARED (n_points_final_grid,mu_of_r_psi_cas,f_psi_cas_ab,total_cas_on_top_density,sqpi) 
+ !$OMP ShARED (n_points_final_grid,mu_of_r_psi_cas,f_psi_cas_ab,total_cas_on_top_density,sqpi,N_states) 
  do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
    f_psi  = f_psi_cas_ab(ipoint,istate) 
