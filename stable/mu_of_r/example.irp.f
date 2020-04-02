@@ -187,7 +187,7 @@ subroutine test_f_ii_ia_aa_valence_ab
   f_ref = f_psi_cas_ab(ipoint,istate)
   f_comp = f_psi_cas_ab_old(ipoint,istate)
   on_top_ref = total_cas_on_top_density(ipoint,istate)
-  on_top_comp= n2_for_mu_of_r(ipoint,istate)
+  on_top_comp= on_top_cas_mu_r(ipoint,istate)
   accu_f += dabs(f_ref - f_comp) * weight
   accu_n2+= dabs(on_top_ref - on_top_comp) * weight
   accu += f_ref * weight

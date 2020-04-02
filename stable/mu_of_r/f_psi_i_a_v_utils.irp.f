@@ -1,7 +1,7 @@
 subroutine give_f_ii_val_ab(r1,r2,f_ii_val_ab,two_bod_dens)
  implicit none
  BEGIN_DOC
-! part of f_{\Psi^B}(r_1,r_2) from purely inactive orbitals 
+! contribution from purely inactive orbitals to f_{\Psi^B}(r_1,r_2) for a CAS wave function 
  END_DOC
  double precision, intent(in) :: r1(3),r2(3)
  double precision, intent(out):: f_ii_val_ab,two_bod_dens
@@ -54,7 +54,7 @@ end
 
 subroutine give_f_ia_val_ab(r1,r2,f_ia_val_ab,two_bod_dens,istate)
  BEGIN_DOC
-! part of f_{\Psi^B}(r_1,r_2) from inactive and active orbitals for the "istate" state of CAS wave function 
+! contribution from inactive and active orbitals to f_{\Psi^B}(r_1,r_2) for the "istate" state of a CAS wave function 
  END_DOC
  implicit none
  integer, intent(in) :: istate
@@ -147,7 +147,7 @@ end
 
 subroutine give_f_aa_val_ab(r1,r2,f_aa_val_ab,two_bod_dens,istate)
  BEGIN_DOC
-! part of f_{\Psi^B}(r_1,r_2) from inactive and active orbitals for the "istate" state of CAS wave function 
+! contribution from purely active orbitals to f_{\Psi^B}(r_1,r_2) for the "istate" state of a CAS wave function 
  END_DOC
  implicit none
  integer, intent(in) :: istate

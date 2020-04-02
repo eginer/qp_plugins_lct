@@ -67,10 +67,10 @@
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,f_hf,on_top,w_hf) & 
- !$OMP ShARED (n_points_final_grid,mu_of_r_hf,f_psi_hf_ab,on_top_psi_hf,sqpi) 
+ !$OMP ShARED (n_points_final_grid,mu_of_r_hf,f_psi_hf_ab,on_top_hf_mu_r,sqpi) 
  do ipoint = 1, n_points_final_grid
   f_hf   = f_psi_hf_ab(ipoint)
-  on_top = on_top_psi_hf(ipoint)
+  on_top = on_top_hf_mu_r(ipoint)
   if(on_top.le.1.d-12.or.f_hf.le.0.d0.or.f_hf * on_top.lt.0.d0)then
     w_hf   = 1.d+10
   else 
@@ -100,15 +100,15 @@
  call wall_time(wall0)
  sqpi = dsqrt(dacos(-1.d0))
 
- provide total_cas_on_top_density f_psi_cas_ab
+ provide f_psi_cas_ab
  !$OMP PARALLEL DO &
  !$OMP DEFAULT (NONE)  &
  !$OMP PRIVATE (ipoint,f_psi,on_top,w_psi,istate) & 
- !$OMP ShARED (n_points_final_grid,mu_of_r_psi_cas,f_psi_cas_ab,total_cas_on_top_density,sqpi,N_states) 
+ !$OMP SHARED (n_points_final_grid,mu_of_r_psi_cas,f_psi_cas_ab,on_top_cas_mu_r,sqpi,N_states) 
  do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
    f_psi  = f_psi_cas_ab(ipoint,istate) 
-   on_top = total_cas_on_top_density(ipoint,istate)
+   on_top = on_top_cas_mu_r(ipoint,istate)
    if(on_top.le.1.d-12.or.f_psi.le.0.d0.or.f_psi * on_top.lt.0.d0)then
      w_psi   = 1.d+10
    else 
