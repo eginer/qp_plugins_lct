@@ -228,7 +228,7 @@ if [[ $readints = "False" ]]; then
       DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
       DEabs=`echo "print abs(${DE})" | python `
       CONV=`echo "print ${DEabs} < ${thresh}" | python`
-      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${ezfio}_data_rsdft
+      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${ezfio}_data_rsdft-${mu}
       if [ "$CONV" = "True" ]; then
         break
       fi
@@ -324,7 +324,7 @@ else
       DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
       DEabs=`echo "print abs(${DE})" | python `
       CONV=`echo "print ${DEabs} < ${thresh}" | python`
-      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${ezfio}_data_rsdft
+      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${ezfio}_data_rsdft-${mu}
       if [ "$CONV" = "True" ]; then
         break
       fi
