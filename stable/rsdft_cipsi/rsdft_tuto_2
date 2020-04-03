@@ -1,0 +1,54 @@
+#!/bin/bash                                                                                                                                  
+QP_ROOT=~/programs/qp2/
+source ${QP_ROOT}/quantum_package.rc
+
+#### Assumes that an "xyz" file exists for H2 
+file_xyz=He.xyz
+basis=cc-pvtz
+ezfio=He
+
+rm -rf $ezfio
+
+mu_tab=" 0.0001 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.5 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0"
+
+
+#start with a RHF calculation
+qp create_ezfio -b $basis -o $ezfio $file_xyz 
+qp run scf 
+
+#define the main options : mu, functional, number of determinants, max pt2 and reading or not two-elec integrals (to save time)
+mu=0.5 
+ndet=1000
+pt2=0.
+readint=False
+fun=sr_pbe
+
+rm -rf $fun
+mkdir $fun
+cp -r $ezfio ${fun}/
+
+cd $fun
+
+for mu in $mu_tab
+ do
+# run the rsdft script
+  qp_cipsi_rsh  -m $mu  -f $fun  -n $ndet  -p $pt2 $ezfio  -r $readint 
+ done
+
+cd ../
+
+fun=md_sr_pbe
+
+rm -rf $fun
+mkdir $fun
+cp -r $ezfio ${fun}/
+
+cd $fun
+
+for mu in $mu_tab
+ do
+# run the rsdft script
+  qp_cipsi_rsh  -m $mu  -f $fun  -n $ndet  -p $pt2 $ezfio  -r $readint 
+ done
+
+cd ../
