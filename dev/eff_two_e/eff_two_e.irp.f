@@ -22,11 +22,11 @@ program eff_two_e
       tmp = dabs(integral - integral_2)
       accu += tmp
 !      if(dabs(integral).lt.1.d-10)cycle
-      if(tmp.gt.1.d-10)then
-       print*,'ahahahaha'
-       print*,i,j,k,l
-       print*,integral,integral_2,tmp
-      endif
+!      if(tmp.gt.1.d-10)then
+!       print*,'ahahahaha'
+!       print*,i,j,k,l
+!       print*,integral,integral_2,tmp
+!      endif
      enddo
     enddo
    enddo

@@ -10,7 +10,7 @@ BEGIN_PROVIDER [ logical, mo_two_e_int_mu_of_r_in_map ]
   END_DOC
   
   integer                        :: i,j,k,l
-  double precision               :: erf_mu_of_r_mo,cpu_1,cpu_2, wall_1, wall_2
+  double precision               :: cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
   include 'utils/constants.include.F'
   
@@ -24,19 +24,19 @@ BEGIN_PROVIDER [ logical, mo_two_e_int_mu_of_r_in_map ]
   character*(64)                 :: fmt
   double precision               :: map_mb
   
-  PROVIDE mo_two_e_integrals_in_map mo_integrals_map big_array_exchange_integrals
+  PROVIDE mo_two_e_integrals_in_map mo_integrals_map 
 
   ! TODO FOR READ/WRITE 
-!  PROVIDE read_mo_integrals_mu_of_r io_mo_integrals_mu_of_r
- !if (read_mo_integrals_mu_of_r) then
- !  print*,'Reading the MO ERF mu of r integrals'
- !    call map_load_from_disk(trim(ezfio_filename)//'/work/mo_ints_erf_mu_of_r',mo_int_mu_of_r_map)
- !    print*, 'MO ERF mu of r integrals provided'
- !    mo_two_e_int_mu_of_r_in_map = .True.
- !    return
- !endif
+  PROVIDE read_mo_int_mu_of_r io_mo_int_mu_of_r
+  if (read_mo_int_mu_of_r) then
+    print*,'Reading the MO mu of r integrals with the effective potential '
+    call map_load_from_disk(trim(ezfio_filename)//'/work/mo_ints_mu_of_r',mo_int_mu_of_r_map)
+    print*, 'MO mu of r integrals provided'
+    mo_two_e_int_mu_of_r_in_map = .True.
+    return
+  endif
   
-  print*, 'Providing the MO ERF mu of r integrals'
+  print*, 'Providing the MO mu of r integrals'
   call wall_time(wall_0)
   call wall_time(wall_1)
   call cpu_time(cpu_1)
@@ -78,23 +78,23 @@ BEGIN_PROVIDER [ logical, mo_two_e_int_mu_of_r_in_map ]
   call map_sort(mo_int_mu_of_r_map)
   call cpu_time(cpu_2)
   call wall_time(wall_2)
-  integer(map_size_kind)         :: get_mo_erf_mu_of_r_map_size, mo_erf_mu_of_r_map_size
-  mo_erf_mu_of_r_map_size = get_mo_erf_mu_of_r_map_size()
+  integer(map_size_kind)         :: get_mo_mu_of_r_map_size, mo_mu_of_r_map_size
+  mo_mu_of_r_map_size = get_mo_mu_of_r_map_size()
   
-  print*, 'MO ERF mu of r integrals provided:'
-  print*, ' Size of MO ERF mu of r map :         ', map_mb(mo_int_mu_of_r_map) ,'MB'
-  print*, ' Number of MO ERF mu of r integrals :', mo_erf_mu_of_r_map_size
+  print*, 'MO mu of r integrals provided:'
+  print*, ' Size of MO mu of r map :         ', map_mb(mo_int_mu_of_r_map) ,'MB'
+  print*, ' Number of MO mu of r integrals :', mo_mu_of_r_map_size
   print*, ' cpu  time :',cpu_2 - cpu_1, 's'
   print*, ' wall time :',wall_2 - wall_1, 's  ( x ', (cpu_2-cpu_1)/(wall_2-wall_1+tiny(1.d0)), ' )'
   
   mo_two_e_int_mu_of_r_in_map = .True.
 
   ! TODO FOR READ/WRITE 
- !if (write_mo_integrals_mu_of_r) then
- !  call ezfio_set_work_empty(.False.)
- !  call map_save_to_disk(trim(ezfio_filename)//'/work/mo_ints_erf_mu_of_r',mo_int_mu_of_r_map)
- !  call ezfio_set_mu_of_r_ints_io_mo_integrals_mu_of_r("Read")
- !endif
+  if (write_mo_int_mu_of_r) then
+    call ezfio_set_work_empty(.False.)
+    call map_save_to_disk(trim(ezfio_filename)//'/work/mo_ints_mu_of_r',mo_int_mu_of_r_map)
+    call ezfio_set_eff_two_e_io_mo_int_mu_of_r("Read")
+  endif
   
 END_PROVIDER
  
@@ -225,16 +225,16 @@ subroutine get_mo_two_e_ints_mu_of_r_non_zero(j,k,l,sze,out_val,out_val_index,no
 end
 
 
-function get_mo_erf_mu_of_r_map_size()
+function get_mo_mu_of_r_map_size()
   implicit none
-  integer (map_size_kind) :: get_mo_erf_mu_of_r_map_size
+  integer (map_size_kind) :: get_mo_mu_of_r_map_size
   BEGIN_DOC
   ! Returns the number of elements in the MO map
   END_DOC
-  get_mo_erf_mu_of_r_map_size = mo_int_mu_of_r_map % n_elements
+  get_mo_mu_of_r_map_size = mo_int_mu_of_r_map % n_elements
 end
 
-subroutine clear_mo_erf_mu_of_r_map
+subroutine clear_mo_mu_of_r_map
   implicit none
   BEGIN_DOC
   ! Frees the memory of the MO map

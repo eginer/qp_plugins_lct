@@ -175,8 +175,8 @@ IRP_ENDIF
 
   deallocate( buffer_i, buffer_value )
 
-  integer (map_size_kind) :: get_mo_erf_mu_of_r_map_size 
-  control = get_mo_erf_mu_of_r_map_size(mo_int_mu_of_r_map)
+  integer (map_size_kind) :: get_mo_mu_of_r_map_size 
+  control = get_mo_mu_of_r_map_size(mo_int_mu_of_r_map)
 
   if (control /= accu) then
       print *, ''

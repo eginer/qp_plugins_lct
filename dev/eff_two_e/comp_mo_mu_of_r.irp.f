@@ -11,9 +11,9 @@ subroutine comp_mo_int_mu_of_r_jl_old(j,l,n_integrals,buffer_i,buffer_value)
   real(integral_kind),intent(out) :: buffer_value(mo_num*mo_num)
 
   integer                        :: i,k
-  double precision               :: mo_two_e_integral_erf,cpu_1,cpu_2, wall_1, wall_2
+  double precision               :: cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0,get_two_e_integral
-  double precision               :: thr,erf_mu_of_r_ao
+  double precision               :: thr
   integer                        :: kk, m, j1, i1
 
   thr = mo_integrals_threshold
@@ -34,9 +34,6 @@ subroutine comp_mo_int_mu_of_r_jl_old(j,l,n_integrals,buffer_i,buffer_value)
 !      if (mo_overlap_abs(i,k)*mo_overlap_abs(j,l) < thr) then
 !        cycle
 !      endif
-!     if (mo_two_e_integral_erf_schwartz(i,k)*mo_two_e_integral_erf_schwartz(j,l) < thr ) then
-!       cycle
-!     endif
       !DIR$ FORCEINLINE
       integral = get_two_e_integral(i,j,k,l,mo_integrals_map) ! i,k : r1    j,l : r2
       if (abs(integral) < thr) then
@@ -64,9 +61,9 @@ subroutine comp_mo_int_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_value)
   real(integral_kind),intent(out) :: buffer_value(mo_num*mo_num)
 
   integer                        :: i,k
-  double precision               :: mo_two_e_integral_erf,cpu_1,cpu_2, wall_1, wall_2
+  double precision               :: cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
-  double precision               :: thr,erf_mu_of_r_ao
+  double precision               :: thr
   integer                        :: kk, m, j1, i1
 
   thr = mo_integrals_threshold
