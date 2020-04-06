@@ -19,17 +19,18 @@
  call give_f_ii_val_ab(r,r,f_ii_val_ab,two_bod_dens_ii)
  call give_f_ia_val_ab(r,r,f_ia_val_ab,two_bod_dens_ia,istate)
  call give_f_aa_val_ab(r,r,f_aa_val_ab,two_bod_dens_aa,istate)
+ provide final_grid_points act_2_rdm_ab_mo 
 
  print*,'Providing  f_psi_cas_ab..... '                                                                                                 
   
 
  call wall_time(wall0)
+ do istate = 1, N_states
  !$OMP PARALLEL        &
  !$OMP DEFAULT (NONE)  &
- !$OMP PRIVATE (ipoint,r,f_ii_val_ab,two_bod_dens_ii,f_ia_val_ab,two_bod_dens_ia,f_aa_val_ab,two_bod_dens_aa,istate) & 
- !$OMP SHARED  (n_points_final_grid,f_psi_cas_ab,on_top_cas_mu_r,N_states,final_grid_points)
+ !$OMP PRIVATE (ipoint,r,f_ii_val_ab,two_bod_dens_ii,f_ia_val_ab,two_bod_dens_ia,f_aa_val_ab,two_bod_dens_aa) & 
+ !$OMP SHARED  (n_points_final_grid,f_psi_cas_ab,on_top_cas_mu_r,final_grid_points,istate)
  !$OMP DO              
- do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
    r(1)   = final_grid_points(1,ipoint)
    r(2)   = final_grid_points(2,ipoint)
@@ -40,12 +41,12 @@
    call give_f_ia_val_ab(r,r,f_ia_val_ab,two_bod_dens_ia,istate)
    ! active-active part of f_psi(r1,r2)
    call give_f_aa_val_ab(r,r,f_aa_val_ab,two_bod_dens_aa,istate)
-   f_psi_cas_ab(ipoint,istate)   = f_ii_val_ab + f_ia_val_ab + f_aa_val_ab 
+   f_psi_cas_ab(ipoint,istate)    = f_ii_val_ab     + f_ia_val_ab     + f_aa_val_ab 
    on_top_cas_mu_r(ipoint,istate) = two_bod_dens_ii + two_bod_dens_ia + two_bod_dens_aa
   enddo
- enddo
  !$OMP END DO
  !$OMP END PARALLEL
+ enddo
  call wall_time(wall1)
  print*,'Time to provide f_psi_cas_ab = ',wall1 - wall0
  print*,'accu = ',accu
