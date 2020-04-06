@@ -13,6 +13,7 @@
  integer :: ipoint,istate
  double precision :: wall0,wall1
  print*,'providing mu_of_r ...'
+! PROVIDE mo_two_e_integrals_in_map mo_integrals_map big_array_exchange_integrals 
  call wall_time(wall0)
 
  if (read_mu_of_r) then
@@ -60,6 +61,7 @@
  END_DOC
  integer :: ipoint
  double precision :: wall0,wall1,f_hf,on_top,w_hf,sqpi
+ PROVIDE mo_two_e_integrals_in_map mo_integrals_map big_array_exchange_integrals 
  print*,'providing mu_of_r_hf ...'
  call wall_time(wall0)
  sqpi = dsqrt(dacos(-1.d0))

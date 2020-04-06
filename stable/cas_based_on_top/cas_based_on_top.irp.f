@@ -9,6 +9,11 @@ program cas_based_on_top_density
   !! belongs to an active space defined by core, inactive and active list of orbitals 
   read_wf = .True.
   touch read_wf
-  call routine_test_cas_based_on_top_density
+!  call routine_test_cas_based_on_top_density
+ call routine
 end
 
+subroutine routine
+ implicit none
+ provide total_cas_on_top_density
+end

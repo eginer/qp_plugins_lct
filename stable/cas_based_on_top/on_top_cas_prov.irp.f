@@ -44,7 +44,7 @@
  logical :: no_core
  print*,'providing the total_cas_on_top_density'
  ! for parallelization
- provide inact_density core_density one_e_act_density_beta one_e_act_density_alpha
+ provide inact_density core_density one_e_act_density_beta one_e_act_density_alpha act_mos_in_r_array
  i_point = 1
  istate = 1
  call act_on_top_on_grid_pt(i_point,istate,pure_act_on_top_of_r)
@@ -52,22 +52,22 @@
  if(no_core_density)then
   print*,'USING THE VALENCE ONLY TWO BODY DENSITY'
  endif
- !$OMP PARALLEL DO &
- !$OMP DEFAULT (NONE)  &
- !$OMP PRIVATE (i_point,core_inact_dm,istate,pure_act_on_top_of_r) & 
- !$OMP SHARED(total_cas_on_top_density,n_points_final_grid,inact_density,core_density,one_e_act_density_beta,one_e_act_density_alpha,N_states,no_core_density)
- do i_point = 1, n_points_final_grid
-  do istate = 1, N_states
-   call act_on_top_on_grid_pt(i_point,istate,pure_act_on_top_of_r)
-   if(no_core_density) then
-    core_inact_dm = inact_density(i_point) 
-   else 
-    core_inact_dm = (inact_density(i_point) + core_density(i_point))
-   endif
-   total_cas_on_top_density(i_point,istate) = pure_act_on_top_of_r + core_inact_dm * (one_e_act_density_beta(i_point,istate) + one_e_act_density_alpha(i_point,istate)) + core_inact_dm*core_inact_dm
-  enddo
+ do istate = 1, N_states
+  !$OMP PARALLEL DO &
+  !$OMP DEFAULT (NONE)  &
+  !$OMP PRIVATE (i_point,core_inact_dm,pure_act_on_top_of_r) & 
+  !$OMP SHARED(total_cas_on_top_density,n_points_final_grid,inact_density,core_density,one_e_act_density_beta,one_e_act_density_alpha,no_core_density,istate)
+  do i_point = 1, n_points_final_grid
+    call act_on_top_on_grid_pt(i_point,istate,pure_act_on_top_of_r)
+    if(no_core_density) then
+     core_inact_dm = inact_density(i_point) 
+    else 
+     core_inact_dm = (inact_density(i_point) + core_density(i_point))
+    endif
+    total_cas_on_top_density(i_point,istate) = pure_act_on_top_of_r + core_inact_dm * (one_e_act_density_beta(i_point,istate) + one_e_act_density_alpha(i_point,istate)) + core_inact_dm*core_inact_dm
+   enddo
+  !$OMP END PARALLEL DO
  enddo
- !$OMP END PARALLEL DO
  call wall_time(wall_1)
  print*,'provided the total_cas_on_top_density'
  print*,'Time to provide :',wall_1 - wall_0
