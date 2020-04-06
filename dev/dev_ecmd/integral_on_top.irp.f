@@ -34,3 +34,38 @@
  print*,'Time to provide integral_on_top   = ',wall1-wall0
  END_PROVIDER
 
+
+subroutine routine_test_cas_based_on_top_density
+ implicit none
+ BEGIN_DOC
+! This routine computes the integral in real-space of the on-top pair density in two ways:
+!
+! +) using the PROVIDER "total_cas_on_top_density" 
+!
+! +) using the ROUTINE  "give_on_top_in_r_one_state" 
+!
+! +) using the PROVIDER "integral_on_top" which is the analytical integral 
+ END_DOC
+ integer :: i_point,istate
+ double precision :: r(3),prov_dm,on_top_in_r
+ double precision :: accu(N_states),accu_2(N_states)
+ accu = 0.d0
+ accu_2 = 0.d0
+ do i_point = 1, n_points_final_grid
+  r(1) = final_grid_points(1,i_point)
+  r(2) = final_grid_points(2,i_point)
+  r(3) = final_grid_points(3,i_point)
+  do istate = 1, N_states
+   ! provider to get the on-top on the becke grid 
+   prov_dm = total_cas_on_top_density(i_point,istate)
+   ! subroutine to get the on-top in any points in space
+   call give_on_top_in_r_one_state(r,istate,on_top_in_r)
+   accu(istate) += dabs(prov_dm - on_top_in_r) * final_weight_at_r_vector(i_point)
+   accu_2(istate) += prov_dm * final_weight_at_r_vector(i_point)
+  enddo
+ enddo
+ print*,'difference between provider and routine = ',accu
+ print*,'integral of the on-top                  = ',accu_2
+ print*,'integral_on_top                         = ',integral_on_top(:)
+end
+
