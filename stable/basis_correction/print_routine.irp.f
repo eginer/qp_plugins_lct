@@ -6,7 +6,6 @@ subroutine print_basis_correction
   provide ecmd_lda_mu_of_r ecmd_pbe_ueg_mu_of_r
  else if(mu_of_r_potential.EQ."cas_ful".or.mu_of_r_potential.EQ."cas_truncated")then
   provide ecmd_lda_mu_of_r ecmd_pbe_ueg_mu_of_r 
-  provide ecmd_lda_eff_xi_mu_of_r ecmd_pbe_ueg_eff_xi_mu_of_r
   provide ecmd_pbe_on_top_mu_of_r ecmd_pbe_on_top_su_mu_of_r
  endif
 
@@ -53,20 +52,6 @@ subroutine print_basis_correction
    print*,'+) PBE-UEG Ecmd functional : PBE at mu=0, UEG ontop pair density at large mu (JPCL, 10, 2931-2937 (2019))'
    do istate = 1, N_states
     write(*, '(A29,X,I3,X,A3,X,F16.10)') '  ECMD PBE-UEG       , state ',istate,' = ',ecmd_pbe_ueg_mu_of_r(istate)
-   enddo
-   print*,'********************************************'
-   print*,'********************************************'
-   print*,'Functionals using the effective spin polarization depending on the on-top pair density'
-   print*,'Usually better in the presence of strong correlation'
-   print*,'********************************************'
-   print*,'+) LDA     effective spin-pol Ecmd functional (unpublished) ' 
-   do istate = 1, N_states
-    write(*, '(A29,X,I3,X,A3,X,F16.10)') '  ECMD LDA-eff-Xi    , state ',istate,' = ',ecmd_lda_eff_xi_mu_of_r(istate)
-   enddo
-   print*,'+) PBE-UEG effective spin-pol Ecmd functional : (??????? REF-SCF ??????????)' 
-   print*,'PBE at mu=0, UEG ontop pair density at large mu, effective spin-polarization'
-   do istate = 1, N_states
-    write(*, '(A29,X,I3,X,A3,X,F16.10)') '  ECMD PBE-UEG-eff-Xi, state ',istate,' = ',ecmd_pbe_ueg_eff_xi_mu_of_r(istate)
    enddo
    print*,''
    print*,'********************************************'

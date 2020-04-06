@@ -39,8 +39,14 @@
    grad_rho_a(1:3) = one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) = one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
    
+   if(mu_of_r_potential == "cas_ful")then
+    ! You take the on-top of the CAS wave function which is computed with mu(r) 
+    on_top = on_top_cas_mu_r(ipoint,istate)
+   else
+    ! You take the on-top of the CAS wave function computed separately
+    on_top = total_cas_on_top_density(ipoint,istate)
+   endif
 !  We take the extrapolated on-top pair density * 2 because of normalization
-   on_top = total_cas_on_top_density(ipoint,istate)
    on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
 
    call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top_extrap,eps_c_md_on_top_PBE)
@@ -95,8 +101,14 @@
    grad_rho_a(1:3) = one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) = one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
    
+   if(mu_of_r_potential == "cas_ful")then
+    ! You take the on-top of the CAS wave function which is computed with mu(r) 
+    on_top = on_top_cas_mu_r(ipoint,istate)
+   else
+    ! You take the on-top of the CAS wave function computed separately
+    on_top = total_cas_on_top_density(ipoint,istate)
+   endif
 !  We take the extrapolated on-top pair density * 2 because of normalization
-   on_top = total_cas_on_top_density(ipoint,istate)
    on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
 
    call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top_extrap,eps_c_md_on_top_PBE)
