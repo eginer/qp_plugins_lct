@@ -1,0 +1,219 @@
+program test
+ read_wf = .True.
+ touch read_wf
+!call correlation_hole_bis
+!call correlation_hole(0.35d0)
+!call test_mu
+!call test_corr
+!call print_laplacian_spherical
+!print*,'energy_x_LDA',energy_x_LDA
+!print*,'energy_c_LDA',energy_c_LDA
+!print*,'energy_x_PBE',energy_x_PBE
+!print*,'energy_c_PBE',energy_c_PBE
+ call print_mu_of_r
+end
+
+
+subroutine print_laplacian_spherical
+ implicit none
+ double precision :: dtheta,theta
+ dtheta = 1.d-4
+ double precision :: r1(3),r2(3)
+ integer :: i,nx,istate
+ double precision :: dx,xmax
+ istate = 1
+ nx = 10
+ xmax = 3.d0
+ dx = xmax/dble(nx)
+ theta_0 = pi
+ r = 0.05d0
+ double precision :: pi,theta_0,r
+ pi = dacos(-1.d0)
+ do i = 1, nx
+  double precision :: two_dm_laplacian,two_dm_laplacian_simple
+  double precision :: on_top,on_top_2left, on_top_2right, on_top_1left,on_top_1right,two_dm_in_r
+  r1 = 0.d0
+  r1(1) = r * dcos(theta_0)
+  r1(2) = r * dsin(theta_0)
+
+  theta = theta_0
+  r2(1) = r * dcos(theta)
+  r2(2) = r * dsin(theta)
+  on_top = two_dm_in_r(r1,r2,istate)
+
+  r2 = r1
+  theta = theta_0 + dtheta
+  r2(1) = r * dcos(theta)
+  r2(2) = r * dsin(theta)
+  on_top_1right = two_dm_in_r(r1,r2,istate)
+
+  r2 = r1
+  theta = theta_0  -dtheta
+  r2(1) = r * dcos(theta)
+  r2(2) = r * dsin(theta)
+  on_top_1left  = two_dm_in_r(r1,r2,istate)
+
+  r2 = r1
+  theta = theta_0 +2.d0 * dtheta
+  r2(1) = r * dcos(theta)
+  r2(2) = r * dsin(theta)
+  on_top_2right = two_dm_in_r(r1,r2,istate)
+
+  r2 = r1
+  theta = theta_0 -2.d0 * dtheta
+  r2(1) = r * dcos(theta)
+  r2(2) = r * dsin(theta)
+  on_top_2left = two_dm_in_r(r1,r2,istate)
+
+  
+  two_dm_laplacian = 1.d0/(12.d0 * dtheta**2) * (-on_top_2left + 16.d0 * on_top_1left - 30.d0 * on_top + 16.d0 * on_top_1right - on_top_2right)
+
+  two_dm_laplacian_simple = (on_top_1right - 2.d0 * on_top + on_top_1left )/(dtheta**2)
+  
+  write(34,'(100(F16.8,X))')r,two_dm_laplacian,two_dm_laplacian_simple,on_top
+! write(33,'(100(F16.8,X))')r1(1),two_dm_laplacian / two_dm - two_dm_laplacian_HF / two_dm_HF,two_dm,two_dm_HF,two_dm_laplacian,two_dm_laplacian_HF,dm_a+dm_b
+!! approximated polynom 
+! mu0 =  dpi * (two_dm_laplacian / two_dm - two_dm_laplacian_HF / two_dm_HF)
+! mu0 = max(mu0,1.d-15)
+! alpha = 1.d0 + 2.d0/(dsqrt(dacos(-1.d0)) * mu0)
+! mu = mu0*alpha
+!! new version with exact polynom 
+! alpha_bis = (two_dm_laplacian / two_dm - two_dm_laplacian_HF / two_dm_HF)
+! alpha_bis = max(alpha_bis,1.d-15)
+! beta = 2.d0/(3.d0*dacos(-1.d0))
+! delta = 2.d0/dsqrt(dacos(-1.d0))
+! mu = 1.d0/(2.d0*beta)*(alpha_bis + dsqrt(alpha_bis*alpha_bis + 4.d0 * alpha_bis * beta * delta))
+  r += dx
+ enddo
+
+ 
+
+end
+
+subroutine print_laplacian
+ implicit none
+ double precision :: r(3)
+ integer :: i,nx,istate
+ double precision :: dx,xmax
+ istate = 1
+ nx = 10
+ xmax = 3.d0
+ dx = xmax/dble(nx)
+ r = 0.d0
+ write(33,'(A114)')'         #r(1  Delta/n2 - (Delta/n2)_HF     n2               n2_HF          Delta        Delta_HF              n1 '
+
+ do i = 1, nx
+  double precision :: two_dm,two_dm_laplacian,total_dm,two_dm_HF,two_dm_laplacian_HF,total_dm_HF,dm_a,dm_b
+  call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
+  call spherical_averaged_two_dm_at_second_order(r,0.d0,istate,two_dm,two_dm_laplacian,total_dm)
+  call spherical_averaged_two_dm_HF_at_second_order(r,0.d0,istate,two_dm_HF,two_dm_laplacian_HF,total_dm_HF)
+ !corr_hole_2 = (two_dm_laplacian - two_dm_laplacian_HF * two_dm/total_dm_HF)/two_dm_HF
+  two_dm = max(two_dm,1.d-15)
+  two_dm_HF = max(two_dm_HF,1.d-15)
+  write(33,'(100(F16.8,X))')r(1),two_dm_laplacian / two_dm - two_dm_laplacian_HF / two_dm_HF,two_dm,two_dm_HF,two_dm_laplacian,two_dm_laplacian_HF,dm_a+dm_b
+!! approximated polynom 
+! mu0 =  dpi * (two_dm_laplacian / two_dm - two_dm_laplacian_HF / two_dm_HF)
+! mu0 = max(mu0,1.d-15)
+! alpha = 1.d0 + 2.d0/(dsqrt(dacos(-1.d0)) * mu0)
+! mu = mu0*alpha
+!! new version with exact polynom 
+! alpha_bis = (two_dm_laplacian / two_dm - two_dm_laplacian_HF / two_dm_HF)
+! alpha_bis = max(alpha_bis,1.d-15)
+! beta = 2.d0/(3.d0*dacos(-1.d0))
+! delta = 2.d0/dsqrt(dacos(-1.d0))
+! mu = 1.d0/(2.d0*beta)*(alpha_bis + dsqrt(alpha_bis*alpha_bis + 4.d0 * alpha_bis * beta * delta))
+  r(1) += dx
+ enddo
+
+
+end
+
+
+subroutine correlation_hole(r)
+ implicit none
+ integer :: i,x1,y1,z1,x2,y2,z2, npas
+ double precision :: two_dm_in_r
+ double precision :: r1(3),r2(3), integral, theta, dtheta, pi,r,tbdm
+ pi = 3.14159265359d0
+ npas = 100 
+ dtheta = 360d0/ dfloat(npas)
+
+  theta = pi
+  r2(1) = r * dcos(theta)
+  r2(2) = r * dsin(theta)
+  r2(3) = 0d0
+
+ do i = 0,npas
+  theta = i*dtheta
+  theta = theta * 2d0*pi/360d0
+  r1(1) = r * dcos(theta)
+  r1(2) = r * dsin(theta)
+  r1(3) = 0.d0
+  tbdm = two_dm_in_r(r1,r2,1)
+  double precision :: r12,two_dm,two_dm_laplacian,total_dm
+  r12 = dsqrt((r1(1) - r2(1))**2 + (r1(2) - r2(2))**2 + (r1(3) - r2(3))**2)
+  write(35,'(100(F16.10,X))')theta , tbdm
+ enddo
+ 
+end
+
+subroutine test_mu
+ implicit none
+ provide on_top_of_r_vector
+
+
+end
+
+
+subroutine correlation_hole_bis
+ implicit none
+ integer :: i,x1,y1,z1,x2,y2,z2, npas
+ double precision :: two_dm_in_r
+ double precision :: r1(3),r2(3), integral, theta, dtheta, pi,r,tbdm,dr
+ double precision :: r12,two_dm,two_dm_laplacian,total_dm
+ npas = 100 
+ dr = 3.d0/dfloat(npas)
+
+ r2(1) = 0.d0
+ r2(2) = 0.d0
+ r2(3) = 0.d0
+ r1 = 0.d0
+ r = 0.d0
+ do i = 0,npas
+  r += dr
+  r1(1) = r
+  tbdm = two_dm_in_r(r1,r2,1)
+  r12 = dsqrt((r1(1) - r2(1))**2 + (r1(2) - r2(2))**2 + (r1(3) - r2(3))**2)
+  call spherical_averaged_two_dm_at_second_order(r2,r12,1,two_dm,two_dm_laplacian,total_dm)
+  print*,two_dm,two_dm_in_r(r2,r2,1)
+  write(33,'(100(F16.10,X))')r12 , tbdm, two_dm, two_dm_laplacian, total_dm
+ enddo
+ 
+print*, 'hahah'
+end
+
+subroutine test_corr
+ implicit none
+ integer :: j,k,l 
+ double precision :: r(3),two_dm,two_dm_laplacian,total_dm
+ j = 1
+ provide mu_of_r_cusp_condition_vector
+ print*,'n_points_radial_grid = ',n_points_radial_grid
+  do k = 1, n_points_radial_grid  -1
+   l = 1
+   r(1) = grid_points_per_atom(1,l,k,j)
+   r(2) = grid_points_per_atom(2,l,k,j)
+   r(3) = grid_points_per_atom(3,l,k,j)
+   call spherical_averaged_two_dm_at_second_order(r,0.d0,1,two_dm,two_dm_laplacian,total_dm)
+  !if(two_dm_laplacian.lt.0.d0)then
+    print*,k
+    print*,'r = '
+    print*,r
+    print*,two_dm,two_dm_laplacian
+  !endif
+  enddo
+
+
+
+
+end
