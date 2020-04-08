@@ -198,8 +198,8 @@ if [[ $readints = "False" ]]; then
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
-#     qp run fci  | tee ${ezfio}/fci-${mu}-$i
-     qp run cisd  | tee ${ezfio}/fci-${mu}-$i
+     qp run fci  | tee ${ezfio}/fci-${mu}-$i
+#     qp run cisd  | tee ${ezfio}/fci-${mu}-$i
      EV=0
 
      echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}/data_conv_${i}
@@ -269,8 +269,8 @@ else
       do 
        cp ${ezfio}/work/mo_ints_erf_$file ${ezfio}/work/mo_ints_$file
       done
-#     qp run fci  | tee ${ezfio}/fci-${mu}-$i
-     qp run cisd  | tee ${ezfio}/fci-${mu}-$i
+     qp run fci  | tee ${ezfio}/fci-${mu}-$i
+#     qp run cisd  | tee ${ezfio}/fci-${mu}-$i
      EV=0
 
      echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}/data_conv_${i}
