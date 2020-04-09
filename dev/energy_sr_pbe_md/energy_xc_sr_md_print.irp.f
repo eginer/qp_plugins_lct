@@ -23,6 +23,7 @@ implicit none
  mu_array = (/ 0.d0, 0.125d0, 0.25d0, 0.375d0, 0.5d0, 0.625d0, 0.75d0, 0.875d0, 1.d0, 1.5d0, 2.d0, 2.5d0, 3.d0, 4.d0, 5.d0, 6.d0, 7.d0, 8.d0, 9.d0, 10.d0 /)
 print*, '#r_norm    rho      grad_rho_2        mu      dexdrho      decdrho       decdgrad_rho_2       dexdgrad_rho_2'
 
+print*,'#mu   energy_c_sr_pbe_md   energy_x_sr_pbe_md'
 do p = 1, 20  ! loop over mu_array  !do1 
 ! print*, mu_array(p)
  mu = mu_array(p)
@@ -60,8 +61,10 @@ do i=1, n_points_final_grid
  energy_x_sr_pbe_md(istate) += ex_srmuPBE*weight
       test_r = 0
      do k=1, i
-        if ((r_norm - r_norm_prec(k)) < 1.d-10 .AND. (mu - mu_tab(k)) < 1.d-10) then
-           test_r = 1
+        !if ((r_norm - r_norm_prec(k)) < 1.d-10 .AND. (mu - mu_tab(k)) < 1.d-10) then
+       
+        if ((r_norm - r_norm_prec(k)) < 1.d-10) then
+            test_r = 1
            exit
         endif
      enddo
@@ -69,13 +72,12 @@ do i=1, n_points_final_grid
      mu_tab(i) = mu
      if(test_r==0)then
      ! print*, r_norm, rho, grad_rho_2, mu, ec(istate), ex(istate), ec_prime, ex_prime
-       print*, r_norm, rho, grad_rho_2, mu, dexdrho, decdrho, decdgrad_rho_2, dexdgrad_rho_2
+!      print*, r_norm, rho
       endif
  
  enddo
 enddo 
-! print*,'# Ec_sr_pbe_md=', energy_c_sr_pbe_md(1)
-! print*,'# Ex_sr_pbe_md=', energy_x_sr_pbe_md(1) 
+ print*, mu, energy_c_sr_pbe_md(1), energy_x_sr_pbe_md(1)
 enddo
 end program
 
