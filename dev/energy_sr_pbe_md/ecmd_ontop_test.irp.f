@@ -38,14 +38,15 @@ do p = 1, 20  ! loop over mu_array  !do1
    rho_a =  one_e_dm_and_grad_alpha_in_r(4,i,istate)
    rho_b =  one_e_dm_and_grad_beta_in_r(4,i,istate)
    rho = rho_a + rho_b
-   rho2 = two_dm_in_r_exact(r,r,istate)
+   !rho2 = two_dm_in_r_exact(r,r,istate)
+   call give_on_top_in_r_one_state_local(r,istate,rho2)
    grad_rho_ax = one_e_dm_and_grad_alpha_in_r(1,i,istate)
    grad_rho_ay = one_e_dm_and_grad_alpha_in_r(2,i,istate)
    grad_rho_az = one_e_dm_and_grad_alpha_in_r(3,i,istate)
    grad_rho_bx = one_e_dm_and_grad_alpha_in_r(1,i,istate)
    grad_rho_by = one_e_dm_and_grad_alpha_in_r(2,i,istate)
    grad_rho_bz = one_e_dm_and_grad_alpha_in_r(3,i,istate)  
-
+   
    grad_rho_a_2 = grad_rho_ax * grad_rho_ax + grad_rho_ay * grad_rho_ay + grad_rho_az * grad_rho_az
    grad_rho_b_2 = grad_rho_bx * grad_rho_bx + grad_rho_by * grad_rho_by + grad_rho_bz * grad_rho_bz
    grad_rho_a_b = grad_rho_ax * grad_rho_bx + grad_rho_ay * grad_rho_by + grad_rho_az * grad_rho_bz
@@ -64,8 +65,8 @@ do p = 1, 20  ! loop over mu_array  !do1
      r_norm_prec(i) = r_norm
      mu_tab(i) = mu
      if(test_r==0)then
-      print*, r_norm, rho, rho2, grad_rho_2, mu, ec_srmuPBE, decdrho, decdgrad_rho_2, decdrho2
-!      print*, r_norm, rho2
+     print*, r_norm, rho, rho2, grad_rho_2, mu, ec_srmuPBE, decdrho, decdgrad_rho_2, decdrho2
+ !     print*, r_norm, rho2
       endif
 enddo !enddo3
 enddo !enddo 2
