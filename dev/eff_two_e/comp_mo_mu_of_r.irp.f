@@ -52,7 +52,7 @@ subroutine comp_mo_int_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_value)
   implicit none
   use map_module
   BEGIN_DOC
-  !  Parallel client for AO integrals
+  !  j,l ==> compute all <ij| 1/r12 |kl> --> <ij|  weeb(r12)  |kl> 
   END_DOC
   
   integer, intent(in)            :: j,l
@@ -89,5 +89,21 @@ subroutine comp_mo_int_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_value)
   enddo
     
 end
+!!!!!!!!!!!!!!!!!! ****************************
+subroutine give_all_ijkl_for_j_l(j,l,mo_integrals_array)
+ implicit 
+ integer, intent(in) ::j,l ! r1,r1
+ double precision, intent(out) :: mo_integrals_array(mo_num,mo_num)
+ double precision :: f
+ do k = 1, mo_num
+  do i = 1, mo_num
+   mo_integrals_array(i,k) = f(i,j,k,l) 
+  enddo
+ enddo
+end
+
+!f(i,j,k,l) = int dr phi_i(r) phi_j(r) wee_b(r) phi_k(r) phi_l(r) = <ij |  WB  | kl>  = \sum_grid w(i) * phi .... ===> W(i,j,k,l) 
+
+
 
 

@@ -22,7 +22,7 @@ subroutine spherical_averaged_two_dm_at_second_order(r1,r12,istate,two_dm,two_dm
      scalar_grad += mos_grad_array_r1(j,ix) * mos_grad_array_r1(k,ix)
     enddo
     do l = 1, mo_num ! 1
-     !                               2 2 1 1 
+     !                              1 2 1 2
      two_dm += full_occ_2_rdm_ab_mo(l,k,i,j,istate)  * mos_array_r1(i) * mos_array_r1(j) * mos_array_r1(k) * mos_array_r1(l)
      two_dm_laplacian += full_occ_2_rdm_ab_mo(l,k,j,i,istate) * mos_array_r1(i) * mos_array_r1(l) * (lapl_k * mos_array_r1(j) + 2.d0 * scalar_grad + lapl_j * mos_array_r1(k))
     enddo
