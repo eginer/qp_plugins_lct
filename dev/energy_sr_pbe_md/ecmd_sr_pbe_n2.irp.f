@@ -1,38 +1,4 @@
 
-! BEGIN_PROVIDER [double precision, all_states_act_two_rdm_alpha_beta_mo, (n_act_orb,n_act_orb,n_act_orb,n_act_orb,N_states)]
-! implicit none
-! BEGIN_DOC
-!! qp_plugins_lct/garbage/no_omp_2rdm/all_states_prov.irp.f
-!! all_states_act_two_rdm_alpha_beta_mo(i,j,k,l,istate) =  STATE SPECIFIC physicist notation for 2RDM of alpha/beta electrons 
-!! 
-!! <Psi| a^{\dagger}_{i \alpha} a^{\dagger}_{j \beta} a_{l \beta} a_{k \alpha} |Psi>
-!!
-!! !!!!! WARNING !!!!! ALL SLATER DETERMINANTS IN PSI_DET MUST BELONG TO AN ACTIVE SPACE DEFINED BY "list_act" 
-!!
-!! !!!!! WARNING !!!!! For efficiency reasons, electron 1 is alpha, electron 2 is beta
-!!
-!!  all_states_act_two_rdm_alpha_beta_mo(i,j,k,l,istate) = i:alpha, j:beta, j:alpha, l:beta
-!!                      
-!!                      Therefore you don't necessayr have symmetry between electron 1 and 2 
-! END_DOC 
-! integer :: ispin
-! double precision :: wall_1, wall_2
-! ! condition for alpha/beta spin
-! call wall_time(wall_1)
-! print*,'providing all_states_act_two_rdm_alpha_beta_mo ...'
-! ispin = 3 
-! print*,'ispin = ',ispin
-! all_states_act_two_rdm_alpha_beta_mo = 0.d0
-! call wall_time(wall_1)
-! call orb_range_all_states_two_rdm(all_states_act_two_rdm_alpha_beta_mo,n_act_orb,n_act_orb,list_act,list_act_reverse,ispin,psi_coef,size(psi_coef,2),size(psi_coef,1))
-!
-! call wall_time(wall_2)
-! print*,'time to provide all_states_act_two_rdm_alpha_beta_mo',wall_2 - wall_1
-! END_PROVIDER 
-
-!--------------------------------------------------------------------------------------------------------------------------------------------
-
-!give_on_top_in_r_one_state ->  /on_top_cas_rout.irp.f
  subroutine give_on_top_in_r_one_state_local(r,istate,on_top_in_r)
  implicit none
  integer, intent(in) :: istate
