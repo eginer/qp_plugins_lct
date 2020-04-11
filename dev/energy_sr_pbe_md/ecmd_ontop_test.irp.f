@@ -39,7 +39,7 @@ do p = 1, 20  ! loop over mu_array  !do1
    rho_b =  one_e_dm_and_grad_beta_in_r(4,i,istate)
    rho = rho_a + rho_b
    !rho2 = two_dm_in_r_exact(r,r,istate)
-   call give_on_top_in_r_one_state_local(r,istate,rho2)
+   call give_on_top_in_r_one_state(r,istate,rho2)
    grad_rho_ax = one_e_dm_and_grad_alpha_in_r(1,i,istate)
    grad_rho_ay = one_e_dm_and_grad_alpha_in_r(2,i,istate)
    grad_rho_az = one_e_dm_and_grad_alpha_in_r(3,i,istate)
