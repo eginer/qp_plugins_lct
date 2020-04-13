@@ -56,7 +56,7 @@
   decdrho_b = decdrho
 
   !dec/((dgradn)^2)
-  decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) !! Vérifier le facteur 2 
+  decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) 
  
   dbetadgrad_rho_2 = decPBEdgrad_rho_2/(c*rho2)
   ddenomdgrad_rho_2 = dbetadgrad_rho_2*mu**3
