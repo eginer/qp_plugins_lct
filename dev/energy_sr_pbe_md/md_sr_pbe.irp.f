@@ -162,9 +162,8 @@
   dexdrho_b = dexdrho
  
   !dex/d((gradn)^2)
-  dexPBEdgrad_rho_2 = 0.25d0 *(dexPBEdgrad_rho_a_2 + dexPBEdgrad_rho_b_2 + 2.d0*dexPBEdgrad_rho_a_b) !! 2*ab??!
  
-  !dexPBEdgrad_rho_2 = 0.25d0 *(dexPBEdgrad_rho_a_2 + dexPBEdgrad_rho_b_2 + dexPBEdgrad_rho_a_b) !! 2*ab??!
+  dexPBEdgrad_rho_2 = 0.25d0 *(dexPBEdgrad_rho_a_2 + dexPBEdgrad_rho_b_2 + dexPBEdgrad_rho_a_b)
  
   dgammadgrad_rho_2 = dexPBEdgrad_rho_2/(a*n2xc_UEG)
   ddeltadgrad_rho_2 = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_2 - b*(n2_UEG/exPBE)*2*gamma*dgammadgrad_rho_2
@@ -244,9 +243,8 @@
   decdrho_b = decdrho
 
   !dec/((dgradn)^2)
-  decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + 2.d0*decPBEdgrad_rho_a_b) !! Vérifier le facteur 2
  
-  !decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) !! Vérifier le facteur 2
+  decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) 
  
   dbetadgrad_rho_2 = decPBEdgrad_rho_2/(c*n2_UEG)
   ddenomdgrad_rho_2 = dbetadgrad_rho_2*mu**3
