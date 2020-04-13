@@ -78,16 +78,12 @@
 
 !-----------------------------------------------------------------Integrales------------------------------------------------------------------
 
-BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
+ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
  implicit none
  BEGIN_DOC
- ! exchange / correlation energies  with the short-range version Perdew-Burke-Ernzerhof GGA functional 
- !
- ! defined in Chem. Phys.329, 276 (2006)
+ ! Bla bla bla
+ ! 
  END_DOC 
- BEGIN_DOC
-! exchange/correlation energy with the short range pbe functional
- END_DOC
  integer :: istate,ipoint,j,m
  double precision :: two_dm_in_r_exact
  double precision :: weight, r(3)
@@ -106,7 +102,7 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
    weight = final_weight_at_r_vector(ipoint)
    rho_a =  one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
    rho_b =  one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
-   !rho2 = two_dm_in_r_exacti(r,r,istate)
+   
    call give_on_top_in_r_one_state(r,istate,rho2)
    grad_rho_a(1:3) =  one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) =  one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
@@ -124,21 +120,28 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    
    decdrho2 = 2.d0*decdrho2 ! normalization
-
    energy_c_md_sr_pbe_n2(istate) += ec_srmuPBE * weight
   enddo
  enddo
 
 END_PROVIDER
 
+
+ BEGIN_PROVIDER [double precision, potential_c_alpha_mo_md_sr_pbe_n2,(mo_num,mo_num,N_states)]
+&BEGIN_PROVIDER [double precision, potential_c_beta_mo_md_sr_pbe_n2,(mo_num,mo_num,N_states)]
+   implicit none
+ call ao_to_mo(potential_c_alpha_ao_md_sr_pbe_n2,ao_num,potential_c_alpha_mo_md_sr_pbe_n2,mo_num)
+ call ao_to_mo(potential_c_beta_ao_md_sr_pbe_n2,ao_num,potential_c_beta_mo_md_sr_pbe_n2,mo_num)
+END_PROVIDER 
+
 !1
  BEGIN_PROVIDER [double precision, potential_c_alpha_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
 &BEGIN_PROVIDER [double precision, potential_c_beta_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
    implicit none
  BEGIN_DOC
- ! correlation potential for alpha / beta electrons  with the short-range version Perdew-Burke-Ernzerhof GGA functional 
+ ! blablabla bis 
  !
- ! defined in Chem. Phys.329, 276 (2006)
+ ! 
  END_DOC 
    integer :: i,j,istate
    do istate = 1, n_states 
@@ -157,6 +160,7 @@ END_PROVIDER
 &BEGIN_PROVIDER[double precision, aos_vc_beta_md_sr_pbe_w_n2   , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_alpha_md_sr_pbe_w_n2  , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_beta_md_sr_pbe_w_n2   ,  (ao_num,n_points_final_grid,N_states)]
+&BEGIN_PROVIDER[double precision, d_dn2_e_cmd_sr_pbe_n2, (n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
 ! intermediates to compute the sr_pbe potentials 
@@ -196,6 +200,7 @@ END_PROVIDER
    ! mu_erf_dft -> mu_b
    mu = mu_of_r_prov(ipoint,istate)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
+   d_dn2_e_cmd_sr_pbe_n2(ipoint,istate) = 2.d0 * decdrho2
    
    decdrho_a *= weight
    decdrho_b *= weight
