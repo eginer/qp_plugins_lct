@@ -91,8 +91,9 @@
  double precision :: rho2, rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
  double precision :: decdrho_a, decdrho_b, decdrho, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
+ double precision :: mu_correction_of_on_top
 
- energy_c_md_sr_pbe = 0.d0
+ energy_c_md_sr_pbe_n2 = 0.d0
  do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
    r(1) = final_grid_points(1,ipoint)
@@ -115,10 +116,11 @@
     grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
    enddo
 
-   rho2 = rho2*2.d0 ! normalization
    mu = mu_of_r_prov(ipoint,istate)
+   rho2 = rho2*2.d0 ! normalization
+   rho2 = mu_correction_of_on_top(mu,rho2)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
-   
+
    decdrho2 = 2.d0*decdrho2 ! normalization
    energy_c_md_sr_pbe_n2(istate) += ec_srmuPBE * weight
   enddo
@@ -172,6 +174,7 @@ END_PROVIDER
  double precision :: contrib_grad_ca(3),contrib_grad_cb(3)
  double precision :: decdrho_a, decdrho_b, decdrho, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
+ double precision :: mu_correction_of_on_top
 
  aos_d_vc_alpha_md_sr_pbe_w_n2 = 0.d0
  aos_d_vc_beta_md_sr_pbe_w_n2 = 0.d0
@@ -196,9 +199,9 @@ END_PROVIDER
    enddo
    
    rho2 = 2.d0*rho2
-   
    ! mu_erf_dft -> mu_b
    mu = mu_of_r_prov(ipoint,istate)
+   rho2 = mu_correction_of_on_top(mu,rho2)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    d_dn2_e_cmd_sr_pbe_n2(ipoint,istate) = 2.d0 * decdrho2
    
