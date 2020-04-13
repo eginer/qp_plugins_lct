@@ -43,11 +43,14 @@
  ! 
  ! n = na + nb  | m = na - nb
  ! na = (n+m)/2 | nb = (n-m)/2
- ! gn2 = ga2 + gb2 + 2 gab | ga2 = (gn2 + gm2 + 2gnm)/4
- ! gm2 = ga2 + gb2 - 2 gab | gb2 = (gn2 + gm2 - 2gnm)/4
- ! gnm = ga2 - gb2         | gab = (gn2 - gm2)/4
- ! dedn = dedna * dnadn + dednb * dnbdn = (1/2) * (dedna + dednb)
- ! dedgn2 = dedga2 * dga2/dgn2 + dedgb2 * dgb2dgn2 + dedgab * dgabdgn2 = 
+ ! gn2       = ga2 + gb2 + 2 gab | ga2 = (gn2 + gm2 + 2gnm)/4
+ ! gm2       = ga2 + gb2 - 2 gab | gb2 = (gn2 + gm2 - 2gnm)/4
+ ! gnm       = ga2 - gb2         | gab = (gn2 - gm2)/4
+ ! dedn      = dedna * dnadn + dednb * dnbdn = (1/2) * (dedna + dednb)
+ ! dedgn2    = dedga2 * dga2/dgn2    + dedgb2 * dgb2dgn2     + dedgab * dgabdgn2       = 0.25*(dedga2 + dedgb2 + dedgagb) 
+ ! dedgna2   = dedgn2 * dgn2/dgna2   + dedgm2 * dgm2/dgna2   + dedgngm * dgngm/dgna    = dedgn2 + dedgm2 + dedgngm
+ ! dedgnb2   = dedgn2 * dgn2/dgnb2   + dedgm2 * dgm2/dgnb2   + dedgngm * dgngm/dgnb    = dedgn2 + dedgm2 - dedgngm
+ ! dedgnagnb = dedgn2 * dgn2/dgnagnb + dedgm2 * dgm2/dgnagnb + dedgngm * dgngm/dgnagnb = 2*dedgn2 - 2*dedgm2 
  !----------------------------------------------------------------------------------------------------------------------------------- 
 
 !-------------------------------------------------------------------------------------------------------------------------------------------
@@ -166,13 +169,25 @@
   dexPBEdgrad_rho_2 = 0.25d0 *(dexPBEdgrad_rho_a_2 + dexPBEdgrad_rho_b_2 + dexPBEdgrad_rho_a_b)
  
   dgammadgrad_rho_2 = dexPBEdgrad_rho_2/(a*n2xc_UEG)
-  ddeltadgrad_rho_2 = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_2 - b*(n2_UEG/exPBE)*2*gamma*dgammadgrad_rho_2
+  ddeltadgrad_rho_2 = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_2 - b*(n2_UEG/exPBE)*2.d0*gamma*dgammadgrad_rho_2
 
   ddenomdgrad_rho_2 = ddeltadgrad_rho_2*mu + dgammadgrad_rho_2*mu**2
   dexdgrad_rho_2 = dexPBEdgrad_rho_2/denom - exPBE*ddenomdgrad_rho_2/(denom**2)
   dexdgrad_rho_a_2 = dexdgrad_rho_2 ! + decdgrad_n_m + decdgrad_m_2
   dexdgrad_rho_b_2 = dexdgrad_rho_2 ! - decdgrad_n_m + decdgrad_m_2
-  dexdgrad_rho_a_b = dexdgrad_rho_2 ! - decdgrad_m_2 
+  dexdgrad_rho_a_b = 2.d0*dexdgrad_rho_2 ! - 2.d0*decdgrad_m_2 
+  print*, 'rhoa =', rho_a
+  print*, 'rhob =', rho_b
+  print*, 'gradrho_a_2 =', grad_rho_a_2
+  print*, 'gradrho_b_2 =', grad_rho_b_2
+  
+  print*, 'gradrho_a_b =', grad_rho_a_b
+  
+  print*, 'exPBE =', exPBE, 'ex_srmuPBE =', ex_srmuPBE
+
+  print*,'dexPBEdrho_a_ =', dexPBEdrho_a, 'dexdrho_b =', dexPBEdrho_b, 'dexdgrad_rhoa2 =', dexdgrad_rho_a_2, 'dexdgrad_rho_b_2 =', dexdgrad_rho_b_2 ,'dexdgrad_rho_a_b= ', dexdgrad_rho_a_b
+
+  print*,'dexPBEdrho =', dexPBEdrho, 'dexdgrad_rho2 =', dexPBEdgrad_rho_2
   end subroutine exmdsrPBE
 !---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -235,10 +250,10 @@
 
   dn2_UEGdrho = 2.d0*rho*g0 + (rho**2)*dg0drho
 
-  dbetadrho = decPBEdrho/(c*n2_UEG) - (ecPBE/(c*n2_UEG**2))*dn2_UEGdrho
+  dbetadrho  = decPBEdrho/(c*n2_UEG) - (ecPBE/(c*n2_UEG**2))*dn2_UEGdrho
   ddenomdrho = dbetadrho*mu**3
 
-  decdrho = decPBEdrho/denom - ecPBE*ddenomdrho/(denom**2)
+  decdrho   = decPBEdrho/denom - ecPBE*ddenomdrho/(denom**2)
   decdrho_a = decdrho
   decdrho_b = decdrho
 
@@ -246,13 +261,13 @@
  
   decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) 
  
-  dbetadgrad_rho_2 = decPBEdgrad_rho_2/(c*n2_UEG)
+  dbetadgrad_rho_2  = decPBEdgrad_rho_2/(c*n2_UEG)
   ddenomdgrad_rho_2 = dbetadgrad_rho_2*mu**3
   
-  decdgrad_rho_2 = decPBEdgrad_rho_2/denom - ecPBE*ddenomdgrad_rho_2/(denom**2)
+  decdgrad_rho_2   = decPBEdgrad_rho_2/denom - ecPBE*ddenomdgrad_rho_2/(denom**2)
   decdgrad_rho_a_2 = decdgrad_rho_2 ! + decdgrad_n_m + decdgrad_m_2
   decdgrad_rho_b_2 = decdgrad_rho_2 ! - decdgrad_n_m + decdgrad_m_2
-  decdgrad_rho_a_b = decdgrad_rho_2 ! - decdgrad_m_2 
+  decdgrad_rho_a_b = 2.d0*decdgrad_rho_2 ! - 2.d0*decdgrad_m_2 
   end subroutine ecmdsrPBE
 
 !---------------------------------------------------------------------------------------------------------------------------------------------
