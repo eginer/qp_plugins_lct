@@ -56,7 +56,7 @@
   decdrho_b = decdrho
 
   !dec/((dgradn)^2)
-  decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + 2.d0*decPBEdgrad_rho_a_b) !! Vérifier le facteur 2 
+  decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) !! Vérifier le facteur 2 
  
   dbetadgrad_rho_2 = decPBEdgrad_rho_2/(c*rho2)
   ddenomdgrad_rho_2 = dbetadgrad_rho_2*mu**3
@@ -119,7 +119,7 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
     grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
    enddo
 
-   rho2 = rho2*2.d0 ! normalization 
+   rho2 = rho2*2.d0 ! normalization
    mu = mu_of_r_prov(ipoint,istate)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    
