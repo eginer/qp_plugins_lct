@@ -376,8 +376,8 @@ subroutine give_d_Ec_pbeueg_d_grad_n(r,mu,d_ec_pbeueg_d_ec_pbe,d_ec_pbeueg_d_gra
    enddo
    do j = 1, ao_num
     do m = 1,3
-     aos_dsr_vc_alpha_pbe_ueg_w(j,i,istate) += weight * d_ec_pbeueg_d_grad_n_alpha(m,istate) * aos_grad_in_r_array_transp_xyz(m,j,i)
-     aos_dsr_vc_beta_pbe_ueg_w (j,i,istate) += weight * d_ec_pbeueg_d_grad_n_beta(m,istate)  * aos_grad_in_r_array_transp_xyz(m,j,i)
+     aos_dsr_vc_alpha_pbe_ueg_w(j,i,istate) += weight * d_ec_pbeueg_d_grad_n_alpha(m,istate) * aos_grad_in_r_array_transp(m,j,i)
+     aos_dsr_vc_beta_pbe_ueg_w (j,i,istate) += weight * d_ec_pbeueg_d_grad_n_beta(m,istate)  * aos_grad_in_r_array_transp(m,j,i)
     enddo
 
    enddo
@@ -457,6 +457,7 @@ END_PROVIDER
     do i = 1, ao_num
      do j = 1, ao_num
       potential_c_alpha_ao_sr_pbe_ueg(j,i,istate) = pot_sr_scal_c_alpha_ao_pbe_ueg(j,i,istate) + pot_sr_grad_c_alpha_ao_pbe_ueg(j,i,istate) + pot_sr_grad_c_alpha_ao_pbe_ueg(i,j,istate)
+                                                                                               
       potential_c_beta_ao_sr_pbe_ueg(j,i,istate) = pot_sr_scal_c_beta_ao_pbe_ueg(j,i,istate) + pot_sr_grad_c_beta_ao_pbe_ueg(j,i,istate) + pot_sr_grad_c_beta_ao_pbe_ueg(i,j,istate)
      enddo
     enddo
