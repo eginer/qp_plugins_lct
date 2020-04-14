@@ -16,8 +16,6 @@ qp run fci | tee ${ezfio}.fci.out
 qp set mu_of_r mu_of_r_potential cas_ful
 qp run basis_correction | tee ${ezfio}.DFT.out
 
-#define the main options : mu, functional, number of determinants, max pt2 and reading or not two-elec integrals (to save time)
-
 qp run write_eff_mu_of_r_ints | tee ${ezfio}.eff_ints_1_out
 qp run diagonalize_h | tee ${ezfio}.diag_h_1_out
 
