@@ -120,7 +120,7 @@
 
    mu = mu_of_r_prov(ipoint,istate)
    rho2 = rho2*2.d0 ! normalization
-   rho2 = mu_correction_of_on_top(mu,rho2)
+!   rho2 = mu_correction_of_on_top(mu,rho2)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
 
    decdrho2 = 2.d0*decdrho2 ! normalization
@@ -203,7 +203,7 @@ END_PROVIDER
    rho2 = 2.d0*rho2
    ! mu_erf_dft -> mu_b
    mu = mu_of_r_prov(ipoint,istate)
-   rho2 = mu_correction_of_on_top(mu,rho2)
+!   rho2 = mu_correction_of_on_top(mu,rho2)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    d_dn2_e_cmd_sr_pbe_n2(ipoint,istate) = 2.d0 * decdrho2
    
