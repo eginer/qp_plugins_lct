@@ -10,7 +10,7 @@ program ecmd_ontop_test
  double precision  :: rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, rho2, two_dm_in_r_exact
  double precision  :: grad_rho_ax, grad_rho_ay, grad_rho_az
  double precision  :: grad_rho_bx, grad_rho_by, grad_rho_bz
- double precision  :: ec_srmuPBE,decdrho_a,decdrho_b,decdrho,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2, decdrho2
+ double precision  :: ec_srmuPBE,decdrho_a,decdrho_b,decdrho,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2, decdrho2, decdrho2_a, decdrho2_b
  double precision  :: ec_md_sr_pbe_n2(N_states)
 !--------A supprimer après les test-------
  double precision  :: rho, grad_rho_2, mu_array(20), test_r, r_norm_prec(n_points_final_grid), mu_tab(n_points_final_grid)
@@ -53,7 +53,8 @@ do p = 1, 20  ! loop over mu_array  !do1
    grad_rho_a_b = grad_rho_ax * grad_rho_bx + grad_rho_ay * grad_rho_by + grad_rho_az * grad_rho_bz
    grad_rho_2 = grad_rho_a_2 + grad_rho_b_2 + 2.d0*grad_rho_a_b
   
-  call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
+  !call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
+  call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2, decdrho2_a, decdrho2_b)
 
 !  decdrho2 = 2.d0*decdrho2
 

@@ -24,9 +24,9 @@ implicit none
 print*, '#r_norm    rho      grad_rho_2        mu      dexdrho      decdrho       decdgrad_rho_2       dexdgrad_rho_2'
 
 print*,'#mu   energy_c_sr_pbe_md   energy_x_sr_pbe_md'
-!do p = 1, 20  ! loop over mu_array  !do1 
+do p = 1, 20  ! loop over mu_array  !do1 
 ! print*, mu_array(p)
- mu = 0.5d0
+ mu = mu_array(p)
  r_norm_prec = 1.d-12
 do i=1, n_points_final_grid
  r(1) = final_grid_points(1,i)
@@ -78,6 +78,6 @@ do i=1, n_points_final_grid
  enddo
 enddo 
 ! print*, mu, energy_c_sr_pbe_md(1), energy_x_sr_pbe_md(1)
-!enddo
+enddo
 end program
 
