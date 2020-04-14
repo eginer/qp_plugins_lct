@@ -3,14 +3,17 @@ QP_ROOT=~/programs/qp2/
 source ${QP_ROOT}/quantum_package.rc
 
 #### Assumes that an "xyz" file exists for H2 
-file_xyz=He.xyz
-basis=cc-pvdz
-ezfio=He
+file_xyz=$1.xyz
+basis=$2
+charge=$3
+
+ezfio=$1
+
 
 rm -rf $ezfio
 
 #start with a RHF calculation
-qp create_ezfio -b $basis -o $ezfio $file_xyz
+qp create_ezfio -b $basis -o $ezfio $file_xyz -c $charge
 qp run scf | tee ${ezfio}.scf.out
 qp run fci | tee ${ezfio}.fci.out
 qp set mu_of_r mu_of_r_potential cas_ful

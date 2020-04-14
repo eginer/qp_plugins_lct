@@ -88,10 +88,10 @@ END_PROVIDER
 END_PROVIDER 
 
 !3
- BEGIN_PROVIDER[double precision, aos_vc_alpha_pbe_n2_w  , (ao_num,n_points_final_grid,N_states)]
-&BEGIN_PROVIDER[double precision, aos_vc_beta_pbe_n2_w   , (ao_num,n_points_final_grid,N_states)]
-&BEGIN_PROVIDER[double precision, aos_d_vc_alpha_pbe_n2_w  , (ao_num,n_points_final_grid,N_states)]
-&BEGIN_PROVIDER[double precision, aos_d_vc_beta_pbe_n2_w   ,  (ao_num,n_points_final_grid,N_states)]
+ BEGIN_PROVIDER[double precision, aos_vc_alpha_su_pbe_ot_no_extrap_w  , (ao_num,n_points_final_grid,N_states)]
+&BEGIN_PROVIDER[double precision, aos_vc_beta_su_pbe_ot_no_extrap_w   , (ao_num,n_points_final_grid,N_states)]
+&BEGIN_PROVIDER[double precision, aos_d_vc_alpha_su_pbe_ot_no_extrap_w  , (ao_num,n_points_final_grid,N_states)]
+&BEGIN_PROVIDER[double precision, aos_d_vc_beta_su_pbe_ot_no_extrap_w   ,  (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, d_dn2_e_cmd_su_pbe_ot_no_extrap, (n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
@@ -105,8 +105,8 @@ END_PROVIDER
  double precision :: decdrho_a, decdrho_b, decdrho, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
 
- aos_d_vc_alpha_pbe_n2_w = 0.d0
- aos_d_vc_beta_pbe_n2_w = 0.d0
+ aos_d_vc_alpha_su_pbe_ot_no_extrap_w = 0.d0
+ aos_d_vc_beta_su_pbe_ot_no_extrap_w = 0.d0
  do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
    r(1) = final_grid_points(1,ipoint)
@@ -142,13 +142,13 @@ END_PROVIDER
    enddo
 
    do j = 1, ao_num
-    aos_vc_alpha_pbe_n2_w(j,ipoint,istate) = decdrho_a * aos_in_r_array(j,ipoint)
-    aos_vc_beta_pbe_n2_w (j,ipoint,istate) = decdrho_b * aos_in_r_array(j,ipoint)
+    aos_vc_alpha_su_pbe_ot_no_extrap_w(j,ipoint,istate) = decdrho_a * aos_in_r_array(j,ipoint)
+    aos_vc_beta_su_pbe_ot_no_extrap_w (j,ipoint,istate) = decdrho_b * aos_in_r_array(j,ipoint)
    enddo
    do j = 1, ao_num
     do m = 1,3
-     aos_d_vc_alpha_pbe_n2_w(j,ipoint,istate) += contrib_grad_ca(m) * aos_grad_in_r_array_transp(m,j,ipoint)
-     aos_d_vc_beta_pbe_n2_w (j,ipoint,istate) += contrib_grad_cb(m) * aos_grad_in_r_array_transp(m,j,ipoint)
+     aos_d_vc_alpha_su_pbe_ot_no_extrap_w(j,ipoint,istate) += contrib_grad_ca(m) * aos_grad_in_r_array_transp(m,j,ipoint)
+     aos_d_vc_beta_su_pbe_ot_no_extrap_w (j,ipoint,istate) += contrib_grad_cb(m) * aos_grad_in_r_array_transp(m,j,ipoint)
     enddo
    enddo
   enddo
@@ -173,12 +173,12 @@ END_PROVIDER
    do istate = 1, N_states
      ! correlation alpha
      call dgemm('N','T',ao_num,ao_num,n_points_final_grid,1.d0,                   &
-                 aos_vc_alpha_pbe_n2_w(1,1,istate),size(aos_vc_alpha_pbe_n2_w,1), &
+                 aos_vc_alpha_su_pbe_ot_no_extrap_w(1,1,istate),size(aos_vc_alpha_su_pbe_ot_no_extrap_w,1), &
                  aos_in_r_array,size(aos_in_r_array,1),1.d0,                      &
                  pot_scal_alpha_ao_su_pbe_ot_no_extrap(1,1,istate),size(pot_scal_alpha_ao_su_pbe_ot_no_extrap,1))
      ! correlation beta
      call dgemm('N','T',ao_num,ao_num,n_points_final_grid,1.d0,                   &
-                 aos_vc_beta_pbe_n2_w(1,1,istate),size(aos_vc_beta_pbe_n2_w,1),   &
+                 aos_vc_beta_su_pbe_ot_no_extrap_w(1,1,istate),size(aos_vc_beta_su_pbe_ot_no_extrap_w,1),   &
                  aos_in_r_array,size(aos_in_r_array,1),1.d0,                      &
                  pot_scal_beta_ao_su_pbe_ot_no_extrap(1,1,istate),size(pot_scal_beta_ao_su_pbe_ot_no_extrap,1))
  
@@ -202,12 +202,12 @@ END_PROVIDER
    do istate = 1, N_states
        ! correlation alpha
        call dgemm('N','N',ao_num,ao_num,n_points_final_grid,1.d0,                     &
-                  aos_d_vc_alpha_pbe_n2_w(1,1,istate),size(aos_d_vc_alpha_pbe_n2_w,1),  &
+                  aos_d_vc_alpha_su_pbe_ot_no_extrap_w(1,1,istate),size(aos_d_vc_alpha_su_pbe_ot_no_extrap_w,1),  &
                   aos_in_r_array_transp,size(aos_in_r_array_transp,1),1.d0,           &
                   pot_grad_alpha_ao_su_pbe_ot_no_extrap(1,1,istate),size(pot_grad_alpha_ao_su_pbe_ot_no_extrap,1))
        ! correlation beta
        call dgemm('N','N',ao_num,ao_num,n_points_final_grid,1.d0,                     &
-                  aos_d_vc_beta_pbe_n2_w(1,1,istate),size(aos_d_vc_beta_pbe_n2_w,1),    &
+                  aos_d_vc_beta_su_pbe_ot_no_extrap_w(1,1,istate),size(aos_d_vc_beta_su_pbe_ot_no_extrap_w,1),    &
                   aos_in_r_array_transp,size(aos_in_r_array_transp,1),1.d0,           &
                   pot_grad_beta_ao_su_pbe_ot_no_extrap(1,1,istate),size(pot_grad_beta_ao_su_pbe_ot_no_extrap,1))
    enddo
