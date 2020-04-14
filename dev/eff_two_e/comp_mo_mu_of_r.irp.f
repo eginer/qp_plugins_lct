@@ -46,7 +46,7 @@ subroutine compute_all_ijkl_for_jl_mu_of_r_int(j,l,mo_integrals)
  implicit none
  integer, intent(in) :: j,l
  double precision, intent(out) :: mo_integrals(mo_num,mo_num)
- provide d_dn2_e_cmd_sr_pbe_n2 mos_in_r_array 
+ provide d_dn2_e_cmd_basis mos_in_r_array 
  integer :: ipoint,istate,i,k
  
  double precision, allocatable :: mo_tmp(:,:)

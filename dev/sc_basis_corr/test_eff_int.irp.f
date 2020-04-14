@@ -8,7 +8,7 @@ subroutine routine
  implicit none
  integer :: i,j,k,l
  double precision :: mo_integrals(mo_num,mo_num)
- double precision :: accu
+ double precision :: accu,accu_2
  accu = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
@@ -26,4 +26,12 @@ subroutine routine
   enddo
  enddo
  print*,'accu = ',accu/dble(mo_num**4)
+ accu = 0.d0
+ accu_2 = 0.d0
+ do i = 1, n_points_final_grid
+  accu += dabs(d_dn2_e_cmd_basis(i,1) - d_dn2_e_cmd_su_pbe_ot(i,1))
+  accu_2 += d_dn2_e_cmd_basis(i,1) * final_weight_at_r_vector(i)
+ enddo
+ print*,'accu = ',accu
+ print*,'accu_2 ',accu_2
 end

@@ -16,11 +16,17 @@ qp run fci | tee ${ezfio}.fci.out
 qp set mu_of_r mu_of_r_potential cas_ful
 qp run basis_correction | tee ${ezfio}.DFT.out
 
-qp run write_eff_mu_of_r_ints | tee ${ezfio}.eff_ints_1_out
+qp run write_eff_basis_ints | tee ${ezfio}.eff_ints_1_out
 qp run diagonalize_h | tee ${ezfio}.diag_h_1_out
 
-qp run write_eff_mu_of_r_ints | tee ${ezfio}.eff_ints_2_out
+qp run write_eff_basis_ints | tee ${ezfio}.eff_ints_2_out
 qp run diagonalize_h | tee ${ezfio}.diag_h_2_out
 
-qp run write_eff_mu_of_r_ints | tee ${ezfio}.eff_ints_3_out
+qp run write_eff_basis_ints | tee ${ezfio}.eff_ints_3_out
 qp run diagonalize_h | tee ${ezfio}.diag_h_3_out                      
+
+qp run write_eff_basis_ints | tee ${ezfio}.eff_ints_4_out
+qp run diagonalize_h | tee ${ezfio}.diag_h_4_out
+
+qp run write_eff_basis_ints | tee ${ezfio}.eff_ints_5_out
+qp run diagonalize_h | tee ${ezfio}.diag_h_5_out                      

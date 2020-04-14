@@ -21,7 +21,7 @@ BEGIN_PROVIDER[double precision, eff_two_e, (mo_num,mo_num,mo_num,mo_num,N_state
   do ipoint = 1, n_points_final_grid
 
    weight = final_weight_at_r_vector(ipoint)
-   decdrho2 = d_dn2_e_cmd_sr_pbe_n2(ipoint,istate)
+   decdrho2 = d_dn2_e_cmd_basis(ipoint,istate)
    do i = 1, mo_num
     do j = 1, mo_num
      do k = 1, mo_num
@@ -48,7 +48,7 @@ BEGIN_PROVIDER [double precision, phi_ij_eff_pot_in_r, (n_points_final_grid, mo_
     do j = 1, mo_num
      do ipoint = 1, n_points_final_grid
       weight = final_weight_at_r_vector(ipoint)
-      decdrho2 = d_dn2_e_cmd_sr_pbe_n2(ipoint,istate)
+      decdrho2 = d_dn2_e_cmd_basis(ipoint,istate)
       phi_ij_eff_pot_in_r(ipoint,j,i)  = weight * decdrho2 * mos_in_r_array(i,ipoint) * mos_in_r_array(j,ipoint) 
      enddo
     enddo
