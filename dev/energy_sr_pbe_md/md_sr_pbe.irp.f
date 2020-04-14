@@ -1,4 +1,4 @@
- ! routine that helps in building the x/c potentials on the AO basis for a GGA functional with a short-range interaction
+! routine that helps in building the x/c potentials on the AO basis for a GGA functional with a short-range interaction
  ! From Emmanuel's plugins: dft_utils_one_e/utils.irp.f
  !
  !-----------------------------------------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@
   double precision, intent(in)  :: rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
   double precision, intent(out) :: ex_srmuPBE,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2
   double precision              :: exPBE,dexPBEdrho_a,dexPBEdrho_b, dexPBEdrho, dexPBEdgrad_rho_a_2,dexPBEdgrad_rho_b_2,dexPBEdgrad_rho_a_b, dexPBEdgrad_rho_2
-  double precision              :: gamma, dgammadrho, dgammadgrad_rho_2, delta, ddeltadrho, ddeltadgrad_rho_2, denom, ddenomdrho, ddenomdgrad_rho_2
+  double precision              :: gamma, dgammadrho, dgammadgrad_rho_2, delta, ddeltadrho, ddeltadgrad_rho_2, denom, ddenomdrho, ddenomdgrad_rho_2,  dgammadgrad_rho_a_2,  dgammadgrad_rho_b_2,  dgammadgrad_rho_a_b,  ddeltadgrad_rho_a_2,  ddeltadgrad_rho_b_2,  ddeltadgrad_rho_a_b, ddenomdgrad_rho_a_2, ddenomdgrad_rho_b_2, ddenomdgrad_rho_a_b  
   double precision              :: pi, a, b, thr
   double precision              :: rho, m  
   double precision              :: n2_UEG, dn2_UEGdrho, n2xc_UEG, dn2xc_UEGdrho, g0, dg0drho
@@ -165,29 +165,54 @@
   dexdrho_b = dexdrho
  
   !dex/d((gradn)^2)
- 
-  dexPBEdgrad_rho_2 = 0.25d0 *(dexPBEdgrad_rho_a_2 + dexPBEdgrad_rho_b_2 + dexPBEdgrad_rho_a_b)
- 
-  dgammadgrad_rho_2 = dexPBEdgrad_rho_2/(a*n2xc_UEG)
-  ddeltadgrad_rho_2 = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_2 - b*(n2_UEG/exPBE)*2.d0*gamma*dgammadgrad_rho_2
+  dgammadgrad_rho_a_2 =dexPBEdgrad_rho_a_2/(a*n2xc_UEG)
+  dgammadgrad_rho_b_2 =dexPBEdgrad_rho_b_2/(a*n2xc_UEG)
+  dgammadgrad_rho_a_b =dexPBEdgrad_rho_a_b/(a*n2xc_UEG)
 
-  ddenomdgrad_rho_2 = ddeltadgrad_rho_2*mu + dgammadgrad_rho_2*mu**2
-  dexdgrad_rho_2 = dexPBEdgrad_rho_2/denom - exPBE*ddenomdgrad_rho_2/(denom**2)
-  dexdgrad_rho_a_2 = dexdgrad_rho_2 ! + decdgrad_n_m + decdgrad_m_2
-  dexdgrad_rho_b_2 = dexdgrad_rho_2 ! - decdgrad_n_m + decdgrad_m_2
-  dexdgrad_rho_a_b = 2.d0*dexdgrad_rho_2 ! - 2.d0*decdgrad_m_2 
-  print*, 'rhoa =', rho_a
-  print*, 'rhob =', rho_b
-  print*, 'gradrho_a_2 =', grad_rho_a_2
-  print*, 'gradrho_b_2 =', grad_rho_b_2
+  ddeltadgrad_rho_a_2 = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_a_2 - b*(n2_UEG/exPBE)*2.d0*gamma*dgammadgrad_rho_a_2
+  ddeltadgrad_rho_b_2 = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_b_2 - b*(n2_UEG/exPBE)*2.d0*gamma*dgammadgrad_rho_b_2
+  ddeltadgrad_rho_a_b = ((b*n2_UEG*gamma**2)/(exPBE**2))*dexPBEdgrad_rho_a_b - b*(n2_UEG/exPBE)*2.d0*gamma*dgammadgrad_rho_a_b
+
+  ddenomdgrad_rho_a_2 = ddeltadgrad_rho_a_2*mu + dgammadgrad_rho_a_2*mu**2  
+  ddenomdgrad_rho_b_2 = ddeltadgrad_rho_b_2*mu + dgammadgrad_rho_b_2*mu**2
+  ddenomdgrad_rho_a_b =ddeltadgrad_rho_a_b*mu + dgammadgrad_rho_a_b*mu**2
   
-  print*, 'gradrho_a_b =', grad_rho_a_b
+  dexdgrad_rho_a_2 = dexPBEdgrad_rho_a_2/denom - exPBE*ddenomdgrad_rho_a_2/(denom**2)
+  dexdgrad_rho_b_2 = dexPBEdgrad_rho_b_2/denom  - exPBE*ddenomdgrad_rho_b_2/(denom**2)
+  dexdgrad_rho_a_b = dexPBEdgrad_rho_a_b/denom - exPBE*ddenomdgrad_rho_a_b/(denom**2)
+
+  dexdgrad_rho_2 = 0.25d0*(dexdgrad_rho_a_2 + dexdgrad_rho_b_2 + dexdgrad_rho_a_b)
   
+  print*, '..................................'
+  print*, 'rhoa                =', rho_a
+  print*, 'rhob                =', rho_b
+  print*, 'gradrho_a_2         =', grad_rho_a_2
+  print*, 'gradrho_b_2         =', grad_rho_b_2
+  print*, 'gradrho_a_b         =', grad_rho_a_b
   print*, 'exPBE =', exPBE, 'ex_srmuPBE =', ex_srmuPBE
-
-  print*,'dexPBEdrho_a_ =', dexPBEdrho_a, 'dexdrho_b =', dexPBEdrho_b, 'dexdgrad_rhoa2 =', dexdgrad_rho_a_2, 'dexdgrad_rho_b_2 =', dexdgrad_rho_b_2 ,'dexdgrad_rho_a_b= ', dexdgrad_rho_a_b
-
-  print*,'dexPBEdrho =', dexPBEdrho, 'dexdgrad_rho2 =', dexPBEdgrad_rho_2
+  print*, 'dexPBEdrho_a        =', dexPBEdrho_a 
+  print*, 'dexPBEdrho_b        =', dexPBEdrho_b
+  print*, 'dexPBEdgrad_rho_a_2 =', dexPBEdgrad_rho_a_2
+  print*, 'dexPBEdgrad_rho_b_2 =', dexPBEdgrad_rho_b_2
+  print*, 'dexPBEdgrad_rho_a_b= ', dexPBEdgrad_rho_a_b
+  print*, 'dexPBEdgrad_rho_2   =', dexPBEdgrad_rho_2
+  print*, 'dexdrho_a           =', dexdrho_a          
+  print*, 'dexdrho_b           =', dexdrho_b          
+  print*, 'dexdgrad_rho_a_2    =', dexdgrad_rho_a_2   
+  print*, 'dexdgrad_rho_b_2    =', dexdgrad_rho_b_2   
+  print*, 'dexdgrad_rho_a_b    =', dexdgrad_rho_a_b   
+  print*, 'dgammadgrad_rho_a_2 =', dgammadgrad_rho_a_2  
+  print*, 'ddeltadgrad_rho_a_2 =', ddeltadgrad_rho_a_2  
+  print*, 'dgammadgrad_rho_b_2 =', dgammadgrad_rho_b_2  
+  print*, 'ddeltadgrad_rho_b_2 =', ddeltadgrad_rho_b_2  
+  print*, 'dgammadgrad_rho_a_b =', dgammadgrad_rho_a_b  
+  print*, 'ddeltadgrad_rho_a_b =', ddeltadgrad_rho_a_b
+  print*, 'denom               =', denom
+  print*, 'ddenomdgrad_rho_a_2 =', ddenomdgrad_rho_a_2 
+  print*, 'ddenomdgrad_rho_b_2 =', ddenomdgrad_rho_b_2 
+  print*, 'ddenomdgrad_rho_a_b =', ddenomdgrad_rho_a_b 
+  print*, '------> dexdgradrho =', dexdgrad_rho_2   
+  print*, '..................................'
   end subroutine exmdsrPBE
 !---------------------------------------------------------------------------------------------------------------------------------------------
 
