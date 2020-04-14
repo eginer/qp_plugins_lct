@@ -33,7 +33,7 @@ program write_effective_RSDFT_hamiltonian
  ! integral of the effective potential 
  io_mo_int_mu_of_r = "None" 
  touch io_mo_int_mu_of_r
- call write_all_ints_mu_of_r
+ call write_all_ints_basis
  call routines_compute_energy
 end
 
