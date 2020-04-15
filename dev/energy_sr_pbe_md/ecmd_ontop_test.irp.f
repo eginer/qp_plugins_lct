@@ -54,7 +54,7 @@ do p = 1, 20  ! loop over mu_array  !do1
    grad_rho_2 = grad_rho_a_2 + grad_rho_b_2 + 2.d0*grad_rho_a_b
   
   !call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
-  call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2, decdrho2_a, decdrho2_b)
+  call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a, decdrho2_b)
 
 !  decdrho2 = 2.d0*decdrho2
 
@@ -69,7 +69,7 @@ do p = 1, 20  ! loop over mu_array  !do1
      r_norm_prec(i) = r_norm
      mu_tab(i) = mu
      if(test_r==0)then
-     print*, r_norm, rho, rho2, grad_rho_2, mu, ec_srmuPBE, decdrho, decdgrad_rho_2, decdrho2
+     print*, r_norm, rho, rho2, grad_rho_2, mu, ec_srmuPBE, decdrho, decdgrad_rho_2, decdrho2, decdrho2_a, decdrho2_b
  !     print*, r_norm, rho2
       endif
 enddo !enddo3

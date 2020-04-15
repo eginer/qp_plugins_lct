@@ -1,6 +1,5 @@
 !-------------------------------------------------------------------------------------------------------------------------------------------
-  !subroutine ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a, decdrho2_b)
-  subroutine  ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2, decdrho2_a, decdrho2_b)
+  subroutine  ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdrho2_a, decdrho2_b)
 
   implicit none
   BEGIN_DOC
@@ -10,7 +9,7 @@
   double precision, intent(in)  :: mu
   double precision, intent(in)  :: rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, rho2
   double precision, intent(out) :: ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a, decdrho2_b
-  double precision, intent(out) :: decdrho, decdgrad_rho_2, decdrho2 
+  !double precision, intent(out) :: decdrho, decdgrad_rho_2, decdrho2 
   double precision              :: ecPBE, decPBEdrho_a, decPBEdrho_b, decPBEdgrad_rho_2, decPBEdgrad_rho_a_2, decPBEdgrad_rho_b_2, decPBEdgrad_rho_a_b
   double precision              :: rho_c, rho_o,grad_rho_c_2, grad_rho_o_2, grad_rho_o_c, decPBEdrho_c, decPBEdrho_o, decPBEdgrad_rho_c_2, decPBEdgrad_rho_o_2, decPBEdgrad_rho_c_o
   double precision              :: beta, dbetadrho_a, dbetadrho_b, dbetadgrad_rho_a_2, dbetadgrad_rho_b_2, dbetadgrad_rho_a_b
@@ -57,7 +56,7 @@
 
   decdrho_a = decPBEdrho_a/denom - ecPBE*ddenomdrho_a/(denom**2)
   decdrho_b = decPBEdrho_b/denom - ecPBE*ddenomdrho_b/(denom**2)
-  decdrho   = 0.5d0*(decdrho_a + decdrho_b)
+  !decdrho   = 0.5d0*(decdrho_a + decdrho_b)
 
   !dec/((dgradn)^2)
   dbetadgrad_rho_a_2 = decPBEdgrad_rho_a_2/(c*rho2)
@@ -71,7 +70,7 @@
   decdgrad_rho_a_2 = decPBEdgrad_rho_a_2/denom - ecPBE*ddenomdgrad_rho_a_2/(denom**2)
   decdgrad_rho_b_2 = decPBEdgrad_rho_b_2/denom - ecPBE*ddenomdgrad_rho_b_2/(denom**2)
   decdgrad_rho_a_b = decPBEdgrad_rho_a_b/denom - ecPBE*ddenomdgrad_rho_a_b/(denom**2)
-  decdgrad_rho_2   = 0.25d0*(decdgrad_rho_a_2 + decdgrad_rho_b_2 + decdgrad_rho_a_b)
+  !decdgrad_rho_2   = 0.25d0*(decdgrad_rho_a_2 + decdgrad_rho_b_2 + decdgrad_rho_a_b)
 
   !dec/dn2
   ddenomdrho2_a = - (mu**3)* ecPBE/(c*rho2**2)
@@ -80,7 +79,7 @@
   decdrho2_a  = - ecPBE*ddenomdrho2_a/(denom**2)
   decdrho2_b  = - ecPBE*ddenomdrho2_b/(denom**2)
 
-  decdrho2 = 0.5d0*(decdrho2_a + decdrho2_b)
+  !decdrho2 = 0.5d0*(decdrho2_a + decdrho2_b)
 
   end subroutine ecmdsrPBE
 
@@ -89,20 +88,17 @@
 BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
  implicit none
  BEGIN_DOC
- ! exchange / correlation energies  with the short-range version Perdew-Burke-Ernzerhof GGA functional 
+ ! Correlation energies  with the short-range version Perdew-Burke-Ernzerhof GGA functional using exact on-top pair density
  !
  ! defined in Chem. Phys.329, 276 (2006)
  END_DOC 
- BEGIN_DOC
-! exchange/correlation energy with the short range pbe functional
- END_DOC
  integer :: istate,ipoint,j,m
  double precision :: two_dm_in_r_exact
  double precision :: weight, r(3)
  double precision :: ec_srmuPBE, mu
  double precision :: rho2, rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
- double precision :: decdrho_a, decdrho_b, decdrho2_a, decdrho2_b, decdrho2, decdrho
- double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
+ double precision :: decdrho_a, decdrho_b, decdrho2_a, decdrho2_b, decdrho2
+ double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b
 
  energy_c_md_sr_pbe = 0.d0
  do istate = 1, N_states
@@ -114,7 +110,6 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
    weight = final_weight_at_r_vector(ipoint)
    rho_a =  one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
    rho_b =  one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
-   !rho2 = two_dm_in_r_exacti(r,r,istate)
    call give_on_top_in_r_one_state(r,istate,rho2)
    grad_rho_a(1:3) =  one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) =  one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
@@ -129,13 +124,15 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
 
    rho2 = rho2*2.d0 ! normalization
    mu = mu_of_r_prov(ipoint,istate)
-   !call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a,decdrho2_b)
-   !call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
 
-   call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2, decdrho2_a, decdrho2_b)
+   call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a, decdrho2_b)
+
    decdrho2_a = 2.d0*decdrho2_a ! normalization
    decdrho2_b = 2.d0*decdrho2_b
-
+   ! rho2 = rho2_a + rho2_b
+   ! m2 = rho2_a - rho2_b
+   ! rho2_a = 0.5(rho2 + m2)     rho2_b = 0.5(rho2 - m2)
+   ! decrrho2 =  decdrho2_a * drho2_a/drho2 + decdrho2_b * drho2_b/drho2
    decdrho2   = 0.5d0*(decdrho2_a + decdrho2_b) !A verifier quand même
    energy_c_md_sr_pbe_n2(istate) += ec_srmuPBE * weight
   enddo
@@ -143,7 +140,6 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
 
 END_PROVIDER
 
-!1
  BEGIN_PROVIDER [double precision, potential_c_alpha_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
 &BEGIN_PROVIDER [double precision, potential_c_beta_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
    implicit none
@@ -164,7 +160,6 @@ END_PROVIDER
 
 END_PROVIDER 
 
-!3
  BEGIN_PROVIDER[double precision, aos_vc_alpha_md_sr_pbe_w_n2  , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_vc_beta_md_sr_pbe_w_n2   , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_alpha_md_sr_pbe_w_n2  , (ao_num,n_points_final_grid,N_states)]
@@ -207,11 +202,9 @@ END_PROVIDER
    
    ! mu_erf_dft -> mu_b
    mu = mu_of_r_prov(ipoint,istate)
-   !call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a,decdrho_b)
+   call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a,decdrho_b)
    
-   !call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
   
-   call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2, decdrho2_a, decdrho2_b)
    decdrho_a *= weight
    decdrho_b *= weight
 
@@ -235,7 +228,6 @@ END_PROVIDER
 
  END_PROVIDER
 
-!4
  BEGIN_PROVIDER [double precision, pot_scal_c_alpha_ao_md_sr_pbe_n2, (ao_num,ao_num,N_states)]
 &BEGIN_PROVIDER [double precision, pot_scal_c_beta_ao_md_sr_pbe_n2, (ao_num,ao_num,N_states)]
  implicit none
@@ -266,7 +258,6 @@ END_PROVIDER
 
 END_PROVIDER 
 
-!5
  BEGIN_PROVIDER [double precision, pot_grad_c_alpha_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
 &BEGIN_PROVIDER [double precision, pot_grad_c_beta_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
    implicit none
