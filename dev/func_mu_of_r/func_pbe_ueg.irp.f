@@ -1,12 +1,10 @@
 
 !-----------------------------------------------------------------Integrales------------------------------------------------------------------
-
  BEGIN_PROVIDER [logical, needs_eff_two_e_ints_pbe_ueg]
  implicit none
  BEGIN_DOC
  ! needs_eff_two_e_ints_pbe_ueg = False because the self consistent procedure for this functional DOES NOT require to write effective two electron integrals
  END_DOC
-! print*,'needs_eff_two_e_ints_pbe_ueg = ',needs_eff_two_e_ints_pbe_ueg
  needs_eff_two_e_ints_pbe_ueg = .False.
 
  END_PROVIDER
@@ -27,7 +25,7 @@
  double precision :: weight,mu
  double precision :: ec_srmuPBE
  double precision :: rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
- double precision :: decdrho_a, decdrho_b, decdrho
+ double precision :: decdrho_a, decdrho_b
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
 
  do istate = 1, N_states
@@ -49,7 +47,7 @@
    enddo
 
    mu = mu_of_r_prov(ipoint,istate)
-   call ecmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2)
+   call ecmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ec_srmuPBE,decdrho_a,decdrho_b, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
 
    e_c_md_basis_pbe_ueg(istate) += ec_srmuPBE * weight
   enddo
@@ -113,7 +111,7 @@ END_PROVIDER
  double precision :: ec_srmuPBE
  double precision :: rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
  double precision :: contrib_grad_ca(3),contrib_grad_cb(3)
- double precision :: decdrho_a, decdrho_b, decdrho
+ double precision :: decdrho_a, decdrho_b
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
 
  aos_d_vc_alpha_basis_pbe_ueg_w= 0.d0
@@ -135,7 +133,7 @@ END_PROVIDER
    enddo
 
    mu = mu_of_r_prov(i,istate)
-   call ecmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2)
+   call ecmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ec_srmuPBE,decdrho_a,decdrho_b, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
 
    decdrho_a *= weight
    decdrho_b *= weight

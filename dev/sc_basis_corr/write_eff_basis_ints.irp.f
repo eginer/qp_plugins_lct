@@ -44,8 +44,8 @@ subroutine routines_compute_energy
 !
 ! and saves the current one-body density matrix into the aux_quantities folder the EZFIO folder
  END_DOC
- density_for_dft = "WFT" 
- touch density_for_dft 
+! density_for_dft = "WFT" 
+! touch density_for_dft 
  call print_variational_energy
  call ezfio_set_aux_quantities_data_one_e_dm_alpha_mo(one_e_dm_mo_alpha)
  call ezfio_set_aux_quantities_data_one_e_dm_beta_mo(one_e_dm_mo_beta)

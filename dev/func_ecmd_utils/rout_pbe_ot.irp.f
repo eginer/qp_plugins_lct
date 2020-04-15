@@ -16,10 +16,6 @@
   double precision              :: pi, c, thr
   double precision              :: rho, m  
  
-  if(abs(rho_a-rho_b) > 1.d-12)then
-  stop "routine implemented only for closed-shell systems"
-  endif 
-
   pi = dacos(-1.d0)
   rho = rho_a + rho_b
   m = rho_a - rho_b
