@@ -1,7 +1,10 @@
 program plugins_test
   implicit none
-  BEGIN_DOC
-! TODO : Put the documentation of the program here
-  END_DOC
-  print *, 'Hello world'
+ integer :: i,j
+ do i = 1, mo_num
+  do j = 1, mo_num
+   write(34,*)i,j,potential_c_alpha_mo_basis_pbe_ueg(j,i,1)
+  enddo
+ enddo
+
 end

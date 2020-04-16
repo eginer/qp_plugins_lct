@@ -1,3 +1,5 @@
+
+
 !-------------------------------------------------------------------------------------------------------------------------------------------
   subroutine  ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdrho2_a, decdrho2_b)
 
@@ -28,12 +30,12 @@
   
 ! correlation PBE standard and on-top pair distribution 
   call rho_ab_to_rho_oc(rho_a,rho_b,rho_o,rho_c)
-  call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,grad_rho_o_2,grad_rho_c_2,grad_rho_o_c)
+  call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,grad_rho_o_2,grad_rho_2,grad_rho_o_c)
 
-  call ec_pbe_sr(1.d-12,rho_c,rho_o,grad_rho_c_2,grad_rho_o_2,grad_rho_o_c,ecPBE,decPBEdrho_c,decPBEdrho_o,decPBEdgrad_rho_c_2,decPBEdgrad_rho_o_2, decPBEdgrad_rho_c_o)
+  call ec_pbe_sr(1.d-12,rho_c,rho_o,grad_rho_2,grad_rho_o_2,grad_rho_o_c,ecPBE,decPBEdrho_c,decPBEdrho_o,decPBEdgrad_rho_2,decPBEdgrad_rho_o_2, decPBEdgrad_rho_o)
 
   call v_rho_oc_to_v_rho_ab(decPBEdrho_o, decPBEdrho_c, decPBEdrho_a, decPBEdrho_b)
-  call v_grad_rho_oc_to_v_grad_rho_ab(decPBEdgrad_rho_o_2, decPBEdgrad_rho_c_2, decPBEdgrad_rho_c_o, decPBEdgrad_rho_a_2, decPBEdgrad_rho_b_2, decPBEdgrad_rho_a_b)
+  call v_grad_rho_oc_to_v_grad_rho_ab(decPBEdgrad_rho_o_2, decPBEdgrad_rho_2, decPBEdgrad_rho_o, decPBEdgrad_rho_a_2, decPBEdgrad_rho_b_2, decPBEdgrad_rho_a_b)
 
 ! calculation of energy
   c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0
@@ -85,7 +87,7 @@
 
 !-----------------------------------------------------------------Integrales------------------------------------------------------------------
 
-BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
+ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
  implicit none
  BEGIN_DOC
  ! Correlation energies  with the short-range version Perdew-Burke-Ernzerhof GGA functional using exact on-top pair density
@@ -100,7 +102,7 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
  double precision :: decdrho_a, decdrho_b, decdrho2_a, decdrho2_b, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b
 
- energy_c_md_sr_pbe = 0.d0
+ energy_c_md_sr_pbe_n2 = 0.d0
  do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
    r(1) = final_grid_points(1,ipoint)
@@ -110,6 +112,7 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
    weight = final_weight_at_r_vector(ipoint)
    rho_a =  one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
    rho_b =  one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+
    call give_on_top_in_r_one_state(r,istate,rho2)
    grad_rho_a(1:3) =  one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) =  one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
@@ -122,8 +125,8 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
     grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
    enddo
 
-   rho2 = rho2*2.d0 ! normalization
    mu = mu_of_r_prov(ipoint,istate)
+   rho2 = rho2*2.d0 ! normalization
 
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a, decdrho2_b)
 
@@ -140,13 +143,21 @@ BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe_n2, (N_states) ]
 
 END_PROVIDER
 
+
+ BEGIN_PROVIDER [double precision, potential_c_alpha_mo_md_sr_pbe_n2,(mo_num,mo_num,N_states)]
+&BEGIN_PROVIDER [double precision, potential_c_beta_mo_md_sr_pbe_n2,(mo_num,mo_num,N_states)]
+   implicit none
+ call ao_to_mo(potential_c_alpha_ao_md_sr_pbe_n2,ao_num,potential_c_alpha_mo_md_sr_pbe_n2,mo_num)
+ call ao_to_mo(potential_c_beta_ao_md_sr_pbe_n2,ao_num,potential_c_beta_mo_md_sr_pbe_n2,mo_num)
+END_PROVIDER 
+
  BEGIN_PROVIDER [double precision, potential_c_alpha_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
 &BEGIN_PROVIDER [double precision, potential_c_beta_ao_md_sr_pbe_n2,(ao_num,ao_num,N_states)]
    implicit none
  BEGIN_DOC
- ! correlation potential for alpha / beta electrons  with the short-range version Perdew-Burke-Ernzerhof GGA functional 
+ ! blablabla bis 
  !
- ! defined in Chem. Phys.329, 276 (2006)
+ ! 
  END_DOC 
    integer :: i,j,istate
    do istate = 1, n_states 
@@ -164,6 +175,7 @@ END_PROVIDER
 &BEGIN_PROVIDER[double precision, aos_vc_beta_md_sr_pbe_w_n2   , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_alpha_md_sr_pbe_w_n2  , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_beta_md_sr_pbe_w_n2   ,  (ao_num,n_points_final_grid,N_states)]
+&BEGIN_PROVIDER[double precision, d_dn2_e_cmd_sr_pbe_n2, (n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
 ! intermediates to compute the sr_pbe potentials 
@@ -175,6 +187,7 @@ END_PROVIDER
  double precision :: contrib_grad_ca(3),contrib_grad_cb(3)
  double precision :: decdrho_a, decdrho_b,decdrho, decdrho2_a, decdrho2_b, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
+ double precision :: mu_correction_of_on_top
 
  aos_d_vc_alpha_md_sr_pbe_w_n2 = 0.d0
  aos_d_vc_beta_md_sr_pbe_w_n2 = 0.d0
@@ -199,7 +212,6 @@ END_PROVIDER
    enddo
    
    rho2 = 2.d0*rho2
-   
    ! mu_erf_dft -> mu_b
    mu = mu_of_r_prov(ipoint,istate)
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a,decdrho_b)

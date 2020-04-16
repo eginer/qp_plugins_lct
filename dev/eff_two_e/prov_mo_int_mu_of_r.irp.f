@@ -24,7 +24,7 @@ BEGIN_PROVIDER [ logical, mo_two_e_int_mu_of_r_in_map ]
   character*(64)                 :: fmt
   double precision               :: map_mb
   
-  PROVIDE mo_two_e_integrals_in_map mo_integrals_map 
+  PROVIDE mo_two_e_integrals_in_map mo_integrals_map mu_of_r_prov d_dn2_e_cmd_basis
 
   ! TODO FOR READ/WRITE 
   PROVIDE read_mo_int_mu_of_r io_mo_int_mu_of_r
