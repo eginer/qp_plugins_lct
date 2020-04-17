@@ -19,10 +19,10 @@
    do i = 1, mo_num
 
     mo_tot_eff_pot_basis(i,j,istate) =  mo_integrals_n_e(i,j) + mo_kinetic_integrals(i,j)   & 
-    + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_alpha_mo(i,j,istate) )
+    + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
 
     mo_tot_eff_pot_basis_no_kin(i,j,istate) = mo_integrals_n_e(i,j) &
-    + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_alpha_mo(i,j,istate) )
+    + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
    enddo
   enddo
  enddo

@@ -29,8 +29,8 @@ subroutine comp_mo_int_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_value)
     i1 = ishft(k*k-k,-1)
     do i = 1, mo_num
       i1 += 1
-      integral = integrals_matrix(k,i)  + eff_int_mat(k,i) ! i,k : r1    j,l : r2
-      if (abs(integral) < thr) then
+      integral = integrals_matrix(i,k)  + eff_int_mat(i,k) ! i,k : r1    j,l : r2
+      if (dabs(integral) < thr) then
         cycle
       endif
       n_integrals += 1

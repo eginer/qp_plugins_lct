@@ -57,7 +57,7 @@ END_PROVIDER
 
 
   BEGIN_PROVIDER [double precision, pot_basis_alpha_mo_basis_pbe_ueg,(mo_num,mo_num,N_states)]
- &BEGIN_PROVIDER [double precision, pot_basis_beta_mo_basis_pbe_ueg,(mo_num,mo_num,N_states)]
+ &BEGIN_PROVIDER [double precision, pot_basis_beta_mo_basis_pbe_ueg, (mo_num,mo_num,N_states)]
   implicit none
   integer :: istate
 

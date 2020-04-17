@@ -15,7 +15,7 @@ function help()
 Range Separated CIPSI program: 
 
 Usage:
-  $(basename $0) -m <real> -f <string>  -p <real> -n <integer> [-t <real>] [--] EZFIO
+  $(basename $0) -m <string> -f <string>  -p <real> -n <integer> [-t <real>] [--] EZFIO
 
 
 Options:
