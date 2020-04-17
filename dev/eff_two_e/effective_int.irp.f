@@ -37,6 +37,29 @@ BEGIN_PROVIDER[double precision, eff_two_e, (mo_num,mo_num,mo_num,mo_num,N_state
 
 END_PROVIDER
 
+
+BEGIN_PROVIDER[double precision, tot_eff_two_e, (mo_num,mo_num,mo_num,mo_num,N_states) ]
+ implicit none
+ integer :: istate,ipoint,m,i,j,k,l
+ double precision :: weight
+ double precision :: decdrho2,get_two_e_integral
+
+ tot_eff_two_e = 0.d0
+ do istate = 1, N_states
+   do i = 1, mo_num
+    do j = 1, mo_num
+     do k = 1, mo_num
+      do l = 1, mo_num
+        integral_regular = get_two_e_integral(i,j,k,l,mo_integrals_map)
+        tot_eff_two_e(l,k,j,i,istate) = eff_two_e(l,k,j,i,istate) + integral_regular
+      enddo
+     enddo
+    enddo
+   enddo
+ enddo
+
+END_PROVIDER
+
 BEGIN_PROVIDER [double precision, phi_ij_eff_pot_in_r, (n_points_final_grid, mo_num, mo_num)]
  implicit none
  integer :: istate,ipoint,m,i,j,k,l
