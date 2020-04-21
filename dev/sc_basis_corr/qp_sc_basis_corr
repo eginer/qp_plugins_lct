@@ -131,7 +131,7 @@ echo "NDETMAX for RS-DFT   :  "$ndetmax
 # value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
 if [[ -z $thresh ]]; then
  echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
- thresh="1.e-10"
+ thresh="1.e-6"
 fi
 echo "thresh of convergence:  "$thresh
 
@@ -151,9 +151,9 @@ qp  set  density_for_dft    density_for_dft         "WFT"
   
   file_int=basis_corr-${mu}-${functional}-0
   qp set mu_of_r io_mu_of_r Write
-  qp run write_eff_basis_ints | tee ${ezfio}/${file_int}
+  qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int}
   qp set mu_of_r io_mu_of_r Read
-  EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/${file_int} | cut -d "=" -f 2`
+  EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_int} | cut -d "=" -f 2`
 
 # save the RS-KS one-e density for the damping on the density 
 #  qp run save_one_e_dm 
@@ -166,39 +166,39 @@ qp  set  density_for_dft    density_for_dft         "WFT"
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
      file_fci=fci-${mu}-${functional}-$i
-     qp run fci  | tee ${ezfio}/${file_fci}
+     qp run fci  | tee ${ezfio}/work/${file_fci}
      EV=0
 
      file_conv=data_conv_${i}-${mu}-${functional}
-     echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}/${file_conv}
+     echo "#" iter evar old     evar new    deltae      threshold  >> ${ezfio}/work/${file_conv}
      for j in {1..100}
      do
         file_int=basis_corr-${mu}-${functional}-${i}-${j}
         # write the new effective Hamiltonian with the damped density (and the current density to be damped with the next density)
-        qp run write_eff_basis_ints | tee ${ezfio}/${file_int}
+        qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int}
         # value of the variational RS-DFT energy 
-        EV_new=`grep "TOTAL ENERGY        =" ${ezfio}/${file_int} | cut -d "=" -f 2`
+        EV_new=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_int} | cut -d "=" -f 2`
         # rediagonalize the new effective Hamiltonian to obtain a new wave function and a new density 
         file_diag=diag-${mu}-${functional}-${i}-${j}
-        qp run diagonalize_h  | tee ${ezfio}/${file_diag}
+        qp run diagonalize_h  | tee ${ezfio}/work/${file_diag}
         # checking the convergence
         DE=`echo "${EV_new} - ${EV}" | bc`
-        DEabs=`echo "print abs(${DE})" | python `
-        CONV=`echo "print ${DEabs} < ${thresh}" | python`
+        DEabs=`echo "print(abs(${DE}))" | python `
+        CONV=`echo "print(${DEabs})< ${thresh}" | python`
         file_conv=data_conv_${i}-${mu}-${functional}
-        echo $j $EV $EV_new $DE $thresh >> ${ezfio}/${file_conv}
+        echo $j $EV $EV_new $DE $thresh >> ${ezfio}/work/${file_conv}
         if [ "$CONV" = "True" ]; then
           break
         fi
         EV=$EV_new
       done
       file_conv_final=basis_corr-${mu}-${functional}-${i}-final
-      qp run  write_eff_basis_ints | tee ${ezfio}/${file_conv_final}
-      EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/${file_conv_final} | cut -d "=" -f 2`
+      qp run  write_eff_basis_ints | tee ${ezfio}/work/${file_conv_final}
+      EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_conv_final} | cut -d "=" -f 2`
       # checking the convergence
       DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
-      DEabs=`echo "print abs(${DE})" | python `
-      CONV=`echo "print ${DEabs} < ${thresh}" | python`
+      DEabs=`echo "print(abs(${DE}))" | python `
+      CONV=`echo "print(${DEabs}) < ${thresh}" | python`
       echo $i $EV_macro $EV_new_macro $DE $thresh >> ${file_final}
       if [ "$CONV" = "True" ]; then
         break
