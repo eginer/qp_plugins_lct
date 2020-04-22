@@ -42,7 +42,7 @@ BEGIN_PROVIDER[double precision, tot_eff_two_e, (mo_num,mo_num,mo_num,mo_num,N_s
  implicit none
  integer :: istate,ipoint,m,i,j,k,l
  double precision :: weight
- double precision :: decdrho2,get_two_e_integral
+ double precision :: decdrho2,get_two_e_integral,integral_regular
 
  tot_eff_two_e = 0.d0
  do istate = 1, N_states

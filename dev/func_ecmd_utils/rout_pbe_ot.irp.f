@@ -33,7 +33,11 @@
 ! calculation of energy
   c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0
    
-  beta = ecPBE/(c*rho2)
+  if(dabs(rho2).lt.1.d-10)then
+   beta = 1.d+10
+  else
+   beta = ecPBE/(c*rho2)
+  endif
   if(dabs(beta).lt.thr)then
    beta = 1.d-12
   endif
@@ -45,7 +49,11 @@
   !dec/dn
   decPBEdrho = 0.5d0 *(decPBEdrho_a + decPBEdrho_b)
 
-  dbetadrho = decPBEdrho/(c*rho2) ! - (ecPBE/(c*rho2**2))*dn2_UEGdrho
+  if(dabs(rho2).lt.1.d-10)then
+   dbetadrho = 1.d+10 ! - (ecPBE/(c*rho2**2))*dn2_UEGdrho
+  else
+   dbetadrho = decPBEdrho/(c*rho2) ! - (ecPBE/(c*rho2**2))*dn2_UEGdrho
+  endif
   ddenomdrho = dbetadrho*mu**3
 
   decdrho = decPBEdrho/denom - ecPBE*ddenomdrho/(denom**2)
@@ -55,7 +63,11 @@
   !dec/((dgradn)^2)
   decPBEdgrad_rho_2 = 0.25d0 *(decPBEdgrad_rho_a_2 + decPBEdgrad_rho_b_2 + decPBEdgrad_rho_a_b) 
  
-  dbetadgrad_rho_2 = decPBEdgrad_rho_2/(c*rho2)
+  if(dabs(rho2).lt.1.d-10)then
+   dbetadgrad_rho_2 = 1.d+10
+  else
+   dbetadgrad_rho_2 = decPBEdgrad_rho_2/(c*rho2)
+  endif
   ddenomdgrad_rho_2 = dbetadgrad_rho_2*mu**3
   
   decdgrad_rho_2 = decPBEdgrad_rho_2/denom - ecPBE*ddenomdgrad_rho_2/(denom**2)
@@ -65,11 +77,16 @@
 
   !dec/dn2
   
-  ddenomdrho2 = - (mu**3)* ecPBE/(c*rho2**2)
+  if(dabs(rho2).gt.1.d-10)then
+   ddenomdrho2 = - (mu**3)* ecPBE/(c*rho2**2)
+  else 
+   ddenomdrho2 = - (mu**3)* ecPBE * 1.d-10
+  endif
 
   decdrho2 = - ecPBE*ddenomdrho2/(denom**2)
   ! decdrho2_a = decdrho2
   ! decdrho2_b = decdrho2
 
-  end subroutine ecmdsrPBE
+  end subroutine ecmdsrPBEn2
+
 

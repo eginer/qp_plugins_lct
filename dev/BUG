@@ -1,0 +1,2 @@
+dans energy_sr_pbe_md/md_sr_pbe.irp.f
+la variable "dn2_uegdrho_a" semble etre non initialisée, c'est à dire sans valeur ?
