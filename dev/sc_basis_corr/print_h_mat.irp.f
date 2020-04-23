@@ -35,7 +35,7 @@ subroutine routine
  implicit none
   use bitmasks
  integer :: i,j
- double precision              :: h_one_e,h_eff_one_e,h_two_e,h_eff_two_e,hij
+ double precision              :: h_eff_one_e,h_eff_two_e
 
  double precision, allocatable :: h_dress_one(:,:),h_dress_two(:,:),h_tot(:,:)
  allocate(h_dress_one(N_det,N_det),h_dress_two(N_det,N_det),h_tot(N_det,N_det))
@@ -43,11 +43,7 @@ subroutine routine
  if(.True.)then
   do i = 1, N_det
    do j = 1, N_det
-    if(i==j)then
-     call get_eff_mat_diag(psi_det(1,1,i),h_one_e,h_eff_one_e,h_two_e,h_eff_two_e)
-    else 
-     call get_eff_mat_off_diag(psi_det(1,1,i),psi_det(1,1,j),hij,h_eff_one_e,h_eff_two_e)
-    endif
+    call i_eff_H_j(psi_det(1,1,i),psi_det(1,1,j),h_eff_one_e,h_eff_two_e)
     h_dress_one(i,j) = h_eff_one_e 
     h_dress_two(i,j) = h_eff_two_e
    enddo
@@ -91,115 +87,6 @@ subroutine routine
 
 end
 
-subroutine get_eff_mat_diag(det_i,h_one_e,h_eff_one_e,h_two_e,h_eff_two_e)
-  use bitmasks
-  integer(bit_kind), intent(in)  :: det_i(N_int,2)
-  double precision, intent(out)  :: h_one_e,h_eff_one_e,h_two_e,h_eff_two_e
-  integer                        :: n_occ_ab(2)
-  integer                        :: occ(N_int*bit_kind_size,2)
-  integer :: i,j,h1,h2,p1,p2
-  double precision :: eff_int_mat(mo_num,mo_num)
-  double precision               :: get_two_e_integral,integral,integral_bis,get_mo_two_e_int_mu_of_r
-  provide tot_eff_two_e
-  call bitstring_to_list_ab(det_i, occ, n_occ_ab, N_int)
-  h_eff_one_e = 0.d0
-  h_one_e     = 0.d0
-  h_two_e     = 0.d0
-  h_eff_two_e = 0.d0
-  ! alpha <-> alpha 
-  do i = 1, n_occ_ab(1)
-   h1 = occ(i,1)
-   h_one_e += mo_one_e_integrals(h1,h1)
-   h_eff_one_e += 0.5d0 * ( pot_basis_alpha_mo_su_pbe_ot(h1,h1,1) + pot_basis_beta_mo_su_pbe_ot(h1,h1,1) )
-   do j = i+1, n_occ_ab(1)
-    h2 = occ(j,1)
-    integral = get_two_e_integral(h1,h2,h1,h2,mo_integrals_map) - get_two_e_integral(h1,h2,h2,h1,mo_integrals_map)
-    h_two_e += integral 
-   enddo
-  enddo
-
-  ! beta  <-> beta  
-  do i = 1, n_occ_ab(2)
-   h1 = occ(i,2)
-   h_one_e += mo_one_e_integrals(h1,h1)
-   h_eff_one_e += 0.5d0 * ( pot_basis_alpha_mo_su_pbe_ot(h1,h1,1) + pot_basis_beta_mo_su_pbe_ot(h1,h1,1) )
-   do j = i+1, n_occ_ab(2)
-    h2 = occ(j,2)
-    integral = get_two_e_integral(h1,h2,h1,h2,mo_integrals_map) - get_two_e_integral(h1,h2,h2,h1,mo_integrals_map)
-    h_two_e += integral 
-   enddo
-  enddo
-
-  ! alpha <-> beta  
-  do i = 1, n_occ_ab(1)
-   h1 = occ(i,1)
-   do j = 1, n_occ_ab(2)
-    h2 = occ(j,2)
-    integral = get_two_e_integral(h1,h2,h1,h2,mo_integrals_map) 
-    h_two_e += integral 
-    integral = eff_two_e(h1,h2,h1,h2,1)
-!    integral_bis = get_mo_two_e_int_mu_of_r(h1,h2,h1,h2,mo_int_mu_of_r_map)
-!    call compute_all_ijkl_for_jl_mu_of_r_int(h1,h2,eff_int_mat)
-!    if(dabs(integral - integral_bis).gt.1.d-10)then
-!     print*,'ahahahahah',h1,h2
-!     print*,integral,integral_bis,eff_int_mat(h1,h2)
-!    endif
-    h_eff_two_e += integral
-   enddo
-  enddo
-
-end
-
-subroutine get_eff_mat_off_diag(det_i,det_j,h_mat,h_eff_one_e,h_eff_two_e)
-  use bitmasks
-  integer(bit_kind), intent(in)  :: det_i(N_int,2),det_j(N_int,2)
-  double precision, intent(out)  :: h_mat,h_eff_one_e,h_eff_two_e
-  integer                        :: n_occ_ab(2),exc(0:2,2,2)
-  integer                        :: occ(N_int*bit_kind_size,2)
-  integer :: i,j,h1,h2,p1,p2,degree,spin,other_spin(2)
-  double precision               :: get_two_e_integral,integral,integral_bis
-  double precision               :: hij,get_mo_two_e_int_mu_of_r,phase
-  other_spin(1) = 2
-  other_spin(2) = 1
-  h_eff_two_e = 0.d0
-  h_eff_one_e = 0.d0
-  call get_excitation_degree(det_i,det_j,degree,N_int)
-  call i_H_j(det_i,det_j,N_int,h_mat)
-  if(degree == 2)then
-   call get_double_excitation(det_i,det_j,exc,phase,N_int)
-   if (exc(0,1,1) == 1) then
-    ! Single alpha, single beta
-    h1 = exc(1,1,1)
-    h2 = exc(1,1,2)
-    p1 = exc(1,2,1)
-    p2 = exc(1,2,2) 
-    integral = eff_two_e(h1,h2,p1,p2,1)
-    h_eff_two_e = phase * integral
-   endif
-  else 
-   call get_single_excitation(det_i,det_j,exc,phase,N_int)
-   call bitstring_to_list_ab(det_i, occ, n_occ_ab, N_int)
-   if (exc(0,1,1) == 1) then
-    ! Single alpha
-    h1 = exc(1,1,1)
-    p1 = exc(1,2,1)
-    spin = 1
-   else
-    ! Single beta
-    h1 = exc(1,1,2)
-    p1 = exc(1,2,2)
-    spin = 2
-   endif
-   h_eff_one_e = 0.5d0 * phase * ( pot_basis_alpha_mo(h1,p1,1) + pot_basis_beta_mo(h1,p1,1) )
-   do i = 1, n_occ_ab(other_spin(spin))
-    h2 = occ(i,other_spin(spin))
-    p2 = h2
-    integral = eff_two_e(h1,h2,p1,p2,1)
-    h_eff_two_e += integral * phase
-   enddo
-  endif
-end
-
 subroutine write_stuff
  implicit none
  integer :: i,j,istate,nx,m
@@ -214,7 +101,8 @@ subroutine write_stuff
  xmax = 20.d0
  dx = xmax/dble(nx)
  r(:) = nucl_coord_transp(:,1) 
- r(3) -= xmax * 0.5d0
+ r(3) = 0.5d0 * (nucl_coord_transp(3,1) + nucl_coord_transp(3,2) ) 
+ r(3) += - xmax * 0.5d0
  write(33,'((A400))')'#       r(3)        rho_a+rho_b          rho2          ec_srmuPBE       decdrho2          mu_of_r            mos_array(1)     mos_array(2)'
  do i = 1, nx
   call give_all_mos_at_r(r,mos_array)
@@ -233,9 +121,9 @@ subroutine write_stuff
    rho2 = mu_correction_of_on_top(mu_of_r,rho2) ! extrapolation based on mu(r)
    call ecmdsrPBEn2(mu_of_r,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    d_dn2 = 2.d0 * decdrho2
-   if(mu_of_r.gt.1.d+5)then
-    mu_of_r = 0.d0
-   endif
+!   if(mu_of_r.gt.1.d+5)then
+!    mu_of_r = 0.d0
+!   endif
    write(33,'(100(F16.10,X))')r(3),rho_a+rho_b,rho2,ec_srmuPBE,d_dn2,mu_of_r,mos_array(1),mos_array(2), mos_array(3), mos_array(4)
   r(3) += dx
  enddo

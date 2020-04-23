@@ -18,9 +18,24 @@
   double precision              :: pi, c, thr
   double precision              :: rho, m  
  
-  pi = dacos(-1.d0)
+  ec_srmuPBE       = 0.d0 
+  decdrho_a        = 0.d0
+  decdrho_b        = 0.d0
+  decdrho          = 0.d0
+  decdgrad_rho_a_2 = 0.d0 
+  decdgrad_rho_b_2 = 0.d0
+  decdgrad_rho_a_b = 0.d0  
+  decdgrad_rho_2   = 0.d0
+  decdrho2         = 0.d0
   rho = rho_a + rho_b
+  if(rho.lt.1.d-10)then
+   return
+  else if(rho2/(rho**2) .lt. 1.d-6)then
+   return
+  endif
   m = rho_a - rho_b
+
+  pi = dacos(-1.d0)
   thr = 1.d-12
   mu = min(mu_in,1.d+10)
   
