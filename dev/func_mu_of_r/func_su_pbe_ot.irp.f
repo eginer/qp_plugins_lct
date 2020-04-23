@@ -1,11 +1,8 @@
-!-----------------------------------------------------------------Integrales------------------------------------------------------------------
-
  BEGIN_PROVIDER [logical, needs_eff_two_e_ints_su_pbe_ot]
  implicit none
  BEGIN_DOC
  ! needs_eff_two_e_ints_su_pbe_ot = True because the self consistent procedure for this functional requires to write effective two electron integrals
  END_DOC
-! print*,'needs_eff_two_e_ints_su_pbe_ot = ',needs_eff_two_e_ints_su_pbe_ot
  needs_eff_two_e_ints_su_pbe_ot = .True.
 
  END_PROVIDER
@@ -13,8 +10,15 @@
  BEGIN_PROVIDER[double precision, e_c_md_basis_su_pbe_ot, (N_states) ]
  implicit none
  BEGIN_DOC
- ! Bla bla bla
- ! 
+!
+! Ecmd functional evaluated with mu(r) and depending on 
+!    +) the EXTRAPOLATED on-top pair density 
+! 
+!    +) the total density, density gradients 
+!
+!    +) !!!!! NO SPIN POLAIRIZATION !!!!! 
+!
+!   See the provider of ecmd_pbe_on_top_su_mu_of_r for more details
  END_DOC 
 
  e_c_md_basis_su_pbe_ot = ecmd_pbe_on_top_su_mu_of_r
@@ -24,6 +28,14 @@ END_PROVIDER
  BEGIN_PROVIDER [double precision, pot_basis_alpha_mo_su_pbe_ot,(mo_num,mo_num,N_states)]
 &BEGIN_PROVIDER [double precision, pot_basis_beta_mo_su_pbe_ot,(mo_num,mo_num,N_states)]
    implicit none
+ BEGIN_DOC
+ ! Effective one electron potential (on the MO basis) coming from the functional derivative 
+ !
+ ! with respect to the total density of the SU-PBE-OT functional evaluated with mu(r). 
+ !
+ ! As the SU-PBE-OT is S_z independent, the alpha and beta potentials are equal
+ ! 
+ END_DOC 
  call ao_to_mo(pot_basis_alpha_ao_su_pbe_ot,ao_num,pot_basis_alpha_mo_su_pbe_ot,mo_num)
  call ao_to_mo(pot_basis_beta_ao_su_pbe_ot,ao_num,pot_basis_beta_mo_su_pbe_ot,mo_num)
 END_PROVIDER 
@@ -33,8 +45,11 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, pot_basis_beta_ao_su_pbe_ot,(ao_num,ao_num,N_states)]
    implicit none
  BEGIN_DOC
- ! blablabla bis 
+ ! Effective one electron potential (on the AO basis) coming from the functional derivative 
  !
+ ! with respect to the total density of the SU-PBE-OT functional evaluated with mu(r). 
+ !
+ ! As the SU-PBE-FULL-OT is S_z independent, the alpha and beta potentials are equal
  ! 
  END_DOC 
    integer :: i,j,istate
@@ -57,7 +72,13 @@ END_PROVIDER
 &BEGIN_PROVIDER[double precision, d_dn2_e_cmd_su_pbe_ot, (n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
-! intermediates to compute the pbe potentials 
+! Intermediates to compute the su-pbe-ot potentials 
+!
+! An important quantity is the "d_dn2_e_cmd_su_pbe_ot" which is the functional derivative with respect to the on-top 
+!
+! evaluated on a given grid point. 
+!
+! NOTICE THAT SUCH QUANTITY IS RETURNED WITH NORMALIZATION N(N-1) WHICH IS SUITED FOR DIRECT MODIFICATION OF V_ijkl
  END_DOC
  integer :: istate,ipoint,j,m
  double precision :: weight, r(3)
@@ -66,7 +87,7 @@ END_PROVIDER
  double precision :: contrib_grad_ca(3),contrib_grad_cb(3)
  double precision :: decdrho_a, decdrho_b, decdrho, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
- double precision :: mu_correction_of_on_top
+ double precision :: mu_correction_of_on_top,rho_tot
 
  aos_d_vc_alpha_su_pbe_ot_w = 0.d0
  aos_d_vc_beta_su_pbe_ot_w = 0.d0
@@ -76,8 +97,12 @@ END_PROVIDER
    r(2) = final_grid_points(2,ipoint)
    r(3) = final_grid_points(3,ipoint)
    weight = final_weight_at_r_vector(ipoint)
-   rho_a =  one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
-   rho_b =  one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+
+   rho_tot = one_e_dm_and_grad_alpha_in_r(4,ipoint,istate) + one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+   ! This ensures that the spin polarization is zero
+   rho_a =  rho_tot * 0.5d0 
+   rho_b =  rho_tot * 0.5d0 
+
    grad_rho_a(1:3) =  one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
    grad_rho_b(1:3) =  one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
    grad_rho_a_2 = 0.d0
@@ -96,12 +121,20 @@ END_PROVIDER
     ! You take the on-top of the CAS wave function computed separately
     rho2 = total_cas_on_top_density(ipoint,istate)
    endif
+
+   ! The factor 2 is because the on-top is normalized to N(N-1)/2 
+   ! whereas the routine ecmdsrPBEn2 assumes a on-top normalized to N(N-1)
    rho2 = 2.d0*rho2
-   ! mu_erf_dft -> mu_b
+   ! mu = mu(r)
    mu = mu_of_r_prov(ipoint,istate)
-   rho2 = mu_correction_of_on_top(mu,rho2) ! extrapolation based on mu(r)
+   ! extrapolation toward the exact on-top based on mu(r)
+   rho2 = mu_correction_of_on_top(mu,rho2) 
+
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
-   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0 * decdrho2
+
+   ! The factor 1 (and not 2) is because the output is with the correct normalization factor (i.e. N(N-1)) 
+   ! for the computation of the effective operator of type 1/2  \sum_{ijkl} <ij|kl> a^k a^l a_j a_i
+   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 1.d0 * decdrho2
    
    decdrho_a *= weight
    decdrho_b *= weight
@@ -130,11 +163,10 @@ END_PROVIDER
  BEGIN_PROVIDER [double precision, pot_scal_alpha_ao_su_pbe_ot, (ao_num,ao_num,N_states)]
 &BEGIN_PROVIDER [double precision, pot_scal_beta_ao_su_pbe_ot, (ao_num,ao_num,N_states)]
  implicit none
-! intermediates to compute the pbe potentials 
-! 
  integer                        :: istate
    BEGIN_DOC
-   ! intermediate quantity for the calculation of the vxc potentials for the GGA functionals  related to the scalar part of the potential 
+   ! Scalar part of the functional derivatives with respect to the density of the su-pbe-ot
+   !
    END_DOC
    pot_scal_alpha_ao_su_pbe_ot = 0.d0
    pot_scal_beta_ao_su_pbe_ot = 0.d0
@@ -162,7 +194,9 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, pot_grad_beta_ao_su_pbe_ot,(ao_num,ao_num,N_states)]
    implicit none
    BEGIN_DOC
-   ! intermediate quantity for the calculation of the vxc potentials for the GGA functionals  related to the gradienst of the density and orbitals 
+   ! Gradient part of the functional derivatives with respect to the density of the su-pbe-ot
+   !
+   END_DOC
    END_DOC
    integer                        :: istate
    double precision               :: wall_1,wall_2

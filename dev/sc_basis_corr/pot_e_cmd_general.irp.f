@@ -128,3 +128,16 @@ print("endif")
 
  END_PROVIDER
 
+
+ BEGIN_PROVIDER [double precision, int_d_dn2_e_cmd_basis, (N_states)]
+ implicit none
+ integer :: istate,ipoint
+ double precision :: weight
+ int_d_dn2_e_cmd_basis = 0.d0
+ do istate = 1, N_states
+  do ipoint = 1, n_points_final_grid
+   weight = final_weight_at_r_vector(ipoint)
+   int_d_dn2_e_cmd_basis(istate) += d_dn2_e_cmd_basis(ipoint,istate) * weight
+  enddo
+ enddo
+ END_PROVIDER 
