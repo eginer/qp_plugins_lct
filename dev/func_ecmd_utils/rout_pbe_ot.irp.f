@@ -5,6 +5,7 @@
   implicit none
   BEGIN_DOC
   ! Calculation of correlation energy and chemical potential in PBE approximation using multideterminantal wave function (short-range part) with exact on top pair density
+  ! The on-top pair density should be normalized to N(N-1)
   END_DOC
  
   double precision, intent(in)  :: mu_in

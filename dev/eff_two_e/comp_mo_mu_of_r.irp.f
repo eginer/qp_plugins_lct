@@ -29,7 +29,8 @@ subroutine comp_mo_int_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_value)
     i1 = ishft(k*k-k,-1)
     do i = 1, mo_num
       i1 += 1
-      integral = integrals_matrix(i,k)  + eff_int_mat(i,k) ! i,k : r1    j,l : r2
+      ! the 1/2 factor comes from different normalization of the on-top pair density
+      integral = integrals_matrix(i,k)  +  eff_int_mat(i,k) ! i,k : r1    j,l : r2
       if (dabs(integral) < thr) then
         cycle
       endif
