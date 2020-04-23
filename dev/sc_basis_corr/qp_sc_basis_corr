@@ -105,13 +105,13 @@ if [[ ! -d $ezfio ]]; then
 fi
 # define the exchange / correlation functionals to be used in RS-DFT calculation
 if [[ -z $functional ]]; then
- echo "you did not specify the \$functional parameter, it will be set to sr_pbe by default (run --help for explanations)"
+ echo "you did not specify the \$functional parameter, it will be set to su_pbe_ot by default (run --help for explanations)"
  functional="su_pbe_ot"
 fi
 echo "COMPLEMENTARY FUNCTIONAL for basis set correction:  "$functional
 # splitting of the interaction to be used in RS-DFT calculation 
 if [[ -z $mu ]]; then
- echo "you did not specify the \$mu parameter, it will be set to hf by default (run --help for explanations)"
+ echo "you did not specify the \$mu parameter, it will be set to cas_ful by default (run --help for explanations)"
  mu="cas_ful"
 fi
 echo "MU for basis set correction :  "$mu
