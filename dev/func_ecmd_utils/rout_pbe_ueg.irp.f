@@ -73,8 +73,10 @@
 
 ! calculation of derivatives
   !dex/dn
-  dn2_UEGdrho = 2.d0*rho*g0 + (rho**2)*dg0drho
-  dn2xc_UEGdrho = dn2_UEGdrho - 2.d0*rho
+  dn2_UEGdrho     = 2.d0*rho*g0 + (rho**2)*dg0drho
+  dn2_UEGdrho_a   = 2.d0*rho*g0 + (rho**2)*dg0drho
+  dn2_UEGdrho_b   = 2.d0*rho*g0 + (rho**2)*dg0drho
+  dn2xc_UEGdrho   = dn2_UEGdrho - 2.d0*rho
   dn2xc_UEGdrho_a = dn2xc_UEGdrho
   dn2xc_UEGdrho_b = dn2xc_UEGdrho
   
