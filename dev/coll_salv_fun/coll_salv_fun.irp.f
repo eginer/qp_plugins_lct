@@ -4,7 +4,6 @@ program coll_salv_fun
 ! TODO : Put the documentation of the program here
   END_DOC
   print *, 'Hello world'
-  call test_int
-!  call test_pol
+  call test_fit
 end
 

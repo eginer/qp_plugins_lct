@@ -1,3 +1,24 @@
+subroutine test_fit
+ implicit none
+ include 'utils/constants.include.F'
+ double precision :: xmax,dx,x,slater_fit,r(3),mos_array(mo_num)
+ integer :: i,nx
+ nx = 10000
+ xmax = 3.d0
+ dx = xmax/dble(nx)
+ x = 0.d0
+ r = 0.d0
+ do i = 1, nx
+  call give_all_mos_at_r(r,mos_array)
+  write(33,'(100(F16.10,X))')x,1.d0/sqpi * dexp(-x),dabs(mos_array(1))
+  x += dx
+  r(3) = x
+ enddo
+end
+
+
+
+
 
 subroutine test_int
  implicit none
