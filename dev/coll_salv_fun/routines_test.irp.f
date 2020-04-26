@@ -1,16 +1,26 @@
 subroutine test_fit
  implicit none
  include 'utils/constants.include.F'
- double precision :: xmax,dx,x,slater_fit,r(3),mos_array(mo_num)
+ double precision :: xmax,dx,x,slater_fit,r(3),mos_array(mo_num),slater_fit_ten_no,slater_ten_no
+ double precision :: g0,gam,slater_fit_gam,j_factor_slat,g1,g2
  integer :: i,nx
  nx = 10000
  xmax = 3.d0
  dx = xmax/dble(nx)
  x = 0.d0
  r = 0.d0
+ g0 = dexp(-0.5d0 * slater_fit_ten_no(0.d0))
+ g1 = 0.22446d0
+ g2 = -0.0809165d0
+ print*,'g0 = ',g0
+ print*,'g1 = ',g1
+ print*,'g2 = ',g2
+ gam = 1.d0/(1.d0 - g0)
+ gam = 1.2d0
  do i = 1, nx
   call give_all_mos_at_r(r,mos_array)
-  write(33,'(100(F16.10,X))')x,1.d0/sqpi * dexp(-x),dabs(mos_array(1))
+  write(33,'(100(F16.10,X))')x,dexp(-x), slater_fit(x), dexp(-gam*x), slater_fit_gam(x,gam)
+  write(34,'(100(F16.10,X))')x,dexp(-0.5d0 * slater_fit_ten_no(x)),j_factor_slat(x,g0,g1,g2), slater_ten_no(x,gam)
   x += dx
   r(3) = x
  enddo

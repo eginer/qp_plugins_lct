@@ -27,7 +27,8 @@ program print_mat
  ! integral of the effective potential 
  io_mo_int_mu_of_r = "None" 
  touch io_mo_int_mu_of_r
- call routine
+! call routine
+  call write_stuff
 
 end
 
@@ -95,13 +96,13 @@ subroutine write_stuff
  double precision :: ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2
  double precision :: mos_array(mo_num)
  double precision  :: aos_array(ao_num)
- double precision  :: grad_aos_array(ao_num,3)
+ double precision  :: grad_aos_array(ao_num,3), rho2_extrap
  istate = 1
  nx = 1000
  xmax = 20.d0
  dx = xmax/dble(nx)
  r(:) = nucl_coord_transp(:,1) 
- r(3) = 0.5d0 * (nucl_coord_transp(3,1) + nucl_coord_transp(3,2) ) 
+! r(3) = 0.5d0 * (nucl_coord_transp(3,1) + nucl_coord_transp(3,2) ) 
  r(3) += - xmax * 0.5d0
  write(33,'((A400))')'#       r(3)        rho_a+rho_b          rho2          ec_srmuPBE       decdrho2          mu_of_r            mos_array(1)     mos_array(2)'
  do i = 1, nx
@@ -118,13 +119,14 @@ subroutine write_stuff
    enddo
    
    rho2 = 2.d0*rho2
-   rho2 = mu_correction_of_on_top(mu_of_r,rho2) ! extrapolation based on mu(r)
+   rho2_extrap = mu_correction_of_on_top(mu_of_r,rho2) ! extrapolation based on mu(r)
    call ecmdsrPBEn2(mu_of_r,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    d_dn2 = 2.d0 * decdrho2
 !   if(mu_of_r.gt.1.d+5)then
 !    mu_of_r = 0.d0
 !   endif
-   write(33,'(100(F16.10,X))')r(3),rho_a+rho_b,rho2,ec_srmuPBE,d_dn2,mu_of_r,mos_array(1),mos_array(2), mos_array(3), mos_array(4)
+!   write(33,'(100(F16.10,X))')r(3),rho_a+rho_b,rho2,rho2_extrap,ec_srmuPBE,d_dn2,mu_of_r,mos_array(1),mos_array(2), mos_array(3), mos_array(4)
+   write(33,'(100(F16.10,X))')r(3),rho_a+rho_b,rho2,rho2_extrap,rho2_extrap/rho2
   r(3) += dx
  enddo
 end
