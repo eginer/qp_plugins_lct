@@ -7,7 +7,7 @@
   double precision, intent(in)  :: mu
   double precision, intent(in)  :: rho_a, rho_b, grad_rho_a_2, grad_rho_b_2, grad_rho_a_b
   double precision, intent(out) :: ex_srmuPBE, dexdrho_a, dexdrho_b, dexdgrad_rho_a_2, dexdgrad_rho_b_2, dexdgrad_rho_a_b
-  ! double precision              :: dexdrho, dexdgrad_rho_2
+ ! double precision              :: dexdrho, dexdgrad_rho_2
   double precision              :: exPBE, dexPBEdrho_a, dexPBEdrho_b, dexPBEdrho, dexPBEdgrad_rho_a_2, dexPBEdgrad_rho_b_2, dexPBEdgrad_rho_a_b, dexPBEdgrad_rho_2
   double precision              :: gamma, dgammadrho_a, dgammadrho_b, dgammadgrad_rho_a_2, dgammadgrad_rho_b_2, dgammadgrad_rho_a_b
   double precision              :: delta, ddeltadrho_a, ddeltadrho_b, ddeltadgrad_rho_a_2, ddeltadgrad_rho_b_2, ddeltadgrad_rho_a_b
