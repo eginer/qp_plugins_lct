@@ -30,6 +30,7 @@ subroutine write_all_integrals_for_mrdft
  !
  ! one-body effective potential and two-elec erf integrals
  END_DOC
+ PROVIDE mo_two_e_integrals_erf_in_map mo_two_e_integrals_in_map
  call save_one_e_effective_potential
  call save_erf_two_e_ints_mo_into_ints_mo
  call save_erf_two_e_ints_ao_into_ints_ao
