@@ -1,5 +1,6 @@
 double precision function gama_f12_mu_based(mu)
  implicit none
+ double precision, intent(in) :: mu
  BEGIN_DOC
 ! you enter with a mu, and it returns the gama exponent of the F12 jastrow of the form 
 !

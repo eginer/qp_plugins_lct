@@ -1,7 +1,7 @@
 subroutine test_fit
  implicit none
  include 'utils/constants.include.F'
- double precision :: xmax,dx,x,slater_fit,r(3),mos_array(mo_num),slater_fit_ten_no,slater_ten_no
+ double precision :: xmax,dx,x,r(3),mos_array(mo_num),slater_fit_ten_no,slater_ten_no
  double precision :: g0,gam,slater_fit_gam,j_factor_slat,g1,g2
  integer :: i,nx
  nx = 10000
@@ -19,7 +19,7 @@ subroutine test_fit
  gam = 1.2d0
  do i = 1, nx
   call give_all_mos_at_r(r,mos_array)
-  write(33,'(100(F16.10,X))')x,dexp(-x), slater_fit(x), dexp(-gam*x), slater_fit_gam(x,gam)
+  write(33,'(100(F16.10,X))')x,dexp(-x), slater_fit_gam(x,1.d0), dexp(-gam*x), slater_fit_gam(x,gam)
   write(34,'(100(F16.10,X))')x,dexp(-0.5d0 * slater_fit_ten_no(x)),j_factor_slat(x,g0,g1,g2), slater_ten_no(x,gam)
   x += dx
   r(3) = x
@@ -37,12 +37,14 @@ subroutine test_int
  END_DOC
  include 'utils/constants.include.F'
  double precision :: A_center(3), B_center(3), C_center(3), D_center(3), r(3)
- double precision :: alpha,beta,delta,mu,NAI_pol_mult_erf_gauss_r12
- double precision :: numerical, analytical, weight,primitive_value_explicit
- double precision :: gauss_a, gauss_b, gauss_d, coulomb, r_ij
+ double precision :: alpha,beta,delta,mu,NAI_pol_mult_erf_gauss_r12,overlap_gauss_r12
+ double precision :: numerical,  analytical, weight,primitive_value_explicit
+ double precision :: numerical_j,analytical_j,r_ij_bis
+ double precision :: gauss_a, gauss_b, gauss_d, coulomb, r_ij,jastrow
  integer          :: power_A(3), power_B(3), power_D(3)
  integer          :: ipoint,ao_i,ao_j,num_A,num_B,i,j,k,l
  double precision :: abs_error_av, relat_error_av,icount
+ double precision :: abs_error_j_av, relat_error_j_av
  ! C    :: center of the Coulomb 
  mu = 1.d0
  C_center = 0.d0
@@ -60,6 +62,8 @@ subroutine test_int
 
  abs_error_av   = 0.d0
  relat_error_av = 0.d0
+ abs_error_j_av   = 0.d0
+ relat_error_j_av = 0.d0
  icount = 0.d0
  do i = 1, ao_num
   do j = 1, ao_num
@@ -82,26 +86,32 @@ subroutine test_int
    
        ! analytical integral 
        analytical = NAI_pol_mult_erf_gauss_r12(D_center,delta,A_center,B_center,power_A,power_B,alpha,beta,C_center,mu)
+       analytical_j = overlap_gauss_r12(D_center,delta,A_center,B_center,power_A,power_B,alpha,beta)
        ! numerical  integral 
-       numerical = 0.d0
+       numerical   = 0.d0
+       numerical_j = 0.d0
        icount += 1.d0
        do ipoint = 1, n_points_final_grid
         r(1) = final_grid_points(1,ipoint)
         r(2) = final_grid_points(2,ipoint)
         r(3) = final_grid_points(3,ipoint)
         r_ij = dsqrt( (C_center(1) - r(1))**2 + (C_center(2) - r(2))**2 + (C_center(3) - r(3))**2 )
+        r_ij_bis = dsqrt( (D_center(1) - r(1))**2 + (D_center(2) - r(2))**2 + (D_center(3) - r(3))**2 )
         weight = final_weight_at_r_vector(ipoint)
         if(dabs(r_ij).lt.1.d-6)then
          coulomb = 2.d0 * mu / sqpi - 2.d0 * mu**3 * r_ij**2 / (3.d0 *sqpi) 
         else
          coulomb = derf(mu * r_ij)/r_ij
         endif
+        jastrow = dexp(-delta * r_ij_bis * r_ij_bis)
         gauss_a = primitive_value_explicit(power_A,A_center,alpha,r)
         gauss_b = primitive_value_explicit(power_B,B_center,beta ,r)
         gauss_d = primitive_value_explicit(power_D,D_center,delta,r)
         numerical += weight * gauss_d * gauss_a * gauss_b * coulomb
+        numerical_j+= weight * gauss_a * gauss_b * jastrow
        enddo
        abs_error_av += dabs(analytical - numerical)
+       abs_error_j_av += dabs(analytical_j - numerical_j)
 !!!!    print*,'numerical  = ',numerical
 !!!!    print*,'analytical = ',analytical
        if(dabs(numerical).gt.1.d-10)then
@@ -116,14 +126,32 @@ subroutine test_int
          print*,'error      = ',dabs(analytical - numerical),dabs(analytical - numerical)/dabs(numerical)
         endif
        endif 
+
+       if(dabs(numerical_j).gt.1.d-10)then
+        relat_error_j_av += dabs(analytical_j - numerical_j)/dabs(numerical_j)
+        if(dabs(analytical_j - numerical_j)/dabs(numerical_j) .gt. 1.d-6 )then
+         print*,'i,j',i,j
+         print*,'l,k',l,k
+         print*,'power_A = ',power_A
+         print*,'power_B = ',power_B
+         print*,'alpha, beta', alpha, beta
+         print*,'numerical_j, analytical_j ',numerical_j,analytical_j
+         print*,'error      = ',dabs(analytical_j - numerical_j),dabs(analytical_j - numerical_j)/dabs(numerical_j)
+         stop
+        endif
+       endif 
      enddo  ! k
     enddo ! l
   enddo ! j 
  enddo ! i
  abs_error_av   = abs_error_av/icount
  relat_error_av = relat_error_av /icount
- print*,'abs_error_av   = ',abs_error_av
- print*,'relat_error_av = ',relat_error_av
+ print*,'abs_error_av     = ',abs_error_av
+ print*,'relat_error_av   = ',relat_error_av
+ abs_error_j_av   = abs_error_j_av/icount
+ relat_error_j_av = relat_error_j_av /icount
+ print*,'abs_error_j_av   = ',abs_error_j_av
+ print*,'relat_error_j_av = ',relat_error_j_av
 
 end
 
