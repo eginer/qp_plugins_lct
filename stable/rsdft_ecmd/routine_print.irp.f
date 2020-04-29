@@ -3,7 +3,7 @@
  BEGIN_DOC
 ! routines that prints the variational energy with the ECMD correction
  END_DOC
- provide psi_energy ecmd_pbe_on_top_at_mu ecmd_pbe_ueg_prov ecmd_pbe_ueg_prov 
+ provide psi_energy ecmd_pbe_on_top_at_mu ecmd_pbe_ueg_prov 
  print*,'/////////////////////////'
   print*,  '****************************************'
   print*,'///////////////////'
@@ -18,14 +18,9 @@
   write(*, '(A22,X,F16.10)') '<Psi| H | Psi>           = ',psi_energy + nuclear_repulsion
   print*,'Correlation part '
   print*,'On-top functional '
-  write(*, '(A22,X,F16.10)') 'ecmd_pbe_on_top_at_mu    = ',ecmd_pbe_on_top_at_mu
+  write(*, '(A22,X,F16.10)') 'Ecmd PBE-OT              = ',ecmd_pbe_on_top_at_mu
   print*,'On-top-UEG functional '
   write(*, '(A22,X,F16.10)') 'Ecmd PBE-UEG             = ',ecmd_pbe_ueg_prov
-  write(*, '(A22,X,F16.10)') 'energy_c_md_sr_pbe       = ',energy_c_md_sr_pbe
-  print*,  '****************************************'
-  print*,'Exchange    part '
-  write(*, '(A22,X,F16.10)') ' Exact EXmd energy       = ',psi_energy_wee_sr - short_range_Hartree
-  write(*, '(A22,X,F16.10)') 'energy_x_md_sr_pbe       = ',energy_x_md_sr_pbe
   print*,  '****************************************'
   write(*, '(A22,X,F16.10)') ' psi_energy_erf          = ',psi_energy_erf 
   print*,''

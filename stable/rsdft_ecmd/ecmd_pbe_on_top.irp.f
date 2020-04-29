@@ -35,7 +35,6 @@
    on_top = total_cas_on_top_density(ipoint,istate)
 !  Multiplied by 2 because of difference of normalizations between the on_top of QP2 and that of JCP, 150, 084103 1-10 (2019)
    on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
-
    call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top_extrap,eps_c_md_on_top_PBE)
  
    ecmd_pbe_on_top_at_mu(istate) += eps_c_md_on_top_PBE * weight
