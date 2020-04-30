@@ -75,12 +75,6 @@
 
    call exmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2,grad_rho_a_b,on_top_extrap,ex_srmuPBE,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
    int_exmdsrpbe_n2_extrapolated += ex_srmuPBE*weight
-   print*,'on-top =', on_top
-   print*,'on-top extrap =', on_top_extrap
-   print*,'mu=',mu
-   print*,'rho_a =',rho_a
-   print*,'rho =', rho
-   print*,
   enddo
  enddo
  END_PROVIDER
