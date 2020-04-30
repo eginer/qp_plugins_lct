@@ -31,6 +31,59 @@
   print*,  'psi_energy_h_core - psi_dft_energy_h_core  = ',psi_energy_h_core - psi_dft_energy_h_core
  end
 
+ BEGIN_PROVIDER [double precision, int_exmdsrpbe_n2_exact,(N_states)]
+&BEGIN_PROVIDER [double precision, int_exmdsrpbe_n2_extrapolated, (N_states)]
+ implicit none
+ BEGIN_DOC
+ ! Integrate the exmd_sr_pbe using the exact on-top and the extrapolated one
+ ! As I don't know yet where to put this providers, I just let it there. Ask Emmanuel where it should go.
+ END_DOC
+  integer          :: m, istate, ipoint
+  double precision :: weight
+  double precision :: mu, mu_correction_of_on_top, on_top, on_top_extrap
+  double precision :: rho_a, rho_b, grad_rho_a(3),grad_rho_b(3),grad_rho_2, grad_rho_a_2, grad_rho_b_2, grad_rho_a_b
+  double precision :: ex_srmuPBE, dexdrho_a, dexdrho_b, dexdrho, dexdgrad_rho_a_2, dexdgrad_rho_b_2, dexdgrad_rho_a_b, dexdgrad_rho_2, dexdrho2
+  
+  mu = mu_erf_dft  
+  int_exmdsrpbe_n2_exact        = 0.d0
+  int_exmdsrpbe_n2_extrapolated = 0.d0
+  
+  do istate = 1, N_states
+  do ipoint = 1, n_points_final_grid
+   weight = final_weight_at_r_vector(ipoint)
+
+   rho_a = one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
+   rho_b = one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+   grad_rho_a(1:3) = one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
+   grad_rho_b(1:3) = one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
+   grad_rho_a_2 = 0.d0
+   grad_rho_b_2 = 0.d0
+   grad_rho_a_b = 0.d0
+   do m = 1, 3
+    grad_rho_a_2 += grad_rho_a(m) * grad_rho_a(m)
+    grad_rho_b_2 += grad_rho_b(m) * grad_rho_b(m)
+    grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
+   enddo
+
+   on_top = on_top_cas_mu_r(ipoint,istate) ! we use mu = cas_ful
+!  We take the extrapolated on-top pair density (Eq. 29)
+!  Multiplied by 2 because of difference of normalizations between the on_top of QP2 and that of JCP, 150, 084103 1-10 (2019)
+   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
+   
+     call exmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2,grad_rho_a_b,on_top,ex_srmuPBE,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
+   int_exmdsrpbe_n2_exact += ex_srmuPBE*weight
+
+   call exmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2,grad_rho_a_b,on_top_extrap,ex_srmuPBE,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
+   int_exmdsrpbe_n2_extrapolated += ex_srmuPBE*weight
+   print*,'on-top =', on_top
+   print*,'on-top extrap =', on_top_extrap
+   print*,'mu=',mu
+   print*,'rho_a =',rho_a
+   print*,'rho =', rho
+   print*,
+  enddo
+ enddo
+ END_PROVIDER
 
  subroutine print_many_energy_component
  implicit none
@@ -61,6 +114,8 @@
   print*,'Correlation part '
   print*,'On-top functional '
   write(*, '(A22,X,F16.10)') 'ecmd_pbe_on_top_at_mu    = ',ecmd_pbe_on_top_at_mu
+  write(*, '(A22,X,F16.10)') 'exmdsr_pbe_on_top_exact  = ',int_exmdsrpbe_n2_exact
+  write(*, '(A22,X,F16.10)') 'exmdsr_pbe_on_top_extra  = ',int_exmdsrpbe_n2_extrapolated
   print*,'On-top-UEG functional '
   write(*, '(A22,X,F16.10)') 'Ecmd PBE-UEG             = ',ecmd_pbe_ueg_prov
   write(*, '(A22,X,F16.10)') 'energy_c_md_sr_pbe       = ',energy_c_md_sr_pbe

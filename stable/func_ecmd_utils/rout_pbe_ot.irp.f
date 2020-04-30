@@ -116,3 +116,136 @@
   end subroutine ecmdsrPBEn2
 
 
+  subroutine exmdsrPBEn2(mu_in,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2,grad_rho_a_b,rho2,ex_srmuPBE,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
+
+  implicit none
+  BEGIN_DOC
+  ! Calculation of exchange energy and chemical potential in PBE approximation using multideterminantal wave function (short-range part) with exact on top pair density
+  ! The on-top pair density should be normalized to N(N-1)
+  END_DOC
+ 
+  double precision, intent(in)  :: mu_in
+  double precision, intent(in)  :: rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, rho2
+  double precision, intent(out) :: ex_srmuPBE,dexdrho_a,dexdrho_b,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2, dexdrho, dexdrho2!, dexdrho2_a, dexdrho2_b
+  double precision              :: mu
+  double precision              :: exPBE,dexPBEdrho_a,dexPBEdrho_b,dexPBEdrho, dexPBEdgrad_rho_a_2,dexPBEdgrad_rho_b_2,dexPBEdgrad_rho_a_b,dexPBEdgrad_rho_2
+  double precision              :: denom, ddenomdrho, ddenomdgrad_rho_2, ddenomdrho2
+  double precision              :: delta, ddeltadrho, ddeltadgrad_rho_2, ddeltadrho2
+  double precision              :: gamma, dgammadrho, dgammadgrad_rho_2, dgammadrho2
+  double precision              :: grad_rho_2
+  double precision              :: pi, a, b, thr
+  double precision              :: rho, m  
+  double precision              :: dn2xc_UEGdrho, dn2xc_UEGdrho2, n2xc_UEG 
+  ex_srmuPBE       = 0.d0 
+  dexdrho_a        = 0.d0
+  dexdrho_b        = 0.d0
+  dexdrho          = 0.d0
+  dexdgrad_rho_a_2 = 0.d0 
+  dexdgrad_rho_b_2 = 0.d0
+  dexdgrad_rho_a_b = 0.d0  
+  dexdgrad_rho_2   = 0.d0
+  dexdrho2         = 0.d0
+  rho = rho_a + rho_b
+  if(rho.lt.1.d-10)then
+   return
+  else if(rho2/(rho**2) .lt. 1.d-6)then
+   return
+  endif
+  m = rho_a - rho_b
+
+  pi = dacos(-1.d0)
+  thr = 1.d-12
+  mu = min(mu_in,1.d+10)
+  
+! exchange PBE standard and on-top pair distribution 
+  call ex_pbe_sr(1.d-12,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,exPBE,dexPBEdrho_a,dexPBEdrho_b,dexPBEdgrad_rho_a_2,dexPBEdgrad_rho_b_2,dexPBEdgrad_rho_a_b)
+
+! calculation of energy
+  a = pi / 2.d0
+  b = 2*dsqrt(pi)*(2*dsqrt(2.d0) - 1.d0)/3.d0   
+   
+  n2xc_UEG = rho2 - rho**2
+  if(dabs(n2xc_UEG).lt.thr)then
+   n2xc_UEG = 1.d-12
+  endif
+
+  gamma = exPBE / (a*n2xc_UEG)
+  if(dabs(gamma).lt.thr)then
+   gamma = 1.d-12
+  endif
+
+  delta = -(b*rho2*gamma**2) / exPBE
+  if(dabs(delta).lt.thr)then
+   delta = 1.d-12
+  endif
+
+  denom = 1.d0 + delta*mu + gamma*(mu**2)
+  ex_srmuPBE=exPBE/denom
+  if(isnan(ex_srmuPBE))then
+   print*,'stop !!! isnan(ex_srmuPBE)'
+   print*,exPBE,denom
+   print*,gamma,delta,mu
+   print*,rho_a,rho_b 
+   print*,grad_rho_2,grad_rho_a_2,grad_rho_a_b
+   stop
+  endif
+
+! calculation of derivatives 
+  !dec/dn
+  dexPBEdrho = 0.5d0 *(dexPBEdrho_a + dexPBEdrho_b)
+
+  dn2xc_UEGdrho = -2.d0*rho
+  
+  if(dabs(rho2).lt.1.d-10)then
+  dgammadrho = - dexPBEdrho/(a*rho**2) - (exPBE*dn2xc_UEGdrho)/(a*rho**4)
+  else
+  dgammadrho = dexPBEdrho/(a*n2xc_UEG) - (exPBE*dn2xc_UEGdrho)/(a*n2xc_UEG**2)
+  endif
+
+  ddeltadrho = (b*rho2*gamma**2)*dexPBEdrho/(exPBE**2) - (b*rho2/exPBE)*2.d0*gamma*dgammadrho
+
+  denom      = 1.d0 + delta*mu + gamma*(mu**2)
+  ddenomdrho = ddeltadrho*mu + dgammadrho*mu
+
+  dexdrho    = dexPBEdrho/denom - exPBE*ddenomdrho/(denom**2)
+  dexdrho_a  = dexdrho
+  dexdrho_b  = dexdrho
+
+  !dec/((dgradn)^2)
+  dexPBEdgrad_rho_2 = 0.25d0 *(dexPBEdgrad_rho_a_2 + dexPBEdgrad_rho_b_2 + dexPBEdgrad_rho_a_b) 
+ 
+  if(dabs(rho2).lt.1.d-10)then
+  dgammadgrad_rho_2  = - dexPBEdgrad_rho_2/(a*rho**2)
+  else
+  dgammadgrad_rho_2  = dexPBEdgrad_rho_2/(a*n2xc_UEG)
+  endif
+
+  ddeltadgrad_rho_2 = (b*rho*gamma**2)*dexPBEdgrad_rho_2/(exPBE**2) -(b*rho2*2.d0*gamma*dgammadgrad_rho_2)/exPBE
+
+  ddenomdgrad_rho_2  = ddeltadgrad_rho_2*mu + dgammadgrad_rho_2*mu**2
+  
+  dexdgrad_rho_2     = dexPBEdgrad_rho_2/denom - exPBE*ddenomdgrad_rho_2/(denom**2)
+  dexdgrad_rho_a_2   = dexdgrad_rho_2 ! + decdgrad_n_m + decdgrad_m_2
+  dexdgrad_rho_b_2   = dexdgrad_rho_2 ! - decdgrad_n_m + decdgrad_m_2
+  dexdgrad_rho_a_b   = 2.d0*dexdgrad_rho_2 ! - 2.d0*decdgrad_m_2 
+
+  !dec/dn2
+ 
+  dn2xc_UEGdrho2 = 1.d0
+  if(dabs(rho2).gt.1.d-10)then
+   dgammadrho2    = - exPBE*dn2xc_UEGdrho2/(a*(-rho**2)**2)
+  else 
+   dgammadrho2    = - exPBE*dn2xc_UEGdrho2/(a*n2xc_UEG**2)
+  endif
+
+  ddeltadrho2    = -(b*gamma**2)/exPBE -(b*rho2*2.d0*gamma*dgammadrho2)/exPBE
+  
+  ddenomdrho2 = ddeltadrho2*mu + dgammadrho2*mu**2
+
+  dexdrho2 = - exPBE*ddenomdrho2/(denom**2)
+  ! dexdrho2_a = dexdrho2
+  ! dexdrho2_b = dexdrho2
+ 
+  end subroutine exmdsrPBEn2
+
+
