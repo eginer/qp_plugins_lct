@@ -47,8 +47,6 @@ double precision function NAI_pol_mult_erf_gauss_r12(D_center,delta,A_center,B_c
     coefxyz = coefxy * coefz 
     if(dabs(coefxyz).lt.thr)cycle
     iorder_tmp(3) = lz
-!    print*,lx,ly,lz
-!    print*,coefx,coefy,coefz
     accu += coefxyz * NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B,alpha_new,beta,C_center,n_pt_max_integrals,mu)
    enddo
   enddo
@@ -112,7 +110,5 @@ double precision function overlap_gauss_r12(D_center,delta,A_center,B_center,pow
   enddo
  enddo
  overlap_gauss_r12 = fact_a_new * accu 
- 
-
 end
 

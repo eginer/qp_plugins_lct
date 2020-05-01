@@ -40,6 +40,7 @@
  expo_fit_slat_gauss(7)  =    .07989100d0 
  expo_fit_slat_gauss(8)  =    .02796200d0 
 
+
 END_PROVIDER 
 
 double precision function slater_fit_gam(x,gam)
