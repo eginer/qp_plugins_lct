@@ -9,7 +9,22 @@ double precision function exp_dl(x,n)
  enddo
 end
 
-subroutine exp_dl_ovlp_stg_phi_ij(D_center,gam,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints,integral_taylor)
+subroutine exp_dl_rout(x,n, array)
+ implicit none
+ double precision, intent(in) :: x
+ integer         , intent(in) :: n
+ double precision, intent(out)::  array(0:n)
+ integer :: i
+ double precision :: accu
+ accu = 1.d0
+ array(0) = 1.d0
+ do i = 1, n
+  accu += fact_inv(i) * x**dble(i)
+  array(i) = accu
+ enddo
+end
+
+subroutine exp_dl_ovlp_stg_phi_ij(zeta,D_center,gam,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints,integral_taylor)
   BEGIN_DOC
   ! Computes the following integrals : 
   !
@@ -22,6 +37,7 @@ subroutine exp_dl_ovlp_stg_phi_ij(D_center,gam,delta,A_center,B_center,power_A,p
   END_DOC
 
  implicit none
+ double precision, intent(in)    :: zeta             ! prefactor of the argument of the exp(-zeta*x)
  integer, intent(in)             :: n_taylor         ! order of the Taylor expansion of the exponential
  double precision, intent(in)    :: D_center(3), gam ! pure Slater "D" in r-r_D
  double precision, intent(in)    :: delta            ! gaussian        in r-r_D
@@ -40,12 +56,12 @@ subroutine exp_dl_ovlp_stg_phi_ij(D_center,gam,delta,A_center,B_center,power_A,p
   delta_exp = dble(i) * delta
   gam_exp   = dble(i) * gam
   array_ints(i) = ovlp_stg_gauss_int_phi_ij(D_center,gam_exp,delta_exp,A_center,B_center,power_A,power_B,alpha,beta)
-  integral_taylor += (-1.d0)**dble(i) * fact_inv(i) * array_ints(i)
+  integral_taylor += (-zeta)**dble(i) * fact_inv(i) * array_ints(i)
  enddo
 
 end
 
-subroutine exp_dl_erf_stg_phi_ij(D_center,gam,delta,A_center,B_center,power_A,power_B,alpha,beta,C_center,mu,n_taylor,array_ints,integral_taylor)
+subroutine exp_dl_erf_stg_phi_ij(zeta,D_center,gam,delta,A_center,B_center,power_A,power_B,alpha,beta,C_center,mu,n_taylor,array_ints,integral_taylor)
   BEGIN_DOC
   ! Computes the following integrals : 
   !
@@ -60,6 +76,7 @@ subroutine exp_dl_erf_stg_phi_ij(D_center,gam,delta,A_center,B_center,power_A,po
 
  implicit none
  integer, intent(in)             :: n_taylor         ! order of the Taylor expansion of the exponential
+ double precision, intent(in)    :: zeta             ! prefactor of the argument of the exp(-zeta*x)
  double precision, intent(in)    :: D_center(3), gam ! pure Slater "D" in r-r_D
  double precision, intent(in)    :: delta            ! gaussian        in r-r_D
  double precision, intent(in)    :: C_center(3),mu      ! coulomb center "C" and "mu" in the erf(mu*x)/x function
@@ -77,7 +94,7 @@ subroutine exp_dl_erf_stg_phi_ij(D_center,gam,delta,A_center,B_center,power_A,po
   delta_exp = dble(i) * delta
   gam_exp   = dble(i) * gam
   array_ints(i) = erf_mu_stg_gauss_int_phi_ij(D_center,gam_exp,delta_exp,A_center,B_center,power_A,power_B,alpha,beta,C_center,mu)
-  integral_taylor += (-1.d0)**dble(i) * fact_inv(i) * array_ints(i)
+  integral_taylor += (-zeta)**dble(i) * fact_inv(i) * array_ints(i)
  enddo
 
 end

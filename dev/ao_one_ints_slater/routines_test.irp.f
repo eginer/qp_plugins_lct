@@ -313,12 +313,13 @@ subroutine test_int_full_j
  integer          :: ipoint,ao_i,ao_j,num_A,num_B,i,j,k,l
  double precision :: abs_error_av, relat_error_av,icount
  double precision :: abs_error_c_av, relat_error_c_av,slater_fit_gam
- double precision :: full_jastrow,exp_dl
+ double precision :: full_jastrow,exp_dl,zeta
  integer :: n_taylor
  n_taylor = 10
  double precision, allocatable :: array_ints_overlap(:),array_ints_erf(:)
  allocate(array_ints_overlap(0:n_taylor),array_ints_erf(0:n_taylor))
  ! C    :: center of the Coulomb 
+ zeta = 1.d0
  mu = 1.d0
 ! C_center(:) = nucl_coord_transp(:,1)
  C_center = 0.d0
@@ -355,8 +356,8 @@ subroutine test_int_full_j
       beta = ao_expo_ordered_transp(k,j)     
    
        ! analytical integral 
-       call exp_dl_ovlp_stg_phi_ij(D_center,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints_overlap,analytical)
-       call exp_dl_erf_stg_phi_ij( D_center,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,C_center,mu,n_taylor,array_ints_erf,analytical_c)
+       call exp_dl_ovlp_stg_phi_ij(zeta,D_center,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints_overlap,analytical)
+       call exp_dl_erf_stg_phi_ij(zeta, D_center,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,C_center,mu,n_taylor,array_ints_erf,analytical_c)
 
        ! numerical  integral 
        numerical   = 0.d0
