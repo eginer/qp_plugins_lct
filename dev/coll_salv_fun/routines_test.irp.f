@@ -19,7 +19,8 @@ subroutine test_int_f_special
  double precision :: abs_error_c_av, relat_error_c_av,slater_fit_gam
  double precision :: exp_dl,f_tilde_fit,full_jastrow,f_mu,full_jastrow_mu,tilde_f_mu
  double precision :: numerical_fit,shank_general,jastrow_fit,full_jastrow_fit
- double precision :: de_abs,de_relat,erf_exp_f_phi_ij
+ double precision :: de_abs,de_relat,erf_exp_f_phi_ij,ao_ints(ao_num,ao_num),aos_array(ao_num),ao_erf_ints(ao_num,ao_num)
+ double precision :: mo_ints(mo_num,mo_num),mos_array(mo_num),mo_erf_ints(mo_num,mo_num)
  double precision, allocatable :: array(:)
  integer :: n_taylor
  double precision :: a0
@@ -31,28 +32,37 @@ subroutine test_int_f_special
  r1 = 0.1d0
 ! r1(1) = 0.1d0
 
+
  abs_error_av   = 0.d0
  relat_error_av = 0.d0
  abs_error_c_av   = 0.d0
  relat_error_c_av = 0.d0
  icount = 0.d0
- do i = 1, ao_num
-  do j = 1, ao_num
+! call give_jastrow2_ovlp_ints_ao(mu,r1,n_taylor,ao_ints)
+! call give_jastrow2_erf_ints_ao(mu,r1,n_taylor,ao_erf_ints)
+ call give_jastrow2_ovlp_ints_mo(mu,r1,n_taylor,mo_ints)
+ call give_jastrow2_erf_ints_mo(mu,r1,n_taylor,mo_erf_ints)
+ do i = 1, mo_num
+  do j = 1, mo_num
    print*,'i,j,mu',i,j,mu
-    num_A = ao_nucl(i)
-    power_A(1:3)= ao_power(i,1:3)
-    A_center(1:3) = nucl_coord(num_A,1:3)
-   
-    num_B = ao_nucl(j)
-    power_B(1:3)= ao_power(j,1:3)
-    B_center(1:3) = nucl_coord(num_B,1:3)
-    do k = 1, ao_prim_num(i)
-     alpha = ao_expo_ordered_transp(k,i)     
-     do l = 1, ao_prim_num(j)
-      beta = ao_expo_ordered_transp(l,j)     
+!    num_A = ao_nucl(i)
+!    power_A(1:3)= ao_power(i,1:3)
+!    A_center(1:3) = nucl_coord(num_A,1:3)
+!   
+!    num_B = ao_nucl(j)
+!    power_B(1:3)= ao_power(j,1:3)
+!    B_center(1:3) = nucl_coord(num_B,1:3)
+!    do k = 1, ao_prim_num(i)
+!     alpha = ao_expo_ordered_transp(k,i)     
+!     do l = 1, ao_prim_num(j)
+!      beta = ao_expo_ordered_transp(l,j)     
        ! analytical integral 
-       analytical   = ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
-       analytical_c =  erf_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
+!       analytical   = ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
+!       analytical_c =  erf_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
+!        analytical   = ao_ints(j,i)
+!        analytical_c = ao_erf_ints(j,i)
+        analytical   = mo_ints(j,i)
+        analytical_c = mo_erf_ints(j,i)
 
        ! numerical  integral 
        numerical   = 0.d0
@@ -63,11 +73,17 @@ subroutine test_int_f_special
         r2(1) = final_grid_points(1,ipoint)
         r2(2) = final_grid_points(2,ipoint)
         r2(3) = final_grid_points(3,ipoint)
+!        call give_all_aos_at_r(r2,aos_array)
+        call give_all_mos_at_r(r2,mos_array)
         weight = final_weight_at_r_vector(ipoint)
 
-        gauss_a = primitive_value_explicit(power_A,A_center,alpha,r2)
-        gauss_b = primitive_value_explicit(power_B,B_center,beta ,r2)
+!        gauss_a = primitive_value_explicit(power_A,A_center,alpha,r2)
+!        gauss_b = primitive_value_explicit(power_B,B_center,beta ,r2)
+!        gauss_a = aos_array(i)
+!        gauss_b = aos_array(j)
 
+        gauss_a = mos_array(i)
+        gauss_b = mos_array(j)
         r_12     = dsqrt( (r1(1) - r2(1))**2.d0 + (r1(2) - r2(2))**2.d0 + (r1(3) - r2(3))**2.d0 )
         if(dabs(r_12).lt.1.d-6)then
          coulomb = 2.d0 * mu / sqpi - 2.d0 * mu**3 * r_12**2 / (3.d0 *sqpi) 
@@ -78,9 +94,9 @@ subroutine test_int_f_special
         full_jastrow_fit = dexp(jastrow_fit*a0) 
         jastrow = tilde_f_mu(mu,r_12)
         full_jastrow = dexp(jastrow*a0)
-        numerical_c += weight * full_jastrow * gauss_a * gauss_b * coulomb
-        numerical +=     weight * full_jastrow     * gauss_a * gauss_b 
-        numerical_fit += weight * full_jastrow_fit * gauss_a * gauss_b 
+        numerical_c   += weight * full_jastrow**2.d0     * gauss_a * gauss_b * coulomb
+        numerical     += weight * full_jastrow**2.d0     * gauss_a * gauss_b 
+        numerical_fit += weight * full_jastrow_fit**2.d0 * gauss_a * gauss_b 
        enddo
            
        de_abs = dabs(numerical- numerical_fit)
@@ -95,14 +111,16 @@ subroutine test_int_f_special
         de_relat = de_abs/dabs(numerical)
        endif
        relat_error_fit_av += de_relat
+
        de_abs = dabs(analytical_c- numerical_c)
        abs_error_c_av += de_abs
        if(dabs(numerical_c).gt.1.d-10)then
         de_relat = de_abs/dabs(numerical_c)
        endif
        relat_error_c_av += de_relat
-      enddo
-     enddo
+
+!      enddo
+!     enddo
   enddo
  enddo
 
@@ -161,6 +179,67 @@ subroutine test_fit(mu)
  print*,'accu     = ',accu
  print*,'er abs/rel ',dabs(accu_fit - accu),dabs(accu_fit - accu)/dabs(accu)
  
+
+
+end
+
+subroutine routine_test_n2_j
+ implicit none
+ include 'utils/constants.include.F'
+ double precision :: r1(3), r2(3),weight,a0,coulomb
+ double precision :: numerical,numerical_c,numerical_fit,n2_psi
+ double precision :: jastrow_fit,f_tilde_fit,full_jastrow_fit,jastrow,tilde_f_mu,full_jastrow
+ double precision :: int_ovlp_n2_jaswtrow2,int_erf_n2_jaswtrow2,analytical,analytical_c
+ double precision :: norm,dm_a,dm_b,mu,r_12,numerical_c_fit
+ integer :: ipoint,n_taylor,istate
+ istate = 1
+ mu = 1.5d0
+ a0 = 1.d0/(2.d0*dsqrt(pi)*mu)
+ n_taylor = 4
+ r1 = 0.1d0
+ analytical   = int_ovlp_n2_jaswtrow2(r1,mu,istate,n_taylor)
+ analytical_c =  int_erf_n2_jaswtrow2(r1,mu,istate,n_taylor)
+ norm = 0.d0
+ numerical_c_fit = 0.d0
+ numerical_fit   = 0.d0
+ numerical       = 0.d0
+ call dm_dft_alpha_beta_at_r(r1,dm_a,dm_b)
+  do ipoint = 1, n_points_final_grid
+   r2(1) = final_grid_points(1,ipoint)
+   r2(2) = final_grid_points(2,ipoint)
+   r2(3) = final_grid_points(3,ipoint)
+   weight = final_weight_at_r_vector(ipoint)
+   r_12     = dsqrt( (r1(1) - r2(1))**2.d0 + (r1(2) - r2(2))**2.d0 + (r1(3) - r2(3))**2.d0 )
+   call give_n2_cas(r1,r2,istate,n2_psi)
+   if(dabs(r_12).lt.1.d-6)then
+    coulomb = 2.d0 * mu / sqpi - 2.d0 * mu**3 * r_12**2 / (3.d0 *sqpi) 
+   else
+    coulomb = derf(mu * r_12)/r_12
+   endif
+   jastrow_fit = f_tilde_fit(mu,r_12)
+   full_jastrow_fit = dexp(jastrow_fit*a0) 
+   jastrow = tilde_f_mu(mu,r_12)
+   full_jastrow = dexp(jastrow*a0)
+   numerical_c     += weight * full_jastrow**2.d0     *n2_psi * coulomb
+   numerical       += weight * full_jastrow**2.d0     *n2_psi  
+   numerical_fit   += weight * full_jastrow_fit**2.d0 *n2_psi 
+   numerical_c_fit += weight * full_jastrow_fit**2.d0 *n2_psi * coulomb
+   norm += weight * n2_psi
+  enddo
+  print*,'norm n2         = ',norm
+  print*,'n(r1)/2         = ',(dm_a + dm_b)*0.5d0
+  print*,''               
+  print*,'n2*J num        = ',numerical
+  print*,'n2*J num/fit    = ',numerical_fit
+  print*,'n2*J analytical = ',analytical
+  print*,'error fit       = ',dabs(numerical_fit-numerical),dabs(numerical_fit-numerical)/dabs(numerical)
+  print*,'error analytic  = ',dabs(analytical-numerical),dabs(analytical-numerical)/dabs(numerical)
+  print*,''               
+  print*,'n2*J erf num    = ',numerical_c
+  print*,'n2*J erf/num fit= ',numerical_c_fit
+  print*,'n2*J erf/analyti= ',analytical_c
+  print*,'error fit       = ',dabs(numerical_c_fit-numerical_c),dabs(numerical_c_fit-numerical_c)/dabs(numerical_c)
+  print*,'error analytic  = ',dabs(analytical_c-numerical_c),dabs(analytical_c-numerical_c)/dabs(numerical_c)
 
 
 end

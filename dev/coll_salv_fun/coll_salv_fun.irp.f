@@ -6,7 +6,8 @@ program coll_salv_fun
 !  print *, 'Hello world'
 !  call test_int_f_tilde
 ! call test_shank
-  call test_int_f_special
+!  call test_int_f_special
+ call routine_test_n2_j
 end
 
 subroutine test_shank
