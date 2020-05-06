@@ -101,13 +101,13 @@ double precision function ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,powe
 end
 
 
-double precision function erf_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
+double precision function erf_exp_f_phi_ij(muj,muc,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
  implicit none
  BEGIN_DOC
-! integral of J(r1,r2)^2 phi_i(r2) phi_j(r2) erf(mu r_12)/r12
+! integral of J_muj(r1,r2)^2 phi_i(r2) phi_j(r2) erf(muc r_12)/r12
  END_DOC
  include 'constants.include.F'
- double precision, intent(in)    :: r1(3), mu        ! where the Jastrow factor is centered and its shape 
+ double precision, intent(in)    :: r1(3), muj,muc   ! where the Jastrow factor is centered and its shape 
  integer, intent(in)             :: n_taylor         ! order of the Taylor expansion of the exponential
  double precision, intent(in)    :: A_center(3),B_center(3),alpha,beta ! gaussian/polynoms "A" and "B"
  integer, intent(in)             :: power_A(3),power_B(3)
@@ -117,9 +117,9 @@ double precision function erf_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power
  double precision :: a0,ai
  integer :: i
 
- a0 = 1.d0/(dsqrt(pi)*mu)
- call give_param_fit_f_h(mu,gama,delta)
- call exp_dl_erf_stg_phi_ij(a0, r1,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,r1,mu,n_taylor,array_ints,integral_taylor)
+ a0 = 1.d0/(dsqrt(pi)*muj)
+ call give_param_fit_f_h(muj,gama,delta)
+ call exp_dl_erf_stg_phi_ij(a0, r1,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,r1,muc,n_taylor,array_ints,integral_taylor)
  sum(0) = array_ints(0) 
  do i = 1, n_taylor
   ai = a0**dble(i)

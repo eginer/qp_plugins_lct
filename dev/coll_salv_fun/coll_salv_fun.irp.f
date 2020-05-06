@@ -3,11 +3,15 @@ program coll_salv_fun
   BEGIN_DOC
 ! TODO : Put the documentation of the program here
   END_DOC
+ read_wf = .True.
+ touch read_wf
 !  print *, 'Hello world'
 !  call test_int_f_tilde
 ! call test_shank
 !  call test_int_f_special
- call routine_test_n2_j
+! call routine_test_n2_j
+! call routine_test_n2_j_full
+ call print_energy
 end
 
 subroutine test_shank
@@ -27,6 +31,33 @@ subroutine test_shank
  print*,'shank, error = ',test,dabs(test -pi )
  print*,'accu , error = ',accu,dabs(accu -pi )
  print*,'pi           = ',pi
+
+
+end
+
+subroutine print_energy
+ implicit none
+ print*,'************************************************'
+ print*,'************************************************'
+ print*,'psi_energy_two_e       = ',psi_energy_two_e
+ print*,'psi_wee_mu_of_r        = ',psi_wee_mu_of_r
+ print*,'---------> '
+ print*,'psi_wee_mu_of_r_sr     = ',psi_wee_mu_of_r_sr
+ print*,''
+ print*,'coulomb_n2_jastrow     = ',coulomb_n2_jastrow
+ print*,'coulomb_n2_jastrow_reno= ',coulomb_n2_jastrow_renorm
+ print*,'wee_mu_of_r_n2_jastrow = ',wee_mu_of_r_n2_jastrow
+ print*,'wee_mu_of_r_n2_jastrow_r ',wee_mu_of_r_n2_jastrow_renorm
+ print*,'---------> '
+ print*,'wee_mu_of_r_sr_n2_jastrow',wee_mu_of_r_sr_n2_jastrow
+ print*,'wee_mu_of_r_sr_n2Rjastrow',wee_mu_of_r_sr_n2_jastrow_renorm
+ print*,''
+ print*,''
+ print*,'Delta sr               = ',wee_mu_of_r_sr_n2_jastrow - psi_wee_mu_of_r_sr
+ print*,'0.5 Delta sr           = ',0.5d0*(wee_mu_of_r_sr_n2_jastrow - psi_wee_mu_of_r_sr)
+ print*,''
+ print*,'Delta sr renorm        = ',wee_mu_of_r_sr_n2_jastrow_renorm - psi_wee_mu_of_r_sr
+ print*,'0.5 Delta sr renorm    = ',0.5d0*(wee_mu_of_r_sr_n2_jastrow_renorm - psi_wee_mu_of_r_sr)
 
 
 end

@@ -38,15 +38,16 @@ end
 
 subroutine routine_print
  implicit none
- integer :: i,ntheta,istate
+ integer :: i,ntheta,istate,n_taylor
  include 'constants.include.F'
  double precision :: r1(3),r2(3),mu_of_r,f_psi,rho2,n2_psi,psi,mu,full_jastrow_mu,thetamax
  double precision :: r,dtheta,theta,n2_hf,r12,jastrow,slater_ten_no,a0,psi_ex,f_mu
  double precision, allocatable :: mos_array_r1(:) , mos_array_r2(:), g0_rsdft,g0_jastrow,g0_exact
- double precision :: psi0,psi0_j
+ double precision :: psi0,psi0_j,norm_n2,int_ovlp_n2_jaswtrow2,dm_a,dm_b,dens
  allocate(mos_array_r1(mo_num) , mos_array_r2(mo_num) )
 
  istate = 1
+ n_taylor = 4
  ntheta = 10000
  thetamax = 2.d0 * pi
  dtheta = thetamax / dble(ntheta)
@@ -60,10 +61,17 @@ subroutine routine_print
  psi_ex = 0.20400134d0
  g0_exact = psi_ex/dabs(psi0)
  call give_mu_of_r_cas(r,istate,mu_of_r,f_psi,n2_psi)
- print*,''
- print*,''
- print*,''
  mu = mu_of_r
+ print*,''
+ print*,''
+ print*,''
+
+ call dm_dft_alpha_beta_at_r(r1,dm_a,dm_b)
+ dens = 0.5d0 * (dm_a + dm_b)
+ norm_n2 = int_ovlp_n2_jaswtrow2(r1,mu_of_r,istate,n_taylor)
+ norm_n2 = dens / norm_n2
+ print*,'norm_n2 = ',norm_n2
+
 ! mu = -1.d0/(2.d0*dsqrt(pi)*dlog(g0_exact))
  a0 = 2.d0 * dsqrt(pi) * mu
  g0_jastrow = full_jastrow_mu(mu,0.d0)
@@ -80,7 +88,7 @@ subroutine routine_print
   r2(2) = r * dsin(theta)
   call get_two_e_psi_at_r1r2(r1,r2,psi)
   r12 = dsqrt( (r1(1) - r2(1))**2.d0 +  (r1(2) - r2(2))**2.d0 + (r1(3) - r2(2))**2.d0 )
-  write(34,'(100(F16.10,X))')theta, r12, dabs(psi), dabs(psi)*full_jastrow_mu(mu,r12), dabs(psi)*full_jastrow_mu(mu,r12)/psi0_j, full_jastrow_mu(mu,r12),f_mu(mu,r12)
+  write(34,'(100(F16.10,X))')theta, r12, dabs(psi), dabs(psi)*full_jastrow_mu(mu,r12), dsqrt(norm_n2) * dabs(psi)*full_jastrow_mu(mu,r12), (1.d0 - derf(mu*r12))/r12
   write(35,'(100(F16.10,X))')r12,dabs(psi),dabs(psi)*full_jastrow_mu(mu,r12),dabs(psi)/psi0_j*full_jastrow_mu(mu,r12),full_jastrow_mu(mu,r12),f_mu(mu,r12)
   theta += dtheta
 !   , n2_hf ,n2_psi 

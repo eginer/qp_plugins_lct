@@ -58,7 +58,7 @@ subroutine test_int_f_special
 !      beta = ao_expo_ordered_transp(l,j)     
        ! analytical integral 
 !       analytical   = ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
-!       analytical_c =  erf_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
+!       analytical_c =  erf_exp_f_phi_ij(mu,mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
 !        analytical   = ao_ints(j,i)
 !        analytical_c = ao_erf_ints(j,i)
         analytical   = mo_ints(j,i)
@@ -240,6 +240,70 @@ subroutine routine_test_n2_j
   print*,'n2*J erf/analyti= ',analytical_c
   print*,'error fit       = ',dabs(numerical_c_fit-numerical_c),dabs(numerical_c_fit-numerical_c)/dabs(numerical_c)
   print*,'error analytic  = ',dabs(analytical_c-numerical_c),dabs(analytical_c-numerical_c)/dabs(numerical_c)
+
+
+end
+
+subroutine routine_test_n2_j_full
+ implicit none
+ include 'utils/constants.include.F'
+ double precision :: r1(3),weight,a0,coulomb
+ double precision :: numerical,numerical_c,n2_psi
+ double precision :: jastrow_fit,f_tilde_fit,full_jastrow_fit,jastrow,tilde_f_mu,full_jastrow
+ double precision :: int_ovlp_n2_jaswtrow2,int_erf_n2_jaswtrow2,analytical,analytical_c
+ double precision :: norm,dm_a,dm_b,muj,muc,r_12,numerical_c_renorm,dens,numerical_renorm
+ integer :: ipoint,n_taylor,istate
+ istate = 1
+ n_taylor = 4
+ numerical          = 0.d0
+ numerical_renorm   = 0.d0
+ numerical_c        = 0.d0
+ numerical_c_renorm = 0.d0
+ muc = 1500.d0
+ print*,'n_points_final_grid = ',n_points_final_grid
+ pause
+ do ipoint = 1, n_points_final_grid
+ print*,'ipoint = ',ipoint
+  r1(1) = final_grid_points(1,ipoint)
+  r1(2) = final_grid_points(2,ipoint)
+  r1(3) = final_grid_points(3,ipoint)
+  dm_a = one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
+  dm_b =  one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+  dens = 0.5d0 * (dm_a + dm_b)
+  muj = mu_of_r_prov(ipoint,istate)
+!  muc = mu_of_r_prov(ipoint,istate)
+!  muj = 1500.d0
+  analytical   = int_ovlp_n2_jaswtrow2(r1,muj,istate,n_taylor)
+  analytical_c =  int_erf_n2_jaswtrow2(r1,muj,muc,istate,n_taylor)
+  weight = final_weight_at_r_vector(ipoint)
+  numerical_c_renorm += weight * analytical_c * dens/analytical
+  numerical_renorm   += weight * dens
+  numerical_c     += weight * analytical_c
+  numerical       += weight * analytical
+ enddo
+ print*,'n2*J num/fit           = ',numerical
+ print*,'norm_n2_jastrow        = ',norm_n2_jastrow
+ print*,'Na*Nb                  = ',elec_alpha_num * elec_beta_num
+ print*,''                     
+ print*,'n2*J erf num           = ',numerical_c
+ print*,'n2*J erf num/ren       = ',numerical_c_renorm
+ print*,'************************************************'
+ print*,'************************************************'
+ print*,'psi_energy_two_e       = ',psi_energy_two_e
+ print*,'psi_wee_mu_of_r        = ',psi_wee_mu_of_r
+ print*,'---------> '
+ print*,'psi_wee_mu_of_r_sr     = ',psi_wee_mu_of_r_sr
+ print*,''
+ print*,'coulomb_n2_jastrow     = ',coulomb_n2_jastrow
+ print*,'coulomb_n2_jastrow_reno= ',coulomb_n2_jastrow_renorm
+ print*,'wee_mu_of_r_n2_jastrow = ',wee_mu_of_r_n2_jastrow
+ print*,'wee_mu_of_r_n2_jastrow_r ',wee_mu_of_r_n2_jastrow_renorm
+ print*,'---------> '
+ print*,'wee_mu_of_r_sr_n2_jastrow',wee_mu_of_r_sr_n2_jastrow
+ print*,'wee_mu_of_r_sr_n2Rjastrow',wee_mu_of_r_sr_n2_jastrow_renorm
+ print*,''
+ print*,''
+ print*,''
 
 
 end
