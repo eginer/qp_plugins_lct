@@ -189,7 +189,8 @@ END_PROVIDER
      do j = 1, mo_num ! 2 
       do l = 1, mo_num ! 2
        wee_mu_of_r_n2_jastrow_on_grid(ipoint,istate) += mos_in_r_array(i,ipoint) * mos_in_r_array(k,ipoint) * & 
-                          erf_mu_of_r_ij_mo(l,j,ipoint) * full_occ_2_rdm_ab_chemist_mo(l,j,k,i,istate)
+!                          erf_mu_of_r_ij_mo(l,j,ipoint) * full_occ_2_rdm_ab_chemist_mo(l,j,k,i,istate)
+                          erf_mu_of_r_jastrow2_ij_mo(l,j,ipoint) * full_occ_2_rdm_ab_chemist_mo(l,j,k,i,istate)
       enddo
      enddo
     enddo

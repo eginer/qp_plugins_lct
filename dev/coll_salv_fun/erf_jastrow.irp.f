@@ -8,6 +8,23 @@ double precision function f_mu(mu,x)
  f_mu = 0.5d0 * x * (1.d0 - derf(mu*x)) - inv_sq_pi*0.5d0/mu * dexp(-x*mu*x*mu)
 end
 
+double precision function f_mu_new(mu,x)
+ include 'constants.include.F'
+ BEGIN_DOC
+! correlation function corresponding to the erf(mu*x)/x interaction with a bit of second order derivative 
+ END_DOC
+ implicit none
+ double precision, intent(in) :: mu,x
+ double precision :: t
+ t = mu*x
+ f_mu_new = 0.5d0 * x * (1.d0 - derf(t)) - inv_sq_pi*0.5d0/mu * dexp(-t*t)
+ if(dabs(t).lt.1.d-6)then
+  f_mu_new += -inv_sq_pi*0.5d0/mu + t*t /(6.d0 *mu * sqpi)
+ else
+  f_mu_new += -0.25d0*derf(t)/(t*mu)
+ endif
+end
+
 double precision function full_jastrow_mu(mu,x)
  implicit none
  double precision, intent(in) :: x,mu
