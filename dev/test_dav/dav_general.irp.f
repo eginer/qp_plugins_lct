@@ -53,7 +53,7 @@ subroutine davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,conv
   include 'constants.include.F'
 
   N_st_diag = N_st_diag_in
-!  !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: U, W, S, y, h, lambda
+  !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: U, W, y, h, lambda
   if (N_st_diag*3 > sze) then
     print *,  'error in Davidson :'
     print *,  'Increase n_det_max_full to ', N_st_diag*3
@@ -63,12 +63,12 @@ subroutine davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,conv
   itermax = max(2,min(davidson_sze_max, sze/N_st_diag))+1
   itertot = 0
 
-!  if (state_following) then
-!    allocate(overlap(N_st_diag*itermax, N_st_diag*itermax))
-!  else
-!    allocate(overlap(1,1))  ! avoid 'if' for deallocate
-!  endif
-!  overlap = 0.d0
+  if (state_following) then
+    allocate(overlap(N_st_diag*itermax, N_st_diag*itermax))
+  else
+    allocate(overlap(1,1))  ! avoid 'if' for deallocate
+  endif
+  overlap = 0.d0
 
   provide threshold_davidson !nthreads_davidson
   call write_time(6)
@@ -256,44 +256,44 @@ subroutine davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,conv
 
       call lapack_diag(lambda,y,h,size(h,1),shift2)
 
-!      if (state_following) then
-!
-!        overlap = -1.d0
-!        do k=1,shift2
-!          do i=1,shift2
-!            overlap(k,i) = dabs(y(k,i))
-!          enddo
-!        enddo
-!        do k=1,N_st
-!          cmax = -1.d0
-!          do i=1,N_st
-!            if (overlap(i,k) > cmax) then
-!              cmax = overlap(i,k)
-!              order(k) = i
-!            endif
-!          enddo
-!          do i=1,N_st_diag
-!            overlap(order(k),i) = -1.d0
-!          enddo
-!        enddo
-!        overlap = y
-!        do k=1,N_st
-!          l = order(k)
-!          if (k /= l) then
-!            y(1:shift2,k) = overlap(1:shift2,l)
-!          endif
-!        enddo
-!        do k=1,N_st
-!          overlap(k,1) = lambda(k)
-!        enddo
-!        do k=1,N_st
-!          l = order(k)
-!          if (k /= l) then
-!            lambda(k) = overlap(l,1)
-!          endif
-!        enddo
-!
-!      endif
+      if (state_following) then
+
+        overlap = -1.d0
+        do k=1,shift2
+          do i=1,shift2
+            overlap(k,i) = dabs(y(k,i))
+          enddo
+        enddo
+        do k=1,N_st
+          cmax = -1.d0
+          do i=1,N_st
+            if (overlap(i,k) > cmax) then
+              cmax = overlap(i,k)
+              order(k) = i
+            endif
+          enddo
+          do i=1,N_st_diag
+            overlap(order(k),i) = -1.d0
+          enddo
+        enddo
+        overlap = y
+        do k=1,N_st
+          l = order(k)
+          if (k /= l) then
+            y(1:shift2,k) = overlap(1:shift2,l)
+          endif
+        enddo
+        do k=1,N_st
+          overlap(k,1) = lambda(k)
+        enddo
+        do k=1,N_st
+          l = order(k)
+          if (k /= l) then
+            lambda(k) = overlap(l,1)
+          endif
+        enddo
+
+      endif
 
 
       ! Express eigenvectors of h in the determinant basis
@@ -389,9 +389,9 @@ subroutine davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,conv
   do k=1,N_st
     energies(k) = lambda(k)
   enddo
-  write_buffer = '======'
+  write_buffer = '====='
   do i=1,N_st
-    write_buffer = trim(write_buffer)//' ================ =========== ==========='
+    write_buffer = trim(write_buffer)//' ================  ==========='
   enddo
   write(6,'(A)') trim(write_buffer)
   write(6,'(A)') ''
@@ -405,7 +405,7 @@ subroutine davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,conv
       y,                                                             &
       lambda                                                         &
       )
-!  deallocate(overlap)
+  deallocate(overlap)
   FREE nthreads_davidson
 end
 
@@ -414,8 +414,6 @@ subroutine hpsi(v,u,N_st,sze,h_mat)
   implicit none
   BEGIN_DOC
   ! Computes $v = H | u \rangle$ and 
-  !
-  ! Default should be 1,N_det,0,1
   END_DOC
   integer, intent(in)              :: N_st,sze
   double precision, intent(in)     :: u(sze,N_st),h_mat(sze,sze)
