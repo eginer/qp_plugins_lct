@@ -1,275 +1,23 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/bin/bash 
+# specify the QP folder 
+QP=$QP_ROOT
+# sourcing the quantum_package.rc file
+. ${QP}/quantum_package.rc
 
-"""
+
+TEMP=$(getopt -o m:f:p:n:t:r:d:h -l mu:,func:pt2max:ndetmax:readints:damp:thresh,help -n $0 -- "$@") || exit 1 # get the input / options 
+eval set -- "$TEMP" # set "--" in the string 
+
+echo $TEMP
+function help()
+{
+    cat <<EOF
+Range Separated CIPSI program: 
+
 Usage:
-       qp_cipsi_rsh [-f <functional>] [-m <mu>] [-p <pt2max>] [-t <thresh>]
-                    [-n <ndetmax>] [-r] EZFIO_DIR
-
-Options:
-      -f <functional>  --functional=<functional>  Exchange/correlation functional.
-                                                  Default=sr_pbe
-      -m <mu>          --mu=<mu>                  Range-separation parameter. Default=0.5
-      -p <pt2max>      --pt2max=<pt2max>          Max value of the E(PT2). Default=1.e-3
-      -t <thresh>      --threshold=<thresh>       Convergence threshold on the energy.
-                                                  Default=1.e-5
-      -n <ndetmax>     --ndetmax=<ndetmax>        Max number of determinants.
-                                                  Default=1000000
-      -r               --readints                 Read integrals. Default=False
-"""
-
-import sys
-import os
-
-try:
-    QP_ROOT = os.environ["QP_ROOT"]
-    QP_EZFIO = os.environ["QP_EZFIO"]
-except KeyError:
-    print("Error: QP_ROOT environment variable not found.")
-    sys.exit(1)
-else:
-    sys.path = [QP_EZFIO + "/Python",
-                QP_ROOT + "/install/resultsFile",
-                QP_ROOT + "/install",
-                QP_ROOT + "/scripts"] + sys.path
-
-os.environ["PYTHONUNBUFFERED"] = "1"
-
-import subprocess
-import atexit
-from ezfio import ezfio
-from docopt import docopt
-import numpy as np
-import scipy
-from scipy import linalg
+  $(basename $0) -m <real> -f <string> -n <integer> -p <real> [-t <real>] [--] EZFIO
 
 
-class DIIS():
-
-    def __init__(self,mmax=6):
-        self.mmax = mmax
-        self.p = []
-        self.e = []
-        self.m = 0
-        self.mmax = mmax
-
-    def append(self,p,e):
-        def update(v,l):
-            if self.m >= self.mmax:
-                l = l[:-1]
-            return [v.flatten()]+l
-        self.p = update(p,self.p)
-        self.e = update(e,self.e)
-        self.m = min(self.mmax, self.m+1)
-        
-    def next(self):
-        m = self.m
-        p = np.transpose(self.p)
-        e = np.transpose(self.e)
-        a = np.matmul(np.transpose(e),e)
-        a = np.pad(a,((0,1),(0,1)), mode="constant", constant_values=-1.)
-        a[m,m] = 0.
-        while m > 1 and np.linalg.cond(a) > 1.e14:
-            m -= 1
-            a = np.pad(a[:-2,:-2],((0,1),(0,1)), mode="constant", constant_values=-1.)
-            a[m,m] = 0.
-        c = np.zeros((m+1,1))
-        c[m,0] = -1.
-        try:
-            b = scipy.linalg.solve(a,c)
-            result = np.matmul(p[:,0:m],b[0:m,:]).flatten()
-        except np.linalg.linalg.LinAlgError:
-            result = self.p[0]
-        return result
-
-
-def get_params(arguments):
-    """Read command line arguments"""
-
-    filename = arguments["EZFIO_DIR"]
-
-    functional = arguments["-f"]
-
-    if not functional:
-        functional = "sr_pbe"
-
-    if arguments["-m"]:
-        mu = float(arguments["-m"])
-    else:
-        mu = 0.5
-
-    if arguments["-p"]:
-        pt2max = float(arguments["-p"])
-    else:
-        pt2max = 1.e-3
-
-    if arguments["-n"]:
-        ndetmax = int(float(arguments["-n"]))
-    else:
-        ndetmax = 1000000
-
-    if arguments["-t"]:
-        thresh = float(arguments["-t"])
-    else:
-        thresh = 1.e-12
-
-    readints = arguments['-r']
-    
-    print(f"""
-EZFIO      : {filename}
-Functional : {functional}
-mu         : {mu} 
-pt2max     : {pt2max}
-ndetmax    : {ndetmax}
-thresh     : {thresh}
-readints   : {readints}""")
-
-    return filename, functional, mu, pt2max, ndetmax, thresh, readints 
-
-
-def reset_ezfio():
-    ezfio.set_ao_one_e_ints_io_ao_integrals_kinetic("None")
-    ezfio.set_ao_one_e_ints_io_ao_integrals_n_e("None")
-    ezfio.set_ao_two_e_ints_io_ao_two_e_integrals("None")
-    ezfio.set_mo_one_e_ints_io_mo_integrals_kinetic("None")
-    ezfio.set_mo_one_e_ints_io_mo_integrals_n_e("None")
-    ezfio.set_mo_two_e_ints_io_mo_two_e_integrals("None")
-
-
-
-def qp_run(command, filename):
-    """Execute a qp_run command."""
-    stderr = open(f"{filename}/work/error","w")
-    result = subprocess.check_output(f"qp_run {command} {filename} | tee {filename}/work/output", shell=True, stderr=stderr)
-    return result.decode('utf-8')
-
-
-
-def write_effective_rsdft_hamiltonian(filename):
-    output = qp_run("write_effective_rsdft_hamiltonian", filename)
-    for line in output.splitlines():
-        if "TOTAL ENERGY        =" in line:
-            ev = float(line.split('=')[1])
-            break
-    return ev
-
-
-def update_density(filename, diis=None):
-    def get_density():
-        alpha = ezfio.get_aux_quantities_data_one_e_dm_alpha_mo()
-        beta  = ezfio.get_aux_quantities_data_one_e_dm_beta_mo()
-        return np.array(alpha, dtype=np.double).flatten(), \
-                np.array(beta, dtype=np.double).flatten()
-
-
-    def set_density(alpha, beta):
-        ezfio.set_aux_quantities_data_one_e_dm_alpha_mo(alpha)
-        ezfio.set_aux_quantities_data_one_e_dm_beta_mo(beta)
-
-    da, db = get_density()
-    qp_run("save_one_e_dm", filename)
-    da_new, db_new = get_density()
-    if diis is not None:
-        diis[0].append(da_new, da_new-da)
-        diis[1].append(db_new, db_new-db)
-        da_test=diis[0].next()
-        db_test=diis[1].next()
-    else:
-        damp = 0.75
-        da_test = damp * da_new + (1.-damp) * da
-        db_test = damp * db_new + (1.-damp) * db
-    set_density(da_test,db_test)
-
-
-def main():
-    arguments = docopt(__doc__)
-    filename, functional, mu, pt2max, ndetmax, thresh, readints = \
-        get_params(arguments)
-
-    ezfio.set_file(filename)
-    ezfio.set_dft_keywords_exchange_functional(functional)
-    ezfio.set_dft_keywords_correlation_functional(functional) 
-    ezfio.set_ao_two_e_erf_ints_mu_erf(mu)
-    ezfio.set_perturbation_pt2_max(pt2max)
-    ezfio.set_determinants_n_det_max(ndetmax)
-    ezfio.set_density_for_dft_density_for_dft("WFT")
-
-    atexit.register(reset_ezfio)
-    
-    datafile = sys.stdout
-
-    if readints:
-        pass
-    else:
-        qp_run("rs_ks_scf", filename)
-
-        # Write the effective Hamiltonian containing long-range
-        # interaction and short-range effective potential to be
-        # diagonalized in a self-consistent way.
-        # Then, save the energy of the macro-iteration.
-        datafile.write("# iter Evar old     Evar new    delta_E\n")
-
-        ev_macro = write_effective_rsdft_hamiltonian(filename)
-        ezfio.set_density_for_dft_density_for_dft("input_density")
-
-        datafile.write(f"  0 --- {ev_macro:15.10f} \n")
-
-        diis_macro = [ DIIS(), DIIS() ]
-        # Macro-iterations
-        for i in range(20):
-            # Run the CIPSI calculation with the effective Hamiltonian
-            # already stored in the EZFIO 
-
-            ezfio.set_determinants_read_wf(False)
-            qp_run("fci", filename)
-
-            update_density(filename, diis_macro)
-            
-            # Write the new effective Hamiltonian with the FCI density 
-            ev = write_effective_rsdft_hamiltonian(filename) 
-
-            diis = [ DIIS(), DIIS() ]
-            # Micro-iterations
-            for j in range(100):
-
-                # Rediagonalize the new effective Hamiltonian to
-                # obtain a new wave function and a new density
-                qp_run("diagonalize_h", filename)
-
-                update_density(filename,diis)
-
-                # Write the new effective Hamiltonian with the current density 
-                ev_new = write_effective_rsdft_hamiltonian(filename) 
-
-                # Convergence
-                delta_E = ev_new - ev
-                datafile.write(f"{i:>3d} {j:>3d} {ev:> 15.10f} {ev_new:> 15.10f} {delta_E:> 12.6e}\n")
-                ev = ev_new
-                if abs(delta_E) < thresh:
-                    break
-                # end if
-
-            # end for
-            datafile.write("# ---\n")
-
-            # Convergence
-            delta_E = ev - ev_macro
-            datafile.write(f"{i:>3d} --- {ev_macro:>15.10f} {ev:> 15.10f} {delta_E:> 12.6e}\n")
-            ev_macro = ev
-            if abs(delta_E) < pt2max:
-                break
-            # end if
-
-        # end for
-
-    # end if
-
-
-
-if __name__ == '__main__':
-    main()
-
-<<<<<<< HEAD
 Options:
   -m, --mu=<positive real>              range separation parameter (default=0.5)
   -f, --func=<LOWER CASE STRING>        range separated functional (default=sr_pbe)
@@ -446,8 +194,7 @@ if [[ $readints = "False" ]]; then
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
 
 
-#  for i in {1..100}
-  for i in 1
+  for i in {1..100}
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
@@ -580,5 +327,3 @@ else
 
 
 fi
-=======
->>>>>>> 5d881bb9369702ebfabbdbce4a4a9916655bc1b1
