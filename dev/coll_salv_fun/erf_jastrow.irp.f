@@ -15,14 +15,10 @@ double precision function f_mu_new(mu,x)
  END_DOC
  implicit none
  double precision, intent(in) :: mu,x
- double precision :: t
+ double precision :: t,a
+ a = -inv_sq_pi/mu + 1.d0/(8.d0 * mu*mu)
  t = mu*x
- f_mu_new = 0.5d0 * x * (1.d0 - derf(t)) - inv_sq_pi*0.5d0/mu * dexp(-t*t)
- if(dabs(t).lt.1.d-6)then
-  f_mu_new += -inv_sq_pi*0.5d0/mu + t*t /(6.d0 *mu * sqpi)
- else
-  f_mu_new += -0.25d0*derf(t)/(t*mu)
- endif
+ f_mu_new = 0.5d0 * x * (1.d0 - derf(t)) + a * dexp(-t*t)
 end
 
 double precision function full_jastrow_mu(mu,x)
