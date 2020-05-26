@@ -194,7 +194,8 @@ if [[ $readints = "False" ]]; then
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
 
 
-  for i in {1..100}
+#  for i in {1..100}
+  for i in 1
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
