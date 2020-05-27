@@ -61,7 +61,7 @@ class DIIS():
         self.p = update(p,self.p)
         self.e = update(e,self.e)
         self.m = min(self.mmax, self.m+1)
-        
+
     def next(self):
         m = self.m
         p = np.transpose(self.p)
@@ -114,17 +114,17 @@ def get_params(arguments):
         thresh = 1.e-12
 
     readints = arguments['-r']
-    
+
     print(f"""
 EZFIO      : {filename}
 Functional : {functional}
-mu         : {mu} 
+mu         : {mu}
 pt2max     : {pt2max}
 ndetmax    : {ndetmax}
 thresh     : {thresh}
 readints   : {readints}""")
 
-    return filename, functional, mu, pt2max, ndetmax, thresh, readints 
+    return filename, functional, mu, pt2max, ndetmax, thresh, readints
 
 
 def reset_ezfio():
@@ -188,14 +188,14 @@ def main():
 
     ezfio.set_file(filename)
     ezfio.set_dft_keywords_exchange_functional(functional)
-    ezfio.set_dft_keywords_correlation_functional(functional) 
+    ezfio.set_dft_keywords_correlation_functional(functional)
     ezfio.set_ao_two_e_erf_ints_mu_erf(mu)
     ezfio.set_perturbation_pt2_max(pt2max)
     ezfio.set_determinants_n_det_max(ndetmax)
     ezfio.set_density_for_dft_density_for_dft("WFT")
 
     atexit.register(reset_ezfio)
-    
+
     datafile = sys.stdout
 
     if readints:
@@ -210,6 +210,7 @@ def main():
         datafile.write("# iter Evar old     Evar new    delta_E\n")
 
         ev_macro = write_effective_rsdft_hamiltonian(filename)
+        qp_run("save_one_e_dm", filename)
         ezfio.set_density_for_dft_density_for_dft("input_density")
 
         datafile.write(f"  0 --- {ev_macro:15.10f} \n")
@@ -218,15 +219,15 @@ def main():
         # Macro-iterations
         for i in range(20):
             # Run the CIPSI calculation with the effective Hamiltonian
-            # already stored in the EZFIO 
+            # already stored in the EZFIO
 
             ezfio.set_determinants_read_wf(False)
             qp_run("fci", filename)
 
             update_density(filename, diis_macro)
-            
-            # Write the new effective Hamiltonian with the FCI density 
-            ev = write_effective_rsdft_hamiltonian(filename) 
+
+            # Write the new effective Hamiltonian with the FCI density
+            ev = write_effective_rsdft_hamiltonian(filename)
 
             diis = [ DIIS(), DIIS() ]
             # Micro-iterations
@@ -238,8 +239,8 @@ def main():
 
                 update_density(filename,diis)
 
-                # Write the new effective Hamiltonian with the current density 
-                ev_new = write_effective_rsdft_hamiltonian(filename) 
+                # Write the new effective Hamiltonian with the current density
+                ev_new = write_effective_rsdft_hamiltonian(filename)
 
                 # Convergence
                 delta_E = ev_new - ev
