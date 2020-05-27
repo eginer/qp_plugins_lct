@@ -4,7 +4,7 @@
 """
 Usage:
        qp_cipsi_rsh [-f <functional>] [-m <mu>] [-p <pt2max>] [-t <thresh>]
-                    [-n <ndetmax>] [-r] EZFIO_DIR
+                    [-n <ndetmax>] [-r] [-s] EZFIO_DIR
 
 Options:
       -f <functional>  --functional=<functional>  Exchange/correlation functional.
@@ -15,6 +15,7 @@ Options:
                                                   Default=1.e-5
       -n <ndetmax>     --ndetmax=<ndetmax>        Max number of determinants.
                                                   Default=1000000
+      -s               --skip_scf                 Skip the RS-Hybrid SCF run at the beginning. Default=False
       -r               --readints                 Read integrals. Default=False
 """
 
@@ -115,6 +116,8 @@ def get_params(arguments):
 
     readints = arguments['-r']
 
+    skip_scf = arguments['-s']
+
     print(f"""
 EZFIO      : {filename}
 Functional : {functional}
@@ -122,9 +125,10 @@ mu         : {mu}
 pt2max     : {pt2max}
 ndetmax    : {ndetmax}
 thresh     : {thresh}
+skip_scf   : {skip_scf}
 readints   : {readints}""")
 
-    return filename, functional, mu, pt2max, ndetmax, thresh, readints
+    return filename, functional, mu, pt2max, ndetmax, thresh, skip_scf, readints
 
 
 def reset_ezfio():
@@ -141,6 +145,13 @@ def qp_run(command, filename):
     """Execute a qp_run command."""
     stderr = open(f"{filename}/work/error","w")
     result = subprocess.check_output(f"qp_run {command} {filename} | tee {filename}/work/output", shell=True, stderr=stderr)
+    return result.decode('utf-8')
+
+
+def qp_reset_det(filename):
+    """Remove the determinants in the EZFIO directory"""
+    stderr = open(f"{filename}/work/error","w")
+    result = subprocess.check_output(f"qp_reset -d {filename} | tee {filename}/work/output", shell=True, stderr=stderr)
     return result.decode('utf-8')
 
 
@@ -183,7 +194,7 @@ def update_density(filename, diis=None):
 
 def main():
     arguments = docopt(__doc__)
-    filename, functional, mu, pt2max, ndetmax, thresh, readints = \
+    filename, functional, mu, pt2max, ndetmax, thresh, skip_scf, readints = \
         get_params(arguments)
 
     ezfio.set_file(filename)
@@ -194,6 +205,7 @@ def main():
     ezfio.set_determinants_n_det_max(ndetmax)
     ezfio.set_density_for_dft_density_for_dft("WFT")
 
+    reset_ezfio()
     atexit.register(reset_ezfio)
 
     datafile = sys.stdout
@@ -201,7 +213,11 @@ def main():
     if readints:
         pass
     else:
-        qp_run("rs_ks_scf", filename)
+        if skip_scf:
+          pass
+        else:
+          qp_reset_det(filename)
+          qp_run("rs_ks_scf", filename)
 
         # Write the effective Hamiltonian containing long-range
         # interaction and short-range effective potential to be
