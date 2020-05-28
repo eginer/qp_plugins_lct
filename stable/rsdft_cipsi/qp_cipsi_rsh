@@ -111,7 +111,7 @@ def get_params(arguments):
     if arguments["-t"]:
         thresh = float(arguments["-t"])
     else:
-        thresh = 1.e-12
+        thresh = 1.e-10
 
     readints = arguments['-r']
 
@@ -201,8 +201,6 @@ def main():
     if readints:
         pass
     else:
-        qp_run("rs_ks_scf", filename)
-
         # Write the effective Hamiltonian containing long-range
         # interaction and short-range effective potential to be
         # diagonalized in a self-consistent way.
@@ -257,7 +255,7 @@ def main():
             delta_E = ev - ev_macro
             datafile.write(f"{i:>3d} --- {ev_macro:>15.10f} {ev:> 15.10f} {delta_E:> 12.6e}\n")
             ev_macro = ev
-            if abs(delta_E) < pt2max:
+            if abs(delta_E) < pt2max*0.1:
                 break
             # end if
 
