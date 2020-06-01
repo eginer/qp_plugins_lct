@@ -20,12 +20,3 @@ scripts_list="qp_cipsi_rsh"
  do 
   ln --symbolic ${currdir}/$i ${QP_ROOT}/scripts/
  done
-
-file_list="qp_cipsi_rsh"
-
-# Make a symbolic link for all scripts to be used in the ${QP_ROOT}/scripts/
-# directory. 
- for i in $scripts_list
- do 
-  ln --symbolic ${currdir}/$i ${QP_ROOT}/scripts/
- done

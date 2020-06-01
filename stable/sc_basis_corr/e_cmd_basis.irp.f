@@ -8,7 +8,7 @@
 import os
 import glob
 from qp_path import QP_SRC
-funcdir=QP_SRC+'/../plugins/qp_plugins_lct/dev/func_mu_of_r/'
+funcdir=QP_SRC+'/../plugins/qp_plugins_lct/stable/func_mu_of_r/'
 os.chdir(funcdir)
 functionals_tmp = map(lambda x : x.replace(".irp.f","") , glob.glob("func_*.irp.f"))
 functionals = map(lambda x : x.replace("func_","") , functionals_tmp)                 

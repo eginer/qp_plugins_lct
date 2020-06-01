@@ -131,9 +131,10 @@ echo "NDETMAX for RS-DFT   :  "$ndetmax
 # value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
 if [[ -z $thresh ]]; then
  echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
- thresh="1.e-6"
+ thresh=$pt2_max
 fi
 echo "thresh of convergence:  "$thresh
+threshmicro=1.e-6
 
 qp set_file $ezfio
 
@@ -184,9 +185,9 @@ qp  set  density_for_dft    density_for_dft         "WFT"
         # checking the convergence
         DE=`echo "${EV_new} - ${EV}" | bc`
         DEabs=`echo "print(abs(${DE}))" | python `
-        CONV=`echo "print(${DEabs})< ${thresh}" | python`
+        CONV=`echo "print(${DEabs}< ${threshmicro})" | python`
         file_conv=data_conv_${i}-${mu}-${functional}
-        echo $j $EV $EV_new $DE $thresh >> ${ezfio}/work/${file_conv}
+        echo $j $EV $EV_new $DE $threshmicro >> ${ezfio}/work/${file_conv}
         if [ "$CONV" = "True" ]; then
           break
         fi
@@ -198,7 +199,7 @@ qp  set  density_for_dft    density_for_dft         "WFT"
       # checking the convergence
       DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
       DEabs=`echo "print(abs(${DE}))" | python `
-      CONV=`echo "print(${DEabs}) < ${thresh}" | python`
+      CONV=`echo "print(${DEabs} < ${thresh})" | python`
       echo $i $EV_macro $EV_new_macro $DE $thresh >> ${file_final}
       if [ "$CONV" = "True" ]; then
         break

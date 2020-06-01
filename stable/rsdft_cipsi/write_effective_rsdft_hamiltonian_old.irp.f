@@ -50,6 +50,8 @@ subroutine routines_compute_energy
  density_for_dft = "WFT" 
  touch density_for_dft 
  call print_variational_energy_dft
+ call ezfio_set_aux_quantities_data_one_e_dm_alpha_mo(one_e_dm_mo_alpha)
+ call ezfio_set_aux_quantities_data_one_e_dm_beta_mo(one_e_dm_mo_beta)
 
 end
 

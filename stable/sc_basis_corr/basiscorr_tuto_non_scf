@@ -12,7 +12,8 @@ source ${QP_ROOT}/quantum_package.rc
 
 #### Assumes that an "xyz" file exists for H2 
 file_xyz=He.xyz
-basis="cc-pvdz cc-pvtz cc-pvqz cc-pv5z"
+#basis="cc-pvdz cc-pvtz cc-pvqz cc-pv5z"
+basis="cc-pvdz"
 ezfio=He
  rm -rf $ezfio
 
