@@ -116,3 +116,70 @@
   end subroutine ecmdsrPBEn2
 
 
+  subroutine exmdsrPBEn2(mu_in,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_2,grad_rho_a_b,rho2,ex_srmuPBE)
+
+  implicit none
+  BEGIN_DOC
+  ! Calculation of exchange energy and chemical potential in PBE approximation using multideterminantal wave function (short-range part) with exact on top pair density
+  ! The on-top pair density should be normalized to N(N-1)
+  END_DOC
+ 
+  double precision, intent(in)  :: mu_in
+  double precision, intent(in)  :: rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, rho2
+  double precision, intent(out) :: ex_srmuPBE
+  double precision              :: mu
+  double precision              :: exPBE,dexPBEdrho_a,dexPBEdrho_b,dexPBEdrho, dexPBEdgrad_rho_a_2,dexPBEdgrad_rho_b_2,dexPBEdgrad_rho_a_b,dexPBEdgrad_rho_2
+  double precision              :: denom, delta, gamma
+  double precision              :: grad_rho_2
+  double precision              :: pi, a, b, thr
+  double precision              :: rho, m  
+  double precision              :: n2xc
+  ex_srmuPBE       = 0.d0 
+  rho = rho_a + rho_b
+  if(rho.lt.1.d-10)then
+   return
+  else if(rho2/(rho**2) .lt. 1.d-6)then
+   return
+  endif
+  m = rho_a - rho_b
+
+  pi = dacos(-1.d0)
+  thr = 1.d-12
+  mu = min(mu_in,1.d+10)
+  
+! exchange PBE standard and on-top pair distribution 
+  call ex_pbe_sr(1.d-12,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,exPBE,dexPBEdrho_a,dexPBEdrho_b,dexPBEdgrad_rho_a_2,dexPBEdgrad_rho_b_2,dexPBEdgrad_rho_a_b)
+
+! calculation of energy
+  a = pi / 2.d0
+  b = 2.d0*dsqrt(pi)*(2.d0*dsqrt(2.d0) - 1.d0)/3.d0   
+   
+  n2xc = rho2 - rho**2
+  if(dabs(n2xc).lt.thr)then
+   n2xc = 1.d-12
+  endif
+
+  gamma = exPBE / (a*n2xc)
+  if(dabs(gamma).lt.thr)then
+   gamma = 1.d-12
+  endif
+
+  delta = -(b*rho2*gamma**2) / exPBE
+  if(dabs(delta).lt.thr)then
+   delta = 1.d-12
+  endif
+
+  denom = 1.d0 + delta*mu + gamma*(mu**2)
+  ex_srmuPBE=exPBE/denom
+  if(isnan(ex_srmuPBE))then
+   print*,'stop !!! isnan(ex_srmuPBE)'
+   print*,exPBE,denom
+   print*,gamma,delta,mu
+   print*,rho_a,rho_b 
+   print*,grad_rho_2,grad_rho_a_2,grad_rho_a_b
+   stop
+  endif
+
+  end subroutine exmdsrPBEn2
+
+

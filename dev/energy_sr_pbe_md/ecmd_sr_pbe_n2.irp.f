@@ -13,7 +13,7 @@
   double precision, intent(out) :: ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,decdrho2_a, decdrho2_b
   !double precision, intent(out) :: decdrho, decdgrad_rho_2, decdrho2 
   double precision              :: ecPBE, decPBEdrho_a, decPBEdrho_b, decPBEdgrad_rho_2, decPBEdgrad_rho_a_2, decPBEdgrad_rho_b_2, decPBEdgrad_rho_a_b
-  double precision              :: rho_c, rho_o,grad_rho_c_2, grad_rho_o_2, grad_rho_o_c, decPBEdrho_c, decPBEdrho_o, decPBEdgrad_rho_c_2, decPBEdgrad_rho_o_2, decPBEdgrad_rho_c_o
+  double precision              :: rho_c, rho_o,grad_rho_c_2, grad_rho_o_2, grad_rho_o_c, decPBEdrho_c, decPBEdrho_o, decPBEdgrad_rho_c_2, decPBEdgrad_rho_o_2, decPBEdgrad_rho_c_o, decPBEdgrad_rho_o, grad_rho_2
   double precision              :: beta, dbetadrho_a, dbetadrho_b, dbetadgrad_rho_a_2, dbetadgrad_rho_b_2, dbetadgrad_rho_a_b
   double precision              :: denom, ddenomdrho_a, ddenomdrho_b, ddenomdgrad_rho_a_2,ddenomdgrad_rho_b_2,ddenomdgrad_rho_a_b, ddenomdrho2_a, ddenomdrho2_b
   double precision              :: pi, c, thr
