@@ -10,7 +10,8 @@ source ${QP_ROOT}/quantum_package.rc
 
 #### Assumes that an "xyz" file exists
 file_xyz=He.xyz
-basis="cc-pvdz cc-pvtz cc-pvqz cc-pv5z"
+#basis="cc-pvdz cc-pvtz cc-pvqz cc-pv5z"
+basis="cc-pvdz "
 ezfio=He
  rm -rf $ezfio
 
@@ -28,7 +29,7 @@ for b in $basis
   #define the main options : mu, functional, number of determinants, max pt2 and reading or not two-elec integrals (to save time)
   mu=cas_ful 
   ndet=1000
-  pt2=0.
+  pt2=0.000001
   readint=False
   fun=su_pbe_ot
   threshold=0.000000001
