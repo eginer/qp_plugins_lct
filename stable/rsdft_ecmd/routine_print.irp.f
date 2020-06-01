@@ -131,7 +131,7 @@
   write(*, '(A22,X,F16.10)') 'ecmd_pbe_on_top_at_mu    = ',ecmd_pbe_on_top_at_mu
   write(*, '(A22,X,F16.10)') 'exmdsr_pbe_on_top_exact  = ',int_exmdsrpbe_n2_exact
   write(*, '(A22,X,F16.10)') 'exmdsr_pbe_on_top_extra  = ',int_exmdsrpbe_n2_extrapolated
-  write(*, '(A22,X,F16.10)') 'exmdsr_pbe_on_top_UEG  = ',int_exmdsrpbe_n2_UEG
+  write(*, '(A22,X,F16.10)') 'exmdsr_pbe_on_top_UEG    = ',int_exmdsrpbe_n2_UEG
   print*,'On-top-UEG functional '
   write(*, '(A22,X,F16.10)') 'Ecmd PBE-UEG             = ',ecmd_pbe_ueg_prov
   write(*, '(A22,X,F16.10)') 'energy_c_md_sr_pbe       = ',energy_c_md_sr_pbe

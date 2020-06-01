@@ -40,7 +40,7 @@ for b in $basis
 
   cd ${b}
   qp set mu_of_r mu_of_r_potential cas_ful
-  qp run write_eff_basis_ints 
+  qp run write_eff_basis_ints | tee write_eff_basis_He.out 
   
   cd ../
  
