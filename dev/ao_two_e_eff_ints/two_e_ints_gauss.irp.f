@@ -63,9 +63,9 @@ double precision function ao_two_e_integral_erf_gauss(i,j,k,l)
                 ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),             &
                 K_power,L_power,K_center,L_center,dim1)
             q_inv = 1.d0/qq
-            call general_primitive_integral_erf_gauss(dim1,              &
-                P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
-                Q_new,Q_center,fact_q,qq,q_inv,iorder_q,erf_int,gauss_int)
+!            call general_primitive_integral_erf_gauss(dim1,              &
+!                P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
+!                Q_new,Q_center,fact_q,qq,q_inv,iorder_q,erf_int,gauss_int)
             integral = erf_int
             ao_two_e_integral_erf_gauss = ao_two_e_integral_erf_gauss +  coef4 * integral
           enddo ! s
@@ -166,9 +166,9 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
             ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),                 &
             K_power,L_power,K_center,L_center,dim1)
         q_inv = 1.d0/qq
-        call general_primitive_integral_erf_gauss(dim1,                              &
-             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,                                &
-             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,scw_erf_int,scw_gauss_int)       
+!        call general_primitive_integral_erf_gauss(dim1,                              &
+!             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,                                &
+!             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,scw_erf_int,scw_gauss_int)       
 
         schwartz_kl(s,r) =  scw_erf_int * coef2
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
@@ -184,9 +184,9 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
             ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
             I_power,J_power,I_center,J_center,dim1)
         p_inv = 1.d0/pp
-        call general_primitive_integral_erf_gauss(dim1,               &
-            P_new,P_center,fact_p,pp,p_inv,iorder_p,                 &
-            P_new,P_center,fact_p,pp,p_inv,iorder_p,scw_erf_int,scw_gauss_int) 
+!        call general_primitive_integral_erf_gauss(dim1,               &
+!            P_new,P_center,fact_p,pp,p_inv,iorder_p,                 &
+!            P_new,P_center,fact_p,pp,p_inv,iorder_p,scw_erf_int,scw_gauss_int) 
         schwartz_ij =  scw_erf_int * coef2*coef2
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
@@ -201,13 +201,13 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
                cycle
             endif
             coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-            call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
-                ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),             &
+            call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q, &
+                ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),            &
                 K_power,L_power,K_center,L_center,dim1)
             q_inv = 1.d0/qq
-            call general_primitive_integral_erf_gauss(dim1,                 &
-                 P_new,P_center,fact_p,pp,p_inv,iorder_p,                   &
-                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q,erf_int,gauss_int)
+!            call general_primitive_integral_erf_gauss(dim1,                 &
+!                 P_new,P_center,fact_p,pp,p_inv,iorder_p,                   &
+!                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q,erf_int,gauss_int)
             integral = erf_int
             ao_two_e_integral_schwartz_accel_erf_gauss = ao_two_e_integral_schwartz_accel_erf_gauss + coef4 * integral
           enddo ! s
@@ -322,9 +322,9 @@ subroutine compute_ao_two_e_integrals_erf_gauss(j,k,l,sze,buffer_value)
 
 end
 
-subroutine general_primitive_integral_erf_gauss(dim,            &
+double precision function general_primitive_integral_gauss(dim,      &
       P_new,P_center,fact_p,p,p_inv,iorder_p,                        &
-      Q_new,Q_center,fact_q,q,q_inv,iorder_q,erf_int,gauss_int)
+      Q_new,Q_center,fact_q,q,q_inv,iorder_q)
   implicit none
   BEGIN_DOC
   ! Computes the integral <pq|rs> where p,q,r,s are Gaussian primitives
@@ -335,7 +335,6 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
   double precision, intent(in)   :: Q_new(0:max_dim,3),Q_center(3),fact_q,q,q_inv
   integer, intent(in)            :: iorder_p(3)
   integer, intent(in)            :: iorder_q(3)
-  double precision, intent(out)  :: erf_int,gauss_int
 
   double precision               :: r_cut,gama_r_cut,rho,dist
   double precision               :: dx(0:max_dim),Ix_pol(0:max_dim),dy(0:max_dim),Iy_pol(0:max_dim),dz(0:max_dim),Iz_pol(0:max_dim)
@@ -347,19 +346,16 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
   integer                        :: n_pt_tmp,n_pt_out, iorder
   double precision               :: d1(0:max_dim),d_poly(0:max_dim),rint,d1_screened(0:max_dim)
 
-  erf_int = 0.d0
+  general_primitive_integral_gauss = 0.d0
 
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: dx,Ix_pol,dy,Iy_pol,dz,Iz_pol
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: d1, d_poly
 
   ! Gaussian Product
   ! ----------------
-  double precision :: p_plus_q
-  ! 
-  p_plus_q = (p+q) * ((p*q)/(p+q) + mu_erf*mu_erf)/(mu_erf*mu_erf)
-  pq = p_inv*0.5d0*q_inv
 
-  pq_inv = 0.5d0/p_plus_q
+  pq = p_inv*0.5d0*q_inv
+  pq_inv = 0.5d0/(p+q)
   p10_1 = q*pq  ! 1/(2p)
   p01_1 = p*pq  ! 1/(2q)
   pq_inv_2 = pq_inv+pq_inv
@@ -369,7 +365,6 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
 
   accu = 0.d0
   iorder = iorder_p(1)+iorder_q(1)+iorder_p(1)+iorder_q(1)
-  !DIR$ VECTOR ALIGNED
   do ix=0,iorder
     Ix_pol(ix) = 0.d0
   enddo
@@ -380,9 +375,9 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
     do jx = 0, iorder_q(1)
       d = a*Q_new(jx,1)
       if (abs(d) < thresh) cycle
-      !DEC$ FORCEINLINE
+      !DIR$ FORCEINLINE
       call give_polynom_mult_center_x(P_center(1),Q_center(1),ix,jx,p,q,iorder,pq_inv,pq_inv_2,p10_1,p01_1,p10_2,p01_2,dx,nx)
-      !DEC$ FORCEINLINE
+      !DIR$ FORCEINLINE
       call add_poly_multiply(dx,nx,d,Ix_pol,n_Ix)
     enddo
   enddo
@@ -390,7 +385,6 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
     return
   endif
   iorder = iorder_p(2)+iorder_q(2)+iorder_p(2)+iorder_q(2)
-  !DIR$ VECTOR ALIGNED
   do ix=0, iorder
     Iy_pol(ix) = 0.d0
   enddo
@@ -401,9 +395,9 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
       do jy = 0, iorder_q(2)
         e = b*Q_new(jy,2)
         if (abs(e) < thresh) cycle
-        !DEC$ FORCEINLINE
+        !DIR$ FORCEINLINE
         call   give_polynom_mult_center_x(P_center(2),Q_center(2),iy,jy,p,q,iorder,pq_inv,pq_inv_2,p10_1,p01_1,p10_2,p01_2,dy,ny)
-        !DEC$ FORCEINLINE
+        !DIR$ FORCEINLINE
         call add_poly_multiply(dy,ny,e,Iy_pol,n_Iy)
       enddo
     endif
@@ -423,9 +417,9 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
       do jz = 0, iorder_q(3)
         f = c*Q_new(jz,3)
         if (abs(f) < thresh) cycle
-        !DEC$ FORCEINLINE
+        !DIR$ FORCEINLINE
         call   give_polynom_mult_center_x(P_center(3),Q_center(3),iz,jz,p,q,iorder,pq_inv,pq_inv_2,p10_1,p01_1,p10_2,p01_2,dz,nz)
-        !DEC$ FORCEINLINE
+        !DIR$ FORCEINLINE
         call add_poly_multiply(dz,nz,f,Iz_pol,n_Iz)
       enddo
     endif
@@ -434,7 +428,7 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
     return
   endif
 
-  rho = p*q *pq_inv_2  ! le rho qui va bien
+  rho = p*q *pq_inv_2
   dist =  (P_center(1) - Q_center(1))*(P_center(1) - Q_center(1)) +  &
       (P_center(2) - Q_center(2))*(P_center(2) - Q_center(2)) +      &
       (P_center(3) - Q_center(3))*(P_center(3) - Q_center(3))
@@ -445,7 +439,7 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
     d_poly(i)=0.d0
   enddo
 
-  !DEC$ FORCEINLINE
+  !DIR$ FORCEINLINE
   call multiply_poly(Ix_pol,n_Ix,Iy_pol,n_Iy,d_poly,n_pt_tmp)
   if (n_pt_tmp == -1) then
     return
@@ -455,34 +449,34 @@ subroutine general_primitive_integral_erf_gauss(dim,            &
     d1(i)=0.d0
   enddo
 
-  !DEC$ FORCEINLINE
+  !DIR$ FORCEINLINE
   call multiply_poly(d_poly ,n_pt_tmp ,Iz_pol,n_Iz,d1,n_pt_out)
-  double precision               :: rint_sum
-  accu = accu + rint_sum(n_pt_out,const,d1)
 
-  ! change p+q in dsqrt
-  erf_int = fact_p * fact_q * accu *pi_5_2*p_inv*q_inv/dsqrt(p_plus_q)
-  double precision :: aa,c_a,t_a,rho_old,rho_p,rho_q,w_a
+  double precision :: aa,c_a,t_a,rho_old,w_a,pi_3,prefactor,inv_pq_3_2
+  double precision :: gauss_int
   integer :: m
   gauss_int = 0.d0
+  pi_3 = pi*pi*pi
+  inv_pq_3_2 = (p_inv * q_inv)**(1.5d0)
   rho_old = (p*q)/(p+q)
-  rho_p = (rho_old/p)**(1.5d0)
-  rho_q = (rho_old/q)**(1.5d0)
+  prefactor = pi_3 * inv_pq_3_2 * fact_p * fact_q 
   do i = 1, n_gauss_eff_pot ! browse the gaussians with different expo/coef
    aa = expo_gauss_eff_pot(i) 
    c_a = coef_gauss_eff_pot(i)
-   t_a = dsqrt( aa*aa /(rho_old + aa*aa) ) 
+   t_a = dsqrt( aa /(rho_old + aa) ) 
    w_a = dexp(-t_a*t_a*rho_old*dist)
    accu = 0.d0
    ! evaluation of the polynom Ix(t_a) * Iy(t_a) * Iz(t_a)
-   do m = 0, n_pt_out
-    accu += d1(m) * t_a**(dble(m)) 
+   do m = 0, n_pt_out,2
+    accu += d1(m) * (t_a)**(dble(m)) 
+    print*,'m',m,d1(m) , (t_a*t_a)**(dble(m))
    enddo
    ! equation A8 of PRA-70-062505 (2004) of Toul. Col. Sav. 
-   gauss_int = gauss_int + c_a * (1.d0 - t_a*t_a)**(1.5d0) * fact_p * fact_q *  rho_p * rho_q * accu * w_a
+   gauss_int = gauss_int + c_a * prefactor * (1.d0 - t_a*t_a)**(1.5d0) * w_a * accu
   enddo
-end
 
+  general_primitive_integral_gauss = gauss_int
+end
 
 double precision function ERI_erf_gauss(alpha,beta,delta,gama,a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z)
   implicit none
