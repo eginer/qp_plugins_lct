@@ -8,10 +8,10 @@ subroutine save_one_e_effective_potential
  END_DOC
 
  call ezfio_set_mo_one_e_ints_mo_integrals_n_e(effective_one_e_potential_without_kin_sa)
- call ezfio_set_mo_one_e_ints_mo_integrals_kinetic(mo_kinetic_integrals_sa)
+ call ezfio_set_mo_one_e_ints_mo_integrals_kinetic(mo_kinetic_integrals)
 
  call ezfio_set_ao_one_e_ints_ao_integrals_n_e(ao_effective_one_e_potential_without_kin_sa)
- call ezfio_set_ao_one_e_ints_ao_integrals_kinetic(ao_kinetic_integrals_sa)
+ call ezfio_set_ao_one_e_ints_ao_integrals_kinetic(ao_kinetic_integrals)
 
  call ezfio_set_mo_one_e_ints_io_mo_integrals_n_e("Read")
  call ezfio_set_mo_one_e_ints_io_mo_integrals_kinetic("Read")
