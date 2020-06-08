@@ -1,112 +1,4 @@
-double precision function ao_two_e_integral_erf_gauss(i,j,k,l)
-  implicit none
-  BEGIN_DOC
-  !  integral of the AO basis <ik|jl> or (ij|kl)
-  !     i(r1) j(r1) (erf(mu_erf*r12)/r12 + \sum_{i} c_i e^{-alpha_i r_12^2}) k(r2) l(r2)
-  END_DOC
-
-  integer,intent(in)             :: i,j,k,l
-  integer                        :: p,q,r,s
-  double precision               :: I_center(3),J_center(3),K_center(3),L_center(3)
-  integer                        :: num_i,num_j,num_k,num_l,dim1,I_power(3),J_power(3),K_power(3),L_power(3)
-  double precision               :: integral
-  include 'utils/constants.include.F'
-  double precision               :: P_new(0:max_dim,3),P_center(3),fact_p,pp
-  double precision               :: Q_new(0:max_dim,3),Q_center(3),fact_q,qq
-  integer                        :: iorder_p(3), iorder_q(3)
-  double precision               :: ao_two_e_integral_schwartz_accel_erf_gauss
-  double precision :: erf_int,gauss_int
-  
-  provide mu_erf
-
-   if (ao_prim_num(i) * ao_prim_num(j) * ao_prim_num(k) * ao_prim_num(l) > 1024 ) then
-     ao_two_e_integral_erf_gauss = ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
-     return
-   endif
-
-  dim1 = n_pt_max_integrals
-
-  num_i = ao_nucl(i)
-  num_j = ao_nucl(j)
-  num_k = ao_nucl(k)
-  num_l = ao_nucl(l)
-  ao_two_e_integral_erf_gauss = 0.d0
-
-  if (num_i /= num_j .or. num_k /= num_l .or. num_j /= num_k)then
-    do p = 1, 3
-      I_power(p) = ao_power(i,p)
-      J_power(p) = ao_power(j,p)
-      K_power(p) = ao_power(k,p)
-      L_power(p) = ao_power(l,p)
-      I_center(p) = nucl_coord(num_i,p)
-      J_center(p) = nucl_coord(num_j,p)
-      K_center(p) = nucl_coord(num_k,p)
-      L_center(p) = nucl_coord(num_l,p)
-    enddo
-
-    double precision               :: coef1, coef2, coef3, coef4
-    double precision               :: p_inv,q_inv
-
-    do p = 1, ao_prim_num(i)
-      coef1 = ao_coef_normalized_ordered_transp(p,i)
-      do q = 1, ao_prim_num(j)
-        coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
-        call give_explicit_poly_and_gaussian(P_new,P_center,pp,fact_p,iorder_p,&
-            ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
-            I_power,J_power,I_center,J_center,dim1)
-        p_inv = 1.d0/pp
-        do r = 1, ao_prim_num(k)
-          coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
-          do s = 1, ao_prim_num(l)
-            coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-            call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
-                ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),             &
-                K_power,L_power,K_center,L_center,dim1)
-            q_inv = 1.d0/qq
-!            call general_primitive_integral_erf_gauss(dim1,              &
-!                P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
-!                Q_new,Q_center,fact_q,qq,q_inv,iorder_q,erf_int,gauss_int)
-            integral = erf_int
-            ao_two_e_integral_erf_gauss = ao_two_e_integral_erf_gauss +  coef4 * integral
-          enddo ! s
-        enddo  ! r
-      enddo   ! q
-    enddo    ! p
-
-  else
-
-    do p = 1, 3
-      I_power(p) = ao_power(i,p)
-      J_power(p) = ao_power(j,p)
-      K_power(p) = ao_power(k,p)
-      L_power(p) = ao_power(l,p)
-    enddo
-    double  precision              :: ERI_erf_gauss
-
-    do p = 1, ao_prim_num(i)
-      coef1 = ao_coef_normalized_ordered_transp(p,i)
-      do q = 1, ao_prim_num(j)
-        coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
-        do r = 1, ao_prim_num(k)
-          coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
-          do s = 1, ao_prim_num(l)
-            coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-            integral = ERI_erf_gauss(                                          &
-                ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),&
-                I_power(1),J_power(1),K_power(1),L_power(1),         &
-                I_power(2),J_power(2),K_power(2),L_power(2),         &
-                I_power(3),J_power(3),K_power(3),L_power(3))
-            ao_two_e_integral_erf_gauss = ao_two_e_integral_erf_gauss + coef4 * integral
-          enddo ! s
-        enddo  ! r
-      enddo   ! q
-    enddo    ! p
-
-  endif
-
-end
-
-double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
+double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
   implicit none
   BEGIN_DOC
   !  integral of the AO basis <ik|jl> or (ij|kl)
@@ -123,8 +15,7 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
   integer                        :: iorder_p(3), iorder_q(3)
   double precision, allocatable  :: schwartz_kl(:,:)
   double precision               :: schwartz_ij
-  double precision :: scw_erf_int,scw_gauss_int
-  double precision :: erf_int,gauss_int
+  double precision :: scw_erf_int,scw_gauss_int,general_primitive_integral_gauss
 
   dim1 = n_pt_max_integrals
 
@@ -132,7 +23,7 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
   num_j = ao_nucl(j)
   num_k = ao_nucl(k)
   num_l = ao_nucl(l)
-  ao_two_e_integral_schwartz_accel_erf_gauss = 0.d0
+  ao_two_e_integral_schwartz_accel_gauss = 0.d0
   double precision               :: thr
   thr = ao_integrals_threshold*ao_integrals_threshold
 
@@ -144,7 +35,6 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
       double precision               :: coef1
       double precision               :: coef4
 
-  if (num_i /= num_j .or. num_k /= num_l .or. num_j /= num_k)then
     do p = 1, 3
       I_power(p) = ao_power(i,p)
       J_power(p) = ao_power(j,p)
@@ -166,9 +56,9 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
             ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),                 &
             K_power,L_power,K_center,L_center,dim1)
         q_inv = 1.d0/qq
-!        call general_primitive_integral_erf_gauss(dim1,                              &
-!             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,                                &
-!             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,scw_erf_int,scw_gauss_int)       
+        scw_gauss_int = general_primitive_integral_gauss(dim1,              &
+                Q_new,Q_center,fact_q,qq,q_inv,iorder_q,             &
+                Q_new,Q_center,fact_q,qq,q_inv,iorder_q)
 
         schwartz_kl(s,r) =  scw_erf_int * coef2
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
@@ -184,9 +74,9 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
             ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
             I_power,J_power,I_center,J_center,dim1)
         p_inv = 1.d0/pp
-!        call general_primitive_integral_erf_gauss(dim1,               &
-!            P_new,P_center,fact_p,pp,p_inv,iorder_p,                 &
-!            P_new,P_center,fact_p,pp,p_inv,iorder_p,scw_erf_int,scw_gauss_int) 
+        schwartz_ij = general_primitive_integral_gauss(dim1,              &
+                P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
+                P_new,P_center,fact_p,pp,p_inv,iorder_p)
         schwartz_ij =  scw_erf_int * coef2*coef2
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
@@ -205,83 +95,21 @@ double precision function ao_two_e_integral_schwartz_accel_erf_gauss(i,j,k,l)
                 ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),            &
                 K_power,L_power,K_center,L_center,dim1)
             q_inv = 1.d0/qq
-!            call general_primitive_integral_erf_gauss(dim1,                 &
-!                 P_new,P_center,fact_p,pp,p_inv,iorder_p,                   &
-!                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q,erf_int,gauss_int)
-            integral = erf_int
-            ao_two_e_integral_schwartz_accel_erf_gauss = ao_two_e_integral_schwartz_accel_erf_gauss + coef4 * integral
+            integral = general_primitive_integral_gauss(dim1,              &
+                P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
+                Q_new,Q_center,fact_q,qq,q_inv,iorder_q)
+            ao_two_e_integral_schwartz_accel_gauss = ao_two_e_integral_schwartz_accel_gauss + coef4 * integral
           enddo ! s
         enddo  ! r
       enddo   ! q
     enddo    ! p
 
-  else
-
-    do p = 1, 3
-      I_power(p) = ao_power(i,p)
-      J_power(p) = ao_power(j,p)
-      K_power(p) = ao_power(k,p)
-      L_power(p) = ao_power(l,p)
-    enddo
-    double  precision              :: ERI_erf_gauss
-
-    schwartz_kl(0,0) = 0.d0
-    do r = 1, ao_prim_num(k)
-      coef1 = ao_coef_normalized_ordered_transp(r,k)*ao_coef_normalized_ordered_transp(r,k)
-      schwartz_kl(0,r) = 0.d0
-      do s = 1, ao_prim_num(l)
-        coef2 = coef1*ao_coef_normalized_ordered_transp(s,l)*ao_coef_normalized_ordered_transp(s,l)
-        schwartz_kl(s,r) = ERI_erf_gauss(                                      &
-            ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),&
-            K_power(1),L_power(1),K_power(1),L_power(1),             &
-            K_power(2),L_power(2),K_power(2),L_power(2),             &
-            K_power(3),L_power(3),K_power(3),L_power(3)) * &
-            coef2
-        schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
-      enddo
-      schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
-    enddo
-
-    do p = 1, ao_prim_num(i)
-      coef1 = ao_coef_normalized_ordered_transp(p,i)
-      do q = 1, ao_prim_num(j)
-        coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
-        schwartz_ij = ERI_erf_gauss(                                          &
-                ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),&
-                I_power(1),J_power(1),I_power(1),J_power(1),         &
-                I_power(2),J_power(2),I_power(2),J_power(2),         &
-                I_power(3),J_power(3),I_power(3),J_power(3))*coef2*coef2
-        if (schwartz_kl(0,0)*schwartz_ij < thr) then
-           cycle
-        endif
-        do r = 1, ao_prim_num(k)
-          if (schwartz_kl(0,r)*schwartz_ij < thr) then
-             cycle
-          endif
-          coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
-          do s = 1, ao_prim_num(l)
-            if (schwartz_kl(s,r)*schwartz_ij < thr) then
-               cycle
-            endif
-            coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-            integral = ERI_erf_gauss(                                          &
-                ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),&
-                I_power(1),J_power(1),K_power(1),L_power(1),         &
-                I_power(2),J_power(2),K_power(2),L_power(2),         &
-                I_power(3),J_power(3),K_power(3),L_power(3))
-            ao_two_e_integral_schwartz_accel_erf_gauss = ao_two_e_integral_schwartz_accel_erf_gauss +  coef4 * integral
-          enddo ! s
-        enddo  ! r
-      enddo   ! q
-    enddo    ! p
-
-  endif
   deallocate (schwartz_kl)
 
 end
 
 
-subroutine compute_ao_two_e_integrals_erf_gauss(j,k,l,sze,buffer_value)
+subroutine compute_ao_two_e_integrals_gauss(j,k,l,sze,buffer_value)
   implicit none
   use map_module
 
@@ -292,7 +120,7 @@ subroutine compute_ao_two_e_integrals_erf_gauss(j,k,l,sze,buffer_value)
   include 'utils/constants.include.F'
   integer, intent(in)            :: j,k,l,sze
   real(integral_kind), intent(out) :: buffer_value(sze)
-  double precision               :: ao_two_e_integral_erf_gauss
+  double precision               :: ao_two_e_integral_schwartz_accel_gauss
 
   integer                        :: i
   logical, external              :: ao_one_e_integral_zero
@@ -317,7 +145,7 @@ subroutine compute_ao_two_e_integrals_erf_gauss(j,k,l,sze,buffer_value)
       cycle
     endif
     !DIR$ FORCEINLINE
-    buffer_value(i) = ao_two_e_integral_erf_gauss(i,k,j,l)
+    buffer_value(i) = ao_two_e_integral_schwartz_accel_gauss(i,k,j,l)
   enddo
 
 end
@@ -469,7 +297,6 @@ double precision function general_primitive_integral_gauss(dim,      &
    ! evaluation of the polynom Ix(t_a) * Iy(t_a) * Iz(t_a)
    do m = 0, n_pt_out,2
     accu += d1(m) * (t_a)**(dble(m)) 
-    print*,'m',m,d1(m) , (t_a*t_a)**(dble(m))
    enddo
    ! equation A8 of PRA-70-062505 (2004) of Toul. Col. Sav. 
    gauss_int = gauss_int + c_a * prefactor * (1.d0 - t_a*t_a)**(1.5d0) * w_a * accu
@@ -478,151 +305,7 @@ double precision function general_primitive_integral_gauss(dim,      &
   general_primitive_integral_gauss = gauss_int
 end
 
-double precision function ERI_erf_gauss(alpha,beta,delta,gama,a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z)
-  implicit none
-  BEGIN_DOC
-  ! Atomic primtive two-electron integral between the 4 primitives :
-  !
-  ! * primitive 1 : $x_1^{a_x} y_1^{a_y} z_1^{a_z} \exp(-\alpha * r1^2)$
-  ! * primitive 2 : $x_1^{b_x} y_1^{b_y} z_1^{b_z} \exp(- \beta * r1^2)$
-  ! * primitive 3 : $x_2^{c_x} y_2^{c_y} z_2^{c_z} \exp(-\delta * r2^2)$
-  ! * primitive 4 : $x_2^{d_x} y_2^{d_y} z_2^{d_z} \exp(-\gamma * r2^2)$
-  !
-  END_DOC
-  double precision, intent(in)   :: delta,gama,alpha,beta
-  integer, intent(in)            :: a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z
-  integer                        :: a_x_2,b_x_2,c_x_2,d_x_2,a_y_2,b_y_2,c_y_2,d_y_2,a_z_2,b_z_2,c_z_2,d_z_2
-  integer                        :: i,j,k,l,n_pt
-  integer                        :: n_pt_sup
-  double precision               :: p,q,denom,coeff
-  double precision               :: I_f
-  integer                        :: nx,ny,nz
-  include 'utils/constants.include.F'
-  nx = a_x+b_x+c_x+d_x
-  if(iand(nx,1) == 1) then
-    ERI_erf_gauss = 0.d0
-    return
-  endif
-
-  ny = a_y+b_y+c_y+d_y
-  if(iand(ny,1) == 1) then
-    ERI_erf_gauss = 0.d0
-    return
-  endif
-
-  nz = a_z+b_z+c_z+d_z
-  if(iand(nz,1) == 1) then
-    ERI_erf_gauss = 0.d0
-    return
-  endif
-
-  ASSERT (alpha >= 0.d0)
-  ASSERT (beta >= 0.d0)
-  ASSERT (delta >= 0.d0)
-  ASSERT (gama >= 0.d0)
-  p = alpha + beta
-  q = delta + gama
-  double precision :: p_plus_q
-  p_plus_q = (p+q) * ((p*q)/(p+q) + mu_erf*mu_erf)/(mu_erf*mu_erf)
-  ASSERT (p+q >= 0.d0)
-  n_pt =  ishft( nx+ny+nz,1 )
-
-  coeff = pi_5_2 / (p * q * dsqrt(p_plus_q))
-  if (n_pt == 0) then
-    ERI_erf_gauss = coeff
-    return
-  endif
-
-  call integrale_new_erf_gauss(I_f,a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z,p,q,n_pt)
-
-  ERI_erf_gauss = I_f * coeff
-end
-
-
-
-subroutine integrale_new_erf_gauss(I_f,a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z,p,q,n_pt)
-  BEGIN_DOC
-  ! Calculate the integral of the polynomial :
-  !
-  ! $I_x1(a_x+b_x, c_x+d_x,p,q) \, I_x1(a_y+b_y, c_y+d_y,p,q) \, I_x1(a_z+b_z, c_z+d_z,p,q)$
-  !
-  ! between $( 0 ; 1)$
-  END_DOC
-
-
-  implicit none
-  include 'utils/constants.include.F'
-  double precision               :: p,q
-  integer                        :: a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z
-  integer                        :: i, n_pt, j
-  double precision               :: I_f, pq_inv, p10_1, p10_2, p01_1, p01_2,rho,pq_inv_2
-  integer :: ix,iy,iz, jx,jy,jz, sx,sy,sz
-
-  j = ishft(n_pt,-1)
-  ASSERT (n_pt > 1)
-  double precision :: p_plus_q
-  p_plus_q = (p+q) * ((p*q)/(p+q) + mu_erf*mu_erf)/(mu_erf*mu_erf)
-
-  pq_inv = 0.5d0/(p_plus_q)
-  pq_inv_2 = pq_inv + pq_inv
-  p10_1 = 0.5d0/p
-  p01_1 = 0.5d0/q
-  p10_2 = 0.5d0 *  q /(p * p_plus_q)
-  p01_2 = 0.5d0 *  p /(q * p_plus_q)
-  double precision               :: B00(n_pt_max_integrals)
-  double precision               :: B10(n_pt_max_integrals), B01(n_pt_max_integrals)
-  double precision               :: t1(n_pt_max_integrals), t2(n_pt_max_integrals)
-  !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: t1, t2, B10, B01, B00
-  ix = a_x+b_x
-  jx = c_x+d_x
-  iy = a_y+b_y
-  jy = c_y+d_y
-  iz = a_z+b_z
-  jz = c_z+d_z
-  sx = ix+jx
-  sy = iy+jy
-  sz = iz+jz
-
-  !DIR$ VECTOR ALIGNED
-  do i = 1,n_pt
-    B10(i)  = p10_1 -  gauleg_t2(i,j)* p10_2
-    B01(i)  = p01_1 -  gauleg_t2(i,j)* p01_2
-    B00(i)  = gauleg_t2(i,j)*pq_inv
-  enddo
-  if (sx > 0) then
-    call I_x1_new(ix,jx,B10,B01,B00,t1,n_pt)
-  else
-    !DIR$ VECTOR ALIGNED
-    do i = 1,n_pt
-      t1(i) = 1.d0
-    enddo
-  endif
-  if (sy > 0) then
-    call I_x1_new(iy,jy,B10,B01,B00,t2,n_pt)
-    !DIR$ VECTOR ALIGNED
-    do i = 1,n_pt
-      t1(i) = t1(i)*t2(i)
-    enddo
-  endif
-  if (sz > 0) then
-    call I_x1_new(iz,jz,B10,B01,B00,t2,n_pt)
-    !DIR$ VECTOR ALIGNED
-    do i = 1,n_pt
-      t1(i) = t1(i)*t2(i)
-    enddo
-  endif
-  I_f= 0.d0
-  !DIR$ VECTOR ALIGNED
-  do i = 1,n_pt
-    I_f += gauleg_w(i,j)*t1(i)
-  enddo
-
-
-
-end
-
-
-subroutine compute_ao_integrals_erf_gauss_jl(j,l,n_integrals,buffer_i,buffer_value)
+subroutine compute_ao_integrals_gauss_jl(j,l,n_integrals,buffer_i,buffer_value)
   implicit none
   use map_module
   BEGIN_DOC
@@ -635,9 +318,9 @@ subroutine compute_ao_integrals_erf_gauss_jl(j,l,n_integrals,buffer_i,buffer_val
   real(integral_kind),intent(out) :: buffer_value(ao_num*ao_num)
 
   integer                        :: i,k
-  double precision               :: ao_two_e_integral_erf_gauss,cpu_1,cpu_2, wall_1, wall_2
+  double precision               :: cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
-  double precision               :: thr
+  double precision               :: thr,ao_two_e_integral_schwartz_accel_gauss
   integer                        :: kk, m, j1, i1
   logical, external              :: ao_two_e_integral_zero
 
@@ -663,7 +346,7 @@ subroutine compute_ao_integrals_erf_gauss_jl(j,l,n_integrals,buffer_i,buffer_val
         cycle
       endif
       !DIR$ FORCEINLINE
-      integral = ao_two_e_integral_erf_gauss(i,k,j,l)  ! i,k : r1    j,l : r2
+      integral = ao_two_e_integral_schwartz_accel_gauss(i,k,j,l)  ! i,k : r1    j,l : r2
       if (abs(integral) < thr) then
         cycle
       endif

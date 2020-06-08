@@ -115,11 +115,14 @@
   energy = psi_dft_energy_h_core + psi_energy_erf + energy_x_sr_pbe + energy_c_sr_pbe +  short_range_Hartree
   write(*, '(A22,X,F16.10)') 'Usual sr_pbe             = ',energy + nuclear_repulsion 
   energy = psi_energy + ecmd_pbe_on_top_at_mu  
-  write(*, '(A22,X,F16.10)') 'PBE-OT energy            = ',energy + nuclear_repulsion 
-  write(*, '(A22,X,F16.10)') 'Test                     = ',ecmd_pbe_on_top_at_mu + nuclear_repulsion 
+  write(*, '(A22,X,F16.10)') 'PBE-OT MD                = ',energy + nuclear_repulsion 
   !       <Psi | T + V_ne        +  W_ee^lr      | Psi >  + E_xmd^sr   +  E_cmd^sr         + E_H^sr 
   energy = psi_dft_energy_h_core + psi_energy_erf + energy_x_md_sr_pbe + energy_c_md_sr_pbe +  short_range_Hartree
   write(*, '(A22,X,F16.10)') 'PBE-UEG MD               = ',energy + nuclear_repulsion
+  print*,  ''
+  print*,'Test of the two implementations of the pbe-ueg correlation energy'
+  print*,'ecmd_pbe_ueg_prov =',ecmd_pbe_ueg_prov
+  print*,'energy_c_md_sr_pbe=',energy_c_md_sr_pbe
   print*,  ''
   print*,  'Component of the energy ....'
   print*,  ''
