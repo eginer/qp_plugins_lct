@@ -6,6 +6,29 @@ BEGIN_PROVIDER [integer, n_gauss_eff_pot]
  n_gauss_eff_pot = n_max_fit_slat + 1
 END_PROVIDER 
 
+BEGIN_PROVIDER [integer, n_gauss_eff_pot_deriv]
+ implicit none
+ BEGIN_DOC
+! number of gaussians to represent the diferential part of the effective potential 
+ END_DOC
+ n_gauss_eff_pot = n_max_fit_slat 
+END_PROVIDER 
+
+ BEGIN_PROVIDER [double precision, expo_gauss_eff_pot_deriv, (n_gauss_eff_pot_deriv)]
+&BEGIN_PROVIDER [double precision, coef_gauss_eff_pot_deriv, (n_gauss_eff_pot_deriv)]
+ implicit none
+ include 'constants.include.F'
+
+ integer :: i
+ ! fit of the -(1 - erf(mu*x)) with n_max_fit_slat gaussians 
+ do i = 1, n_max_fit_slat
+  expo_gauss_eff_pot_deriv(i) = expo_gauss_1_erf_x(i) 
+  coef_gauss_eff_pot_deriv(i) = -1.d0 * coef_gauss_1_erf_x(i) ! -(1 - erf(mu*x))
+ enddo
+
+END_PROVIDER
+
+
  BEGIN_PROVIDER [double precision, expo_gauss_eff_pot, (n_gauss_eff_pot)]
 &BEGIN_PROVIDER [double precision, coef_gauss_eff_pot, (n_gauss_eff_pot)]
  implicit none

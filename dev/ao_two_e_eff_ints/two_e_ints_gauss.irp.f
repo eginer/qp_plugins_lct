@@ -15,7 +15,7 @@ double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
   integer                        :: iorder_p(3), iorder_q(3)
   double precision, allocatable  :: schwartz_kl(:,:)
   double precision               :: schwartz_ij
-  double precision :: scw_erf_int,scw_gauss_int,general_primitive_integral_gauss
+  double precision :: scw_gauss_int,general_primitive_integral_gauss
 
   dim1 = n_pt_max_integrals
 
@@ -60,7 +60,7 @@ double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q,             &
                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q)
 
-        schwartz_kl(s,r) =  scw_erf_int * coef2
+        schwartz_kl(s,r) = scw_gauss_int * coef2
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
       enddo
       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
@@ -74,10 +74,10 @@ double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
             ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
             I_power,J_power,I_center,J_center,dim1)
         p_inv = 1.d0/pp
-        schwartz_ij = general_primitive_integral_gauss(dim1,              &
+        scw_gauss_int = general_primitive_integral_gauss(dim1,              &
                 P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
                 P_new,P_center,fact_p,pp,p_inv,iorder_p)
-        schwartz_ij =  scw_erf_int * coef2*coef2
+        schwartz_ij = scw_gauss_int * coef2*coef2
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
         endif
