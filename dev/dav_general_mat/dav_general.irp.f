@@ -7,8 +7,7 @@ subroutine davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,conv
   !
   ! H_jj : specific diagonal H matrix elements to diagonalize de Davidson
   !
-  ! u_in : guess coefficients on the various states. Overwritten
-  !   on exit
+  ! u_in : guess coefficients on the various states. Overwritten on exit
   !
   ! dim_in : leftmost dimension of u_in
   !

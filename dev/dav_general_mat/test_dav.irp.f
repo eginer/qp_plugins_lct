@@ -16,6 +16,7 @@ subroutine routine
  integer :: dim_in,sze,N_st,N_st_diag_in,dressing_state
  logical :: converged 
  integer :: i,j
+ external hcalc_template
  N_st = N_states
  N_st_diag_in = N_states_diag
  sze = N_det
@@ -32,7 +33,10 @@ subroutine routine
   enddo
   H_jj(i) = H_mat(i,i)
  enddo
-! provide nthreads_davidson
-  call davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,converged,h_mat)
-! print*,'energies = ',energies
+ provide nthreads_davidson
+ call davidson_general(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,converged,h_mat)
+ print*,'energies = ',energies + nuclear_repulsion
+ call davidson_general_ext_rout(u_in,H_jj,energies,dim_in,sze,N_st,N_st_diag_in,converged,hcalc_template)
+ print*,'energies = ',energies + nuclear_repulsion
 end
+
