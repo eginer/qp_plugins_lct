@@ -86,7 +86,6 @@ subroutine test_extra_basis
      print*,i_ao,m,ao_power(i_ao,m)
      print*,r
      print*,aos_grad_array(m,i_ao)*r(m),xyz_grad_phi(m)
-     pause
     endif
     accu(m,i_ao) += dabs(aos_grad_array(m,i_ao) * r(m) - xyz_grad_phi(m)) * weight
    enddo
@@ -97,6 +96,62 @@ subroutine test_extra_basis
  print*,''
  do i_ao = 1, ao_num
   write(*,'(100(F16.10,X))')accu(:,i_ao)
+ enddo
+end
+
+subroutine test_extra
+ implicit none
+ double precision :: r(3)
+ integer :: prim_num_i,prim_num_j
+ include 'utils/constants.include.F'
+ double precision, allocatable :: P_new(:,:,:,:) ! new polynom for each couple of prim
+ double precision :: P_center(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+ integer :: i,j,ipoint,num_i,num_j
+ double precision :: ao_prod_in_r,weight,accu,num,ref
+ double precision :: aos_grad_array(3,ao_num),aos_array(ao_num)
+ allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max)) ! new polynom for each couple of prim
+
+ do i = 1, ao_num
+  do j = 1, ao_num
+   print*,'i,j',i,j
+   call give_poly_ij(i,j,P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
+   accu = 0.d0
+   do ipoint = 1, n_points_final_grid
+    r(1) = final_grid_points(1,ipoint)
+    r(2) = final_grid_points(2,ipoint)
+    r(3) = final_grid_points(3,ipoint)
+    weight = final_weight_at_r_vector(ipoint)
+    call give_all_aos_and_grad_at_r(r,aos_array,aos_grad_array)
+    num = ao_prod_in_r(r,ao_prim_num(i),ao_prim_num(j),P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
+    ref = aos_array(i) * aos_array(j)
+    if(dabs(num - ref).gt.1.d-9)then
+     print*,r
+     num_i = ao_nucl(i)
+     num_j = ao_nucl(j)
+     print*,'num_i,num_j',num_i,num_j
+     print*,'ao_power i ', ao_power(i,:)
+     print*,'ao_power j ', ao_power(j,:)
+     print*,num,ref
+     print*,'STOOOOOP '
+     stop
+    endif
+    accu += dabs(num - ref) * weight
+   enddo
+   print*,'accu = ',accu
+   if(dabs(accu).gt.1.d-9)then
+    num_i = ao_nucl(i)
+    num_j = ao_nucl(j)
+    print*,'num_i,num_j',num_i,num_j
+    print*,'ao_power i ', ao_power(i,:)
+    print*,'ao_power j ', ao_power(j,:)
+    print*,'STOOOOOP '
+    stop
+   endif
+  enddo
  enddo
 
 
