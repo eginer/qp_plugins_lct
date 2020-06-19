@@ -99,7 +99,7 @@ subroutine test_extra_basis
  enddo
 end
 
-subroutine test_extra
+subroutine test_prod_ij
  implicit none
  double precision :: r(3)
  integer :: prim_num_i,prim_num_j
@@ -153,7 +153,227 @@ subroutine test_extra
    endif
   enddo
  enddo
+end
 
+subroutine test_prod_iplus_1_j
+ implicit none
+ double precision :: r(3)
+ integer :: prim_num_i,prim_num_j
+ include 'utils/constants.include.F'
+ double precision, allocatable :: P_new(:,:,:,:) ! new polynom for each couple of prim
+ double precision :: P_center(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+ integer :: i,j,ipoint,num_i,num_j,k
+ double precision :: ao_prod_in_r,weight,accu,num,ref,phi_ao_plus_n
+ double precision :: aos_grad_array(3,ao_num),aos_array(ao_num)
+ allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max)) ! new polynom for each couple of prim
 
+ do i = 1, ao_num
+  do j = 1, ao_num
+   print*,'i,j',i,j
+   accu = 0.d0
+   do ipoint = 1, n_points_final_grid
+    r(1) = final_grid_points(1,ipoint)
+    r(2) = final_grid_points(2,ipoint)
+    r(3) = final_grid_points(3,ipoint)
+    weight = final_weight_at_r_vector(ipoint)
+    call give_all_aos_and_grad_at_r(r,aos_array,aos_grad_array)
+    do k = 1, 3
+     call give_poly_i_plus_n_j(i,j,P_new,P_center,p_exp,fact_p,iorder_p,coef_prod,1,k)
+     num = ao_prod_in_r(r,ao_prim_num(i),ao_prim_num(j),P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
+     ref = phi_ao_plus_n(r,i,1,k) * aos_array(j)
+    enddo
+    if(dabs(num - ref).gt.1.d-9)then
+     print*,r
+     num_i = ao_nucl(i)
+     num_j = ao_nucl(j)
+     print*,'num_i,num_j',num_i,num_j
+     print*,'ao_power i ', ao_power(i,:)
+     print*,'ao_power j ', ao_power(j,:)
+     print*,num,ref
+     print*,'STOOOOOP '
+     stop
+    endif
+    accu += dabs(num - ref) * weight
+   enddo
+   print*,'accu = ',accu
+   if(dabs(accu).gt.1.d-9)then
+    num_i = ao_nucl(i)
+    num_j = ao_nucl(j)
+    print*,'num_i,num_j',num_i,num_j
+    print*,'ao_power i ', ao_power(i,:)
+    print*,'ao_power j ', ao_power(j,:)
+    print*,'STOOOOOP '
+    stop
+   endif
+  enddo
+ enddo
+end
 
+subroutine test_prod_xyzi_j
+ implicit none
+ double precision :: r(3)
+ integer :: prim_num_i,prim_num_j
+ include 'utils/constants.include.F'
+ double precision, allocatable :: P_new(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision :: P_center(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+ integer :: i,j,ipoint,num_i,num_j,k
+ double precision :: ao_prod_in_r,weight,accu(3),num,ref
+ double precision :: aos_grad_array(3,ao_num),aos_array(ao_num),aos_xyzi_j(3),phi_ao_plus_n,ao_i1
+ allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max,3)) ! new polynom for each couple of prim
+
+ do i = 1, ao_num
+  do j = 1, ao_num
+! do i = 6,6
+!  do j = 3,3
+   accu = 0.d0
+   do ipoint = 1, n_points_final_grid
+!   do ipoint = 605,605
+    r(1) = final_grid_points(1,ipoint)
+    r(2) = final_grid_points(2,ipoint)
+    r(3) = final_grid_points(3,ipoint)
+    weight = final_weight_at_r_vector(ipoint)
+    call give_all_aos_and_grad_at_r(r,aos_array,aos_grad_array)
+    call ao_xyz_i_prod_j_in_r(r,i,j,aos_xyzi_j)
+    do k = 1,3
+     num = aos_xyzi_j(k)
+     ref = aos_array(i) * r(k) * aos_array(j)
+!     print*,aos_array(i),aos_array(j)
+     if(dabs(num - ref).gt.1.d-9)then
+      print*,'i,j',i,j
+      print*,r
+      num_i = ao_nucl(i)
+      num_j = ao_nucl(j)
+      print*,'k = ',k
+      print*,'num_i,num_j',num_i,num_j
+      print*,'ao_power i ', ao_power(i,:)
+      print*,'ao_power j ', ao_power(j,:)
+      print*,num,ref
+      print*,'STOOOOOP '
+      print*,ipoint
+      stop
+     endif
+     accu(k) += dabs(num - ref) * weight
+    enddo
+   enddo
+   print*,'i,j',i,j
+   print*,accu
+  enddo
+ enddo
+end
+
+subroutine test_prod_dxyzi_j
+ implicit none
+ double precision :: r(3)
+ integer :: prim_num_i,prim_num_j
+ include 'utils/constants.include.F'
+ double precision, allocatable :: P_new(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision :: P_center(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+ integer :: i,j,ipoint,num_i,num_j,k
+ double precision :: ao_prod_in_r,weight,accu(3),num,ref
+ double precision :: aos_grad_array(3,ao_num),aos_array(ao_num),aos_dxyzi_j(3),phi_ao_plus_n,ao_i1
+ allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max,3)) ! new polynom for each couple of prim
+
+ do i = 1, ao_num
+  do j = 1, ao_num
+   accu = 0.d0
+   do ipoint = 1, n_points_final_grid
+    r(1) = final_grid_points(1,ipoint)
+    r(2) = final_grid_points(2,ipoint)
+    r(3) = final_grid_points(3,ipoint)
+    weight = final_weight_at_r_vector(ipoint)
+    call give_all_aos_and_grad_at_r(r,aos_array,aos_grad_array)
+    call ao_dxyz_i_prod_j_in_r(r,i,j,aos_dxyzi_j)
+    do k = 1,3
+     num = aos_dxyzi_j(k)
+     ref = aos_grad_array(k,i) * aos_array(j)
+     if(dabs(num - ref).gt.1.d-9)then
+      print*,'i,j',i,j
+      print*,r
+      num_i = ao_nucl(i)
+      num_j = ao_nucl(j)
+      print*,'k = ',k
+      print*,'num_i,num_j',num_i,num_j
+      print*,'ao_power i ', ao_power(i,:)
+      print*,'ao_power j ', ao_power(j,:)
+      print*,num,ref
+      print*,'STOOOOOP '
+      print*,ipoint
+      stop
+     endif
+     accu(k) += dabs(num - ref) * weight
+    enddo
+   enddo
+   print*,'i,j',i,j
+   print*,accu
+  enddo
+ enddo
+end
+
+subroutine test_prod_xyz_dxyzi_j
+ implicit none
+ double precision :: r(3)
+ integer :: prim_num_i,prim_num_j
+ include 'utils/constants.include.F'
+ double precision, allocatable :: P_new(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision :: P_center(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+ integer :: i,j,ipoint,num_i,num_j,k
+ double precision :: ao_prod_in_r,weight,accu(3),num,ref
+ double precision :: aos_grad_array(3,ao_num),aos_array(ao_num),aos_dxyzi_j(3),phi_ao_plus_n,ao_i1
+ allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max,3)) ! new polynom for each couple of prim
+
+ do i = 1, ao_num
+  do j = 1, ao_num
+! do i = 1,1
+!  do j = 16,16
+   accu = 0.d0
+   do ipoint = 1, n_points_final_grid
+    r(1) = final_grid_points(1,ipoint)
+    r(2) = final_grid_points(2,ipoint)
+    r(3) = final_grid_points(3,ipoint)
+    weight = final_weight_at_r_vector(ipoint)
+!    print*,'ipoint = ',ipoint
+    call give_all_aos_and_grad_at_r(r,aos_array,aos_grad_array)
+    call ao_xyz_dxyz_i_prod_j_in_r(r,i,j,aos_dxyzi_j)
+    do k = 1,3
+     num = aos_dxyzi_j(k)
+     ref = aos_grad_array(k,i) * aos_array(j) * r(k)
+     if(dabs(num - ref).gt.1.d-9)then
+      print*,'STOOOOOP '
+      print*,'STOOOOOP '
+      print*,'i,j',i,j
+      print*,r
+      num_i = ao_nucl(i)
+      num_j = ao_nucl(j)
+      print*,'k = ',k
+      print*,'num_i,num_j',num_i,num_j
+      print*,'ao_power i ', ao_power(i,:)
+      print*,'ao_power j ', ao_power(j,:)
+      print*,num,ref
+      print*,'STOOOOOP '
+      print*,ipoint
+      stop
+     endif
+     accu(k) += dabs(num - ref) * weight
+    enddo
+   enddo
+   print*,'i,j',i,j
+   print*,accu
+  enddo
+ enddo
 end
