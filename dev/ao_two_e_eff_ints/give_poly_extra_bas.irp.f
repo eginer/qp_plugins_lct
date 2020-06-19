@@ -272,10 +272,18 @@ subroutine give_poly_dxyzi_j(i,j,P_new0,P_new1,P_center,p_exp,fact_p,iorder_p0,i
     do n = 1, 3
      iorder_p0(n,q,p,k) = iorder_p_ij_p1(n,q,p)
      do m = 0, iorder_p_ij_p1(n,q,p)
-      P_new0(m,n,q,p,k) = P_new_ij_p1(m,n,q,p) * dble(nx)
+      P_new0(m,n,q,p,k) = P_new_ij_p1(m,n,q,p)
      enddo
     enddo
    enddo
+  enddo
+  do p = 1, ao_prim_num(j)
+   do q = 1, ao_prim_num(i)
+    n = k
+     do m = 0, iorder_p_ij_p1(n,q,p)
+      P_new0(m,n,q,p,k) = P_new_ij_p1(m,n,q,p) * dble(nx)
+     enddo
+    enddo
   enddo
  enddo
 
