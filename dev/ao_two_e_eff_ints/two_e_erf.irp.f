@@ -203,16 +203,36 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
       K_center(p) = nucl_coord(num_k,p)
       L_center(p) = nucl_coord(num_l,p)
     enddo
+ double precision :: P_new_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ double precision :: P_center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp_ij(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p_ij(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod_ij(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
 
+ double precision :: P_new_kl(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ double precision :: P_center_kl(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp_kl(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_p_kl(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ integer          :: iorder_p_kl(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: coef_prod_kl(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+
+    call give_poly_ij(k,l,P_new_kl,P_center_kl,p_exp_kl,fact_p_kl,iorder_p_kl,coef_prod_kl)
+    call give_poly_ij(i,j,P_new_ij,P_center_ij,p_exp_ij,fact_p_ij,iorder_p_ij,coef_prod_ij)
     schwartz_kl(0,0) = 0.d0
     do r = 1, ao_prim_num(k)
       coef1 = ao_coef_normalized_ordered_transp(r,k)*ao_coef_normalized_ordered_transp(r,k)
       schwartz_kl(0,r) = 0.d0
       do s = 1, ao_prim_num(l)
         coef2 = coef1 * ao_coef_normalized_ordered_transp(s,l) * ao_coef_normalized_ordered_transp(s,l)
-        call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
-            ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),                 &
-            K_power,L_power,K_center,L_center,dim1)
+!        call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
+!            ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),                 &
+!            K_power,L_power,K_center,L_center,dim1)
+        qq = p_exp_kl(r,s)
+        fact_q = fact_p_kl(r,s)
+        iorder_q(:) = iorder_p_kl(:,r,s)
+        Q_new(:,:) = P_new_kl(:,:,r,s)
+        Q_center(:) = P_center_kl(:,r,s)
         q_inv = 1.d0/qq
         schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
             Q_new,Q_center,fact_q,qq,q_inv,iorder_q,                 &
@@ -223,13 +243,20 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
     enddo
 
+
     do p = 1, ao_prim_num(i)
       coef1 = ao_coef_normalized_ordered_transp(p,i)
       do q = 1, ao_prim_num(j)
-        coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
-        call give_explicit_poly_and_gaussian(P_new,P_center,pp,fact_p,iorder_p,&
-            ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
-            I_power,J_power,I_center,J_center,dim1)
+!        coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
+        coef2 = coef_prod_ij(p,q)
+        pp = p_exp_ij(p,q)
+        fact_p = fact_p_ij(p,q)
+        iorder_p(:) = iorder_p_ij(:,p,q)
+        P_new(:,:) = P_new_ij(:,:,p,q)
+        P_center(:) = P_center_ij(:,p,q)
+!        call give_explicit_poly_and_gaussian(P_new,P_center,pp,fact_p,iorder_p,&
+!            ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
+!            I_power,J_power,I_center,J_center,dim1)
         p_inv = 1.d0/pp
         schwartz_ij = general_primitive_integral_erf_new(dim1,               &
             P_new,P_center,fact_p,pp,p_inv,iorder_p,                 &
@@ -248,9 +275,14 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
                cycle
             endif
             coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-            call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
-                ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),             &
-                K_power,L_power,K_center,L_center,dim1)
+!            call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
+!                ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),             &
+!                K_power,L_power,K_center,L_center,dim1)
+            qq = p_exp_kl(r,s)
+            fact_q = fact_p_kl(r,s)
+            iorder_q(:) = iorder_p_kl(:,r,s)
+            Q_new(:,:) = P_new_kl(:,:,r,s)
+            Q_center(:) = P_center_kl(:,r,s)
             q_inv = 1.d0/qq
             integral = general_primitive_integral_erf_new(dim1,              &
                 P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
