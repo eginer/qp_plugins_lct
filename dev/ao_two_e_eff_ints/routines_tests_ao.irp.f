@@ -129,6 +129,7 @@ subroutine test_prod_ij
     num = ao_prod_in_r(r,ao_prim_num(i),ao_prim_num(j),P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
     ref = aos_array(i) * aos_array(j)
     if(dabs(num - ref).gt.1.d-9)then
+     print*,'in test_prod_ij'
      print*,r
      num_i = ao_nucl(i)
      num_j = ao_nucl(j)
@@ -231,11 +232,8 @@ subroutine test_prod_xyzi_j
 
  do i = 1, ao_num
   do j = 1, ao_num
-! do i = 6,6
-!  do j = 3,3
    accu = 0.d0
    do ipoint = 1, n_points_final_grid
-!   do ipoint = 605,605
     r(1) = final_grid_points(1,ipoint)
     r(2) = final_grid_points(2,ipoint)
     r(3) = final_grid_points(3,ipoint)
@@ -245,8 +243,8 @@ subroutine test_prod_xyzi_j
     do k = 1,3
      num = aos_xyzi_j(k)
      ref = aos_array(i) * r(k) * aos_array(j)
-!     print*,aos_array(i),aos_array(j)
      if(dabs(num - ref).gt.1.d-9)then
+      print*,'in test_prod_xyzi_j'
       print*,'i,j',i,j
       print*,r
       num_i = ao_nucl(i)
@@ -299,6 +297,7 @@ subroutine test_prod_dxyzi_j
      num = aos_dxyzi_j(k)
      ref = aos_grad_array(k,i) * aos_array(j)
      if(dabs(num - ref).gt.1.d-9)then
+      print*,'in test_prod_dxyzi_j'
       print*,'i,j',i,j
       print*,r
       num_i = ao_nucl(i)
@@ -354,6 +353,7 @@ subroutine test_prod_xyz_dxyzi_j
      num = aos_dxyzi_j(k)
      ref = aos_grad_array(k,i) * aos_array(j) * r(k)
      if(dabs(num - ref).gt.1.d-9)then
+      print*,'test_prod_xyz_dxyzi_j'
       print*,'STOOOOOP '
       print*,'STOOOOOP '
       print*,'i,j',i,j
