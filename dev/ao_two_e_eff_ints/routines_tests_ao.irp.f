@@ -111,14 +111,25 @@ subroutine test_prod_ij
  integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
  double precision :: coef_prod(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
  integer :: i,j,ipoint,num_i,num_j
- double precision :: ao_prod_in_r,weight,accu,num,ref
+ double precision :: ao_prod_in_r,weight,accu,num,ref,ao_prod_in_r_bis
  double precision :: aos_grad_array(3,ao_num),aos_array(ao_num)
+ double precision :: P_x(0:max_dim,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ double precision :: P_y(0:max_dim,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim                                                  
+ double precision :: P_z(0:max_dim,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer :: p,q
  allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max)) ! new polynom for each couple of prim
 
  do i = 1, ao_num
   do j = 1, ao_num
    print*,'i,j',i,j
    call give_poly_ij(i,j,P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
+   do p = 1, ao_prim_num(j)
+    do q = 1, ao_prim_num(i)
+     P_x(0:max_dim,q,p) = P_new(0:max_dim,1,q,p)
+     P_y(0:max_dim,q,p) = P_new(0:max_dim,2,q,p)
+     P_z(0:max_dim,q,p) = P_new(0:max_dim,3,q,p)
+    enddo
+   enddo
    accu = 0.d0
    do ipoint = 1, n_points_final_grid
     r(1) = final_grid_points(1,ipoint)
@@ -126,7 +137,8 @@ subroutine test_prod_ij
     r(3) = final_grid_points(3,ipoint)
     weight = final_weight_at_r_vector(ipoint)
     call give_all_aos_and_grad_at_r(r,aos_array,aos_grad_array)
-    num = ao_prod_in_r(r,ao_prim_num(i),ao_prim_num(j),P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
+!    num = ao_prod_in_r(r,ao_prim_num(i),ao_prim_num(j),P_new,P_center,p_exp,fact_p,iorder_p,coef_prod)
+    num = ao_prod_in_r_bis(r,ao_prim_num(i),ao_prim_num(j),P_x,P_y,P_z,P_center,p_exp,fact_p,iorder_p,coef_prod)
     ref = aos_array(i) * aos_array(j)
     if(dabs(num - ref).gt.1.d-9)then
      print*,'in test_prod_ij'
