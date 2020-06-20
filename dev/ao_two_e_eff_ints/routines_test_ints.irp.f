@@ -8,7 +8,7 @@ subroutine test_new_erf_ints
  do i = 1, ao_num
   do j = 1, ao_num
    do k = 1, ao_num
-    do l = 1, ao_num
+    do l = j,j
      ref = ao_two_e_integral_schwartz_accel_erf(i,j,k,l)
     enddo
    enddo
@@ -20,7 +20,7 @@ subroutine test_new_erf_ints
  do i = 1, ao_num
   do j = 1, ao_num
    do k = 1, ao_num
-    do l = 1, ao_num
+    do l = j,j
      new = ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
     enddo
    enddo

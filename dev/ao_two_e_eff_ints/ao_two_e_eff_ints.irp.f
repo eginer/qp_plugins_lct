@@ -1,10 +1,11 @@
 program ao_two_e_eff_ints
  implicit none
 ! call test_prod_ij
+  call test_prod_xyzi_j
 ! call test_prod_iplus_1_j
 ! call test_prod_dxyzi_j
 ! call test_prod_xyz_dxyzi_j
- call test_new_erf_ints
+! call test_new_erf_ints
 end
 subroutine test_fits
   implicit none
