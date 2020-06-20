@@ -257,22 +257,12 @@ subroutine give_poly_dxyzi_j(i,j,P_new0,P_new1,P_center,p_exp,fact_p,iorder_p0,i
  do k = 1, 3
   nx = ao_power(i,k)
   ixyz = k
-  call give_poly_i_plus_n_j(i,j,P_new_ij_p1,P_center_ij_p1,p_exp_ij_p1,fact_p_ij_p1,iorder_p_ij_p1,coef_prod_ij_p1,n_new,ixyz)
-  do p = 1, ao_prim_num(j)
-   do q = 1, ao_prim_num(i)
-    do n = 1, 3
-     iorder_p0(n,q,p,k) = iorder_p_ij_p1(n,q,p)
-     do m = 0, iorder_p_ij_p1(n,q,p)
-      P_new0(m,n,q,p,k) = P_new_ij_p1(m,n,q,p)
-     enddo
-    enddo
-   enddo
-  enddo
+  call give_poly_i_plus_n_j(i,j,P_new0(0,1,1,1,k),P_center_ij_p1,p_exp_ij_p1,fact_p_ij_p1,iorder_p0(1,1,1,k),coef_prod_ij_p1,n_new,ixyz)
   do p = 1, ao_prim_num(j)
    do q = 1, ao_prim_num(i)
     n = k
-     do m = 0, iorder_p_ij_p1(n,q,p)
-      P_new0(m,n,q,p,k) = P_new_ij_p1(m,n,q,p) * dble(nx)
+     do m = 0, iorder_p0(n,q,p,k)
+      P_new0(m,n,q,p,k) *=   dble(nx)
      enddo
     enddo
   enddo
@@ -282,17 +272,7 @@ subroutine give_poly_dxyzi_j(i,j,P_new0,P_new1,P_center,p_exp,fact_p,iorder_p0,i
  do k = 1, 3
   nx = ao_power(i,k)
   ixyz = k
-  call give_poly_i_plus_n_j(i,j,P_new_ij_p1,P_center_ij_p1,p_exp_ij_p1,fact_p_ij_p1,iorder_p_ij_p1,coef_prod_ij_p1,n_new,ixyz)
-  do p = 1, ao_prim_num(j)
-   do q = 1, ao_prim_num(i)
-    do n = 1, 3
-     iorder_p1(n,q,p,k) = iorder_p_ij_p1(n,q,p)
-     do m = 0, iorder_p_ij_p1(n,q,p)
-      P_new1(m,n,q,p,k) = P_new_ij_p1(m,n,q,p) 
-     enddo
-    enddo
-   enddo
-  enddo
+  call give_poly_i_plus_n_j(i,j,P_new1(0,1,1,1,k),P_center_ij_p1,p_exp_ij_p1,fact_p_ij_p1,iorder_p1(1,1,1,k),coef_prod_ij_p1,n_new,ixyz)
  enddo
 
 end
