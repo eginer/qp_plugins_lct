@@ -1,6 +1,12 @@
 program ao_two_e_eff_ints
  implicit none
- call test_gauss_ints_bis
+! call test_prod_ij
+!  call test_prod_xyzi_j
+! call test_prod_iplus_1_j
+! call test_prod_dxyzi_j
+! call test_prod_xyz_dxyzi_j
+! call test_new_erf_ints
+ call test_all_prod_in_r
 end
 subroutine test_fits
   implicit none
@@ -125,22 +131,22 @@ subroutine test_gauss_ints_bis
    int_r2    = overlap_gauss_r12(r,alpha_r12,C_center,C_center,power_C,power_D,0.5d0*gama,0.5d0*gama)
    int_gauss_num += weight * gauss_a * int_r2 * coef 
   enddo
-!  int_r2 = 0.d0
-!  do jpoint = 1, n_points_final_grid
-!   r2(1) = final_grid_points(1,jpoint)
-!   r2(2) = final_grid_points(2,jpoint)
-!   r2(3) = final_grid_points(3,jpoint)
-!   weightj = final_weight_at_r_vector(jpoint)
-!   r_12 = (r(1) - r2(1))**2 + (r(2) - r2(2))**2 + (r(3) - r2(3))**2 
-!   gauss_b = primitive_value_explicit(power_C,C_center,gama,r2) ! r1
-!   if(r_12.gt.20.d0)cycle
-!   do i = 1,n_gauss_eff_pot
-!    alpha_r12 = expo_gauss_eff_pot(i)
-!    coef      = coef_gauss_eff_pot(i)
-!    int_r2   += gauss_b * dexp(-alpha_r12*r_12) * coef * weightj
-!   enddo
-!  enddo
-!  int_gauss_num_2 += weight * gauss_a * int_r2 
+  int_r2 = 0.d0
+  do jpoint = 1, n_points_final_grid
+   r2(1) = final_grid_points(1,jpoint)
+   r2(2) = final_grid_points(2,jpoint)
+   r2(3) = final_grid_points(3,jpoint)
+   weightj = final_weight_at_r_vector(jpoint)
+   r_12 = (r(1) - r2(1))**2 + (r(2) - r2(2))**2 + (r(3) - r2(3))**2 
+   gauss_b = primitive_value_explicit(power_C,C_center,gama,r2) ! r1
+   do i = 1,n_gauss_eff_pot
+    alpha_r12 = expo_gauss_eff_pot(i)
+    if(alpha_r12 * r_12.gt.20.d0)cycle
+    coef      = coef_gauss_eff_pot(i)
+    int_r2   += gauss_b * dexp(-alpha_r12*r_12) * coef * weightj
+   enddo
+  enddo
+  int_gauss_num_2 += weight * gauss_a * int_r2 
  enddo
  integer :: dim1
  dim1 = n_pt_max_integrals
@@ -178,7 +184,7 @@ subroutine test_gauss_ints_bis
 ! print*,'erf_int      = ',erf_int
 
  print*,'int_gauss_num= ',int_gauss_num
-! print*,'int_gauss_num_2',int_gauss_num_2
+ print*,'int_gauss_num_2',int_gauss_num_2
  print*,'gauss_int    = ',gauss_int
 
 end
