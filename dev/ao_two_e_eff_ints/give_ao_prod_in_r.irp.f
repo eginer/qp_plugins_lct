@@ -83,7 +83,7 @@ double precision function ao_prod_in_r_bis(r,prim_num_i,prim_num_j,P_x,P_y,P_z,P
    enddo
    pol_tot = pol(1) * pol(2) * pol(3)
    ao_prod_in_r_bis += pol_tot * gauss_r * fact_p(q,p) * coef_prod(q,p)
-   write(*,'(100(F16.10,X))')pol_tot,gauss_r,fact_p(q,p),coef_prod(q,p)
+!   write(*,'(100(F16.10,X))')pol_tot,gauss_r,fact_p(q,p),coef_prod(q,p)
    if(isnan(ao_prod_in_r_bis))then
     print*,'isnan(ao_prod_in_r_bis)',isnan(ao_prod_in_r_bis)
     print*,'p,q',p,q
@@ -95,6 +95,7 @@ double precision function ao_prod_in_r_bis(r,prim_num_i,prim_num_j,P_x,P_y,P_z,P
    endif
   enddo
  enddo
+! print*,"ao_prod_in_r_bis = ",ao_prod_in_r_bis
 end
 
 subroutine ao_xyz_i_prod_j_in_r(r,i,j,aos_xyzi_j)

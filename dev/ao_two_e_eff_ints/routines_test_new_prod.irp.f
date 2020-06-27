@@ -116,6 +116,7 @@ subroutine test_all_poly_for_r12_deriv(i,j,r,value_ij,value_j_x_i, value_j_dxyz_
  ! phi_j * d/dx * phi_i = (phi_j * phi_i)_y * (phi_j * phi_i)_z * (phi_j * d/dy * phi_i)_x
  do p = 1, prim_num_j 
   do q = 1, prim_num_i 
+!   print*,'iorder_j_dxyz_i(1,1,q,p) = ',iorder_j_dxyz_i(1,1,q,p)
    P_x(0:max_dim,q,p) = P_j_dxyz_i(0:max_dim,1,1,q,p) ! the part with the new polynoms in x 
    P_y(0:max_dim,q,p) = P_ij(0:max_dim,2,q,p) ! the usual part with the polynom in y 
    P_z(0:max_dim,q,p) = P_ij(0:max_dim,3,q,p) ! the usual part with the polynom in z
@@ -125,17 +126,19 @@ subroutine test_all_poly_for_r12_deriv(i,j,r,value_ij,value_j_x_i, value_j_dxyz_
   enddo
  enddo
  value_j_dxyz_i(1) = ao_prod_in_r_bis(r,prim_num_i,prim_num_j,P_x,P_y,P_z,P_center_ij,p_exp_ij,fact_p_ij,iorder_tmp,coef_prod_ij)
- print*,'value_j_dxyz_i(1) = ',value_j_dxyz_i(1)
+! print*,'value_j_dxyz_i(1) = ',value_j_dxyz_i(1)
  do p = 1, prim_num_j 
   do q = 1, prim_num_i 
    P_x(0:max_dim,q,p) = P_j_dxyz_i(0:max_dim,1,2,q,p) ! you replace by the second contribution in x 
+   P_y(0:max_dim,q,p) = P_ij(0:max_dim,2,q,p) ! the usual part with the polynom in y 
+   P_z(0:max_dim,q,p) = P_ij(0:max_dim,3,q,p) ! the usual part with the polynom in z
    iorder_tmp(1,q,p)  = iorder_j_dxyz_i(1,2,q,p)
    iorder_tmp(2,q,p)  = iorder_ij(2,q,p)
    iorder_tmp(3,q,p)  = iorder_ij(3,q,p)
   enddo
  enddo
  value_j_dxyz_i(1) += ao_prod_in_r_bis(r,prim_num_i,prim_num_j,P_x,P_y,P_z,P_center_ij,p_exp_ij,fact_p_ij,iorder_tmp,coef_prod_ij)
- print*,'value_j_dxyz_i(1) = ',value_j_dxyz_i(1)
+! print*,'value_j_dxyz_i(1) = ',value_j_dxyz_i(1)
 
  ! phi_j * d/dy * phi_i = (phi_j * phi_i)_x * (phi_j * phi_i)_z * (phi_j * d/dy * phi_i)_y
  do p = 1, prim_num_j 
@@ -199,10 +202,10 @@ subroutine test_all_prod_in_r
  double precision :: aos_grad_array(3,ao_num),aos_array(ao_num),aos_dxyzi_j(3),phi_ao_plus_n,ao_i1
  double precision :: value_ij,value_j_x_i(3),value_j_dxyz_i(3)
 
-! do i = 1, ao_num
-!  do j = 1, ao_num
- do i = 4, ao_num
+ do i = 1, ao_num
   do j = 1, ao_num
+! do i = 1, ao_num
+!  do j = 71, ao_num
    accu = 0.d0
    accu_scal = 0.d0
    do ipoint = 1, n_points_final_grid

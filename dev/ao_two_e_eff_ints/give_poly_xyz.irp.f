@@ -130,7 +130,6 @@ subroutine give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
   if(I_power(k).lt.0)then
    P_new(:,k,:,:) = 0.d0
    iorder_p(k,:,:) = -1
-   return
   endif
  enddo
  do p = 1, ao_prim_num(j)
