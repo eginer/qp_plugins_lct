@@ -19,12 +19,21 @@ subroutine give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,f
 
  integer :: p,q,k,m,n,num_ao,nx
  double precision :: center_ao(1:3)
+ integer :: n_new(3)
+ double precision :: P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+
  num_ao = ao_nucl(i)
  center_ao(1:3) = nucl_coord(num_ao,1:3)
 
+ !!!!!!!!!!!!!!!!
+ ! phi_i phi_j 
  call give_poly_ij(i,j,P_ij,P_center_ij,p_exp_ij,fact_p_ij,iorder_ij,coef_prod_ij)
+ !!!!!!!!!!!!!!!!
 
+ !!!!!!!!!!!!!!!!
  ! phi_j x1 phi_i
+ !
  ! First contribution is A_x (x-A_x)^a_x
  do p = 1, ao_prim_num(j)
   do q = 1, ao_prim_num(i)
@@ -37,13 +46,10 @@ subroutine give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,f
    enddo
   enddo
  enddo
-
+ !
  ! Second contribution is (x-A_x)^{a_x+1}
- integer :: n_new(3)
- n_new = 1
- double precision :: P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
- integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- ! You increase the order of the polynom of phi_i on x/y/z
+ !
+ n_new = 1 ! You increase the order of the polynom of phi_i on x/y/z
  ! and you create all polynoms for the x/y/z
  call give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
  do p = 1, ao_prim_num(j)
@@ -57,10 +63,14 @@ subroutine give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,f
    enddo
   enddo
  enddo
+ !!!!!!!!!!!!!!!!
 
+ !!!!!!!!!!!!!!!!
  ! phi_j d/dx phi_i
+ !!!!!!!!!!!!!!!!
+ !
  ! First contribution is a_x (x - A_x)^{a_x-1}
- n_new = -1
+ n_new = -1 ! You decrease the order of the polynom
  call give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
  do p = 1, ao_prim_num(j)
   do q = 1, ao_prim_num(i)
@@ -76,7 +86,7 @@ subroutine give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,f
  enddo
  ! 
  ! Second contribution is -2 * alpha_i * (x - A_x)^{a_x+1}
- n_new = 1
+ n_new = 1 ! You increase the order of the polynom
  call give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
  do p = 1, ao_prim_num(j)
   do q = 1, ao_prim_num(i)
@@ -85,6 +95,70 @@ subroutine give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,f
     do m = 0, iorder_p(k,q,p)
      ! This corresponds to (x-A_x)^{a_x+1}
      P_j_dxyz_i(m,k,2,q,p) = -2.d0 * ao_expo_ordered_transp(q,i) * P_new(m,k,q,p) 
+    enddo
+   enddo
+  enddo
+ enddo
+
+ !!!!!!!!!!!!!!!!
+ ! phi_j x d/dx phi_i
+ !!!!!!!!!!!!!!!!
+ !
+ ! First contribution is a_x A_x (x - A_x)^{a_x-1}
+ n_new = -1 ! You decrease the order of the polynom
+ call give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
+ do p = 1, ao_prim_num(j)
+  do q = 1, ao_prim_num(i)
+   do k = 1, 3
+    nx = ao_power(i,k)
+    iorder_j_xyz_dxyz_i(k,1,q,p) = iorder_p(k,q,p)
+    do m = 0, iorder_p(k,q,p)
+     ! This corresponds to (x-A_x)^{a_x+1}
+     P_j_xyz_dxyz_i(m,k,1,q,p) = P_new(m,k,q,p) * dble(nx) * center_ao(k)
+    enddo
+   enddo
+  enddo
+ enddo
+ !
+ ! Second contribution is a_x (x-A_x)^a_x
+ do p = 1, ao_prim_num(j)
+  do q = 1, ao_prim_num(i)
+   do k = 1, 3
+    nx = ao_power(i,k)
+    iorder_j_xyz_dxyz_i(k,2,q,p) = iorder_ij(k,q,p)
+    do m = 0, iorder_ij(k,q,p)
+     ! This corresponds to a_x (x - A_x)^a_x 
+     P_j_xyz_dxyz_i(m,k,2,q,p) = P_ij(m,k,q,p) * dble(nx)
+    enddo
+   enddo
+  enddo
+ enddo
+ ! 
+ ! Third contribution is -2 * alpha_i * A_x * (x - A_x)^{a_x+1}
+ n_new = 1 ! You increase the order of the polynom
+ call give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
+ do p = 1, ao_prim_num(j)
+  do q = 1, ao_prim_num(i)
+   do k = 1, 3
+    iorder_j_xyz_dxyz_i(k,3,q,p) = iorder_p(k,q,p)
+    do m = 0, iorder_p(k,q,p)
+     ! This corresponds to (x-A_x)^{a_x+1}
+     P_j_xyz_dxyz_i(m,k,3,q,p) = -2.d0 * ao_expo_ordered_transp(q,i) * P_new(m,k,q,p) * center_ao(k)
+    enddo
+   enddo
+  enddo
+ enddo
+ ! 
+ ! Fourth contribution is -2 * alpha_i * (x - A_x)^{a_x+2}
+ n_new = 2 ! You increase the order of the polynom
+ call give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
+ do p = 1, ao_prim_num(j)
+  do q = 1, ao_prim_num(i)
+   do k = 1, 3
+    iorder_j_xyz_dxyz_i(k,4,q,p) = iorder_p(k,q,p)
+    do m = 0, iorder_p(k,q,p)
+     ! This corresponds to (x-A_x)^{a_x+1}
+     P_j_xyz_dxyz_i(m,k,4,q,p) = -2.d0 * ao_expo_ordered_transp(q,i) * P_new(m,k,q,p) 
     enddo
    enddo
   enddo
