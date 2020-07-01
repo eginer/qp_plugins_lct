@@ -102,6 +102,7 @@ double precision function general_primitive_integral_erf_new(dim,            &
   accu = 0.d0
   n_Ix = 0 
   Ix_pol = 0.d0
+  ! You get the polynoms Ix_pol(:,1), Ix_pol(:,2), Ix_pol(:,3) for the x,y,z integration
   do m = 1, 3
    call give_polynom_x_for_erf_int(                                              &
        P_new(0,m),P_center(m),p,iorder_p(m),pq_inv,pq_inv_2,        &
@@ -123,6 +124,7 @@ double precision function general_primitive_integral_erf_new(dim,            &
     d_poly(i)=0.d0
   enddo
 
+  ! You multiply the polynom in x and Y to give d_poly
   !DEC$ FORCEINLINE
   call multiply_poly(Ix_pol(0,1),n_Ix(1),Ix_pol(0,2),n_Ix(2),d_poly,n_pt_tmp)
   if (n_pt_tmp == -1) then
@@ -133,9 +135,11 @@ double precision function general_primitive_integral_erf_new(dim,            &
     d1(i)=0.d0
   enddo
 
+  ! You multiply d_poly with the polynom in z to get d1
   !DEC$ FORCEINLINE
   call multiply_poly(d_poly ,n_pt_tmp ,Ix_pol(0,3),n_Ix(3),d1,n_pt_out)
   double precision               :: rint_sum
+  ! then you integrate over [0,1] d1(t) * exp(-const * t^2)
   accu = accu + rint_sum(n_pt_out,const,d1)
 
   ! change p+q in dsqrt
@@ -213,9 +217,6 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
       schwartz_kl(0,r) = 0.d0
       do s = 1, ao_prim_num(l)
         coef2 = coef1 * ao_coef_normalized_ordered_transp(s,l) * ao_coef_normalized_ordered_transp(s,l)
-!        call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
-!            ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),                 &
-!            K_power,L_power,K_center,L_center,dim1)
         qq = p_exp_kl(r,s)
         q_inv = 1.d0/qq
         schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
@@ -232,10 +233,6 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
       coef1 = ao_coef_normalized_ordered_transp(p,i)
       do q = 1, ao_prim_num(j)
         coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
-!        call give_explicit_poly_and_gaussian(P_new,P_center,pp,fact_p,iorder_p,&
-!            ao_expo_ordered_transp(p,i),ao_expo_ordered_transp(q,j),                 &
-!            I_power,J_power,I_center,J_center,dim1)
-!        coef2 = coef_prod_ij(p,q)
         pp = p_exp_ij(p,q)
         p_inv = 1.d0/pp
         schwartz_ij = general_primitive_integral_erf_new(dim1,               &
@@ -255,9 +252,6 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
                cycle
             endif
             coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-!            call give_explicit_poly_and_gaussian(Q_new,Q_center,qq,fact_q,iorder_q,&
-!                ao_expo_ordered_transp(r,k),ao_expo_ordered_transp(s,l),             &
-!                K_power,L_power,K_center,L_center,dim1)
             qq = p_exp_kl(r,s)
             q_inv = 1.d0/qq
             integral = general_primitive_integral_erf_new(dim1,              &
