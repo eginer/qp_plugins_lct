@@ -1,12 +1,23 @@
-double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
+subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
   implicit none
   BEGIN_DOC
-  !  integral of the AO basis <jl|1/r12 * r_{12}.d/dr12 |ik> 
-  !  j(r1) l(r2) (1 - erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) + (y_1 - y_2) (d/dy1 - d/dy2) + (z_1 - z_2) (d/dz1 - d/dz2) i(r1) k(r2)
+  !
+  ! Warning :: chemist notation :: i,j,k,l = (i,j|k,l)
+  !
+  ! Warining :: the derivarive operators are applied to i(r1) and k(r2)
+  !
+  !  integral of the AO basis <jl|erf(mu_in * r_12) /r12 * r_{12}.d/dr12 |ik> 
+  !  j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) + (y_1 - y_2) (d/dy1 - d/dy2) + (z_1 - z_2) (d/dz1 - d/dz2) i(r1) k(r2)
   !  
   ! WARNING <ik|jl> IS NOT EQUAL TO <kl|ik> because of the first-order differential operator
+  !
+  ! in output you obtain d_dr12(1) = j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) i(r1) k(r2)
+  ! 
+  ! and d_dr12(2) and d_dr12(3), the same with the (y_1 - y_2) (d/dy1 - d/dy2) and (z_1 - z_2) (d/dz1 - d/dz2) operators
   END_DOC
+  double precision, intent(out)  :: d_dr12(3)
   integer,intent(in)             :: i,j,k,l
+  double precision, intent(in)   :: mu_in
   integer                        :: p,q,r,s
   double precision               :: I_center(3),J_center(3),K_center(3),L_center(3)
   integer                        :: num_i,num_j,num_k,num_l,dim1,I_power(3),J_power(3),K_power(3),L_power(3)
@@ -18,6 +29,9 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
   double precision, allocatable  :: schwartz_kl(:,:)
   double precision               :: schwartz_ij
   double precision :: scw_gauss_int,general_primitive_integral_gauss
+  double precision :: d_dr12_tmp(3)
+
+  d_dr12 = 0.d0
 
   dim1 = n_pt_max_integrals
 
@@ -25,31 +39,30 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
   num_j = ao_nucl(j)
   num_k = ao_nucl(k)
   num_l = ao_nucl(l)
-  ao_two_e_integral_schwartz_accel_dr12_coul = 0.d0
   double precision               :: thr
   thr = ao_integrals_threshold*ao_integrals_threshold
 
   allocate(schwartz_kl(0:ao_prim_num(l),0:ao_prim_num(k)))
 
-      double precision               :: coef3
-      double precision               :: coef2
-      double precision               :: p_inv,q_inv
-      double precision               :: coef1
-      double precision               :: coef4
+  double precision               :: coef3
+  double precision               :: coef2
+  double precision               :: p_inv,q_inv
+  double precision               :: coef1
+  double precision               :: coef4
 
-    do p = 1, 3
-      I_power(p) = ao_power(i,p)
-      J_power(p) = ao_power(j,p)
-      K_power(p) = ao_power(k,p)
-      L_power(p) = ao_power(l,p)
-      I_center(p) = nucl_coord(num_i,p)
-      J_center(p) = nucl_coord(num_j,p)
-      K_center(p) = nucl_coord(num_k,p)
-      L_center(p) = nucl_coord(num_l,p)
-    enddo
+  do p = 1, 3
+    I_power(p) = ao_power(i,p)
+    J_power(p) = ao_power(j,p)
+    K_power(p) = ao_power(k,p)
+    L_power(p) = ao_power(l,p)
+    I_center(p) = nucl_coord(num_i,p)
+    J_center(p) = nucl_coord(num_j,p)
+    K_center(p) = nucl_coord(num_k,p)
+    L_center(p) = nucl_coord(num_l,p)
+  enddo
 
-    call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
-    call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
+ call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
+ call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
 
  double precision :: P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
@@ -79,6 +92,7 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
  double precision :: P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_xyz_dxyz_k(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
+ double precision :: general_primitive_integral_erf_new
 
  call give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,coef_prod_ij,& 
             P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i)
@@ -92,10 +106,10 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
         coef2 = coef1 * ao_coef_normalized_ordered_transp(s,l) * ao_coef_normalized_ordered_transp(s,l)
         qq = p_exp_kl(r,s)
         q_inv = 1.d0/qq
-!        schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
-!            P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s),                 &
-!            P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))      &
-!            * coef2
+        schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
+            P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s),                 &
+            P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))      &
+            * coef2
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
       enddo
       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
@@ -107,10 +121,10 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
         coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
         pp = p_exp_ij(p,q)
         p_inv = 1.d0/pp
-!        schwartz_ij = general_primitive_integral_erf_new(dim1,               &
-!            P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q),                 &
-!            P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
-!            coef2*coef2
+        schwartz_ij = general_primitive_integral_erf_new(dim1,               &
+            P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q),                 &
+            P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
+            coef2*coef2
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
         endif
@@ -126,10 +140,19 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
             coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
             qq = p_exp_kl(r,s)
             q_inv = 1.d0/qq
-!            integral = general_primitive_integral_erf_new(dim1,              &
-!                P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q), & 
-!                P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))
-!            ao_two_e_integral_schwartz_accel_erf_new = ao_two_e_integral_schwartz_accel_erf_new + coef4 * integral
+           call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                        &
+                P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
+                P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
+                P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
+                P_j_xyz_dxyz_i(0,1,1,p,q), iorder_j_xyz_dxyz_i(1,1,p,q),                               &
+                P_kl(0,1,r,s),iorder_kl(1,r,s),center_kl(1,r,s),p_exp_kl(r,s),fact_kl(r,s),            &
+                P_l_xyz_k(0,1,1,r,s),iorder_l_xyz_k(1,1,r,s),                                          & 
+                P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
+                P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
+           integer :: mm
+           do mm = 1, 3
+            d_dr12(mm) += d_dr12_tmp(mm) * coef4
+           enddo
           enddo ! s
         enddo  ! r
       enddo   ! q
@@ -138,21 +161,33 @@ double precision function ao_two_e_integral_schwartz_accel_dr12_coul(i,j,k,l)
 end
 
 subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
-     P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,coef_prod_ij,            &
-     P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i, &
-     P_kl,iorder_kl,center_kl,p_exp_kl,fact_kl,coef_prod_kl,            &
-     P_l_xyz_k,iorder_l_xyz_k, iorder_l_dxyz_k,P_l_dxyz_k, P_l_xyz_dxyz_k, iorder_l_xyz_dxyz_k) 
+     P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,            &
+     P_j_xyz_i,iorder_j_xyz_i,P_j_dxyz_i, iorder_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i, &
+     P_kl,iorder_kl,center_kl,p_exp_kl,fact_kl,            &
+     P_l_xyz_k,iorder_l_xyz_k,P_l_dxyz_k, iorder_l_dxyz_k, P_l_xyz_dxyz_k, iorder_l_xyz_dxyz_k) 
       
+  BEGIN_DOC
+  !  integral for a general couple of primitive function j(r1) i(r1) and l(r2) k(r2) of the following operator 
+  !
+  !  j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) + (y_1 - y_2) (d/dy1 - d/dy2) + (z_1 - z_2) (d/dz1 - d/dz2) i(r1) k(r2)
+  !  
+  ! Here, one needs the polynoms for [j(r1) i(r1)]= P_ij, [j(r1) (x1 i(r1))] = P_j_xyz_i, [j(r1) d/dx1 i(r1)]= P_j_dxyz_i and [j(r1) x1 . d/dx1 i(r1) =  P_j_xyz_dxyz_i
+  ! 
+  ! WARNING <ik|jl> IS NOT EQUAL TO <kl|ik> because of the first-order differential operator
+  !
+  ! in output you obtain d_dr12(1) = j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) i(r1) k(r2)
+  ! 
+  ! and d_dr12(2) and d_dr12(3), the same with the (y_1 - y_2) (d/dy1 - d/dy2) and (z_1 - z_2) (d/dz1 - d/dz2) operators
+  END_DOC
   include 'utils/constants.include.F'
   implicit none
-  double precision, intent(out) :: d_dr12(2)
+  double precision, intent(out) :: d_dr12(3)
   double precision, intent(in) :: mu_in
   double precision,intent(in) :: P_ij(0:max_dim,3) 
   integer         ,intent(in) :: iorder_ij(3) 
   double precision,intent(in) :: center_ij(3) 
   double precision,intent(in) :: p_exp_ij 
   double precision,intent(in) :: fact_ij 
-  double precision,intent(in) :: coef_prod_ij 
   double precision,intent(in) :: P_j_xyz_i(0:max_dim,3,2) 
   integer         ,intent(in) :: iorder_j_xyz_i(3,2) 
   double precision,intent(in) :: P_j_dxyz_i(0:max_dim,3,2) 
@@ -165,7 +200,6 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
   double precision,intent(in) :: center_kl(3) 
   double precision,intent(in) :: p_exp_kl 
   double precision,intent(in) :: fact_kl 
-  double precision,intent(in) :: coef_prod_kl 
   double precision,intent(in) :: P_l_xyz_k(0:max_dim,3,2) 
   integer         ,intent(in) :: iorder_l_xyz_k(3,2) 
   double precision,intent(in) :: P_l_dxyz_k(0:max_dim,3,2) 
@@ -173,18 +207,14 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
   double precision,intent(in) :: P_l_xyz_dxyz_k(0:max_dim,3,4) 
   integer         ,intent(in) :: iorder_l_xyz_dxyz_k(3,4) 
 
-  BEGIN_DOC
-  ! 
-  END_DOC
-
   double precision               :: rho,dist,p,q,p_inv,q_inv
   double precision               :: Ixyz_pol(0:max_dim,3),Iprod_xyz(0:max_dim,3)
   integer                        :: n_Ixyz(3),m,i,n_Iprod_xyz(3),kk,ll
   double precision               :: accu,pq,const
   double precision               :: pq_inv, p10_1, p10_2, p01_1, p01_2,pq_inv_2
-  integer                        :: n_pt_tmp,n_pt_out, iorder
+  integer                        :: n_pt_tmp,n_pt_out, iorder,n_dsum(3),n_dtmp
   double precision               :: d1(0:max_dim),d_poly(0:max_dim),rint
-  double precision               :: dtmp(0:max_dim),n_dtmp,dsum(0:max_dim,3),n_dsum(3)
+  double precision               :: dtmp(0:max_dim),dsum(0:max_dim,3)
   integer  :: dim
   dim = n_pt_max_integrals
 
@@ -193,7 +223,7 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
   q = p_exp_kl
   q_inv = 1.d0/q
 
-
+  d_dr12 = 0.d0 
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: Ixyz_pol
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: d1, d_poly
 
@@ -257,12 +287,13 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
 ! dsum(0:,3) =  (z1,z2) integration of the j(r1) l(r2) (z1 - z2)(dz1 - dz2) i(z1) k(z2) 
    dsum = 0.d0 
    n_dsum = 0
+  !
   do m = 1, 3
   ! computing the X part of the r12 derivative : j(r1) l(r2) (x1 - x2)(dx1 - dx2) i(r1) k(r2)
   !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  ! j(r1) l(r2) (x1 dx1 i(r1) ) k(r2)
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  ! j(r1) l(r2) (x1 dx1 i(r1) ) k(r2)
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 4 ! you loop over the four polynoms of P_j_xyz_dxyz_i
     ! the polynom in x1 is [j(r1) (x1 dx1 i(r1))] 
     ! the polynom in x2 is l(r2) k(r2)
@@ -273,9 +304,9 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
     ! you sum up dtmp into dsum to accumulate 
     call add_poly_multiply(dtmp,n_dtmp,1.d0,dsum(0,m),n_dsum(m))
    enddo
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  ! j(r1) l(r2) (x2 dx2 k(r2) ) i(r2)
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  ! j(r1) l(r2) (x2 dx2 k(r2) ) i(r2)
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 4 ! you loop over the four polynoms of P_l_xyz_dxyz_k
     ! the polynom in x1 is j(r1) i(r1)
     ! the polynom in x2 is l(r2) (x2 dx2 k(r2))
@@ -286,9 +317,9 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
     ! you sum up dtmp into dsum to accumulate 
     call add_poly_multiply(dtmp,n_dtmp,1.d0,dsum(0,m),n_dsum(m))
    enddo
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   ! - j(r1) l(r2) (x1 i(r1)) (dx2 k(r2))
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   ! - j(r1) l(r2) (x1 i(r1)) (dx2 k(r2))
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 2 ! you loop over the two polynoms of P_j_xyz_i 
     do ll = 1, 2 ! you loop over two polynoms of P_l_dxyz_k
      ! the polynom in x1 is [j(r1) (x1 i(r1))] 
@@ -301,10 +332,10 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
      call add_poly_multiply(dtmp,n_dtmp,-1.d0,dsum(0,m),n_dsum(m))
     enddo
    enddo
-
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   ! - j(r1) l(r2) (dx1 i(r1)) (x2 k(r2)) 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   ! - j(r1) l(r2) (dx1 i(r1)) (x2 k(r2)) 
+!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 2 ! you loop over the two polynoms of P_j_dxyz_i
     do ll = 1, 2 ! you loop over the two polynoms of P_l_xyz_k
      ! the polynom in x1 is [j(r1) (x1  i(r1))] 
@@ -317,6 +348,7 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
      call add_poly_multiply(dtmp,n_dtmp,-1.d0,dsum(0,m),n_dsum(m))
     enddo
    enddo
+
   enddo ! m 
 
   double precision :: rint_sum
@@ -327,7 +359,7 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
    call multiply_poly(Iprod_xyz(0,3),n_Iprod_xyz(3),dsum(0,1),n_dsum(1),d1,n_pt_out)
   ! then you integrate over [0,1] d1(t) * exp(-const * t^2)
    accu = rint_sum(n_pt_out,const,d1)
-   d_dr12(1) = fact_ij * fact_kl * accu *pi_5_2*p_inv*q_inv/dsqrt(p_plus_q)
+   d_dr12(1) = fact_ij * fact_kl * accu *pi_5_2*p_inv*q_inv/dsqrt(p_plus_q) 
 
   ! j(y1) l(y2) (y1 - y2)(dy1 - dy2) i(y1) k(y2) * P_ij(x1) P_kl(x1) * P_ij(z1) P_kl(z1) 
   ! ==> you multiply dsum(:,2) with the polynoms in x * z == d1
@@ -345,5 +377,7 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
    call multiply_poly(Iprod_xyz(0,1),n_Iprod_xyz(1),dsum(0,3),n_dsum(3),d1,n_pt_out)
   ! then you integrate over [0,1] d1(t) * exp(-const * t^2)
    accu = rint_sum(n_pt_out,const,d1)
-   d_dr12(1) = fact_ij * fact_kl * accu *pi_5_2*p_inv*q_inv/dsqrt(p_plus_q)
+   d_dr12(3) = fact_ij * fact_kl * accu *pi_5_2*p_inv*q_inv/dsqrt(p_plus_q)
+
+   d_dr12 = d_dr12 * 0.5d0 ! note the 1/2 factor coming from
 end
