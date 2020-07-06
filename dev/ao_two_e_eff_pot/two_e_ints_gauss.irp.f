@@ -1,4 +1,4 @@
-double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
+double precision function ao_two_e_integral_eff_pot(i,j,k,l)
   implicit none
   BEGIN_DOC
   !  integral of the AO basis <ik|jl> or (ij|kl)
@@ -23,7 +23,7 @@ double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
   num_j = ao_nucl(j)
   num_k = ao_nucl(k)
   num_l = ao_nucl(l)
-  ao_two_e_integral_schwartz_accel_gauss = 0.d0
+  ao_two_e_integral_eff_pot = 0.d0
   double precision               :: thr
   thr = ao_integrals_threshold*ao_integrals_threshold
 
@@ -98,7 +98,7 @@ double precision function ao_two_e_integral_schwartz_accel_gauss(i,j,k,l)
             integral = general_primitive_integral_gauss(dim1,              &
                 P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q)
-            ao_two_e_integral_schwartz_accel_gauss = ao_two_e_integral_schwartz_accel_gauss + coef4 * integral
+            ao_two_e_integral_eff_pot = ao_two_e_integral_eff_pot + coef4 * integral
           enddo ! s
         enddo  ! r
       enddo   ! q
@@ -120,7 +120,7 @@ subroutine compute_ao_two_e_integrals_gauss(j,k,l,sze,buffer_value)
   include 'utils/constants.include.F'
   integer, intent(in)            :: j,k,l,sze
   real(integral_kind), intent(out) :: buffer_value(sze)
-  double precision               :: ao_two_e_integral_schwartz_accel_gauss
+  double precision               :: ao_two_e_integral_eff_pot
 
   integer                        :: i
   logical, external              :: ao_one_e_integral_zero
@@ -145,7 +145,7 @@ subroutine compute_ao_two_e_integrals_gauss(j,k,l,sze,buffer_value)
       cycle
     endif
     !DIR$ FORCEINLINE
-    buffer_value(i) = ao_two_e_integral_schwartz_accel_gauss(i,k,j,l)
+    buffer_value(i) = ao_two_e_integral_eff_pot(i,k,j,l)
   enddo
 
 end
@@ -320,7 +320,7 @@ subroutine compute_ao_integrals_gauss_jl(j,l,n_integrals,buffer_i,buffer_value)
   integer                        :: i,k
   double precision               :: cpu_1,cpu_2, wall_1, wall_2
   double precision               :: integral, wall_0
-  double precision               :: thr,ao_two_e_integral_schwartz_accel_gauss
+  double precision               :: thr,ao_two_e_integral_eff_pot
   integer                        :: kk, m, j1, i1
   logical, external              :: ao_two_e_integral_zero
 
@@ -342,11 +342,11 @@ subroutine compute_ao_integrals_gauss_jl(j,l,n_integrals,buffer_i,buffer_value)
       if (ao_two_e_integral_zero(i,j,k,l)) then
         cycle
       endif
-      if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) then
+      if (ao_two_e_integral_eff_pot_schwartz(i,k)*ao_two_e_integral_eff_pot_schwartz(j,l) < thr ) then
         cycle
       endif
       !DIR$ FORCEINLINE
-      integral = ao_two_e_integral_schwartz_accel_gauss(i,k,j,l)  ! i,k : r1    j,l : r2
+      integral = ao_two_e_integral_eff_pot(i,k,j,l)  ! i,k : r1    j,l : r2
       if (abs(integral) < thr) then
         cycle
       endif

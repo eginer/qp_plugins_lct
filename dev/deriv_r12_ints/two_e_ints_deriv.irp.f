@@ -93,70 +93,75 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
  integer          :: iorder_l_xyz_dxyz_k(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
  double precision :: general_primitive_integral_erf_new
+ integer :: mm
 
- call give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,coef_prod_ij,& 
-            P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i)
- call give_all_poly_for_r12_deriv(k,l,P_kl,iorder_kl,center_kl,p_exp_kl,fact_kl,coef_prod_kl,& 
-            P_l_xyz_k,iorder_l_xyz_k, iorder_l_dxyz_k,P_l_dxyz_k, P_l_xyz_dxyz_k, iorder_l_xyz_dxyz_k)
-    schwartz_kl(0,0) = 0.d0
-    do r = 1, ao_prim_num(k)
-      coef1 = ao_coef_normalized_ordered_transp(r,k)*ao_coef_normalized_ordered_transp(r,k)
-      schwartz_kl(0,r) = 0.d0
-      do s = 1, ao_prim_num(l)
-        coef2 = coef1 * ao_coef_normalized_ordered_transp(s,l) * ao_coef_normalized_ordered_transp(s,l)
-        qq = p_exp_kl(r,s)
-        q_inv = 1.d0/qq
-        schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
-            P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s),                 &
-            P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))      &
-            * coef2
-        schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
-      enddo
-      schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
-    enddo
-
-    do p = 1, ao_prim_num(i)
-      coef1 = ao_coef_normalized_ordered_transp(p,i)
-      do q = 1, ao_prim_num(j)
-        coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
-        pp = p_exp_ij(p,q)
-        p_inv = 1.d0/pp
-        schwartz_ij = general_primitive_integral_erf_new(dim1,               &
-            P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q),                 &
-            P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
-            coef2*coef2
-        if (schwartz_kl(0,0)*schwartz_ij < thr) then
-           cycle
-        endif
-        do r = 1, ao_prim_num(k)
-          if (schwartz_kl(0,r)*schwartz_ij < thr) then
-             cycle
-          endif
-          coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
-          do s = 1, ao_prim_num(l)
-            if (schwartz_kl(s,r)*schwartz_ij < thr) then
-               cycle
-            endif
-            coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
-            qq = p_exp_kl(r,s)
-            q_inv = 1.d0/qq
-           call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                        &
-                P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
-                P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
-                P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
-                P_j_xyz_dxyz_i(0,1,1,p,q), iorder_j_xyz_dxyz_i(1,1,p,q),                               &
-                P_kl(0,1,r,s),iorder_kl(1,r,s),center_kl(1,r,s),p_exp_kl(r,s),fact_kl(r,s),            &
-                P_l_xyz_k(0,1,1,r,s),iorder_l_xyz_k(1,1,r,s),                                          & 
-                P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
-                P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
-           integer :: mm
-           do mm = 1, 3
-            d_dr12(mm) += d_dr12_tmp(mm) * coef4
-           enddo
-          enddo ! s
-        enddo  ! r
-      enddo   ! q
-    enddo    ! p
+  call give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,coef_prod_ij,& 
+             P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i)
+  call give_all_poly_for_r12_deriv(k,l,P_kl,iorder_kl,center_kl,p_exp_kl,fact_kl,coef_prod_kl,& 
+             P_l_xyz_k,iorder_l_xyz_k, iorder_l_dxyz_k,P_l_dxyz_k, P_l_xyz_dxyz_k, iorder_l_xyz_dxyz_k)
+     schwartz_kl(0,0) = 0.d0
+     do r = 1, ao_prim_num(k)
+       coef1 = ao_coef_normalized_ordered_transp(r,k)*ao_coef_normalized_ordered_transp(r,k)
+       schwartz_kl(0,r) = 0.d0
+       do s = 1, ao_prim_num(l)
+         coef2 = coef1 * ao_coef_normalized_ordered_transp(s,l) * ao_coef_normalized_ordered_transp(s,l)
+         qq = p_exp_kl(r,s)
+         q_inv = 1.d0/qq
+         schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
+             P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s),                 &
+             P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))      &
+             * coef2
+         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
+       enddo
+       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
+     enddo
+ 
+     do p = 1, ao_prim_num(i)
+       coef1 = ao_coef_normalized_ordered_transp(p,i)
+       do q = 1, ao_prim_num(j)
+         coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
+         pp = p_exp_ij(p,q)
+         p_inv = 1.d0/pp
+         schwartz_ij = general_primitive_integral_erf_new(dim1,               &
+             P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q),                 &
+             P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
+             coef2*coef2
+         if (schwartz_kl(0,0)*schwartz_ij < thr) then
+            cycle
+         endif
+         do r = 1, ao_prim_num(k)
+           if (schwartz_kl(0,r)*schwartz_ij < thr) then
+              cycle
+           endif
+           coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
+           do s = 1, ao_prim_num(l)
+             if (schwartz_kl(s,r)*schwartz_ij < thr) then
+                cycle
+             endif
+             coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
+             qq = p_exp_kl(r,s)
+             q_inv = 1.d0/qq
+!            if (num_i /= num_j .or. num_k /= num_l .or. num_j /= num_k)then
+!             is_ok = .True.
+!            else
+!             is_ok = is_poly_ok(a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z)
+!            endif
+            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                        &
+                 P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
+                 P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
+                 P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
+                 P_j_xyz_dxyz_i(0,1,1,p,q), iorder_j_xyz_dxyz_i(1,1,p,q),                               &
+                 P_kl(0,1,r,s),iorder_kl(1,r,s),center_kl(1,r,s),p_exp_kl(r,s),fact_kl(r,s),            &
+                 P_l_xyz_k(0,1,1,r,s),iorder_l_xyz_k(1,1,r,s),                                          & 
+                 P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
+                 P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
+            do mm = 1, 3
+             d_dr12(mm) += d_dr12_tmp(mm) * coef4
+            enddo
+           enddo ! s
+         enddo  ! r
+       enddo   ! q
+     enddo    ! p
 
 end
 
@@ -215,8 +220,19 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
   integer                        :: n_pt_tmp,n_pt_out, iorder,n_dsum(3),n_dtmp
   double precision               :: d1(0:max_dim),d_poly(0:max_dim),rint
   double precision               :: dtmp(0:max_dim),dsum(0:max_dim,3)
-  integer  :: dim
+  integer  :: dim,px,qx
+
   dim = n_pt_max_integrals
+ 
+  logical :: is_same_center,is_poly_ok,is_ok
+  is_same_center = .False.
+  is_ok = .True.
+   if( (center_ij(1) == center_kl(1)) .and. & 
+       (center_ij(2) == center_kl(2)) .and. & 
+       (center_ij(3) == center_kl(3))  )then
+    is_same_center = .True.
+   endif
+
 
   p = p_exp_ij
   p_inv = 1.d0/p
@@ -239,7 +255,6 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
   pq_inv_2 = pq_inv+pq_inv
   p10_2 = pq_inv_2 * p10_1*q !0.5d0*q/(pq + p*p)
   p01_2 = pq_inv_2 * p01_1*p !0.5d0*p/(q*q + pq)
-
   rho = p*q *pq_inv_2  ! le rho qui va bien
   dist =  (center_ij(1) - center_kl(1))*(center_ij(1) - center_kl(1)) +  &
       (center_ij(2) - center_kl(2))*(center_ij(2) - center_kl(2)) +      &
@@ -297,6 +312,13 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
    do kk = 1, 4 ! you loop over the four polynoms of P_j_xyz_dxyz_i
     ! the polynom in x1 is [j(r1) (x1 dx1 i(r1))] 
     ! the polynom in x2 is l(r2) k(r2)
+    is_ok = .True.
+    if(is_same_center)then
+     px = iorder_j_xyz_dxyz_i(m,kk)
+     qx = iorder_kl(m)
+     is_ok = is_poly_ok(px,qx)
+    endif
+    if(.not.is_ok)cycle
     call give_polynom_x_for_erf_int(                                              &
         P_j_xyz_dxyz_i(0,m,kk),center_ij(m),p,iorder_j_xyz_dxyz_i(m,kk),pq_inv,pq_inv_2,        &
         P_kl(0,m),center_kl(m),q,iorder_kl(m),p10_1,p01_1,p10_2,p01_2,&
@@ -310,6 +332,13 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
    do kk = 1, 4 ! you loop over the four polynoms of P_l_xyz_dxyz_k
     ! the polynom in x1 is j(r1) i(r1)
     ! the polynom in x2 is l(r2) (x2 dx2 k(r2))
+    is_ok = .True.
+    if(is_same_center)then
+     px = iorder_ij(m)
+     qx = iorder_l_xyz_dxyz_k(m,kk)
+     is_ok = is_poly_ok(px,qx)
+    endif
+    if(.not.is_ok)cycle
     call give_polynom_x_for_erf_int(                                              &
         P_ij(0,m),center_ij(m),p,iorder_ij(m),pq_inv,pq_inv_2,        &
         P_l_xyz_dxyz_k(0,m,kk),center_kl(m),q,iorder_l_xyz_dxyz_k(m,kk),p10_1,p01_1,p10_2,p01_2,&
@@ -324,6 +353,13 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
     do ll = 1, 2 ! you loop over two polynoms of P_l_dxyz_k
      ! the polynom in x1 is [j(r1) (x1 i(r1))] 
      ! the polynom in x2 is  l(r2) (dx2 k(r2))
+     is_ok = .True.
+     if(is_same_center)then
+      px = iorder_j_xyz_i(m,kk)
+      qx = iorder_l_dxyz_k(m,ll)
+      is_ok = is_poly_ok(px,qx)
+     endif
+     if(.not.is_ok)cycle
      call give_polynom_x_for_erf_int(                                              &
          P_j_xyz_i(0,m,kk),center_ij(m),p,iorder_j_xyz_i(m,kk),pq_inv,pq_inv_2,        &
          P_l_dxyz_k(0,m,ll),center_kl(m),q,iorder_l_dxyz_k(m,ll),p10_1,p01_1,p10_2,p01_2,&
@@ -340,6 +376,13 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
     do ll = 1, 2 ! you loop over the two polynoms of P_l_xyz_k
      ! the polynom in x1 is [j(r1) (x1  i(r1))] 
      ! the polynom in x2 is  l(r2) (dx2 k(r2))
+     is_ok = .True.
+     if(is_same_center)then
+      px = iorder_j_dxyz_i(m,kk)
+      qx = iorder_l_xyz_k(m,ll)
+      is_ok = is_poly_ok(px,qx)
+     endif
+     if(.not.is_ok)cycle
      call give_polynom_x_for_erf_int(                                              &
          P_j_dxyz_i(0,m,kk),center_ij(m),p,iorder_j_dxyz_i(m,kk),pq_inv,pq_inv_2,        &
          P_l_xyz_k(0,m,ll),center_kl(m),q,iorder_l_xyz_k(m,ll),p10_1,p01_1,p10_2,p01_2,&
@@ -380,4 +423,16 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
    d_dr12(3) = fact_ij * fact_kl * accu *pi_5_2*p_inv*q_inv/dsqrt(p_plus_q)
 
    d_dr12 = d_dr12 * 0.5d0 ! note the 1/2 factor coming from
+end
+
+logical function is_poly_ok(p_x,q_x)
+ implicit none
+ integer, intent(in)            :: p_x,q_x
+ integer                        :: nx
+  is_poly_ok = .True.
+  nx = p_x + q_x 
+  if(iand(nx,1) == 1) then
+    is_poly_ok = .False.
+    return
+  endif
 end

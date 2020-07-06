@@ -9,18 +9,23 @@ subroutine big_thing
  double precision :: accu_tmp(3),d_dr12(3),mu_in,derf_mu_x,accu_tmp_bis(3)
  include 'utils/constants.include.F'
  integer :: iao,jao,kao,lao
+ double precision :: test, ao_two_e_integral_schwartz_accel_erf,num_int
  mu_in = mu_erf
  accu_abs = 0.d0
  accu_relat = 0.d0
+ num_int = 0.d0
  do jao = 1, ao_num ! r1
   do lao = 1, ao_num ! r2
    do iao = 1, ao_num ! r1
     do kao = 1, ao_num ! r2
+!    test = ao_two_e_integral_schwartz_accel_erf(iao,jao,kao,lao)
+!    if(dabs(test).lt.1.d-10)cycle
+    num_int += 1.d0
 ! do jao = 1, 1! r1
-!  do lao = 1, 1 ! r2
-!   do iao = 1, 1 ! r1
-!    do kao = 3, 3 ! r2
-     print*,'<ij|kl> = ',iao,jao,kao,lao
+!  do lao = 8, 8 ! r2
+!   do iao = 3, 3 ! r1
+!    do kao = 6, 6 ! r2
+     print*,'<ij|kl> = ',jao,lao,iao,kao
      call ao_two_e_d_dr12_int(iao,jao,kao,lao,mu_in,d_dr12)
      int_gauss_num = 0.d0
      accu_tmp = 0.d0
@@ -78,7 +83,7 @@ subroutine big_thing
       int_gauss_num = accu_tmp(m)
       int_ao = d_dr12(m)
       err_abs = dabs(int_gauss_num - int_ao)
-      if(int_gauss_num.gt.1.d-10)then
+      if(dabs(int_gauss_num).gt.1.d-10)then
        err_relat = err_abs/dabs(int_gauss_num)
       else
        err_relat = 0.d0
@@ -89,7 +94,7 @@ subroutine big_thing
       print*,'int_ao        = ',int_ao
       print*,'abs error     = ',err_abs
       print*,'err_relat     = ',err_relat
-      if(err_relat .gt. 1.d-6)then
+      if(err_relat .gt. 1.d-2)then
        print*,'AHAHAHAAH'
        stop
       endif
@@ -107,8 +112,8 @@ subroutine big_thing
  print*,''
  print*,''
  print*,''
- print*,'accu_abs   = ',accu_abs/dble(ao_num**4)
- print*,'accu_relat = ',accu_relat/dble(ao_num**4)
+ print*,'accu_abs   = ',accu_abs/num_int
+ print*,'accu_relat = ',accu_relat/num_int
 end
 
 double precision function derf_mu_x(mu,x)
@@ -121,4 +126,40 @@ double precision function derf_mu_x(mu,x)
    derf_mu_x =  inv_sq_pi * 2.d0 * mu * (1.d0 - mu*mu*x*x/3.d0)
   endif
 
+end
+
+subroutine test_hermit
+ implicit none 
+ include 'utils/constants.include.F'
+ integer :: iao,jao,kao,lao
+ double precision :: mu_in,d_dr12(3),num_int_ik,num_int_jl
+ mu_in = mu_erf
+ do jao = 1, ao_num ! r1
+  do lao = 1, ao_num ! r2
+   do iao = 1, ao_num ! r1
+    do kao = 1, ao_num ! r2
+     if(iao == jao)cycle
+     if(kao == lao)cycle
+     !                        <jl|ik>
+     call ao_two_e_d_dr12_int(iao,jao,kao,lao,mu_in,d_dr12)
+     num_int_ik = d_dr12(1)
+     num_int_ik+= d_dr12(2)
+     num_int_ik+= d_dr12(3)
+     if(dabs(num_int_ik).lt.1.d-10)cycle
+     print*,'******************'
+     print*,'j,l,i,k',jao,lao,iao,kao
+     print*,'<jl|ik>'
+     print*,num_int_ik
+     !                        <lj|ki>
+     call ao_two_e_d_dr12_int(kao,lao,iao,jao,mu_in,d_dr12)
+     num_int_ik = d_dr12(1)
+     num_int_ik+= d_dr12(2)
+     num_int_ik+= d_dr12(3)
+     print*,'<jl|ki>'
+     print*,num_int_ik
+    enddo
+   enddo
+  enddo
+ enddo
+ 
 end

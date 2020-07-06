@@ -20,16 +20,6 @@ subroutine give_polynom_x_for_erf_int(                           &
   double precision, intent(in)   :: pq_inv, p10_1, p10_2, p01_1, p01_2,pq_inv_2
   integer, intent(in)            :: iorder_p
   integer, intent(in)            :: iorder_q
-!  print*,'iorder_p,iorder_q',iorder_p,iorder_q
-!  print*,'polynoms '
-!  print*,P_new(0:iorder_p)
-!  print*,Q_new(0:iorder_q)
-!  print*,'centers'
-!  print*,P_center
-!  print*,Q_center
-!  print*,'exponents = ',p,q
-!  print*,pq_inv, p10_1, p10_2
-!  print*,p01_1, p01_2,pq_inv_2
 
   double precision, intent(out)  :: Ix_pol(0:max_dim)
   integer, intent(out)           :: n_Ix
