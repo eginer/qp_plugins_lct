@@ -18,13 +18,7 @@ subroutine big_thing
   do lao = 1, ao_num ! r2
    do iao = 1, ao_num ! r1
     do kao = 1, ao_num ! r2
-!    test = ao_two_e_integral_schwartz_accel_erf(iao,jao,kao,lao)
-!    if(dabs(test).lt.1.d-10)cycle
     num_int += 1.d0
-! do jao = 1, 1! r1
-!  do lao = 8, 8 ! r2
-!   do iao = 3, 3 ! r1
-!    do kao = 6, 6 ! r2
      print*,'<ij|kl> = ',jao,lao,iao,kao
      call ao_two_e_d_dr12_int(iao,jao,kao,lao,mu_in,d_dr12)
      int_gauss_num = 0.d0

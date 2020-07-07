@@ -1,10 +1,11 @@
 subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
   implicit none
   BEGIN_DOC
+  ! j(r1) l(r2) erf(mu_r12) d/d_r12 [i(r1) k(r2)]
   !
   ! Warning :: chemist notation :: i,j,k,l = (i,j|k,l)
   !
-  ! Warining :: the derivarive operators are applied to i(r1) and k(r2)
+  ! Warining :: the derivarive operators ARE APPLIED TO i(r1) AND k(r2)
   !
   !  integral of the AO basis <jl|erf(mu_in * r_12) /r12 * r_{12}.d/dr12 |ik> 
   !  j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) + (y_1 - y_2) (d/dy1 - d/dy2) + (z_1 - z_2) (d/dz1 - d/dz2) i(r1) k(r2)
@@ -154,6 +155,187 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
                  P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
             do mm = 1, 3
              d_dr12(mm) += d_dr12_tmp(mm) * coef4
+            enddo
+           enddo ! s
+         enddo  ! r
+       enddo   ! q
+     enddo    ! p
+
+end
+
+subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
+  implicit none
+  BEGIN_DOC
+  ! Derivative non-hermitian operator needed in the transcorrelated Hamiltonian
+  !
+  ! j(r1) l(r2) (erf(mu_r12)-1) d/d_r12 [i(r1) k(r2)]
+  !
+  ! Warning :: chemist notation :: i,j,k,l = (i,j|k,l)
+  !
+  ! Warning :: the derivarive operators ARE APPLIED TO i(r1) AND k(r2)
+  !
+  !  integral of the AO basis <jl| [1 - erf(mu_in * r_12)] /r12 * r_{12}.d/dr12 |ik> 
+  !  j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) + (y_1 - y_2) (d/dy1 - d/dy2) + (z_1 - z_2) (d/dz1 - d/dz2) i(r1) k(r2)
+  !  
+  ! WARNING <ik|jl> IS NOT EQUAL TO <kl|ik> because of the first-order differential operator
+  !
+  ! in output you obtain d_dr12(1) = j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) i(r1) k(r2)
+  ! 
+  ! and d_dr12(2) and d_dr12(3), the same with the (y_1 - y_2) (d/dy1 - d/dy2) and (z_1 - z_2) (d/dz1 - d/dz2) operators
+  END_DOC
+  double precision, intent(out)  :: d_dr12(3)
+  integer,intent(in)             :: i,j,k,l
+  double precision, intent(in)   :: mu_in
+  integer                        :: p,q,r,s
+  double precision               :: I_center(3),J_center(3),K_center(3),L_center(3)
+  integer                        :: num_i,num_j,num_k,num_l,dim1,I_power(3),J_power(3),K_power(3),L_power(3)
+  double precision               :: integral
+  include 'utils/constants.include.F'
+  double precision               :: P_new(0:max_dim,3),P_center(3),fact,pp
+  double precision               :: Q_new(0:max_dim,3),Q_center(3),fact_q,qq
+  integer                        :: iorder(3), iorder_q(3)
+  double precision, allocatable  :: schwartz_kl(:,:)
+  double precision               :: schwartz_ij
+  double precision :: scw_gauss_int,general_primitive_integral_gauss
+  double precision :: d_dr12_tmp(3)
+
+  d_dr12 = 0.d0
+
+  dim1 = n_pt_max_integrals
+
+  num_i = ao_nucl(i)
+  num_j = ao_nucl(j)
+  num_k = ao_nucl(k)
+  num_l = ao_nucl(l)
+  double precision               :: thr
+  thr = ao_integrals_threshold*ao_integrals_threshold
+
+  allocate(schwartz_kl(0:ao_prim_num(l),0:ao_prim_num(k)))
+
+  double precision               :: coef3
+  double precision               :: coef2
+  double precision               :: p_inv,q_inv
+  double precision               :: coef1
+  double precision               :: coef4
+
+  do p = 1, 3
+    I_power(p) = ao_power(i,p)
+    J_power(p) = ao_power(j,p)
+    K_power(p) = ao_power(k,p)
+    L_power(p) = ao_power(l,p)
+    I_center(p) = nucl_coord(num_i,p)
+    J_center(p) = nucl_coord(num_j,p)
+    K_center(p) = nucl_coord(num_k,p)
+    L_center(p) = nucl_coord(num_l,p)
+  enddo
+
+ call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
+ call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
+
+ double precision :: P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp_ij(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_ij(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ double precision :: coef_prod_ij(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+
+ double precision :: P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_j_xyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_j_dxyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_j_xyz_dxyz_i(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+
+ double precision :: P_kl(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_kl(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: center_kl(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp_kl(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_kl(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ double precision :: coef_prod_kl(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+
+ double precision :: P_l_xyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_l_xyz_k(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: P_l_dxyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_l_dxyz_k(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ integer          :: iorder_l_xyz_dxyz_k(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+
+ double precision :: general_primitive_integral_erf_new,mu_large
+ integer :: mm
+ mu_large = 1.d+9
+  call give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,coef_prod_ij,& 
+             P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i)
+  call give_all_poly_for_r12_deriv(k,l,P_kl,iorder_kl,center_kl,p_exp_kl,fact_kl,coef_prod_kl,& 
+             P_l_xyz_k,iorder_l_xyz_k, iorder_l_dxyz_k,P_l_dxyz_k, P_l_xyz_dxyz_k, iorder_l_xyz_dxyz_k)
+     schwartz_kl(0,0) = 0.d0
+     do r = 1, ao_prim_num(k)
+       coef1 = ao_coef_normalized_ordered_transp(r,k)*ao_coef_normalized_ordered_transp(r,k)
+       schwartz_kl(0,r) = 0.d0
+       do s = 1, ao_prim_num(l)
+         coef2 = coef1 * ao_coef_normalized_ordered_transp(s,l) * ao_coef_normalized_ordered_transp(s,l)
+         qq = p_exp_kl(r,s)
+         q_inv = 1.d0/qq
+         schwartz_kl(s,r) = general_primitive_integral_erf_new(dim1,          &
+             P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s),                 &
+             P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))      &
+             * coef2
+         schwartz_kl(s,r) = dabs(schwartz_kl(s,r))
+         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
+       enddo
+       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
+     enddo
+ 
+     do p = 1, ao_prim_num(i)
+       coef1 = ao_coef_normalized_ordered_transp(p,i)
+       do q = 1, ao_prim_num(j)
+         coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
+         pp = p_exp_ij(p,q)
+         p_inv = 1.d0/pp
+         schwartz_ij = general_primitive_integral_erf_new(dim1,               &
+             P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q),                 &
+             P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
+             coef2*coef2
+         schwartz_ij = dabs( schwartz_ij )
+         if (schwartz_kl(0,0)*schwartz_ij < thr) then
+            cycle
+         endif
+         do r = 1, ao_prim_num(k)
+           if (schwartz_kl(0,r)*schwartz_ij < thr) then
+              cycle
+           endif
+           coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
+           do s = 1, ao_prim_num(l)
+             if (schwartz_kl(s,r)*schwartz_ij < thr) then
+                cycle
+             endif
+             coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
+             qq = p_exp_kl(r,s)
+             q_inv = 1.d0/qq
+            ! computes the erf(mu_in r12) d/dr12
+            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                    &
+                 P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
+                 P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
+                 P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
+                 P_j_xyz_dxyz_i(0,1,1,p,q), iorder_j_xyz_dxyz_i(1,1,p,q),                               &
+                 P_kl(0,1,r,s),iorder_kl(1,r,s),center_kl(1,r,s),p_exp_kl(r,s),fact_kl(r,s),            &
+                 P_l_xyz_k(0,1,1,r,s),iorder_l_xyz_k(1,1,r,s),                                          & 
+                 P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
+                 P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
+            do mm = 1, 3
+             d_dr12(mm) = d_dr12_tmp(mm) * coef4
+            enddo
+            ! computes the -1 * d/dr12 :::: mu_in -> mu_large 
+            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_large,                                 &
+                 P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
+                 P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
+                 P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
+                 P_j_xyz_dxyz_i(0,1,1,p,q), iorder_j_xyz_dxyz_i(1,1,p,q),                               &
+                 P_kl(0,1,r,s),iorder_kl(1,r,s),center_kl(1,r,s),p_exp_kl(r,s),fact_kl(r,s),            &
+                 P_l_xyz_k(0,1,1,r,s),iorder_l_xyz_k(1,1,r,s),                                          & 
+                 P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
+                 P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
+            do mm = 1, 3
+             d_dr12(mm) += -d_dr12_tmp(mm) * coef4
             enddo
            enddo ! s
          enddo  ! r
