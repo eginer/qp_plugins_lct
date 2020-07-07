@@ -51,7 +51,8 @@ END_PROVIDER
 double precision function eff_pot_gauss(x,mu)
  implicit none
  double precision, intent(in) :: x,mu
- eff_pot_gauss = derf(mu*x)/x + mu/dsqrt(dacos(-1.d0)) * dexp(-mu*mu*x*x) - 0.25d0 * (1.d0 - derf(mu*x))**2.d0
+! eff_pot_gauss = derf(mu*x)/x + mu/dsqrt(dacos(-1.d0)) * dexp(-mu*mu*x*x) - 0.25d0 * (1.d0 - derf(mu*x))**2.d0
+ eff_pot_gauss =  mu/dsqrt(dacos(-1.d0)) * dexp(-mu*mu*x*x) - 0.25d0 * (1.d0 - derf(mu*x))**2.d0
 end
 
 double precision function eff_pot_fit_gauss(x)
@@ -59,8 +60,8 @@ double precision function eff_pot_fit_gauss(x)
  double precision, intent(in) :: x
  integer :: i
  double precision :: alpha
- eff_pot_fit_gauss = derf(mu_erf*x)/x
-
+! eff_pot_fit_gauss = derf(mu_erf*x)/x
+  eff_pot_fit_gauss = 0.d0
  do i = 1, n_gauss_eff_pot
   alpha = expo_gauss_eff_pot(i)
   eff_pot_fit_gauss += coef_gauss_eff_pot(i) * dexp(-alpha*x*x)
