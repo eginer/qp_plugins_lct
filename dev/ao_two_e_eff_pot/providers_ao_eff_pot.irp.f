@@ -114,8 +114,8 @@ BEGIN_PROVIDER [ double precision, ao_two_e_integral_eff_pot_schwartz,(ao_num,ao
       !$OMP SCHEDULE(dynamic)
   do i=1,ao_num
     do k=1,i
-      ao_two_e_integral_eff_pot_schwartz(i,k) = dsqrt(ao_two_e_integral_eff_pot(i,k,i,k))
-      ao_two_e_integral_eff_pot_schwartz(k,i) = ao_two_e_integral_eff_pot_schwartz(i,k)
+      ao_two_e_integral_eff_pot_schwartz(i,k) = dsqrt(dabs(ao_two_e_integral_eff_pot(i,k,i,k)))
+      ao_two_e_integral_eff_pot_schwartz(k,i) = dabs(ao_two_e_integral_eff_pot_schwartz(i,k))
     enddo
   enddo
   !$OMP END PARALLEL DO

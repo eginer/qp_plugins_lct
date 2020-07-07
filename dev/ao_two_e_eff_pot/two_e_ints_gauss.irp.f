@@ -60,12 +60,11 @@ double precision function ao_two_e_integral_eff_pot(i,j,k,l)
                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q,             &
                 Q_new,Q_center,fact_q,qq,q_inv,iorder_q)
 
-        schwartz_kl(s,r) = scw_gauss_int * coef2
+        schwartz_kl(s,r) = dabs(scw_gauss_int * coef2)
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
       enddo
       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
     enddo
-
     do p = 1, ao_prim_num(i)
       coef1 = ao_coef_normalized_ordered_transp(p,i)
       do q = 1, ao_prim_num(j)
@@ -77,7 +76,7 @@ double precision function ao_two_e_integral_eff_pot(i,j,k,l)
         scw_gauss_int = general_primitive_integral_gauss(dim1,              &
                 P_new,P_center,fact_p,pp,p_inv,iorder_p,             &
                 P_new,P_center,fact_p,pp,p_inv,iorder_p)
-        schwartz_ij = scw_gauss_int * coef2*coef2
+        schwartz_ij = dabs(scw_gauss_int * coef2*coef2)
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
         endif

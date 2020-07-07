@@ -227,6 +227,7 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
             P_new_kl(0,1,r,s),P_center_kl(1,r,s),fact_p_kl(r,s),p_exp_kl(r,s),q_inv,iorder_p_kl(1,r,s),                 &
             P_new_kl(0,1,r,s),P_center_kl(1,r,s),fact_p_kl(r,s),p_exp_kl(r,s),q_inv,iorder_p_kl(1,r,s))      &
             * coef2
+        schwartz_kl(s,r) = dabs(schwartz_kl(s,r))
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
       enddo
       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
@@ -243,6 +244,7 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
             P_new_ij(0,1,p,q),P_center_ij(1,p,q),fact_p_ij(p,q),p_exp_ij(p,q),p_inv,iorder_p_ij(1,p,q),                 &
             P_new_ij(0,1,p,q),P_center_ij(1,p,q),fact_p_ij(p,q),p_exp_ij(p,q),p_inv,iorder_p_ij(1,p,q)) *               &
             coef2*coef2
+        schwartz_ij = dabs(schwartz_ij)
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
         endif
@@ -289,6 +291,7 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
             K_power(2),L_power(2),K_power(2),L_power(2),             &
             K_power(3),L_power(3),K_power(3),L_power(3)) * &
             coef2
+        schwartz_kl(s,r) = dabs(schwartz_kl(s,r))
         schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
       enddo
       schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
@@ -303,6 +306,7 @@ double precision function ao_two_e_integral_schwartz_accel_erf_new(i,j,k,l)
                 I_power(1),J_power(1),I_power(1),J_power(1),         &
                 I_power(2),J_power(2),I_power(2),J_power(2),         &
                 I_power(3),J_power(3),I_power(3),J_power(3))*coef2*coef2
+        schwartz_ij = dabs(schwartz_ij)
         if (schwartz_kl(0,0)*schwartz_ij < thr) then
            cycle
         endif

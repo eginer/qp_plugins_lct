@@ -112,3 +112,28 @@ double precision function overlap_gauss_r12(D_center,delta,A_center,B_center,pow
  overlap_gauss_r12 = fact_a_new * accu 
 end
 
+
+double precision function overlap_gauss_r12_ao(D_center,delta,i,j)
+ implicit none
+ integer, intent(in) :: i,j
+ double precision, intent(in) :: D_center(3), delta
+
+ integer :: num_a,num_b,power_A(3), power_B(3),l,k
+ double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,analytical_j
+ num_A = ao_nucl(i)
+ power_A(1:3)= ao_power(i,1:3)
+ A_center(1:3) = nucl_coord(num_A,1:3)
+ num_B = ao_nucl(j)
+ power_B(1:3)= ao_power(j,1:3)
+ B_center(1:3) = nucl_coord(num_B,1:3)
+ overlap_gauss_r12_ao = 0.d0
+ do l=1,ao_prim_num(i)
+  alpha = ao_expo_ordered_transp(l,i)     
+  do k=1,ao_prim_num(j)
+   beta = ao_expo_ordered_transp(k,j)     
+   analytical_j = overlap_gauss_r12(D_center,delta,A_center,B_center,power_A,power_B,alpha,beta)
+   overlap_gauss_r12_ao += analytical_j *  ao_coef_normalized_ordered_transp(l,i)             &
+                                        *  ao_coef_normalized_ordered_transp(k,j) 
+  enddo 
+ enddo
+end

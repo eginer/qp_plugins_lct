@@ -111,6 +111,7 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
              P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s),                 &
              P_kl(0,1,r,s),center_kl(1,r,s),fact_kl(r,s),p_exp_kl(r,s),q_inv,iorder_kl(1,r,s))      &
              * coef2
+         schwartz_kl(s,r) = dabs(schwartz_kl(s,r))
          schwartz_kl(0,r) = max(schwartz_kl(0,r),schwartz_kl(s,r))
        enddo
        schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
@@ -126,6 +127,7 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
              P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q),                 &
              P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
              coef2*coef2
+         schwartz_ij = dabs( schwartz_ij )
          if (schwartz_kl(0,0)*schwartz_ij < thr) then
             cycle
          endif
@@ -141,11 +143,6 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
              coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
              qq = p_exp_kl(r,s)
              q_inv = 1.d0/qq
-!            if (num_i /= num_j .or. num_k /= num_l .or. num_j /= num_k)then
-!             is_ok = .True.
-!            else
-!             is_ok = is_poly_ok(a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z)
-!            endif
             call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                        &
                  P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
                  P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
