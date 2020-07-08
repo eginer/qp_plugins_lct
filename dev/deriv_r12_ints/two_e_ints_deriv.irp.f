@@ -163,18 +163,16 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
 
 end
 
-subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
+subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12,d_dr12_large)
   implicit none
   BEGIN_DOC
-  ! Derivative non-hermitian operator needed in the transcorrelated Hamiltonian
-  !
-  ! j(r1) l(r2) (erf(mu_r12)-1) d/d_r12 [i(r1) k(r2)]
+  ! j(r1) l(r2) (erf(mu_r12) and 1/r12) d/d_r12 [i(r1) k(r2)]
   !
   ! Warning :: chemist notation :: i,j,k,l = (i,j|k,l)
   !
-  ! Warning :: the derivarive operators ARE APPLIED TO i(r1) AND k(r2)
+  ! Warining :: the derivarive operators ARE APPLIED TO i(r1) AND k(r2)
   !
-  !  integral of the AO basis <jl| [1 - erf(mu_in * r_12)] /r12 * r_{12}.d/dr12 |ik> 
+  !  integral of the AO basis <jl|erf(mu_in * r_12) /r12 * r_{12}.d/dr12 |ik> 
   !  j(r1) l(r2) (erf(mu r12))/(2 r12) (x_1 - x_2) (d/dx1 - d/dx2) + (y_1 - y_2) (d/dy1 - d/dy2) + (z_1 - z_2) (d/dz1 - d/dz2) i(r1) k(r2)
   !  
   ! WARNING <ik|jl> IS NOT EQUAL TO <kl|ik> because of the first-order differential operator
@@ -183,7 +181,7 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
   ! 
   ! and d_dr12(2) and d_dr12(3), the same with the (y_1 - y_2) (d/dy1 - d/dy2) and (z_1 - z_2) (d/dz1 - d/dz2) operators
   END_DOC
-  double precision, intent(out)  :: d_dr12(3)
+  double precision, intent(out)  :: d_dr12(3),d_dr12_large(3)
   integer,intent(in)             :: i,j,k,l
   double precision, intent(in)   :: mu_in
   integer                        :: p,q,r,s
@@ -197,9 +195,10 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
   double precision, allocatable  :: schwartz_kl(:,:)
   double precision               :: schwartz_ij
   double precision :: scw_gauss_int,general_primitive_integral_gauss
-  double precision :: d_dr12_tmp(3)
-
+  double precision :: d_dr12_tmp(3),mu_large
+  mu_large  = 1.d+09
   d_dr12 = 0.d0
+  d_dr12_large = 0.d0
 
   dim1 = n_pt_max_integrals
 
@@ -260,9 +259,9 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
  double precision :: P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_xyz_dxyz_k(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
- double precision :: general_primitive_integral_erf_new,mu_large
+ double precision :: general_primitive_integral_erf_new
  integer :: mm
- mu_large = 1.d+9
+
   call give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,center_ij,p_exp_ij,fact_ij,coef_prod_ij,& 
              P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i)
   call give_all_poly_for_r12_deriv(k,l,P_kl,iorder_kl,center_kl,p_exp_kl,fact_kl,coef_prod_kl,& 
@@ -311,8 +310,7 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
              coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
              qq = p_exp_kl(r,s)
              q_inv = 1.d0/qq
-            ! computes the erf(mu_in r12) d/dr12
-            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                    &
+            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_in,                                        &
                  P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
                  P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
                  P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
@@ -322,10 +320,9 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
                  P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
                  P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
             do mm = 1, 3
-             d_dr12(mm) = d_dr12_tmp(mm) * coef4
+             d_dr12(mm) += d_dr12_tmp(mm) * coef4
             enddo
-            ! computes the -1 * d/dr12 :::: mu_in -> mu_large 
-            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_large,                                 &
+            call general_primitive_integral_d_dr12(d_dr12_tmp,mu_large,                                        &
                  P_ij(0,1,p,q),iorder_ij(1,p,q),center_ij(1,p,q),p_exp_ij(p,q),fact_ij(p,q),            &
                  P_j_xyz_i(0,1,1,p,q), iorder_j_xyz_i(1,1,p,q),                                         &
                  P_j_dxyz_i(0,1,1,p,q),iorder_j_dxyz_i(1,1,p,q),                                        &
@@ -335,7 +332,7 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12)
                  P_l_dxyz_k(0,1,1,r,s),iorder_l_dxyz_k(1,1,r,s),                                        &
                  P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
             do mm = 1, 3
-             d_dr12(mm) += -d_dr12_tmp(mm) * coef4
+             d_dr12_large(mm) += d_dr12_tmp(mm) * coef4
             enddo
            enddo ! s
          enddo  ! r
