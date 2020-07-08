@@ -1,7 +1,7 @@
 subroutine phi_j_erf_mu_r_xyz_phi(i,j,mu_in, C_center, xyz_ints)
  implicit none
  BEGIN_DOC
-! int dr phi_j(r) x/y/z phi_i(r)
+! xyz_ints(1/2/3) = int dr phi_j(r) [erf(mu  |r - C|)/|r-C|]  x/y/z phi_i(r)
  END_DOC
  integer, intent(in) :: i,j
  double precision, intent(in) :: mu_in, C_center(3)
@@ -47,7 +47,7 @@ end
 subroutine phi_j_erf_mu_r_dxyz_phi(i,j,mu_in, C_center, dxyz_ints)
  implicit none
  BEGIN_DOC
-! int dr phi_j(r) d/dx phi_i(r)
+! dxyz_ints(1/2/3) = int dr phi_j(r) [erf(mu  |r - C|)/|r-C|]  d/d(x/y/z) phi_i(r)
  END_DOC
  integer, intent(in) :: i,j
  double precision, intent(in) :: mu_in, C_center(3)
@@ -92,4 +92,36 @@ subroutine phi_j_erf_mu_r_dxyz_phi(i,j,mu_in, C_center, dxyz_ints)
 end
 
 
+
+double precision function phi_j_erf_mu_r_phi(i,j,mu_in, C_center)
+ implicit none
+ BEGIN_DOC
+! phi_j_erf_mu_r_phi  = int dr phi_j(r) [erf(mu  |r - C|)/|r-C|]  phi_i(r)
+ END_DOC
+ integer, intent(in) :: i,j
+ double precision, intent(in) :: mu_in, C_center(3)
+ integer :: num_A,power_A(3), num_b, power_B(3)
+ double precision :: alpha, beta, A_center(3), B_center(3),contrib,NAI_pol_mult_erf
+ integer :: n_pt_in,l,m
+ n_pt_in = n_pt_max_integrals
+ ! j 
+ num_A = ao_nucl(j)
+ power_A(1:3)= ao_power(j,1:3)
+ A_center(1:3) = nucl_coord(num_A,1:3)
+ ! i 
+ num_B = ao_nucl(i)
+ power_B(1:3)= ao_power(i,1:3)
+ B_center(1:3) = nucl_coord(num_B,1:3)
+
+ phi_j_erf_mu_r_phi = 0.d0
+ do l=1,ao_prim_num(j)
+  alpha = ao_expo_ordered_transp(l,j)
+  do m=1,ao_prim_num(i)
+    beta = ao_expo_ordered_transp(m,i)
+    contrib = NAI_pol_mult_erf(A_center,B_center,power_A,power_B,alpha,beta,C_center,n_pt_in,mu_in)  
+    phi_j_erf_mu_r_phi += contrib *  ao_coef_normalized_ordered_transp(l,j)             &
+                                  *  ao_coef_normalized_ordered_transp(m,i) 
+  enddo
+ enddo
+end
 

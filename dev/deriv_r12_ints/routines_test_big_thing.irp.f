@@ -157,3 +157,84 @@ subroutine test_hermit
  enddo
  
 end
+
+
+subroutine new_test_big_thing
+ implicit none
+ double precision :: weight,r1(3)
+ integer :: ipoint,i,j,n_pt_in,jpoint,m
+ double precision :: int_r2(3,ao_num,ao_num)
+ double precision :: mu_in,aos_array_r1(ao_num),aos_grad_array_r1(3,ao_num),phi_j_erf_mu_r_phi
+ double precision :: xyz_ints(3, ao_num,ao_num), coulomb(ao_num,ao_num)
+ double precision :: d_dr12(3),int_ao,int_gauss_num,err_relat,err_abs,accu_relat(3),accu_abs(3)
+ integer :: iao,jao,kao,lao
+ mu_in = mu_erf
+ do kao = 1, ao_num ! r1
+  do lao = 1, ao_num ! r2
+    int_r2 = 0.d0
+    do ipoint = 1, n_points_final_grid
+     r1(1) = final_grid_points(1,ipoint)
+     r1(2) = final_grid_points(2,ipoint)
+     r1(3) = final_grid_points(3,ipoint)
+     call give_all_aos_and_grad_at_r(r1,aos_array_r1,aos_grad_array_r1)
+     weight = final_weight_at_r_vector(ipoint)
+     do iao = 1, ao_num ! r1
+      do jao = 1, ao_num ! r2
+       call phi_j_erf_mu_r_xyz_phi(iao,jao,mu_in, r1, xyz_ints(1, jao,iao))
+       coulomb(jao,iao) = phi_j_erf_mu_r_phi(iao,jao,mu_in, r1)
+      enddo
+     enddo
+     do jao = 1, ao_num
+      do iao = 1, ao_num
+       do m = 1, 3
+        int_r2(m,iao,jao) += weight * aos_array_r1(kao) * r1(m) * aos_grad_array_r1(m,iao) * coulomb(jao,lao)    
+        int_r2(m,iao,jao) += weight * aos_array_r1(lao) * r1(m) * aos_grad_array_r1(m,jao) * coulomb(iao,kao)    
+        int_r2(m,iao,jao) -= weight * aos_array_r1(lao)         * aos_grad_array_r1(m,jao) * xyz_ints(m,iao,kao) 
+        int_r2(m,iao,jao) -= weight * aos_array_r1(kao)         * aos_grad_array_r1(m,iao) * xyz_ints(m,jao,lao) 
+       enddo
+      enddo
+     enddo
+    enddo
+    int_r2 *= 0.5d0
+
+    do jao = 1, ao_num
+     do iao = 1, ao_num
+      call ao_two_e_d_dr12_int(iao,kao,jao,lao,mu_in,d_dr12)
+      print*,'iao,kao,jao,lao',iao,kao,jao,lao
+      do m = 1, 3
+       int_ao = d_dr12(m)                ! <kl|ij>
+       int_gauss_num = int_r2(m,iao,jao) ! <kl|ij>
+       err_abs = dabs(int_gauss_num - int_ao)
+       if(dabs(int_gauss_num).gt.1.d-10)then
+        err_relat = err_abs/dabs(int_gauss_num)
+       else
+        err_relat = 0.d0
+       endif
+       print*,'m = ',m
+       print*,'int_gauss_num = ',int_gauss_num
+       print*,'int_ao        = ',int_ao
+       print*,'abs error     = ',err_abs
+       print*,'err_relat     = ',err_relat
+       if(err_relat .gt. 1.d-2 .and. dabs(int_gauss_num).gt.1.d-7)then
+        print*,'AHAHAHAAH'
+!        stop
+       endif
+       accu_abs(m) += err_abs
+       accu_relat(m) += err_relat
+      enddo
+     enddo
+    enddo
+  enddo
+ enddo
+
+ print*,''
+ print*,''
+ print*,''
+ print*,'Summary'
+ print*,''
+ print*,''
+ print*,''
+ print*,'accu_abs   = ',accu_abs/(dble(ao_num)**4.d0)
+ print*,'accu_relat = ',accu_relat/(dble(ao_num)**4.d0)
+
+end

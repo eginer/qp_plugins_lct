@@ -4,5 +4,6 @@ program deriv_r12_ints
 ! TODO : Put the documentation of the program here
   END_DOC
   print *, 'Hello world'
-  call test_one_e_int
+!  call test_one_e_int
+ call new_test_big_thing
 end
