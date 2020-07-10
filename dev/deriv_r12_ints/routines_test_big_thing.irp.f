@@ -125,36 +125,30 @@ end
 subroutine test_hermit
  implicit none 
  include 'utils/constants.include.F'
- integer :: iao,jao,kao,lao
- double precision :: mu_in,d_dr12(3),num_int_ik,num_int_jl
- mu_in = mu_erf
- do jao = 1, ao_num ! r1
-  do lao = 1, ao_num ! r2
-   do iao = 1, ao_num ! r1
-    do kao = 1, ao_num ! r2
-     if(iao == jao)cycle
-     if(kao == lao)cycle
-     !                        <jl|ik>
-     call ao_two_e_d_dr12_int(iao,jao,kao,lao,mu_in,d_dr12)
-     num_int_ik = d_dr12(1)
-     num_int_ik+= d_dr12(2)
-     num_int_ik+= d_dr12(3)
-     if(dabs(num_int_ik).lt.1.d-10)cycle
-     print*,'******************'
-     print*,'j,l,i,k',jao,lao,iao,kao
-     print*,'<jl|ik>'
-     print*,num_int_ik
-     !                        <lj|ki>
-     call ao_two_e_d_dr12_int(kao,lao,iao,jao,mu_in,d_dr12)
-     num_int_ik = d_dr12(1)
-     num_int_ik+= d_dr12(2)
-     num_int_ik+= d_dr12(3)
-     print*,'<jl|ki>'
-     print*,num_int_ik
-    enddo
-   enddo
-  enddo
- enddo
+ integer :: i,j,k,l,m
+ double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
+ provide  ao_two_e_eff_dr12_pot_array
+ provide  mo_two_e_eff_dr12_pot_array
+! mu_in = mu_erf
+! do j = 1, ao_num
+!  do i = 1, ao_num
+!   do l = 1, ao_num
+!    do k = 1, ao_num
+!      ! <kl|ij>
+!      call ao_two_e_eff_dr12_pot(i,k,j,l,mu_in,d_dr12,d_dr12_large)
+!      accu = 0.d0
+!      do m = 1, 3
+!       accu += d_dr12(m) - d_dr12_large(m) 
+!      enddo
+!      if(dabs(ao_two_e_eff_dr12_pot_array(k,l,i,j) - accu).gt.1.d-12)then
+!       print*,'AAHAHAHA'
+!       print*,i,k,j,l
+!       stop
+!      endif
+!    enddo
+!   enddo
+!  enddo
+! enddo
  
 end
 

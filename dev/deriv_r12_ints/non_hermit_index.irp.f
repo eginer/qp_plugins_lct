@@ -8,6 +8,7 @@ integer function two_int_d_dr12_index(i,j,k,l,imax,i1)
  integer, intent(in)            :: i,j,k,l,imax
  integer(key_kind), intent(out) :: i1
  integer(key_kind)              :: m_ik,n_kl,r,s,i2
+! i1 = 0
 ! ! unique index for (i,k) using the usual matrix form
 ! ! m_ik = (i - 1) * imax + k
 ! m_ik = (i-1) * imax + k
@@ -17,5 +18,4 @@ integer function two_int_d_dr12_index(i,j,k,l,imax,i1)
 ! ! unique convention for (i,k) <-> (j,l)
 ! r = max(m_ik,n_jl)
 ! s = min(m_ij,n_jl) 
- i1 = 0
 end

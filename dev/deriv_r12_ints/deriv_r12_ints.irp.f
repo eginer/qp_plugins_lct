@@ -5,5 +5,6 @@ program deriv_r12_ints
   END_DOC
   print *, 'Hello world'
 !  call test_one_e_int
- call new_test_big_thing
+! call new_test_big_thing
+ call test_hermit
 end
