@@ -111,7 +111,7 @@ def get_params(arguments):
     if arguments["-t"]:
         thresh = float(arguments["-t"])
     else:
-        thresh = 1.e-10
+        thresh = 1.e-12
 
     readints = arguments['-r']
 
@@ -147,11 +147,11 @@ def qp_run(command, filename):
 
 def write_effective_rsdft_hamiltonian(filename):
     output = qp_run("write_effective_rsdft_hamiltonian", filename)
+    ev = []
     for line in output.splitlines():
         if "TOTAL ENERGY        =" in line:
-            ev = float(line.split('=')[1])
-            break
-    return ev
+            ev.append( float(line.split('=')[1]) )
+    return np.array(ev)
 
 
 def update_density(filename, diis=None):
@@ -207,11 +207,14 @@ def main():
         # Then, save the energy of the macro-iteration.
         datafile.write("# iter Evar old     Evar new    delta_E\n")
 
-        ev_macro = write_effective_rsdft_hamiltonian(filename)
-        qp_run("save_one_e_dm", filename)
         ezfio.set_density_for_dft_density_for_dft("input_density")
+        qp_run("save_one_e_dm", filename)
+        ev_macro = write_effective_rsdft_hamiltonian(filename)
 
-        datafile.write(f"  0 --- {ev_macro:15.10f} \n")
+        datafile.write(f"  0 --- ")
+        for x in ev_macro:
+            datafile.write(f"{x:15.10f}                ")
+        datafile.write(f"\n")
 
         diis_macro = [ DIIS(), DIIS() ]
         # Macro-iterations
@@ -242,9 +245,12 @@ def main():
 
                 # Convergence
                 delta_E = ev_new - ev
-                datafile.write(f"{i:>3d} {j:>3d} {ev:> 15.10f} {ev_new:> 15.10f} {delta_E:> 12.6e}\n")
+                datafile.write(f"{i:>3d} {j:>3d} ")
+                for i in range(len(ev)):
+                  datafile.write(f"{ev[i]:>15.10f} {ev_new[i]:> 15.10f} {delta_E[i]:> 12.6e}  ")
+                datafile.write(f"\n")
                 ev = ev_new
-                if abs(delta_E) < thresh:
+                if max(abs(delta_E)) < thresh*len(ev):
                     break
                 # end if
 
@@ -253,9 +259,12 @@ def main():
 
             # Convergence
             delta_E = ev - ev_macro
-            datafile.write(f"{i:>3d} --- {ev_macro:>15.10f} {ev:> 15.10f} {delta_E:> 12.6e}\n")
+            datafile.write(f"{i:>3d} --- \n")
+            for i in range(len(ev)):
+              datafile.write(f"{ev_macro[i]:>15.10f} {ev[i]:> 15.10f} {delta_E[i]:> 12.6e}  ")
+            datafile.write(f"\n")
             ev_macro = ev
-            if abs(delta_E) < pt2max*0.1:
+            if max(abs(delta_E)) < pt2max*0.1*len(ev_macro):
                 break
             # end if
 
