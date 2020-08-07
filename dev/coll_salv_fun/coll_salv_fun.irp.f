@@ -45,9 +45,18 @@ subroutine print_energy
 ! print*,'psi_wee_mu_of_r_sr     = ',psi_wee_mu_of_r_sr
  print*,''
  print*,'coulomb_n2_jastrow     = ',coulomb_n2_jastrow
- print*,''
  print*,'Delta                  = ',coulomb_n2_jastrow  - psi_energy_two_e
  print*,'0.5 * Delta            = ',0.5d0*(coulomb_n2_jastrow  - psi_energy_two_e)
+ print*,''
+ print*,'coulomb_n2_jastrow_reno= ',coulomb_n2_jastrow_renorm
+ print*,'Delta                  = ',coulomb_n2_jastrow_renorm  - psi_energy_two_e
+ print*,'0.5 * Delta            = ',0.5d0*(coulomb_n2_jastrow_renorm  - psi_energy_two_e)
+ print*,''
+ print*,'norm_n2_jastrow        = ',norm_n2_jastrow
+ print*,'coulomb_n2_jastrow/norm= ',coulomb_n2_jastrow/norm_n2_jastrow
+ print*,'Delta                  = ',coulomb_n2_jastrow/norm_n2_jastrow  - psi_energy_two_e
+ print*,'0.5 * Delta            = ',0.5d0*(coulomb_n2_jastrow/norm_n2_jastrow  - psi_energy_two_e)
+ print*,''
 ! print*,'coulomb_n2_jastrow_reno= ',coulomb_n2_jastrow_renorm
 ! print*,'wee_mu_of_r_n2_jastrow = ',wee_mu_of_r_n2_jastrow
 ! print*,'wee_mu_of_r_n2_jastrow_r ',wee_mu_of_r_n2_jastrow_renorm

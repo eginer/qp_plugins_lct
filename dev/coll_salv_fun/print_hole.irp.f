@@ -171,6 +171,7 @@ subroutine routine_print_2
  print*,''
  print*,''
  print*,''
+! mu = mu_erf_dft 
  mu = mu_of_r
 ! mu = -1.d0/(2.d0*dsqrt(pi)*dlog(g0_exact))
  a0 = 2.d0 * dsqrt(pi) * mu
@@ -191,7 +192,7 @@ subroutine routine_print_2
   r2(2) = r * dsin(theta)
   call get_two_e_psi_at_r1r2(r1,r2,psi)
   r12 = dsqrt( (r1(1) - r2(1))**2.d0 +  (r1(2) - r2(2))**2.d0 + (r1(3) - r2(2))**2.d0 )
-  write(32,'(100(F16.10,X))')theta,r12, psi_ex_array(i),psi_ex_array(i)/psi0_ex
+  write(32,'(100(F16.10,X))')theta,r12, psi_ex_array(i),dabs(psi),dabs(psi)*full_jastrow_mu(mu,r12)
   write(33,'(100(F16.10,X))')r12, dabs(psi)*full_jastrow_mu(mu,r12)/psi0_j,psi_ex_array(i)/psi0_ex,dabs(psi)*dexp(f_mu_new(mu,r12))/psi0_j_new
  enddo
 end

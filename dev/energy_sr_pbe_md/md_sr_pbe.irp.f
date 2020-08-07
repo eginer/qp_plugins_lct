@@ -52,7 +52,6 @@
  ! dedgnb2   = dedgn2 * dgn2/dgnb2   + dedgm2 * dgm2/dgnb2   + dedgngm * dgngm/dgnb    = dedgn2 + dedgm2 - dedgngm
  ! dedgnagnb = dedgn2 * dgn2/dgnagnb + dedgm2 * dgm2/dgnagnb + dedgngm * dgngm/dgnagnb = 2*dedgn2 - 2*dedgm2 
  !----------------------------------------------------------------------------------------------------------------------------------- 
-
 !-------------------------------------------------------------------------------------------------------------------------------------------
   subroutine exmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ex_srmuPBE,dexdrho_a,dexdrho_b, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b)
   
@@ -63,7 +62,7 @@
   double precision, intent(in)  :: mu
   double precision, intent(in)  :: rho_a, rho_b, grad_rho_a_2, grad_rho_b_2, grad_rho_a_b
   double precision, intent(out) :: ex_srmuPBE, dexdrho_a, dexdrho_b, dexdgrad_rho_a_2, dexdgrad_rho_b_2, dexdgrad_rho_a_b
-  ! double precision              :: dexdrho, dexdgrad_rho_2
+   double precision              :: dexdrho, dexdgrad_rho_2
   double precision              :: exPBE, dexPBEdrho_a, dexPBEdrho_b, dexPBEdrho, dexPBEdgrad_rho_a_2, dexPBEdgrad_rho_b_2, dexPBEdgrad_rho_a_b, dexPBEdgrad_rho_2
   double precision              :: gamma, dgammadrho_a, dgammadrho_b, dgammadgrad_rho_a_2, dgammadgrad_rho_b_2, dgammadgrad_rho_a_b
   double precision              :: delta, ddeltadrho_a, ddeltadrho_b, ddeltadgrad_rho_a_2, ddeltadgrad_rho_b_2, ddeltadgrad_rho_a_b
@@ -73,15 +72,18 @@
   double precision              :: n2_UEG, dn2_UEGdrho, dn2_UEGdrho_a, dn2_UEGdrho_b
   double precision              :: n2xc_UEG, dn2xc_UEGdrho, dn2xc_UEGdrho_a, dn2xc_UEGdrho_b
   double precision              :: g0, dg0drho
-
-  if(abs(rho_a-rho_b) > 1.d-12)then
-  stop "routine implemented only for closed-shell systems"
-  endif 
-
+  
   pi = dacos(-1.d0)
   rho = rho_a + rho_b
   m = rho_a - rho_b
   thr = 1.d-12
+
+  if(dabs(rho) > 1.d-12)then
+   if(abs(rho_a-rho_b)/rho > 1.d-3)then
+     print*, 'rho_a - rho_b= ', rho_a - rho_b
+     stop "routine implemented only for closed-shell systems"
+   endif 
+  endif
 
 ! exchange PBE standard and on-top pair distribution
   call ex_pbe_sr(1.d-12,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,exPBE,dexPBEdrho_a,dexPBEdrho_b,dexPBEdgrad_rho_a_2,dexPBEdgrad_rho_b_2,dexPBEdgrad_rho_a_b)
@@ -130,6 +132,8 @@
 ! calculation of derivatives
   !dex/dn
   dn2_UEGdrho = 2.d0*rho*g0 + (rho**2)*dg0drho
+  dn2_UEGdrho_a = 2.d0*rho*g0 + (rho**2)*dg0drho
+  dn2_UEGdrho_b = 2.d0*rho*g0 + (rho**2)*dg0drho
   dn2xc_UEGdrho = dn2_UEGdrho - 2.d0*rho
   dn2xc_UEGdrho_a = dn2xc_UEGdrho
   dn2xc_UEGdrho_b = dn2xc_UEGdrho
@@ -164,11 +168,13 @@
   dexdgrad_rho_b_2 = dexPBEdgrad_rho_b_2/denom  - exPBE*ddenomdgrad_rho_b_2/(denom**2)
   dexdgrad_rho_a_b = dexPBEdgrad_rho_a_b/denom - exPBE*ddenomdgrad_rho_a_b/(denom**2)
 
+!  print*, 'rho_a - rhob= ', rho_a - rho_b
 !  dexdgrad_rho_2 = 0.25d0*(dexdgrad_rho_a_2 + dexdgrad_rho_b_2 + dexdgrad_rho_a_b)
   
 !  print*, '..................................'
 !  print*, 'rhoa                =', rho_a
 !  print*, 'rhob                =', rho_b
+
 !  print*, 'gradrho_a_2         =', grad_rho_a_2
 !  print*, 'gradrho_b_2         =', grad_rho_b_2
 !  print*, 'gradrho_a_b         =', grad_rho_a_b
@@ -218,16 +224,19 @@
   double precision              :: rho, m  
   double precision              :: n2_UEG, dn2_UEGdrho_a, dn2_UEGdrho_b
   double precision              :: g0, dg0drho
- 
-  if(abs(rho_a-rho_b) > 1.d-12)then
-  stop "routine implemented only for closed-shell systems"
-  endif 
 
   pi = dacos(-1.d0)
   rho = rho_a + rho_b
   m = rho_a - rho_b
   thr = 1.d-12
-  
+ 
+  if(dabs(rho) > 1.d-12)then
+   if(abs(rho_a-rho_b)/rho > 1.d-3)then
+     print*, 'rho_a - rho_b= ', rho_a - rho_b
+     stop "routine implemented only for closed-shell systems"
+   endif 
+  endif
+ 
 ! correlation PBE standard and on-top pair distribution 
   call rho_ab_to_rho_oc(rho_a,rho_b,rho_o,rho_c)
   call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,grad_rho_o_2,grad_rho_c_2,grad_rho_o_c)
