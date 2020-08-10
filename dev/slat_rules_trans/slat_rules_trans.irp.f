@@ -1,8 +1,11 @@
-subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv)
+subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
   use bitmasks
+  BEGIN_DOC
+!  diagonal element of htilde 
+  END_DOC
   implicit none
   integer(bit_kind), intent(in)  :: key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
   integer                        :: occ(N_int*bit_kind_size,2)
   integer                        :: ne(2),i,j,ii,jj,ispin,jspin
   double precision :: get_mo_two_e_integral_erf,mo_two_e_integral_eff_pot
@@ -42,8 +45,144 @@ subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv)
     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map)
     heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) 
     hderiv += mo_two_e_eff_dr12_pot_array(ii,jj,ii,jj) 
-    print*,'mo_two_e_eff_dr12_pot_array(ii,jj,ii,jj',mo_two_e_eff_dr12_pot_array(ii,jj,ii,jj)
    enddo
   enddo
+  htot = hmono + herf + heff + hderiv
 
+end
+
+subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  use bitmasks
+  BEGIN_DOC
+! <key_j | H_tilde | key_i> for single excitation  
+!!
+!! WARNING !!
+! 
+! Non hermitian !!
+  END_DOC
+  implicit none
+  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  integer                        :: occ(N_int*bit_kind_size,2)
+  integer                        :: ne(2),i,j,ii,jj,ispin,jspin
+  integer                        :: degree,exc(0:2,2,2)
+  integer                        :: h1, p1, h2, p2, s1, s2
+  double precision :: get_mo_two_e_integral_erf,mo_two_e_integral_eff_pot,phase
+  integer :: other_spin(2)
+  other_spin(1) = 2
+  other_spin(2) = 1
+
+  call get_excitation_degree(key_i,key_j,degree,N_int)
+  hmono = 0.d0
+  herf = 0.d0
+  heff = 0.d0
+  hderiv = 0.d0
+  if(degree.ne.1)then
+   return
+  endif
+  call bitstring_to_list_ab(key_i,occ,Ne,N_int)
+  call get_single_excitation(key_i,key_j,exc,phase,N_int)
+  call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
+
+  hmono = mo_one_e_integrals(h1,p1) * phase
+  
+  ! Coulomb 
+  ispin = other_spin(s1)
+  do i = 1, Ne(ispin)
+   ii = occ(i,ispin) 
+   herf   += get_mo_two_e_integral_erf(ii,h1,ii,p1,mo_integrals_erf_map)
+   heff   += mo_two_e_integral_eff_pot(ii,h1,ii,p1) 
+   hderiv += mo_two_e_eff_dr12_pot_array(ii,h1,ii,p1) 
+  enddo
+  ! Exchange 
+  ispin = s1 
+  do i = 1, Ne(ispin)
+   ii = occ(i,ispin) 
+   if(ii == h1)cycle
+   herf   += get_mo_two_e_integral_erf(ii,h1,ii,p1,mo_integrals_erf_map) & 
+            -get_mo_two_e_integral_erf(ii,h1,p1,ii,mo_integrals_erf_map)
+   heff   += mo_two_e_integral_eff_pot(ii,h1,ii,p1) - mo_two_e_integral_eff_pot(ii,h1,p1,ii) 
+   hderiv += mo_two_e_eff_dr12_pot_array(ii,h1,ii,p1) - mo_two_e_eff_dr12_pot_array(ii,h1,p1,ii) 
+  enddo
+  herf    *= phase
+  heff    *= phase
+  hderiv  *= phase
+  htot = hmono + herf + heff + hderiv
+end
+
+subroutine double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  use bitmasks
+  BEGIN_DOC
+! <key_j | H_tilde | key_i> for double excitation  
+!!
+!! WARNING !!
+! 
+! Non hermitian !!
+  END_DOC
+  implicit none
+  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  integer                        :: occ(N_int*bit_kind_size,2)
+  integer                        :: ne(2),i,j,ii,jj,ispin,jspin
+  integer                        :: degree,exc(0:2,2,2)
+  integer                        :: h1, p1, h2, p2, s1, s2
+  double precision :: get_mo_two_e_integral_erf,mo_two_e_integral_eff_pot,phase
+  integer :: other_spin(2)
+  other_spin(1) = 2
+  other_spin(2) = 1
+
+  call get_excitation_degree(key_i,key_j,degree,N_int)
+  hmono = 0.d0
+  herf = 0.d0
+  heff = 0.d0
+  hderiv = 0.d0
+  if(degree.ne.2)then
+   return
+  endif
+  call get_double_excitation(key_i,key_j,exc,phase,N_int)
+  call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
+  if(s1==s2)then
+   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map) & 
+            -get_mo_two_e_integral_erf(p1,p2,h2,h1,mo_integrals_erf_map) 
+   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) - mo_two_e_integral_eff_pot(p1,p2,h2,h1)
+   hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) - mo_two_e_eff_dr12_pot_array(p1,p2,h2,h1) 
+  else
+   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
+   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
+   hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) 
+  endif
+  herf   *= phase
+  heff   *= phase
+  hderiv *= phase
+  htot = hmono + herf + heff + hderiv
+ end
+
+
+subroutine htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  use bitmasks
+  BEGIN_DOC
+! <key_j | H_tilde | key_i> 
+!!
+!! WARNING !!
+! 
+! Non hermitian !!
+  END_DOC
+  implicit none
+  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  integer                        :: degree
+  call get_excitation_degree(key_i,key_j,degree,N_int)
+  hmono = 0.d0
+  herf = 0.d0
+  heff = 0.d0
+  hderiv = 0.d0
+  if(degree.gt.2)then
+   return
+  else if(degree == 2)then
+   call double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  else if(degree == 1)then
+   call single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  else if(degree == 0)then
+   call diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
+  endif
 end
