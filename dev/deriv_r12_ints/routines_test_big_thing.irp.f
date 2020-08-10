@@ -127,28 +127,29 @@ subroutine test_hermit
  include 'utils/constants.include.F'
  integer :: i,j,k,l,m
  double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
+ double precision :: int1,int2,get_two_e_integral
  provide  ao_two_e_eff_dr12_pot_array
  provide  mo_two_e_eff_dr12_pot_array
-! mu_in = mu_erf
-! do j = 1, ao_num
-!  do i = 1, ao_num
-!   do l = 1, ao_num
-!    do k = 1, ao_num
-!      ! <kl|ij>
-!      call ao_two_e_eff_dr12_pot(i,k,j,l,mu_in,d_dr12,d_dr12_large)
-!      accu = 0.d0
-!      do m = 1, 3
-!       accu += d_dr12(m) - d_dr12_large(m) 
-!      enddo
-!      if(dabs(ao_two_e_eff_dr12_pot_array(k,l,i,j) - accu).gt.1.d-12)then
-!       print*,'AAHAHAHA'
-!       print*,i,k,j,l
-!       stop
-!      endif
-!    enddo
-!   enddo
-!  enddo
-! enddo
+ mu_in = mu_erf
+ accu = 0.d0
+ do j = 1, mo_num
+  do i = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+      ! <kl|ij>
+      int1 = mo_two_e_eff_dr12_pot_array(k,l,i,j)
+      int2 = get_two_e_integral(k,l,i,j,mo_integrals_map)
+      if(dabs(int1 - int2).gt.1.d-10)then
+       print*,'k,l,i,j',k,l,i,j
+       print*,int2,int1,dabs(int1 - int2)
+       stop
+      endif
+      accu += dabs(int1 - int2)
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'accu  = ',accu
  
 end
 

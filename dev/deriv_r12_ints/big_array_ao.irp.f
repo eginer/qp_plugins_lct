@@ -38,14 +38,18 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
+ mo_two_e_eff_dr12_pot_array = 0.d0
  allocate(mo_tmp_1(ao_num,ao_num,ao_num,mo_num))
  do i = 1, mo_num ! r1
   do m = 1, ao_num
    do n = 1, ao_num
     do p = 1, ao_num
+     mo_tmp_1(p,n,m,i) = 0.d0
      do q = 1, ao_num
       ! <j p
       mo_tmp_1(p,n,m,i) += mo_coef(q,i) * ao_two_e_eff_dr12_pot_array(q,p,n,m)
+!      double precision :: get_ao_two_e_integral
+!      mo_tmp_1(p,n,m,i) += mo_coef(q,i) * get_ao_two_e_integral(q,p,n,m,ao_integrals_map)
      enddo
     enddo
    enddo
@@ -57,6 +61,7 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
   do j = 1, mo_num
     do m = 1, ao_num
      do n = 1, ao_num
+      mo_tmp_2(n,m,j,i) = 0.d0
       do p = 1, ao_num
        mo_tmp_2(n,m,j,i) += mo_tmp_1(p,n,m,i) * mo_coef(p,j)
       enddo
@@ -70,6 +75,7 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
   do j = 1, mo_num
    do k = 1, mo_num
     do m = 1, ao_num
+     mo_tmp_3(m,k,j,i) = 0.d0
      do n = 1, ao_num
       mo_tmp_3(m,k,j,i) += mo_tmp_2(n,m,j,i) * mo_coef(n,k)
      enddo
@@ -82,6 +88,7 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
   do j = 1, mo_num
    do k = 1, mo_num
     do l = 1, mo_num
+     mo_two_e_eff_dr12_pot_array(l,k,j,i) = 0.d0
      do m = 1, ao_num
       mo_two_e_eff_dr12_pot_array(l,k,j,i) += mo_coef(m,l) * mo_tmp_3(m,k,j,i)
      enddo
