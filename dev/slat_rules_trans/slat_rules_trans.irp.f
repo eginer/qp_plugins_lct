@@ -24,18 +24,6 @@ subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
   heff  = 0.d0
   hderiv= 0.d0
 
-  do ispin = 1,2
-   do i = 1, Ne(ispin) 
-    ii = occ(i,ispin) 
-    do j = i+1, Ne(ispin)
-     jj = occ(j,ispin) 
-     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) & 
-            -get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
-     heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii) 
-     hderiv += mo_two_e_eff_dr12_pot_array(ii,jj,ii,jj) - mo_two_e_eff_dr12_pot_array(ii,jj,jj,ii)
-    enddo
-   enddo
-  enddo
   ispin = 1
   jspin = 2 
   do i = 1, Ne(ispin) 
@@ -90,19 +78,9 @@ subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   ispin = other_spin(s1)
   do i = 1, Ne(ispin)
    ii = occ(i,ispin) 
-   herf   += get_mo_two_e_integral_erf(ii,h1,ii,p1,mo_integrals_erf_map)
-   heff   += mo_two_e_integral_eff_pot(ii,h1,ii,p1) 
-   hderiv += mo_two_e_eff_dr12_pot_array(ii,h1,ii,p1) 
-  enddo
-  ! Exchange 
-  ispin = s1 
-  do i = 1, Ne(ispin)
-   ii = occ(i,ispin) 
-   if(ii == h1)cycle
-   herf   += get_mo_two_e_integral_erf(ii,h1,ii,p1,mo_integrals_erf_map) & 
-            -get_mo_two_e_integral_erf(ii,h1,p1,ii,mo_integrals_erf_map)
-   heff   += mo_two_e_integral_eff_pot(ii,h1,ii,p1) - mo_two_e_integral_eff_pot(ii,h1,p1,ii) 
-   hderiv += mo_two_e_eff_dr12_pot_array(ii,h1,ii,p1) - mo_two_e_eff_dr12_pot_array(ii,h1,p1,ii) 
+   herf   += get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map)
+   heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) 
+   hderiv += mo_two_e_eff_dr12_pot_array(ii,p1,ii,h1) 
   enddo
   herf    *= phase
   heff    *= phase
@@ -141,20 +119,13 @@ subroutine double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   endif
   call get_double_excitation(key_i,key_j,exc,phase,N_int)
   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
-  if(s1==s2)then
-   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map) & 
-            -get_mo_two_e_integral_erf(p1,p2,h2,h1,mo_integrals_erf_map) 
-   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) - mo_two_e_integral_eff_pot(p1,p2,h2,h1)
-   hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) - mo_two_e_eff_dr12_pot_array(p1,p2,h2,h1) 
-  else
-   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
-   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
-   hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) 
-  endif
+  herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
+  heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
+  hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) 
   herf   *= phase
   heff   *= phase
   hderiv *= phase
-  htot = hmono + herf + heff + hderiv
+  htot = herf + heff + hderiv
  end
 
 

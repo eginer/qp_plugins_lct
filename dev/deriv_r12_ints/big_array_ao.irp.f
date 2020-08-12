@@ -1,6 +1,7 @@
 BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao_num,ao_num)]
  implicit none
  BEGIN_DOC
+!   1 2                                1 2 
 ! < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
  END_DOC
  integer :: i,j,k,l,m
@@ -16,11 +17,14 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
    do l = 1, ao_num ! r2 
     do k = 1, ao_num ! r1 
       ! <kl|ij>
+      !    the d/dr12 op acts on 1   2    
+      !                            1   2
       call ao_two_e_eff_dr12_pot(i,k,j,l,mu_in,d_dr12,d_dr12_large)
       accu  = 0.d0
       do m = 1, 3
        accu += d_dr12(m) - d_dr12_large(m) 
       enddo
+      !                           1 2 1 2 
       ao_two_e_eff_dr12_pot_array(k,l,i,j) = accu
     enddo
    enddo
@@ -40,11 +44,11 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
  mo_two_e_eff_dr12_pot_array = 0.d0
  allocate(mo_tmp_1(ao_num,ao_num,ao_num,mo_num))
+ mo_tmp_1 = 0.d0
  do i = 1, mo_num ! r1
   do m = 1, ao_num
    do n = 1, ao_num
     do p = 1, ao_num
-     mo_tmp_1(p,n,m,i) = 0.d0
      do q = 1, ao_num
       ! <j p
       mo_tmp_1(p,n,m,i) += mo_coef(q,i) * ao_two_e_eff_dr12_pot_array(q,p,n,m)
@@ -57,11 +61,11 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
  enddo
  FREE ao_two_e_eff_dr12_pot_array
  allocate(mo_tmp_2(ao_num,ao_num,mo_num,mo_num))
+ mo_tmp_2 = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
     do m = 1, ao_num
      do n = 1, ao_num
-      mo_tmp_2(n,m,j,i) = 0.d0
       do p = 1, ao_num
        mo_tmp_2(n,m,j,i) += mo_tmp_1(p,n,m,i) * mo_coef(p,j)
       enddo
@@ -71,11 +75,11 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
  enddo
  deallocate(mo_tmp_1)
  allocate(mo_tmp_3(ao_num,mo_num,mo_num,mo_num))
+ mo_tmp_3 = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
    do k = 1, mo_num
     do m = 1, ao_num
-     mo_tmp_3(m,k,j,i) = 0.d0
      do n = 1, ao_num
       mo_tmp_3(m,k,j,i) += mo_tmp_2(n,m,j,i) * mo_coef(n,k)
      enddo
@@ -88,7 +92,6 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
   do j = 1, mo_num
    do k = 1, mo_num
     do l = 1, mo_num
-     mo_two_e_eff_dr12_pot_array(l,k,j,i) = 0.d0
      do m = 1, ao_num
       mo_two_e_eff_dr12_pot_array(l,k,j,i) += mo_coef(m,l) * mo_tmp_3(m,k,j,i)
      enddo
