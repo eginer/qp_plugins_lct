@@ -1,0 +1,619 @@
+\documentclass[aip,jcp,reprint,noshowkeys,superscriptaddress]{revtex4-1}
+\usepackage{graphicx,dcolumn,bm,xcolor,microtype,multirow,amsmath,amssymb,amsfonts,physics,mhchem,xspace,subfigure}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{txfonts}
+
+\usepackage[
+	colorlinks=true,
+    citecolor=blue,
+    breaklinks=true
+	]{hyperref}
+\urlstyle{same}
+
+\definecolor{darkgreen}{HTML}{009900}
+\usepackage[normalem]{ulem}
+\newcommand{\sphi}[1]{\hat{{\bf S}}_{#1}}
+\newcommand{\overlap}[2]{\langle #1 | #2 \rangle}
+\newcommand{\matelem}[3]{\langle #1 | #2 | #3 \rangle}
+\newcommand{\deriv}[3]{\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+\newcommand{\bd}[1]{{\bf {#1}}}
+\newcommand{\br}[0]{{\bf {r}}}
+\newcommand{\bs}[0]{{\bf {s}}}
+\newcommand{\dr}[1]{\text{d}{\bf {#1}}}
+\newcommand{\psiex}[0]{\Psi^{\text{ex}}}
+\newcommand{\energyex}[0]{E^{\text{ex}}}
+
+\begin{document}	
+
+\title{On the general mapping between effective two-electron interaction and Jastrow factors.}
+
+\author{Emmanuel Giner}
+\email{emmanuel.giner@lct.jussieu.fr}
+
+\begin{abstract}
+blabla
+
+\end{abstract}
+
+\maketitle
+\section{Position of the problem: the cusp of the helium atom}
+Consider the Hamiltonian of He atom: 
+\begin{equation}
+ \label{eq:h_he}
+ \begin{aligned}
+ H = &-\frac{1}{2} \sum_{i=1}^2 \bigg(\deriv{}{r_i}{2} + \frac{2}{r_i} \deriv{}{r_i}{} + \frac{2 Z}{r_i}\bigg) \\
+     &-\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \\
+     &-\bigg( \frac{\bd{r_1}}{r_1} \cdot \frac{\bd{r_{12}} }{r_{12}}  \deriv{}{r_1}{} + 
+              \frac{\bd{r_2}}{r_2} \cdot \frac{\bd{r_{21}} }{r_{21}}  \deriv{}{r_2}{} \bigg).
+ \end{aligned}
+\end{equation}
+The exact wave function $\psiex(\bd{r_1},\bd{r_2})$ must satisfy the Schrodinger equation for all points $(\bd{r_1},\bd{r_2})$, which means that 
+\begin{equation}
+ H \psiex(\bd{r_1},\bd{r_2}) = \energyex \psiex(\bd{r_1},\bd{r_2}) \quad \forall (\bd{r_1},\bd{r_2}).
+\end{equation}
+When looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ must remain finite, which translates into 
+\begin{equation}
+ \bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
+\end{equation}
+which translates into
+\begin{equation}
+ 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2})  = c\times r_{12}. 
+\end{equation}
+At $r_{12}=0$, one obtains the famous cusp condition
+\begin{equation}
+ \deriv{\psiex}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
+\end{equation}
+%Nevertheless, imposing $c=0$ is just a choice, as long as $c<\infty$ one can satisfies the Schrodinger equation. 
+%In the next section, we will focus on imposing a finite value. 
+
+\section{Wave function with a Jastrow factor}
+Let us assume now that we have an approximate wave function $\Psi(r_{12)}$ which is obtained from a Jastrow factor $f(r_{12})$ and a wave function $\psi(r_{12})$
+\begin{equation}
+  \Psi(r_{12)} = e^{f(r_{12})} \psi(r_{12}). 
+\end{equation}
+Let us plug such a wave function in the previous equation
+\begin{equation}
+ \begin{aligned}
+ & \bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) e^{f(r_{12})} \psi(r_{12}) \\
+ = & e^{f(r_{12})} \bigg[ \frac{2}{r_{12}} \deriv{\psi}{r_{12}}{} - \left( \frac{1}{r_{12}} - \frac{2}{r_{12}}\deriv{f}{r_{12}}{} \right) \psi(r_{12}) \bigg].
+ \end{aligned}
+\end{equation}
+Therefore, by multiplying by $e^{-f(r_{12})}$ one obtains a similarity transformed Hamiltonian and therefore 
+\begin{equation}
+ \label{eq:eff_h}
+ \begin{aligned}
+ & e^{-f(r_{12})} \bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) e^{f(r_{12})} \psi(r_{12}) \\ 
+=& \frac{2}{r_{12}} \deriv{\psi}{r_{12}}{} - \left( \frac{1}{r_{12}} -  \frac{2}{r_{12}}\deriv{f}{r_{12}}{} \right) \psi(r_{12}) \\
+=& \frac{2}{r_{12}} \deriv{\psi}{r_{12}}{} - \frac{1}{r_{12}} \left( 1-  2 \deriv{f}{r_{12}}{} \right) \psi(r_{12}). 
+ \end{aligned}
+\end{equation}
+As before, one imposes that such quantity remains finite at $r_{12} = 0$, which translates into
+\begin{equation}
+ 2 \deriv{\psi}{r_{12}}{} = \left( 1-  2 \deriv{f}{r_{12}}{} \right) \psi(r_{12}). 
+\end{equation}
+Now let us impose that $\psi(r_{12})$ is cusp-less, \textit{i.e.}
+\begin{equation}
+ \deriv{\psi}{r_{12}}{} = 0, 
+\end{equation}
+this translates into 
+\begin{equation}
+ \deriv{f}{r_{12}}{} = \frac{1}{2}, 
+\end{equation}
+or 
+\begin{equation}
+ f(r_{12}) = f(0) + \frac{1}{2} r_{12} + \hdots 
+\end{equation}
+Therefore, a Jastrow factor of form $e^{\alpha + \frac{1}{2} r_{12}}$ can fulfill the conditions. 
+
+\section{Link with an effective non divergent interaction}
+Let us rewrite Eq. \eqref{eq:eff_h} as 
+\begin{equation}
+ \label{eq:eff_h}
+ \begin{aligned}
+ & e^{-f(r_{12})} \bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) e^{f(r_{12})} \psi(r_{12}) \\ 
+ =& \frac{2}{r_{12}} \deriv{\psi}{r_{12}}{} - \frac{w(r_{12})}{r_{12}} \psi(r_{12}),
+ \end{aligned}
+\end{equation}
+with 
+\begin{equation}
+ \label{eq:dev_wr12}
+ w(r_{12}) =  1-  2 \deriv{f}{r_{12}}{}.
+\end{equation}
+This equation can be seen as a piece of an effective Hamiltonian of the form of Eq. \eqref{eq:h_he} but where the regular coulomb interaction $1/r_{12}$ would be replaced by $w(r_{12})/r_{12}$. 
+
+Therefore, one can have a \textit{quantitative and constructive} mapping between a general two-electron interaction, and a general Jastrow factor. 
+One can notice that one can choose $w(r_{12})$ such that 
+\begin{equation}
+ \label{eq:wr12}
+ \lim_{r_{12}\rightarrow 0} \frac{w(r_{12})}{r_{12}} < \infty,
+\end{equation}
+which helps therefore in designing a Jastrow factor which makes the effective interaction non divergent. 
+
+
+\section{The case of the long-range interaction of RS-DFT}
+As a special case of Eq. \eqref{eq:wr12}, one can choose the long-range interaction of RS-DFT, which is nothing but imposing 
+\begin{equation}
+ w(r_{12}) = \text{erf}(\mu r_{12}). 
+\end{equation}
+Therefore, thanks to Eq. \eqref{eq:dev_wr12}, we can obtain the form of the Jastrow factor which would give an effective interaction of of the form 
+\begin{equation}
+ \frac{w(r_{12})}{r_{12}} = \frac{\text{erf}(\mu r_{12})}{r_{12}}. 
+\end{equation}
+This translates into 
+\begin{equation}
+ 1-  2 \deriv{f}{r_{12}}{} = \text{erf}(\mu r_{12}), 
+\end{equation}
+which is a differential equation which can be integrated (thank God for Wolfram Alpha) and gives
+\begin{equation}
+ \label{eq:def_f}
+ f(r_{12};\mu) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg) - \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2} + cst
+\end{equation}
+where $cst$ is a constant. Here we take the $cst$ such that $\lim_{\mu \rightarrow \infty} f(r_{12};\mu) = 0$ in order to have a Jastrow factor becoming $1$ at large $r_{12}$. 
+
+
+\section{Study of the Jastrow factor as a function of $\mu$ and $r_{12}$}
+Let us call the $\mu$-dependent Jastrow factor $J(r_{12};\mu)$
+\begin{equation}
+ J(r_{12};\mu) = \text{exp}(f(r_{12};\mu))
+\end{equation}
+with of course 
+\begin{equation}
+ f(r_{12};\mu) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg) - \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2}.
+\end{equation}
+\subsection{Some limits in terms of $\mu$}
+\subsubsection{$\mu \rightarrow \infty$}
+In that case one has
+\begin{equation}
+ \lim_{\mu \rightarrow \infty} \text{erf}(\mu r_{12}) = 1,
+\end{equation}
+which means that the effective interaction in that limit is the full Coulomb interaction
+\begin{equation}
+ \lim_{\mu \rightarrow \infty} \frac{\text{erf}(\mu r_{12})}{r_{12}} = \frac{1}{r_{12}}.
+\end{equation}
+Regarding now the function $f(r_{12};\mu)$, one has 
+\begin{equation}
+ \lim_{\mu \rightarrow \infty} \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg) = 0,
+\end{equation}
+\begin{equation}
+ \lim_{\mu \rightarrow \infty} \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2} = 0
+\end{equation}
+and therefore 
+\begin{equation}
+ \lim_{\mu \rightarrow \infty} f(r_{12};\mu) = 0,
+\end{equation}
+which implies that 
+\begin{equation}
+ \lim_{\mu \rightarrow \infty} J(r_{12};\mu) = 1. 
+\end{equation}
+This limit can be interpreted as follows: if you have no Jastrow factor (\textit{i.e.}$J(r_{12})=1$), the cusp-less wave function sees the full interaction.
+
+\subsubsection{$\mu \rightarrow 0$}
+This suggests that there is no Coulomb interaction in the Hamiltonian 
+\begin{equation}
+  \lim_{\mu \rightarrow 0} \text{erf}(\mu r_{12}) = 0. 
+\end{equation}
+Therefore, even if 
+\begin{equation}
+  \lim_{\mu \rightarrow 0} \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2} = \infty
+\end{equation}
+\begin{equation}
+ \lim_{\mu \rightarrow 0} f(r_{12};\mu) = -\infty,
+\end{equation}
+we chose the $cst$ such that the $f(r_{12};\mu) = 0$, which implies 
+\begin{equation}
+ \lim_{\mu \rightarrow 0} J(r_{12};\mu) = 1. 
+\end{equation}
+This suggests that, in the case of a vanishing effective two-electron interaction, there is no Jastrow factor as there is no cusp in the wave function. This can be seen as the Hartree-Fock or Kohn-Sham limit. 
+
+\subsection{Some limits in terms of $r_{12}$ for different $\mu$}
+For a finite value of $\mu$ and small value of $r_{12}$, let us Taylor expand the function $f(r_{12};\mu)$
+\begin{equation}
+ \label{eq:f_dl}
+ f(r_{12};\mu) = -\frac{1}{2\sqrt{\pi}\mu} + \frac{1}{2}r_{12} - \frac{\mu}{2\sqrt{\pi}} r_{12}^2 + o(r_{12}^4).
+\end{equation}
+Therefore, it is interesting to analyze the first three terms. 
+\subsubsection{The zeroth-order term: digging the Coulomb hole}
+The term of order $0$ in $r_{12}$ in Eq. \eqref{eq:f_dl} corresponds in the Jastrow factor to 
+\begin{equation}
+ \label{eq:g0_mu}
+ J(r_{12};\mu) \approx  e^{-\frac{1}{2\sqrt{\pi}\mu}},
+\end{equation}
+which means that this term directly lowers the on-top pair density of the cusp-less wave function $\psi(r_{12})$. 
+It is interesting to develop this function in powers of $\mu^{-1} $:
+\begin{equation}
+ \label{eq:g0_mu_dl}
+ e^{-\frac{1}{2\sqrt{\pi}\mu}} = 1 - \frac{1}{2\sqrt{\pi}\mu} + o(\mu^{-2}).
+\end{equation}
+The Eq. \eqref{eq:g0_mu_dl} has exactly the same development in $\mu^{-1} $ than the extrapolation of the on-top pair density derived in the context of RS-DFT by Savin and Gori-Giorgi\cite{GorSav-PRA-06}
+\begin{equation}
+ \frac{1}{1+\frac{1}{2\sqrt{\pi}\mu}} =  1 - \frac{1}{2\sqrt{\pi}\mu} + o(\mu^{-2}).
+\end{equation}
+Nevertheless, the form of Eq. ~\eqref{eq:g0_mu} could be more precise (to be tested) ...
+
+\subsubsection{The first-order term: restoring the cusp}
+The term of order 1 in $r_{12}$ in Eq. \eqref{eq:f_dl} directly restores the cusp of the full wave function
+\begin{equation}
+ \begin{aligned}
+  J(r_{12};\mu) \approx  & e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{\frac{1}{2}r_{12}} \\
+                \approx  & e^{-\frac{1}{2\sqrt{\pi}\mu}} \bigg( 1 + \frac{1}{2} r_{12} + \hdots \bigg).
+ \end{aligned}
+\end{equation}
+Interestingly, this term does not depend on $\mu$, which means that with the form of Eq. \eqref{eq:def_f} for the Jastrow factor, one obtains systematically the good cusp, whatever the $\mu$ value. 
+
+\subsubsection{The second-order term: reshaping the hole}
+The term of order 2 in $r_{12}$ in Eq. \eqref{eq:f_dl} drives the shape of the hole
+\begin{equation}
+  \frac{1}{2} \deriv{f(r_{12};\mu)}{r_{12}}{2} = - \frac{\mu}{2\sqrt{\pi}} 
+\end{equation}
+and is negative. 
+
+\subsection{A few plots for different values of $\mu$}
+Let us begin the graphical study for small values of $\mu$. In Fig. \ref{fig_small_mu} I report the value of the shape of the Jastrow factor $J(r_{12};\mu)$ for small values of $\mu$. As expected,  as $\mu$ increases the Jastrow factor becomes of shorter range, and the value at $r_{12}=0$ increases. This last statement implies that the closer you are from the exact Coulomb interaction, the lower is the on-top pair density of $\psi(r_{12})$, and therefore the Jastrow factor has less work to do. 
+In Fig \ref{fig_large_mu} we report the shape of the Jastrow factor for relatively large values of $\mu$. 
+\begin{figure*}
+ \label{fig_small_mu}
+        \includegraphics[width=1.00\linewidth]{small_mu.pdf}
+        \caption{Shape of $J(r_{12};\mu)$ for small values of $\mu$.}
+\end{figure*}
+\begin{figure*}
+ \label{fig_large_mu}
+        \includegraphics[width=1.00\linewidth]{large_mu.pdf}
+        \caption{Shape of $J(r_{12};\mu)$ for large values of $\mu$.}
+\end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Technical stuffs: integration of the Jastrow factor}
+\subsection{Fit of the Jastrow factor with usual functions}
+\subsubsection{The fit of $f(r_{12},\mu)$}
+We want to be able to fit $f(r_{12},\mu)$ with simple Slater and Gaussian type functions of the type 
+\begin{equation}
+ h(r_{12},\gamma,\delta) = e^{-\gamma r_{12} - \delta r_{12}^2}. 
+\end{equation}
+First we define the rescaled $\tilde{f}(r_{12},\mu)$ function as
+\begin{equation}
+ \begin{aligned}
+ \tilde{f}(r_{12},\mu) & = f(r_{12},\mu)\times 2\sqrt{\pi}\mu  \\
+                       & = \sqrt{\pi}\mu r_{12} \bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - e^{-(\mu  r_{12})^2},
+ \end{aligned}
+\end{equation}
+which has the advantage to take values in $[-1:0]$. 
+The Taylor expansion of $\tilde{f}(r_{12},\mu)$ up to second order in $r_{12}$ is simply
+\begin{equation}
+ \tilde{f}(r_{12},\mu) = -1 + \sqrt{\pi}\mu r_{12} - \mu^2 (r_{12})^2 + o\big((r_{12})^2\big). 
+\end{equation}
+Then, we Taylor expand at second order the function $-h(r_{12},\gamma,\delta)$
+\begin{equation}
+ -h(r_{12},\gamma,\delta) = - 1 + \gamma r_{12} + \big( \delta - \frac{\gamma^2}{2} \big) (r_{12})^2.
+\end{equation}
+and the fit of $\tilde{f}(r_{12},\mu)$ by $h(r_{12},\gamma,\delta)$ is done by imposing the equality of the functions up to second order in $r_{12}$. 
+This gives the following relationships
+\begin{equation}
+ \gamma(\mu) = \sqrt{\pi} \mu
+\end{equation}
+\begin{equation}
+ \delta(\mu) = -\mu^2 + \frac{\gamma(\mu)^2}{2}.
+\end{equation}
+Therefore, we propose to fit the function $\tilde{f}(r_{12},\mu)$ by $h(r_{12},\gamma(\mu),\delta(\mu))$ 
+\begin{equation}
+ \label{fit_f_h}
+  \tilde{f}(r_{12},\mu) = h(r_{12},\gamma,\delta) + O\big((r_{12})^2\big)
+\end{equation}
+As one can see from Fig. \ref{fit_small_mu} and \ref{fit_large_mu}, the agreement is pretty good between $\tilde{f}(r_{12},\mu)$ and $h(r_{12},\gamma,\delta)$, even for large values of $r_{12}$ and $\mu$. 
+\begin{figure*}
+ \label{fit_small_mu}
+        \includegraphics[width=1.00\linewidth]{fit_f_small.pdf}
+        \caption{Fit of the function $\tilde{f}(r_{12},\mu)$ with the function $h(r_{12},\gamma(\mu),\delta(\mu))$, for small values of $\mu$. }
+\end{figure*}
+\begin{figure*}
+ \label{fit_large_mu}
+        \includegraphics[width=1.00\linewidth]{fit_f_large.pdf}
+        \caption{Fit of the function $\tilde{f}(r_{12},\mu)$ with the function $h(r_{12},\gamma(\mu),\delta(\mu))$, for large values of $\mu$. }
+\end{figure*}
+
+\subsubsection{Fit of the full Jastrow factor $J(r_{12},\mu)$}
+Now we want to be able to represent the full Jastrow factor $J(r_{12},\mu)$ as a Taylor series of $\tilde{f}(r_{12},\mu)$. 
+To do so we write
+\begin{equation}
+ \begin{aligned}
+ \label{def_fit_j}
+ J(r_{12},\mu) & = e^{f(r_{12},\mu)} \\
+               & = e^{\frac{\tilde{f}(r_{12},\mu)}{2\sqrt{\pi}\mu}} \\
+               & \approx e^{\frac{-h(r_{12},\gamma(\mu),\delta(\mu))}{2\sqrt{\pi}\mu}}. 
+ \end{aligned}
+\end{equation}
+Then, as the function $-h(r_{12},\gamma(\mu),\delta(\mu)) \in [-1:0]$, we can Taylor expand the function $e^{-h(r_{12},\gamma(\mu),\delta(\mu))}$
+\begin{equation}
+ e^{-h(r_{12},\gamma(\mu),\delta(\mu))} = \sum_{n=0}^{\infty} \frac{1}{n!}\bigg(\frac{-h(r_{12},\gamma(\mu),\delta(\mu))}{2\sqrt{\pi}\mu}\bigg)^n. 
+\end{equation}
+By defining 
+\begin{equation}
+ a_n = \frac{1}{n!}\bigg(\frac{-1}{2\sqrt{\pi}\mu}\bigg)^n
+\end{equation}
+and because of the shape of the function $h(r_{12},\gamma,\delta)$ one obtains 
+\begin{equation}
+ \begin{aligned}
+ \label{h_r_dl}
+ e^{-h(r_{12},\gamma(\mu),\delta(\mu))} & = \sum_{n=0}^{\infty} a_n e^{-n\gamma(\mu)r_{12}} e^{-n\delta(\mu)(r_{12})^2} \\
+                                      & = \sum_{n=0}^{\infty} a_n h\bigg( r_{12}, n\gamma(\mu),n\delta(\mu)\bigg).
+ \end{aligned}
+\end{equation}
+
+\subsection{Important integrals with the Jastrow factor}
+\subsubsection{Generic integrals}
+We need two types of integrals. 
+The first type are the normalization integrals 
+\begin{equation}
+ \label{def_big_sij}
+ \mathcal{S}_{ij}^{kl}(\mu) = \int \int \dr{r_1}\dr{r_2} e^{f(r_{12},\mu)} \phi_i(\bd{r_1}) \phi_j(\bd{r_2}) \phi_k(\bd{r_1}) \phi_l(\bd{r_2})
+\end{equation}
+needed to normalize the wave function to unity or the pair density to the number of electron pairs. 
+The second type of integrals are the interaction integrals 
+\begin{equation}
+ \label{def_big_vij}
+ \mathcal{V}_{ij}^{kl}(\mu) = \int \int \dr{r_1}\dr{r_2} e^{f(r_{12},\mu)} \frac{\text{erf}(\mu r_{12})}{r_{12}}\phi_i(\bd{r_1}) \phi_j(\bd{r_2}) \phi_k(\bd{r_1}) \phi_l(\bd{r_2})
+\end{equation}
+needed to compute energy contributions.  
+
+As computing analytical integrals of the type \eqref{def_big_sij} or \eqref{def_big_vij} is hard, we propose to compute analytical integrals of the type
+\begin{equation}
+ \label{def_s_ij}
+ S_{jl}(\mu,\bd{r_1}) = \int \dr{r_2} e^{f(r_{12},\mu)} \phi_j(\bd{r_2}) \phi_l(\bd{r_2})
+\end{equation}
+and 
+\begin{equation}
+ \label{def_v_ij}
+ V_{jl}(\mu,\bd{r_1}) = \int \dr{r_2} e^{f(r_{12},\mu)}\frac{\text{erf}(\mu r_{12})}{r_{12}}\phi_j(\bd{r_2}) \phi_l(\bd{r_2}).
+\end{equation}
+Therefore, we can compute $\mathcal{S}_{ij}^{kl}(\mu)$ and $\mathcal{V}_{ij}^{kl}(\mu)$ as
+\begin{equation}
+ \label{def_big_sij_bis}
+ \mathcal{S}_{ij}^{kl}(\mu) = \int \dr{r_1} \phi_i(\bd{r_1})  \phi_k(\bd{r_1})S_{jl}(\mu,\bd{r_1})
+\end{equation}
+\begin{equation}
+ \label{def_big_sij_bis}
+ \mathcal{V}_{ij}^{kl}(\mu) = \int \dr{r_1} \phi_i(\bd{r_1})  \phi_k(\bd{r_1})V_{jl}(\mu,\bd{r_1})
+\end{equation}
+where the integration over $\bd{r_1}$ is performed using a regular DFT grid. 
+The computation of \eqref{def_s_ij} and \eqref{def_v_ij} are not analytical in practice as the function $e^{f(r_{12},\mu)}$ might be hard to integrate. 
+Nevertheless, as shown in Figs. \ref{fig_small_mu} and \ref{fig_large_mu},  and the function $\tilde{f}(r_{12},\mu)$ take values in $[-1:0]$, and therefore one can approximate the exponential by a Taylor development as in \eqref{def_fit_j}, and then use a Shank transformation to even gain in accuracy. 
+
+\subsubsection{Basic framework to compute $S_{jl}(\mu,\bd{r_1})$ and $V_{jl}(\mu,\bd{r_1})$}
+Assuming that the fit of of \eqref{def_fit_j} is valid, one can write $S_{jl}(\mu,\bd{r_1})$ as 
+\begin{equation}
+ \label{def_s_ij_dl_1} 
+ \begin{aligned}
+ S_{jl}(\mu,\bd{r_1})& = \int \dr{r_2} e^{f(r_{12},\mu)} \phi_j(\bd{r_2}) \phi_l(\bd{r_2}) \\
+                     & =\int \dr{r_2} e^{\frac{-h(r_{12},\gamma(\mu),\delta(\mu))}{2\sqrt{\pi}\mu}}  \phi_j(\bd{r_2}) \phi_l(\bd{r_2}), 
+ \end{aligned}
+\end{equation}
+which, according to \eqref{h_r_dl} becomes 
+\begin{equation}
+ \label{def_s_ij_dl_2} 
+ \begin{aligned}
+ S_{jl}(\mu,\bd{r_1})& = \int \dr{r_2} e^{f(r_{12},\mu)} \phi_j(\bd{r_2}) \phi_l(\bd{r_2}) \\
+                     & =\int \dr{r_2} 
+ \sum_{n=0}^{\infty} a_n h\big( r_{12}, n\gamma(\mu),n\delta(\mu)\big)
+ \phi_j(\bd{r_2}) \phi_l(\bd{r_2}).
+ \end{aligned}
+\end{equation}
+As in practice, we will truncate the sum in Eq. \eqref{def_s_ij_dl_2} up to some $N$ order, we can invert the discrete summation and integral. Therefore, we define the function $s_{ij}(\gamma,\delta)$ as 
+\begin{equation} 
+ \label{def_s_ij_atom}
+ s_{jl}(\gamma,\delta,\bd{r_1}) = \int \dr{r_2} h( r_{12}, \gamma,\delta) \phi_j(\bd{r_2}) \phi_l(\bd{r_2}), 
+\end{equation} 
+and we write $S_{jl}(\mu,\bd{r_1})$ as 
+\begin{equation}
+ \label{def_s_ij_dl_3} 
+ \begin{aligned}
+ S_{jl}(\mu,\bd{r_1}) \approx & \sum_{n=0}^{N}  a_n 
+                     & s_{ij}(n  \gamma(\mu),n  \delta(\mu),\bd{r_1}).
+ \end{aligned}
+\end{equation}
+Here, the dependence in $\bd{r_1}$ of $S_{jl}(\mu,\bd{r_1})$ is within the function $h( r_{12}, \gamma,\delta)$ which can be written as a function of $\bd{r_2}$ depending on a vectorial parameter $\bd{r_1}$
+\begin{equation}
+ \begin{aligned}
+  h( r_{12}, \gamma,\delta) = & h(\bd{r_1},\bd{r_2},\gamma,\delta) \\
+                              & e^{-\gamma |\bd{r_1} - \bd{r_2}|} e^{-\delta |\bd{r_1} - \bd{r_2}|^2} 
+ \end{aligned}
+\end{equation}
+
+Similarly, we can define the function 
+\begin{equation} 
+ \label{def_v_ij_atom}
+ v_{jl}(\gamma,\delta,\mu,\bd{r_1}) = \int \dr{r_2} \frac{\text{erf}(\mu r_{12})}{r_{12}}h( r_{12}, \gamma,\delta) \phi_j(\bd{r_2}) \phi_l(\bd{r_2}), 
+\end{equation}
+and approximate the function $V_{jl}(\mu,\bd{r_1}) $ as
+\begin{equation}
+ \label{def_v_ij_dl}
+ V_{jl}(\mu,\bd{r_1}) \approx \sum_{n=0}^{N}  a_n 
+    v_{jl}(n  \gamma(\mu),n  \delta(\mu),\mu,\bd{r_1}).
+\end{equation}
+
+\subsubsection{Computation of $s_{ij}(\gamma,\delta,\bd{r_1})$ and $v_{ij}(\gamma,\delta,\mu,\bd{r_1})$}
+The computation of $s_{ij}(\gamma,\delta,\bd{r_1})$ is \textit{a priori} not trivial as it contains a Slater function. 
+Nevertheless, we can fit a Slater function with Gaussian functions (that is what quantum chemistry is about):
+\begin{equation}
+ e^{-X} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m X^2}, 
+\end{equation}
+and, by posing $X=\gamma x$ one can fit any Slater function as
+\begin{equation}
+ e^{-\gamma x} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m \gamma^2 x^2}. 
+\end{equation}
+To find the $\{c_m,\zeta_m\}$ parameters, I performed a Hartree Fock calculation on the Hydrogen atom using the $s$ functions of the ANO-RCC basis set which contains 8 gaussians.  
+Therefore, computing $s_{jl}(\gamma,\delta,\bd{r_1})$ is nothing but a proper linear combination of Gaussian integrals. 
+
+Of course, the same thing is valid for the computation of the $v_{ij}(\gamma,\delta,\mu,\bd{r_1})$. 
+
+\section{Further thoughts ...}
+Some stuffs to approximate maybe at second order ...
+Higher order cusp condition
+\begin{equation}
+ \lim_{r_{12}\rightarrow 0}\deriv{\psiex}{r_{12}}{2} = \frac{1}{2} \deriv{\psiex}{r_{12}}{} = \frac{1}{4}\psiex(r_{12}=0)
+\end{equation}
+Now assume that $\psiex = e^{f}\psi$, then
+\begin{equation}
+ \deriv{e^{f}\psi }{r_{12}}{2} = \deriv{f}{r_{12}}{2} e^f \psi + \bigg(\deriv{f}{r_{12}}{} \bigg)^2 e^f\psi  
+                               + \deriv{\psi}{r_{12}}{2}e^f
+\end{equation}
+and 
+\begin{equation}
+ slkqv
+\end{equation}
+
+\section{Derivation of Tew and applications to the Jastrow factor}
+The present section provides some details about the very insightful derivations by Tew\cite{Tew-JCP-08} where the cusp conditions up to third order are proven. 
+\subsection{The derivation by Tew}
+Let us take a general Hamiltonian for $n$ particle within Coulomb interaction
+\begin{equation}
+ \bigg( -\sum_{i=1}^n \frac{\nabla_i^2}{m_i} + \sum_{i>j=1}^n \frac{Z_i Z_j}{r_{ij}}\bigg) \Psi = E \Psi .
+\end{equation}
+Here, the particles can be either protons and/or electrons, and therefore the wave function $\Psi$ depends on all coordinates \textit{i.e.} $\Psi(\bd{r}_1,\hdots,\bd{r}_n)$. 
+Let us consider now the regions in configurational space where $0\le r_{12}\le\epsilon$ and $r_{i1}$, $r_{i2}$, $r_{ij}\gg \epsilon$.
+
+We transform the coordinate spaces from $\bd{r}_1$, $\bd{r}_2$ to $\br = \bd{r}_1 - \bd{r}_2$ and $\bs = (m_1 \bd{r}_1 + m_2 \bd{r}_2)/M$ with $M=m_1+m_2$. 
+The kinetic operator becomes {\color{red} I don't know how to prove it ... :(}
+\begin{equation}
+ \hat{T} = -\frac{\nabla^2_{\bs}}{2M} -\frac{\nabla^2_{\br}}{2\mu} - \sum_{i=3}^n \frac{\nabla_i^2}{m_i}
+\end{equation}
+where $\mu = m_1 m_2/M$. In order to express the potential operator in terms of $\br$ and $\bs$, we introduce the cosines $\text{cos}(\theta_i)$ between the vectors $\bd{r}_{is} = \bd{r}_i - \bs$ and $\br$. 
+To do so, we note that
+\begin{equation}
+ \begin{aligned}
+ & \bd{r}_1 = \frac{m_2}{M}\br + \bs\\
+ & \bd{r}_2 = \frac{m_1}{M}\br - \bs,
+ \end{aligned}
+\end{equation}
+and 
+\begin{equation}
+ \begin{aligned}
+ \bd{r_{i1}}& = \bd{r_i} - \bd{r_1} = \bd{r_i} - \bd{s} - \frac{m_2}{M}\bd{r}\\
+            & = \bd{r}_{is} - \frac{m_2}{M}\bd{r},
+ \end{aligned}
+\end{equation}
+so 
+\begin{equation}
+ \begin{aligned}
+ r_{i1}^2 &  = \bd{r_{i1}} \cdot \bd{r_{i1}} = r_{is}^2 + \bigg(\frac{m_2 r}{M}\bigg)^2 - 2\frac{m_2}{M} \bd{r}_{i1} \cdot \bd{r} \\
+            & = r_{is}^2 + \bigg(\frac{m_2}{M}\bigg)^2 r^2 - 2\frac{m_2}{M} r_{is} r\, \text{cos}(\theta_i).
+ \end{aligned}
+\end{equation}
+Similarly, we find for $r_{i2}^2$
+\begin{equation}
+ \begin{aligned}
+ r_{i2}^2 &  = r_{is}^2 + \bigg(\frac{m_1}{M}\bigg)^2 r^2 + 2\frac{m_2}{M} r_{is} r\, \text{cos}(\theta_i).
+ \end{aligned}
+\end{equation}
+In the region of interest, we can replace the potential in $1/r_{i1}$ by its partial wave expansion in terms of Legendre polynomials 
+\begin{equation}
+  \frac{1}{r_{i1}} = \frac{1}{r_{is}} \sum_{l=0}^\infty \bigg( \frac{m_2 r}{Mr_{is}} \bigg)^l P_l(\cos(\theta_i))
+\end{equation}
+which can be seen as a smart Taylor expansion of the annoying function $1/(1+X^2 -2 \alpha X)$. 
+The same thing holds for $\frac{1}{r_{i1}}$ by replacing $1$ by $2$ and $\cos(\theta_i)$ by $\-\cos(\theta_i)$. 
+Therefore, the full Schroedinger equation becomes
+\begin{equation}
+ \begin{aligned}
+  \bigg(&  -\frac{\nabla_{s}^2}{2 M}- \frac{\nabla_r^2}{2\mu} - \sum_{i=3}^n \frac{\nabla_i^2}{m_i} + \frac{Z_1 Z_2}{r} 
+   + \sum_{i>j=3}^n \frac{Z_i Z_j}{r_{ij}} \\
+  &+ \sum_{i=3}^n \frac{Z_i}{r_{is}} \sum_{l=0}^\infty \bigg[Z_1 \bigg( \frac{m_2 r}{Mr_{is}}  \bigg)^l 
+                                                            +Z_2 \bigg( -\frac{m_1 r}{Mr_{is}} \bigg)^l\bigg]P_l(\cos(\theta_i)) \bigg) \Psi = E \Psi.
+ \end{aligned}
+\end{equation}
+We can then assign an order in $\epsilon$ to each term in the Hamiltonian, and we shall consider the terms of order 0 or less in $\epsilon$. 
+Therefore, we have 
+\begin{equation}
+ \label{eq:schro_0}
+ \bigg( - \frac{\nabla_r^2}{2\mu} + \frac{Z_1 Z_2}{r} + \hat{S} + \mathcal{O}(\epsilon) \bigg) \Psi = E \Psi
+\end{equation}
+with the operator $\hat{S}$ being of zeroth order in $\epsilon$, which contains the kinetic energy of all particles except the inter particle kinetic term between 1 and 2, together with the zeroth order development of the Coulomb interaction minus that of particle 1 and 2
+\begin{equation}
+ \hat{S} = -\frac{\nabla_{s}^2}{2 M}  - \sum_{i=3}^n \frac{\nabla_i^2}{m_i}  + \sum_{i>j=3}^n \frac{Z_i Z_j}{r_{ij}} 
+ + \sum_{i=3}^n \frac{Z_i}{r_{is}} \big( Z_1+Z_2 \big). 
+\end{equation}
+The terms in the Hamiltonian of order $\epsilon$ is 
+\begin{equation}
+ \mathcal{O}(\epsilon) = \sum_{i=3}^n \frac{Z_i}{r_{is}} \bigg[Z_1 \frac{m_2 r}{Mr_{is}}-Z_2 \frac{m_1 r}{Mr_{is}}\bigg],
+\end{equation}
+which vanishes for identical particles such as our dear electrons. 
+The most general solution to Eq. \eqref{eq:schro_0} is given by 
+\begin{equation}
+ \Psi\big(\br,\bs \bd{r}_3, \hdots ,\bd{r}_n\big) = \sum_{l=0}^{\infty} \sum_{l=-m}^{+m} 
+ r^l f_{lm}\big(r,\bs,\bd{r}_3, \hdots ,\bd{r}_n\big) Y_{lm}(\theta,\phi). 
+\end{equation}
+The differential operator $\nabla_r^2$ can be written in spherical coordinate as
+\begin{equation}
+ \begin{aligned}
+ \nabla_r^2 f(r,\theta,\phi) = & \frac{1}{r} \deriv{}{r}{2} \bigg( r\,\, f(r,\theta,\phi) \bigg) \\
+  &+ \frac{1}{r^2 \sin(\theta)}  \deriv{}{\theta}{} \bigg(\sin(\theta) \deriv{f(r,\theta,\phi)}{\theta}{} \bigg) \\
+  &+ \frac{1}{r^2 \sin(\theta)}  \deriv{}{\phi}{2} f(r,\theta,\phi). 
+ \end{aligned}
+\end{equation}
+Let us begin with $\frac{1}{r} \deriv{}{r}{2} \bigg( r\,\, \Psi(r,\theta,\phi,\hdots) \bigg)$.
+First, $r\Psi(r,\theta,\phi,\hdots)$
+\begin{equation}
+ \Psi(r,\theta,\phi,\hdots) = \sum_{l=0}^{\infty} \sum_{l=-m}^{+m} r^{l+1}f_{lm}\big(r,\bs,\bd{r}_3, \hdots ,\bd{r}_n\big) Y_{lm}(\theta,\phi),
+\end{equation}
+and therefore, 
+\begin{equation}
+ \begin{aligned}
+ \deriv{r\Psi}{r}{}  = & \sum_{l=0}^{\infty} \sum_{l=-m}^{+m}  Y_{lm}(\theta,\phi)\\  
+  & \bigg[ (l+1) r^l f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) + r^{l+1} \deriv{}{r}{} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big)\bigg]. 
+ \end{aligned}
+\end{equation}
+Then, 
+\begin{equation}
+ \begin{aligned}
+ &\deriv{r\Psi}{r}{2}  = \sum_{l=0}^{\infty} \sum_{l=-m}^{+m}  Y_{lm}(\theta,\phi)\\   
+ & \bigg[ l(l+1) r^{l-1} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) + (l+1) r^l \deriv{}{r}{} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) \\
++& (l+1) r^l  \deriv{}{r}{} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) + r^{l+1} \deriv{}{r}{2} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) \bigg],
+ \end{aligned}
+\end{equation}
+and therefore 
+\begin{equation}
+ \label{eq:lapl}
+ \begin{aligned}
+ \frac{1}{r}\deriv{r\Psi}{r}{2}  =& \sum_{l=0}^{\infty} \sum_{l=-m}^{+m}  Y_{lm}(\theta,\phi) \, \, r^l\\
+ & \bigg[  \deriv{}{r}{2} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) 
+ + \frac{2(l+1)}{r} \deriv{}{r}{} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) \\
+ & + \frac{l(l+1)}{r^2} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) \bigg].
+ \end{aligned}
+\end{equation}
+Unfortunatly, I don't find back the results of Eq. (16) of Ref. \onlinecite{Tew-JCP-08}, but this might be because the last term of equation \eqref{eq:lapl} involving $\frac{l(l+1)}{r^2}$ cancels out with the derivatives in $\theta$ and $\phi$. 
+In any cases, we want to develop such an equation for $l=0$, which means that the last term in \eqref{eq:lapl} involving $\frac{l(l+1)}{r^2}$ vanishes, and that the part of the Laplacian involving angular derivatives vanishes also as $Y_0^0 = \frac{1}{\sqrt{4\pi}}$. 
+Anyway, before taking the specific case of $l=0$, we will assume the result of Eq. (16) of Ref. \onlinecite{Tew-JCP-08}, which is  that the Schroedinger equation of \eqref{eq:schro_0} becomes
+\begin{equation}
+ \begin{aligned}
+& \sum_{l=0}^\infty \sum_{m=-l}^{+l} r^l\bigg( \frac{1}{2\mu} \bigg[ \deriv{}{r}{2} + \frac{2(l+1)}{r} \deriv{}{r}{}\bigg] \\ 
+&- \frac{Z_1 Z_2}{r}  - \hat{S} + E \bigg) Y_{lm}(\theta,\phi) f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) =0.
+ \end{aligned}
+\end{equation}
+Because of completeness and linear independence of the $Y_{lm}(\theta,\phi)$, this equation must stand for each value of $l,m$. Therefore, one obtains 
+\begin{equation}
+ \begin{aligned}
+& \bigg( \frac{1}{2\mu} \bigg[ \deriv{}{r}{2} + \frac{2(l+1)}{r} \deriv{}{r}{}\bigg] 
+&- \frac{Z_1 Z_2}{r}  - \hat{S} + E \bigg) f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) =0.
+ \end{aligned}
+\end{equation}
+Now, we can Taylor expand up to some order $v$ the functions $f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) $ 
+\begin{equation}
+ f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big)  = \sum_{k=0}^v r^k f_{lm}^k\big(\bs,\bd{r}_3, \hdots \bd{r}_n\big), 
+\end{equation}
+and what has derived Tew in Ref. \onlinecite{Tew-JCP-08} is essentially the derivation of the three first terms $f_{lm}^k\big(\bs,\bd{r}_3, \hdots \bd{r}_n\big)$ for general $l$ and $k=0,1,2$. We will focus on $l=0$ for the rest of the section. 
+
+\subsection{The case $l=0$}
+From thereon, we focus on the part $l=0$ as it consists in two opposite spin electrons at coalescence, and therefore we want to find 
+the function $f_{00}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big)$ which is Taylor expanded as
+\begin{equation}
+ f_{00}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big)  = \sum_{k=0}^v r^k f_{00}^k\big(\bs,\bd{r}_3, \hdots \bd{r}_n\big). 
+\end{equation}
+Let us compute the action of the differential operator on $f_{00}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big)$
+\begin{equation}
+ \frac{2}{r}\deriv{}{r}{} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) = \sum_{k=1}^v r^{k-2} 2 k\,f_{lm}^k\big(\bs,\bd{r}_3, \hdots \bd{r}_n\big),
+\end{equation}
+\begin{equation}
+ \deriv{}{r}{2} f_{lm}\big(r,\bs,\bd{r}_3, \hdots \bd{r}_n\big) = \sum_{k=2}r^{k-2} k(k-1) f_{lm}^k\big(\bs,\bd{r}_3, \hdots \bd{r}_n\big)
+\end{equation}
+
+\bibliography{srDFT_SC}
+\end{document}

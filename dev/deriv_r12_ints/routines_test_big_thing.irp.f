@@ -110,18 +110,6 @@ subroutine big_thing
  print*,'accu_relat = ',accu_relat/num_int
 end
 
-double precision function derf_mu_x(mu,x)
- implicit none
- include 'utils/constants.include.F'
- double precision, intent(in) :: mu,x
-  if(dabs(x).gt.1.d-6)then
-   derf_mu_x = derf(mu * x)/x
-  else
-   derf_mu_x =  inv_sq_pi * 2.d0 * mu * (1.d0 - mu*mu*x*x/3.d0)
-  endif
-
-end
-
 subroutine test_hermit
  implicit none 
  include 'utils/constants.include.F'

@@ -1,0 +1,3 @@
+set term pdf
+set output "large_mu.pdf"
+plot "fort.33" w l title "mu = 1.0", "" u 1:3 w l title "mu = 1.5", "" u 1:4 w l title "mu = 2.0", "" u 1:5 w l title "mu = 2.5", "" u 1:6 w l title "mu = 3.0", "" u 1:7 w l title "mu = 3.5", "" u 1:8 w l title "mu = 4.0", "" u 1:9 w l title "mu = 4.5", "" u 1:10 w l title "mu = 5.0", "" u 1:11 w l title "mu = 5.5","" u 1:12 w l title "mu = 6.0"
