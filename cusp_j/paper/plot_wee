@@ -1,0 +1,18 @@
+#set term 
+set terminal pdf enhanced 
+set output "w_ee.pdf"
+set ylabel "W_{ee} (a.u.)"
+set xlabel "r_{12} (bohr)"
+set key right top
+set yrange [0:10]
+plot "fort.38"  u 1:7 w l title "{/Symbol m} = 0.5",  "" u 1:12 w l title "{/Symbol m} = 1.0","" u 1:13 w l title "{/Symbol m} = 1.5","" u 1:14 w l title "{/Symbol m} = 3.0","" u 1:15 w l title "{/Symbol m} = 5.0", "" u 1:(1./$1) title "1/r_{12}" w l  dt 2
+
+#set term 
+set terminal pdf enhanced 
+set output "w_ee_bis.pdf"
+set ylabel "W_{ee} (a.u.)"
+set xlabel "r_{12} (bohr)"
+set key right top
+unset yrange 
+plot "fort.38"  u 1:13 w l title "W_{ee}(r_{12},{/Symbol m}), {/Symbol m} = 1.5", "fort.39"  u 1:13 w l dt 2 title "erf({/Symbol m} r_{12})/r_{12}, , {/Symbol m} = 1.5",  "fort.38" u 1:14 w l title "W_{ee}(r_{12},{/Symbol m}), {/Symbol m} = 3.0", "fort.39"  u 1:14 w l dt 2 title "erf({/Symbol m} r_{12})/r_{12}, , {/Symbol m} = 3.0"
+

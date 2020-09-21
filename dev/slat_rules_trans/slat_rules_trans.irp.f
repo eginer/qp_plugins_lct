@@ -70,7 +70,13 @@ subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   endif
   call bitstring_to_list_ab(key_i,occ,Ne,N_int)
   call get_single_excitation(key_i,key_j,exc,phase,N_int)
+!  print*,'in get single '
+!  print*,'key_i :: ket '
+!  call debug_det(key_i,N_int)
+!  print*,'key_j :: bra '
+!  call debug_det(key_j,N_int)
   call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
+!  print*,'h1,p1',h1,p1
 
   hmono = mo_one_e_integrals(h1,p1) * phase
   
@@ -142,7 +148,12 @@ subroutine htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
   double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
   integer                        :: degree
-  call get_excitation_degree(key_i,key_j,degree,N_int)
+  call get_excitation_degree(key_j,key_i,degree,N_int)
+!  print*,'-----'
+!  print*,'key_i :: ket '
+!  call debug_det(key_i,N_int)
+!  print*,'key_j :: bra '
+!  call debug_det(key_j,N_int)
   hmono = 0.d0
   herf = 0.d0
   heff = 0.d0
@@ -156,4 +167,5 @@ subroutine htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   else if(degree == 0)then
    call diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
   endif
+!  print*,'-----'
 end
