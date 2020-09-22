@@ -6,11 +6,55 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
  END_DOC
  integer :: i,j,k,l,m
  double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
+ double precision, allocatable :: ao_ints(:)
+ mu_in = mu_erf
+ PROVIDE ao_two_e_integrals_in_map ao_integrals_map
+ !$OMP PARALLEL & 
+ !$OMP DEFAULT(NONE) &
+ !$OMP PRIVATE(i,j,k,l,m,d_dr12,d_dr12_large,accu, ao_ints) & 
+ !$OMP SHARED(ao_two_e_eff_dr12_pot_array,mu_in,ao_num,ao_integrals_threshold)   
+ allocate(ao_ints(ao_num))
+ !$OMP DO SCHEDULE (dynamic)
+ do j = 1, ao_num ! r2
+  do i = 1, ao_num ! r1
+   do l = 1, ao_num ! r2 
+     call get_ao_two_e_integrals(i,j,l,ao_num,ao_ints)
+    do k = 1, ao_num ! r1 
+      if(dabs(ao_ints(k)).lt.ao_integrals_threshold)then
+       ao_two_e_eff_dr12_pot_array(k,l,i,j)  = 0.d0
+       cycle
+      endif
+      ! <kl|ij>
+      !    the d/dr12 op acts on 1   2    
+      !                            1   2
+      call ao_two_e_eff_dr12_pot(i,k,j,l,mu_in,d_dr12,d_dr12_large)
+      accu  = 0.d0
+      do m = 1, 3
+       accu += d_dr12(m) - d_dr12_large(m) 
+      enddo
+      !                           1 2 1 2 
+      ao_two_e_eff_dr12_pot_array(k,l,i,j) = accu
+    enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+END_PROVIDER 
+
+BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_no_cycle, (ao_num,ao_num,ao_num,ao_num)]
+ implicit none
+ BEGIN_DOC
+!   1 2                                1 2 
+! < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+ END_DOC
+ integer :: i,j,k,l,m
+ double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
  mu_in = mu_erf
  !$OMP PARALLEL & 
  !$OMP DEFAULT(NONE) &
  !$OMP PRIVATE(i,j,k,l,m,d_dr12,d_dr12_large,accu) & 
- !$OMP SHARED(ao_two_e_eff_dr12_pot_array,mu_in,ao_num) 
+ !$OMP SHARED(ao_two_e_eff_dr12_pot_array_no_cycle,mu_in,ao_num) 
  !$OMP DO SCHEDULE (dynamic)
  do j = 1, ao_num ! r2
   do i = 1, ao_num ! r1
@@ -25,7 +69,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
        accu += d_dr12(m) - d_dr12_large(m) 
       enddo
       !                           1 2 1 2 
-      ao_two_e_eff_dr12_pot_array(k,l,i,j) = accu
+      ao_two_e_eff_dr12_pot_array_no_cycle(k,l,i,j) = accu
     enddo
    enddo
   enddo

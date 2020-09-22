@@ -122,10 +122,11 @@ subroutine compute_ao_two_e_integrals_gauss(j,k,l,sze,buffer_value)
   double precision               :: ao_two_e_integral_eff_pot
 
   integer                        :: i
-  logical, external              :: ao_one_e_integral_zero
+! logical, external              :: ao_one_e_integral_zero
   logical, external              :: ao_two_e_integral_zero
 
-  if (ao_one_e_integral_zero(j,l)) then
+! if (ao_one_e_integral_zero(j,l)) then
+  if (.False.) then
     buffer_value = 0._integral_kind
     return
   endif
@@ -135,7 +136,8 @@ subroutine compute_ao_two_e_integrals_gauss(j,k,l,sze,buffer_value)
   endif
 
   do i = 1, ao_num
-    if (ao_two_e_integral_zero(i,j,k,l)) then
+!   if (ao_two_e_integral_zero(i,j,k,l)) then
+    if (.False.) then
       buffer_value(i) = 0._integral_kind
       cycle
     endif
@@ -338,7 +340,8 @@ subroutine compute_ao_integrals_gauss_jl(j,l,n_integrals,buffer_i,buffer_value)
       if (i1 > j1) then
         exit
       endif
-      if (ao_two_e_integral_zero(i,j,k,l)) then
+!      if (ao_two_e_integral_zero(i,j,k,l)) then
+      if (.False.) then
         cycle
       endif
       if (ao_two_e_integral_eff_pot_schwartz(i,k)*ao_two_e_integral_eff_pot_schwartz(j,l) < thr ) then

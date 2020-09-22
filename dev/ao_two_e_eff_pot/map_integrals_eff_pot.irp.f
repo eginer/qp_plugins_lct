@@ -88,7 +88,8 @@ double precision function get_ao_two_e_integral_eff_pot(i,j,k,l,map) result(resu
   logical, external              :: ao_two_e_integral_zero
   PROVIDE ao_two_e_integrals_eff_pot_in_map ao_integrals_eff_pot_cache ao_integrals_eff_pot_cache_min
   !DIR$ FORCEINLINE
-  if (ao_two_e_integral_zero(i,j,k,l)) then
+!  if (ao_two_e_integral_zero(i,j,k,l)) then
+  if (.False.) then
     tmp = 0.d0
   else if (ao_two_e_integral_eff_pot_schwartz(i,k)*ao_two_e_integral_eff_pot_schwartz(j,l) < ao_integrals_threshold) then
     tmp = 0.d0
@@ -128,11 +129,12 @@ subroutine get_ao_two_e_integrals_eff_pot(j,k,l,sze,out_val)
   integer                        :: i
   integer(key_kind)              :: hash
   double precision               :: thresh
-  logical, external              :: ao_one_e_integral_zero
+! logical, external              :: ao_one_e_integral_zero
   PROVIDE ao_two_e_integrals_eff_pot_in_map ao_integrals_eff_pot_map
   thresh = ao_integrals_threshold
 
-  if (ao_one_e_integral_zero(j,l)) then
+! if (ao_one_e_integral_zero(j,l)) then
+  if (.False.) then
     out_val = 0.d0
     return
   endif
@@ -158,12 +160,13 @@ subroutine get_ao_two_e_integrals_eff_pot_non_zero(j,k,l,sze,out_val,out_val_ind
   integer                        :: i
   integer(key_kind)              :: hash
   double precision               :: thresh,tmp
-  logical, external              :: ao_one_e_integral_zero
+! logical, external              :: ao_one_e_integral_zero
   PROVIDE ao_two_e_integrals_eff_pot_in_map
   thresh = ao_integrals_threshold
 
   non_zero_int = 0
-  if (ao_one_e_integral_zero(j,l)) then
+! if (ao_one_e_integral_zero(j,l)) then
+  if (.False.) then
     out_val = 0.d0
     return
   endif

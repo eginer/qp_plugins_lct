@@ -1,5 +1,5 @@
  BEGIN_PROVIDER [double precision, coef_xyz_ao, (2,3,ao_num)]
-&BEGIN_PROVIDER [integer, power_xyz_ao, (2,3,ao_num) ]
+&BEGIN_PROVIDER [integer, power_xyz_ao, (2,3,ao_num)]
  implicit none
  BEGIN_DOC
 ! coefficient for the basis function :: (x * phi_i(r), y * phi_i(r), * z_phi(r))

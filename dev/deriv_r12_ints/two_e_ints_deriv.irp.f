@@ -62,35 +62,50 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
     L_center(p) = nucl_coord(num_l,p)
   enddo
 
- call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
- call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
 
- double precision :: P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ double precision , allocatable :: P_ij(:,:,:,:) ! new polynom for each couple of prim                                                       
+ double precision , allocatable :: P_j_xyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_dxyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_xyz_dxyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_kl(:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_l_xyz_dxyz_k(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_l_dxyz_k(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_l_xyz_k(:,:,:,:,:) ! new polynom for each couple of prim
+
+
+ allocate( P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_kl(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_l_dxyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_l_xyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+
+ print*,'coucou'
+ print*,size(P_kl,1)
+!call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
+!call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
+ stop
+
  integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
  double precision :: center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
  double precision :: p_exp_ij(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
  double precision :: fact_ij(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
  double precision :: coef_prod_ij(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
 
- double precision :: P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_xyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_dxyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_xyz_dxyz_i(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
- double precision :: P_kl(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_kl(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
  double precision :: center_kl(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
  double precision :: p_exp_kl(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
  double precision :: fact_kl(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
  double precision :: coef_prod_kl(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
 
- double precision :: P_l_xyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_xyz_k(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_l_dxyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_dxyz_k(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_xyz_dxyz_k(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
  double precision :: general_primitive_integral_erf_new
@@ -196,6 +211,32 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12,d_dr12_large)
   double precision               :: schwartz_ij
   double precision :: scw_gauss_int,general_primitive_integral_gauss
   double precision :: d_dr12_tmp(3),mu_large
+
+ integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ double precision :: center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
+ double precision :: p_exp_ij(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
+ double precision :: fact_ij(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
+ double precision :: coef_prod_ij(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
+
+
+ double precision , allocatable :: P_j_xyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_ij(:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_dxyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_xyz_dxyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_kl(:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_l_xyz_k(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_l_dxyz_k(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_l_xyz_dxyz_k(:,:,:,:,:) ! new polynom for each couple of prim
+
+
+ allocate( P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_kl(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_l_xyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_l_dxyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
+ allocate( P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
   mu_large  = 1.d+09
   d_dr12 = 0.d0
   d_dr12_large = 0.d0
@@ -231,32 +272,18 @@ subroutine ao_two_e_eff_dr12_pot(i,j,k,l,mu_in,d_dr12,d_dr12_large)
  call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
  call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
 
- double precision :: P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
- integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
- double precision :: p_exp_ij(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
- double precision :: fact_ij(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
- double precision :: coef_prod_ij(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
-
- double precision :: P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_xyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_dxyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_xyz_dxyz_i(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
- double precision :: P_kl(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_kl(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
  double precision :: center_kl(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
  double precision :: p_exp_kl(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
  double precision :: fact_kl(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
  double precision :: coef_prod_kl(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
 
- double precision :: P_l_xyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_xyz_k(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_l_dxyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_dxyz_k(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_l_xyz_dxyz_k(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_l_xyz_dxyz_k(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
 
  double precision :: general_primitive_integral_erf_new

@@ -6,19 +6,26 @@ subroutine test_all_poly_for_r12_deriv(i,j,r,value_ij,value_j_x_i, value_j_dxyz_
  double precision, intent(in) :: r(3)
  double precision, intent(out):: value_ij,value_j_x_i(3),value_j_dxyz_i(3),value_j_xyz_dxyz_i(3)
 
- double precision :: P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
  double precision :: P_center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
  double precision :: p_exp_ij(ao_prim_num_max,ao_prim_num_max) ! new gaussian exponents for each couple of prim
  double precision :: fact_p_ij(ao_prim_num_max,ao_prim_num_max) ! factor for each couple of primitive 
  double precision :: coef_prod_ij(ao_prim_num_max,ao_prim_num_max) ! produc of coef for each couple of primitive 
 
- double precision :: P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_xyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_ij(:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_dxyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+ double precision , allocatable :: P_j_xyz_dxyz_i(:,:,:,:,:) ! new polynom for each couple of prim
+
  integer          :: iorder_j_xyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_dxyz_i(3,2,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
- double precision :: P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer          :: iorder_j_xyz_dxyz_i(3,4,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+
+
+ allocate( P_j_xyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) )! new polynom for each couple of prim
+ allocate( P_ij(0:max_dim,3,ao_prim_num_max,ao_prim_num_max)        )! new polynom for each couple of prim
+ allocate( P_j_dxyz_i(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max)) ! new polynom for each couple of prim
+ allocate( P_j_xyz_dxyz_i(0:max_dim,3,4,ao_prim_num_max,ao_prim_num_max)) ! new polynom for each couple of prim
 
  call give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,fact_p_ij,coef_prod_ij,& 
             P_j_xyz_i,iorder_j_xyz_i, iorder_j_dxyz_i,P_j_dxyz_i, P_j_xyz_dxyz_i, iorder_j_xyz_dxyz_i)

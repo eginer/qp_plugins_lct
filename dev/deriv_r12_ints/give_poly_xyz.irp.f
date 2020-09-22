@@ -20,8 +20,9 @@ subroutine give_all_poly_for_r12_deriv(i,j,P_ij,iorder_ij,P_center_ij,p_exp_ij,f
  integer :: p,q,k,m,n,num_ao,nx
  double precision :: center_ao(1:3)
  integer :: n_new(3)
- double precision :: P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
+ double precision, allocatable :: P_new(:,:,:,:) ! new polynom for each couple of prim
  integer          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
+ allocate(P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max))
 
  num_ao = ao_nucl(i)
  center_ao(1:3) = nucl_coord(num_ao,1:3)
@@ -169,7 +170,7 @@ end
 
 subroutine give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
  implicit none
- include 'utils/constants.include.F'                                                                                                                                  
+ include 'utils/constants.include.F'
  integer, intent(in) :: i,j,n_new(3)
  double precision, intent(out) :: P_new(0:max_dim,3,ao_prim_num_max,ao_prim_num_max) ! new polynom for each couple of prim
  integer, intent(out)          :: iorder_p(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
@@ -214,3 +215,4 @@ subroutine give_poly_i_plus_n_j_xyz(i,j,P_new,iorder_p,n_new)
   enddo
  enddo
 end
+

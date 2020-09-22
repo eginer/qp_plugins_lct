@@ -34,7 +34,8 @@ subroutine compute_ao_integrals_eff_pot_jl(j,l,n_integrals,buffer_i,buffer_value
       if (i1 > j1) then
         exit
       endif
-      if (ao_two_e_integral_zero(i,j,k,l)) then
+!     if (ao_two_e_integral_zero(i,j,k,l)) then
+      if (.False.) then
         cycle
       endif
       if (ao_two_e_integral_eff_pot_schwartz(i,k)*ao_two_e_integral_eff_pot_schwartz(j,l) < thr ) then

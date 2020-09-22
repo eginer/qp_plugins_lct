@@ -10,7 +10,8 @@ program pouet
 ! call test_left_right_eigenvalues(ith)
 ! call test_overlap_matrix
 ! provide htilde_matrix_elmt
-  provide mo_two_e_eff_dr12_pot_array
+!  provide mo_two_e_eff_dr12_pot_array
+  provide ao_two_e_eff_dr12_pot_array
 end
 
 subroutine routine
@@ -175,10 +176,10 @@ subroutine print_mos
  r1(1) = 1.5d0
  do i = 1, nx
   call give_all_mos_at_r(r,mos_array)
-  call non_hermit_term(r1,r,1,1,mu_in,d_d_r12_11)
-  call non_hermit_term(r1,r,1,2,mu_in,d_d_r12_12)
-  call non_hermit_term(r1,r,1,3,mu_in,d_d_r12_13)
-  call non_hermit_term(r1,r,1,6,mu_in,d_d_r12_16)
+! call non_hermit_term(r1,r,1,1,mu_in,d_d_r12_11)
+! call non_hermit_term(r1,r,1,2,mu_in,d_d_r12_12)
+! call non_hermit_term(r1,r,1,3,mu_in,d_d_r12_13)
+! call non_hermit_term(r1,r,1,6,mu_in,d_d_r12_16)
   r12 = dabs(r(1)-r1(1))
   short_range = (1.d0 - derf(mu_in * mu_erf))
   write(33,'(100(F16.10,X))')r(1),mos_array(1), mos_array(2), mos_array(3), mos_array(6)
@@ -192,38 +193,38 @@ subroutine print_mos
 
 end
 
-subroutine non_hermit_term(r1,r2,i,j,mu_in,d_d_r12)
- implicit none
- integer, intent(in) :: i,j
- double precision, intent(in) :: r1(3), r2(3) , mu_in
- double precision, intent(out):: d_d_r12
- double precision :: mos_array_r1(mo_num),mos_grad_array_r1(3,mo_num)
- double precision :: mos_array_r2(mo_num),mos_grad_array_r2(3,mo_num)
- double precision :: r12(3), dist_r12, dist_vec(3),poly(3)
- double precision :: erf_mu_r12,derf_mu_x,poly_tot(3)
- integer :: k
- call give_all_mos_and_grad_at_r(r1,mos_array_r1,mos_grad_array_r1)
- call give_all_mos_and_grad_at_r(r2,mos_array_r2,mos_grad_array_r2)
- dist_r12 = 0.d0
- do k = 1, 3
-  r12(k) = r1(k) - r2(k) 
-  dist_r12 += r12(k)*r12(k)
- enddo
- dist_r12 = dsqrt(dist_r12)
- dist_vec(1) = dsqrt(r12(2)*r12(2) + r12(3)*r12(3))
- dist_vec(2) = dsqrt(r12(1)*r12(1) + r12(3)*r12(3))
- dist_vec(3) = dsqrt(r12(1)*r12(1) + r12(2)*r12(2))
- erf_mu_r12 = derf_mu_x(mu_in,dist_r12)
- call inv_r_times_poly(r12, dist_r12, dist_vec, poly)
- ! poly_tot(1) = (1 - erf(mu * r12))/(2 * r12) (x1 - x2)
- do k = 1, 3
-  poly_tot(k) = 0.5d0 * (poly(k) - erf_mu_r12 * r12(k) )
- enddo
- d_d_r12 = 0.d0
- do k = 1, 3
-  d_d_r12 += poly_tot(k) * (mos_grad_array_r1(k,i) - mos_grad_array_r2(k,j) )
- enddo
-end
+!subroutine non_hermit_term(r1,r2,i,j,mu_in,d_d_r12)
+!implicit none
+!integer, intent(in) :: i,j
+!double precision, intent(in) :: r1(3), r2(3) , mu_in
+!double precision, intent(out):: d_d_r12
+!double precision :: mos_array_r1(mo_num),mos_grad_array_r1(3,mo_num)
+!double precision :: mos_array_r2(mo_num),mos_grad_array_r2(3,mo_num)
+!double precision :: r12(3), dist_r12, dist_vec(3),poly(3)
+!double precision :: erf_mu_r12,derf_mu_x,poly_tot(3)
+!integer :: k
+!call give_all_mos_and_grad_at_r(r1,mos_array_r1,mos_grad_array_r1)
+!call give_all_mos_and_grad_at_r(r2,mos_array_r2,mos_grad_array_r2)
+!dist_r12 = 0.d0
+!do k = 1, 3
+! r12(k) = r1(k) - r2(k) 
+! dist_r12 += r12(k)*r12(k)
+!enddo
+!dist_r12 = dsqrt(dist_r12)
+!dist_vec(1) = dsqrt(r12(2)*r12(2) + r12(3)*r12(3))
+!dist_vec(2) = dsqrt(r12(1)*r12(1) + r12(3)*r12(3))
+!dist_vec(3) = dsqrt(r12(1)*r12(1) + r12(2)*r12(2))
+!erf_mu_r12 = derf_mu_x(mu_in,dist_r12)
+!call inv_r_times_poly(r12, dist_r12, dist_vec, poly)
+!! poly_tot(1) = (1 - erf(mu * r12))/(2 * r12) (x1 - x2)
+!do k = 1, 3
+! poly_tot(k) = 0.5d0 * (poly(k) - erf_mu_r12 * r12(k) )
+!enddo
+!d_d_r12 = 0.d0
+!do k = 1, 3
+! d_d_r12 += poly_tot(k) * (mos_grad_array_r1(k,i) - mos_grad_array_r2(k,j) )
+!enddo
+!end
 
 subroutine test_grad_mo
  implicit none
