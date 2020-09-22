@@ -2,16 +2,16 @@ program pouet
  implicit none
  read_wf = .True.
  touch read_wf
-! call routine
-! call test_pert
-! call test_eigv
+  call routine
+  call test_pert
+  call test_eigv
  integer :: ith
  ith = 1
 ! call test_left_right_eigenvalues(ith)
 ! call test_overlap_matrix
 ! provide htilde_matrix_elmt
 !  provide mo_two_e_eff_dr12_pot_array
-  provide ao_two_e_eff_dr12_pot_array
+! provide ao_two_e_eff_dr12_pot_array
 end
 
 subroutine routine
@@ -27,6 +27,7 @@ subroutine routine
  print*,'H      eigenvalue'
  i = 1
  print*,'E0       = ',CI_energy(i)
+ print*,'E0       = ',CI_electronic_energy(i)
  print*,''
  print*,'Htilde eigenvalue'
  i = 1
@@ -92,71 +93,71 @@ subroutine test_pert
  norm_t1 = 0.d0
  norm_t2 = 0.d0
  call htilde_mat(psi_det(1,1,1),psi_det(1,1,1),hmono,herf,heff,hderiv,h00)
-! print*,'Printing the connection '
-! do i = 1, N_det
-!  ! <0|H|i>
-!  print*,'******************'
-!  print*,'i = ',i
-!  call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,h0i)
-!
-!  ! <i|H|i>
-!  call htilde_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,herf,heff,hderiv,hii)
-!
-!  ! <i|H|0>
-!  call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hi0)
-!
-!  call get_excitation_degree(psi_det(1,1,i),psi_det(1,1,1),degree,N_int)
-!  if(degree==1)then
-!   call get_single_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
-!   call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
-!   norm_t1 += (reigvec_trans(i,1)/reigvec_trans(1,1))**2.d0
-!   print*,'h1,p1',h1,p1
-!   accu_mono += h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
-!   pert_mono += h0i*hi0/(h00 - hii)
-!  else if (degree==2)then
-!   norm_t2 += (reigvec_trans(i,1)/reigvec_trans(1,1))**2.d0
+  print*,'Printing the connection '
+  do i = 1, N_det
+   ! <0|H|i>
+   print*,'******************'
+   print*,'i = ',i
+   call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,h0i)
+ 
+   ! <i|H|i>
+   call htilde_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,herf,heff,hderiv,hii)
+ 
+   ! <i|H|0>
+   call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hi0)
+ 
+   call get_excitation_degree(psi_det(1,1,i),psi_det(1,1,1),degree,N_int)
+   if(degree==1)then
+    call get_single_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
+    call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
+    norm_t1 += (reigvec_trans(i,1)/reigvec_trans(1,1))**2.d0
+    print*,'h1,p1',h1,p1
+    accu_mono += h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
+    pert_mono += h0i*hi0/(h00 - hii)
+   else if (degree==2)then
+    norm_t2 += (reigvec_trans(i,1)/reigvec_trans(1,1))**2.d0
   !call debug_det(psi_det(1,1,i),N_int)
   !call debug_det(psi_det(1,1,1),N_int)
-!   call get_double_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
-!   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
-!   print*,'h1,p1,h2,p2',h1,p1,h2,p2
-!   accu_double += h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
-!   pert_double += h0i*hi0/(h00 - hii)
-!  endif
-!  if(degree.ne.0)then
-!   print*,'amplitude = ',reigvec_trans(i,1)/reigvec_trans(1,1)
-!   print*,'ampl pert = ',hi0/(h00 - hii)
-!   print*,'contrib   = ', h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
-!   print*,'cont pert = ', h0i * hi0/(h00 - hii)
-!   print*,'h0i       = ',h0i
-!   print*,'hi0       = ',hi0
-!   print*,'Delta E   = ',hii - h00
-!  endif
-!  ! correct sum = \sum_i <0|H|i> * t_i
-!  accu += h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
-!  ! incorrect sum = \sum_i <i|H|0> * t_i
-!  accu2+= hi0 * reigvec_trans(i,1)/reigvec_trans(1,1)
-! enddo
-! print*,''
-! print*,''
-! print*,'accu wrong      = ',accu2
-! print*,'accu            = ',accu
-! print*,'eigval_trans    = ',eigval_trans(1)
-! print*,'<d0|tile{H}|d0> = ',h00 
-! print*,'<d0|   H   |d0> = ',ref_bitmask_energy
-! print*,'E corr          = ',eigval_trans(1) - h00
-! print*,'accu_mono       = ',accu_mono
-! print*,'accu_double     = ',accu_double
-! print*,'norm_t1         = ',norm_t1
-! print*,'norm_t2         = ',norm_t2
-! print*,'pert_mono       = ',pert_mono
-! print*,'pert_double     = ',pert_double
-! !!call print_mos
-! do i = 1, N_det
-!  psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
-! enddo
-! touch psi_coef
-! call save_wavefunction
+    call get_double_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
+    call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
+    print*,'h1,p1,h2,p2',h1,p1,h2,p2
+    accu_double += h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
+    pert_double += h0i*hi0/(h00 - hii)
+   endif
+   if(degree.ne.0)then
+    print*,'amplitude = ',reigvec_trans(i,1)/reigvec_trans(1,1)
+    print*,'ampl pert = ',hi0/(h00 - hii)
+    print*,'contrib   = ', h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
+    print*,'cont pert = ', h0i * hi0/(h00 - hii)
+    print*,'h0i       = ',h0i
+    print*,'hi0       = ',hi0
+    print*,'Delta E   = ',hii - h00
+   endif
+   ! correct sum = \sum_i <0|H|i> * t_i
+   accu += h0i * reigvec_trans(i,1)/reigvec_trans(1,1)
+   ! incorrect sum = \sum_i <i|H|0> * t_i
+   accu2+= hi0 * reigvec_trans(i,1)/reigvec_trans(1,1)
+  enddo
+  print*,''
+  print*,''
+  print*,'accu wrong      = ',accu2
+  print*,'accu            = ',accu
+  print*,'eigval_trans    = ',eigval_trans(1)
+  print*,'<d0|tile{H}|d0> = ',h00 
+  print*,'<d0|   H   |d0> = ',ref_bitmask_energy
+  print*,'E corr          = ',eigval_trans(1) - h00
+  print*,'accu_mono       = ',accu_mono
+  print*,'accu_double     = ',accu_double
+  print*,'norm_t1         = ',norm_t1
+  print*,'norm_t2         = ',norm_t2
+  print*,'pert_mono       = ',pert_mono
+  print*,'pert_double     = ',pert_double
+  !!call print_mos
+  do i = 1, N_det
+   psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
+  enddo
+  touch psi_coef
+  call save_wavefunction
 
 end
 
