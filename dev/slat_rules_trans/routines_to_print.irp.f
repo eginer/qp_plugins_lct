@@ -1,43 +1,29 @@
-program pouet
- implicit none
- read_wf = .True.
- touch read_wf
- call routine
-! call test_pert
- call test_eigv
- call plot_on_top_left_right
- integer :: ith
- ith = 1
-! call test_left_right_eigenvalues(ith)
-! call test_overlap_matrix
-! provide htilde_matrix_elmt
-!  provide mo_two_e_eff_dr12_pot_array
-! provide ao_two_e_eff_dr12_pot_array
-end
 
-subroutine routine
+subroutine print_energy
+ implicit none
  use bitmasks
- integer(bit_kind) :: key_i(N_int,2), key_j(N_int,2)
- integer :: i,j,degree
- double precision :: hij,s2,hmono,herf,heff,hderiv,htot
- double precision :: accu
- accu = 0.d0
- key_i(:,:) = psi_det(:,:,1)
- call diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
- print*,''
+ integer :: i
+ print*,'***************************************'
+ print*,'mu_erf = ',mu_erf
  print*,'H      eigenvalue'
  i = 1
  print*,'E0       = ',CI_energy(i)
- print*,'E0       = ',CI_electronic_energy(i)
  print*,''
  print*,'Htilde eigenvalue'
  i = 1
-  print*,'E0_tilde = ',eigval_trans(i) + nuclear_repulsion
+ print*,'E0_tilde = ',eigval_trans(i) + nuclear_repulsion
+ print*,''
+ print*,'Delta E  = ',eigval_trans(i) - CI_energy(i)
 end
 
-subroutine test_eigv
+subroutine print_eigv
  implicit none
  integer :: i,j
+ print*,'******************'
+ print*,'******************'
+ print*,'******************'
+ print*,'Eigenvectors '
+ print*,'******************'
  print*,'Right eigenvector             Left eigenvector               psi_coef'
  do i = 1, N_det
   print*,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
@@ -46,42 +32,40 @@ subroutine test_eigv
  accu1 = 0.d0
  accu2 = 0.d0
  do i = 1, N_det
-  accu2 += reigvec_trans(i,1) * reigvec_trans(i,1)
+  accu2 += htilde_matrix_elmt(1,i) * reigvec_trans(i,1) / reigvec_trans(1,1)
   do j = 1, N_det
    accu1 += htilde_matrix_elmt(j,i) * reigvec_trans(i,1) * reigvec_trans(j,1)
   enddo
  enddo
- accu2 = dsqrt(accu2)
- e = accu1/accu2
- print*,'right eigenvector'
+ e = accu1/reigvec_trans_norm(1)
+ print*,'******************'
+ print*,'Energy computed with the RIGHT eigenvector'
+ print*,'-----'
  print*,'expectation value= ',e
- print*,'norm             = ',accu2 * accu2
+ print*,'projection on HF = ',accu2
+ print*,''
  print*,'reigvec_trans_norm ',reigvec_trans_norm(1)
+ print*,''
+
  accu1 = 0.d0
  accu2 = 0.d0
  do i = 1, N_det
-  accu2 += leigvec_trans(i,1) * leigvec_trans(i,1)
+  accu2 += htilde_matrix_elmt(i,1) * leigvec_trans(i,1) / leigvec_trans(1,1)
   do j = 1, N_det
    accu1 += htilde_matrix_elmt(j,i) * leigvec_trans(i,1) * leigvec_trans(j,1)
   enddo
  enddo
- accu2 = dsqrt(accu2)
- e = accu1/accu2
- print*,'left eigenvector'
+ e = accu1/reigvec_trans_norm(1)
+ print*,'******************'
+ print*,'Energy computed with the LEFT  eigenvector'
+ print*,'-----'
  print*,'expectation value= ',e
- print*,'norm             = ',accu2 * accu2
- print*,'leigvec_trans_norm ',leigvec_trans_norm(1)
+ print*,'projection on HF = ',accu2
  print*,''
- print*,'eigval_trans(1)  = ',eigval_trans(1)
-!do i = 1, N_det
-! psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
-! psi_coef(i,1) = leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1))
-!enddo
-!touch psi_coef
-!call save_wavefunction
+ print*,'reigvec_trans_norm ',leigvec_trans_norm(1)
 end
 
-subroutine test_pert
+subroutine print_pert
  implicit none
  integer :: i,j
  double precision :: accu,hmono,herf,heff,hderiv,htot
@@ -101,6 +85,14 @@ subroutine test_pert
  norm_t1 = 0.d0
  norm_t2 = 0.d0
  call htilde_mat(psi_det(1,1,1),psi_det(1,1,1),hmono,herf,heff,hderiv,h00)
+ print*,''
+ print*,'*************************************'
+ print*,'*************************************'
+ print*,'*************************************'
+ print*,''
+ print*,'Detailed analysis by projection on HF'
+ print*,''
+ print*,''
   print*,'Printing the connection '
   do i = 1, N_det
    ! <0|H|i>
@@ -124,8 +116,6 @@ subroutine test_pert
     pert_mono += h0i*hi0/(h00 - hii)
    else if (degree==2)then
     norm_t2 += (reigvec_trans(i,1)/reigvec_trans(1,1))**2.d0
-  !call debug_det(psi_det(1,1,i),N_int)
-  !call debug_det(psi_det(1,1,1),N_int)
     call get_double_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
     call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
     print*,'h1,p1,h2,p2',h1,p1,h2,p2
@@ -148,25 +138,23 @@ subroutine test_pert
   enddo
   print*,''
   print*,''
-  print*,'accu wrong      = ',accu2
-  print*,'accu            = ',accu
+  print*,'projection on HF= ',accu
   print*,'eigval_trans    = ',eigval_trans(1)
+  print*,''
   print*,'<d0|tile{H}|d0> = ',h00 
   print*,'<d0|   H   |d0> = ',ref_bitmask_energy
+  print*,''
   print*,'E corr          = ',eigval_trans(1) - h00
+  print*,''
+  print*,'Analysis of energy by components '
   print*,'accu_mono       = ',accu_mono
   print*,'accu_double     = ',accu_double
-  print*,'norm_t1         = ',norm_t1
-  print*,'norm_t2         = ',norm_t2
+  print*,'Analysis of energy by perturbation'
   print*,'pert_mono       = ',pert_mono
   print*,'pert_double     = ',pert_double
-  !!call print_mos
- !do i = 1, N_det
- ! psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
- !enddo
- !touch psi_coef
- !call save_wavefunction
-
+  print*,'Norm of amplitudes by components '
+  print*,'norm_t1         = ',norm_t1
+  print*,'norm_t2         = ',norm_t2
 end
 
 subroutine print_mos
@@ -243,31 +231,6 @@ subroutine plot_on_top_left_right
  PROVIDE ezfio_filename
  
  provide reigvec_trans_norm
- double precision :: hmono,herf,heff,hderiv,h0i
-!print*,''
-!i = 2
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'<0|H|i>'
-!call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,h0i)
-!print*,'h0i   = ',h0i
-!print*,'*************'
-!print*,'*************'
-!print*,'<i|H|0>'
-!call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,h0i)
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-!print*,'*************'
-
  print*,'Psi '
  output=trim(ezfio_filename)//'.on_top_psi'
  i_unit_output = getUnitAndOpen(output,'w')
@@ -278,7 +241,6 @@ subroutine plot_on_top_left_right
  i_unit_output = getUnitAndOpen(output,'w')
  do i = 1, N_det
   psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
-! psi_coef(i,1) = leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1))
  enddo
  touch psi_coef
  call plot_on_top(i_unit_output)
