@@ -241,7 +241,7 @@ subroutine big_thing_mo
  integer :: ipoint,i,j,n_pt_in,jpoint,m
  double precision :: mos_array_r1(mo_num),mos_array_r2(mo_num),mos_grad_array_r1(3,mo_num),mos_grad_array_r2(3,mo_num)
  double precision :: accu_relat,accu_abs,err_relat,err_abs
- double precision :: accu_tmp(3),d_dr12,mu_in,derf_mu_x,accu_tmp_bis(3),r12_vec(3)
+ double precision :: accu_tmp(3),d_dr12_old,d_dr12_new,mu_in,derf_mu_x,accu_tmp_bis(3),r12_vec(3)
  include 'utils/constants.include.F'
  integer :: imo,jmo,kmo,lmo
  double precision :: test, mo_two_e_integral_schwartz_accel_erf,num_int
@@ -255,7 +255,8 @@ subroutine big_thing_mo
     do kmo = 1, mo_num ! r2
     num_int += 1.d0
      print*,'<ij|kl> = ',jmo,lmo,imo,kmo
-     d_dr12 =  mo_two_e_eff_dr12_pot_array(imo,kmo,jmo,lmo)
+     d_dr12_old =  mo_two_e_eff_dr12_pot_array_old(imo,kmo,jmo,lmo)
+     d_dr12_new =  mo_two_e_eff_dr12_pot_array(jmo,lmo,imo,kmo)
      int_gauss_num = 0.d0
      accu_tmp = 0.d0
      accu_tmp_bis = 0.d0
@@ -300,7 +301,7 @@ subroutine big_thing_mo
      do m = 1, 3
       int_gauss_num_bis += accu_tmp_bis(m)
      enddo
-      int_mo = d_dr12
+      int_mo = d_dr12_old
       err_abs = dabs(int_gauss_num_bis - int_mo)
       if(dabs(int_gauss_num_bis).gt.1.d-10)then
        err_relat = err_abs/dabs(int_gauss_num_bis)
@@ -309,7 +310,8 @@ subroutine big_thing_mo
       endif
       print*,'int_gauss_num_bis = ',int_gauss_num_bis
 !      print*,'accu_tmp_bis(m)=',accu_tmp_bis(m)
-      print*,'int_mo            = ',int_mo
+      print*,'int_mo_old        = ',d_dr12_old
+      print*,'int_mo_new        = ',d_dr12_new
       print*,'abs error         = ',err_abs
       print*,'err_relat         = ',err_relat
       if(err_relat .gt. 1.d-2)then

@@ -80,14 +80,14 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_no_cycle, (ao_num,
 END_PROVIDER 
 
 
-BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo_num,mo_num)]
+BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_old, (mo_num,mo_num,mo_num,mo_num)]
  implicit none
  BEGIN_DOC
-! mo_two_e_eff_dr12_pot_array(k,l,i,j) = < i j | [erf( mu r12) - 1] d/d_r12 | k l > on the MO basis
+! mo_two_e_eff_dr12_pot_array_old(k,l,i,j) = < i j | [erf( mu r12) - 1] d/d_r12 | k l > on the MO basis
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
- mo_two_e_eff_dr12_pot_array = 0.d0
+ mo_two_e_eff_dr12_pot_array_old = 0.d0
  allocate(mo_tmp_1(ao_num,ao_num,ao_num,mo_num))
  mo_tmp_1 = 0.d0
  do i = 1, mo_num ! r1
@@ -143,12 +143,32 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
     do l = 1, mo_num
      do m = 1, ao_num
      !mo_tmp_2(m,k,j,i) = \sum_m c_ml < i j | d/dr12 | k m > = < i j | d/dr12 | k l >
-      mo_two_e_eff_dr12_pot_array(l,k,j,i) += mo_coef(m,l) * mo_tmp_3(m,k,j,i)
+      mo_two_e_eff_dr12_pot_array_old(l,k,j,i) += mo_coef(m,l) * mo_tmp_3(m,k,j,i)
      enddo
     enddo
    enddo
   enddo
  enddo
  deallocate(mo_tmp_3)
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo_num,mo_num)]
+ implicit none
+ BEGIN_DOC
+! mo_two_e_eff_dr12_pot_array(k,l,i,j) = < i j | [erf( mu r12) - 1] d/d_r12 | k l > on the MO basis
+ END_DOC
+ integer :: i,j,k,l,m,n,p,q
+ mo_two_e_eff_dr12_pot_array = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     mo_two_e_eff_dr12_pot_array(i,j,k,l) = mo_two_e_eff_dr12_pot_array_old(k,l,i,j)
+    enddo
+   enddo
+  enddo
+ enddo
+ FREE   mo_two_e_eff_dr12_pot_array_old 
 
 END_PROVIDER 
