@@ -112,6 +112,14 @@ subroutine routine_print_2
  double precision :: psi0,psi0_j
  double precision :: psi0_j_new,g0_new,f_mu_new
 
+ integer                        :: i_unit_output,getUnitAndOpen
+ character*(128)                :: output
+ PROVIDE ezfio_filename
+ output=trim(ezfio_filename)//'.cusp_wf'
+ print*,'output = ',trim(output)
+ i_unit_output = getUnitAndOpen(output,'w')
+
+
  istate = 1
  ntheta = 21
  allocate(theta_array(ntheta),psi_ex_array(ntheta))
@@ -192,6 +200,6 @@ subroutine routine_print_2
   r2(2) = r * dsin(theta)
   call get_two_e_psi_at_r1r2(r1,r2,psi)
   r12 = dsqrt( (r1(1) - r2(1))**2.d0 +  (r1(2) - r2(2))**2.d0 + (r1(3) - r2(2))**2.d0 )
-  write(32,'(100(F16.10,X))')theta,r12, psi_ex_array(i),dabs(psi),dabs(psi)*full_jastrow_mu(mu,r12), dabs(psi)*full_jastrow_mu(mu,r12)*inv_norm_n2_jastrow_cst_mu(1), dabs(psi)*full_jastrow_mu(mu,r12)/psi0_j,psi_ex_array(i)/psi0_ex
+  write(i_unit_output,'(100(F16.10,X))')theta,r12, psi_ex_array(i),dabs(psi),dabs(psi)*full_jastrow_mu(mu,r12), dabs(psi)*full_jastrow_mu(mu,r12)*inv_norm_n2_jastrow_cst_mu(1), dabs(psi)*full_jastrow_mu(mu,r12)/psi0_j,psi_ex_array(i)/psi0_ex
  enddo
 end
