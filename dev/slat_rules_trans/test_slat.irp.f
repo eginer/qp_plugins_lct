@@ -37,6 +37,7 @@ end
 subroutine test_eigv
  implicit none
  integer :: i,j
+ print*,'Right eigenvector             Left eigenvector               psi_coef'
  do i = 1, N_det
   print*,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
  enddo
@@ -52,7 +53,9 @@ subroutine test_eigv
  accu2 = dsqrt(accu2)
  e = accu1/accu2
  print*,'right eigenvector'
- print*,'e                = ',e
+ print*,'expectation value= ',e
+ print*,'norm             = ',accu2 * accu2
+ print*,'reigvec_trans_norm ',reigvec_trans_norm(1)
  accu1 = 0.d0
  accu2 = 0.d0
  do i = 1, N_det
@@ -64,10 +67,14 @@ subroutine test_eigv
  accu2 = dsqrt(accu2)
  e = accu1/accu2
  print*,'left eigenvector'
- print*,'e                = ',e
+ print*,'expectation value= ',e
+ print*,'norm             = ',accu2 * accu2
+ print*,'leigvec_trans_norm ',leigvec_trans_norm(1)
+ print*,''
  print*,'eigval_trans(1)  = ',eigval_trans(1)
  do i = 1, N_det
   psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
+! psi_coef(i,1) = leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1))
  enddo
  touch psi_coef
  call save_wavefunction
@@ -153,11 +160,11 @@ subroutine test_pert
   print*,'pert_mono       = ',pert_mono
   print*,'pert_double     = ',pert_double
   !!call print_mos
-  do i = 1, N_det
-   psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
-  enddo
-  touch psi_coef
-  call save_wavefunction
+ !do i = 1, N_det
+ ! psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
+ !enddo
+ !touch psi_coef
+ !call save_wavefunction
 
 end
 

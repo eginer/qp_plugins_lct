@@ -85,6 +85,7 @@ subroutine routine_print
  print*,'g0 rsdft   / Psi   = ',g0_rsdft  , g0_rsdft  *dabs(psi0)
  print*,'g0 exact   / Psi   = ',g0_exact  , psi_ex 
 
+
  theta = -thetamax * 0.5d0
  do i = 1, ntheta
   r2(1) = r * dcos(theta)
@@ -180,6 +181,10 @@ subroutine routine_print_2
  print*,'g0 jastrow / Psi   = ',g0_jastrow, g0_jastrow*dabs(psi0)
  print*,'g0 rsdft   / Psi   = ',g0_rsdft  , g0_rsdft  *dabs(psi0)
  print*,'g0 exact   / Psi   = ',g0_exact  , psi0_ex 
+ print*,'norm_n2_jastrow_cst_mu = ',norm_n2_jastrow_cst_mu
+ double precision :: inv_norm_n2_jastrow_cst_mu(N_states)
+ inv_norm_n2_jastrow_cst_mu(:)  = 1.d0/dsqrt(norm_n2_jastrow_cst_mu(:))
+ print*,'reigvec_trans_norm     = ',reigvec_trans_norm(1)
 
  do i = 1, ntheta
   theta = theta_array(i)
@@ -187,6 +192,6 @@ subroutine routine_print_2
   r2(2) = r * dsin(theta)
   call get_two_e_psi_at_r1r2(r1,r2,psi)
   r12 = dsqrt( (r1(1) - r2(1))**2.d0 +  (r1(2) - r2(2))**2.d0 + (r1(3) - r2(2))**2.d0 )
-  write(32,'(100(F16.10,X))')theta,r12, psi_ex_array(i),dabs(psi),dabs(psi)*full_jastrow_mu(mu,r12), dabs(psi)*full_jastrow_mu(mu,r12)/psi0_j,psi_ex_array(i)/psi0_ex
+  write(32,'(100(F16.10,X))')theta,r12, psi_ex_array(i),dabs(psi),dabs(psi)*full_jastrow_mu(mu,r12), dabs(psi)*full_jastrow_mu(mu,r12)*inv_norm_n2_jastrow_cst_mu(1), dabs(psi)*full_jastrow_mu(mu,r12)/psi0_j,psi_ex_array(i)/psi0_ex
  enddo
 end

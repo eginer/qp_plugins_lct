@@ -4,14 +4,14 @@ program coll_salv_fun
 ! TODO : Put the documentation of the program here
   END_DOC
  read_wf = .True.
- touch read_wf
+!touch read_wf
 !  print *, 'Hello world'
 !  call test_int_f_tilde
 ! call test_shank
-!  call test_int_f_special
+  call test_int_f_special
 ! call routine_test_n2_j
 ! call routine_test_n2_j_full
- call print_energy
+! call print_energy
 end
 
 subroutine test_shank
