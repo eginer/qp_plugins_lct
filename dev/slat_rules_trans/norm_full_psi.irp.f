@@ -11,6 +11,11 @@
  double precision :: weight
  norm_n2_jastrow_cst_mu = 0.d0
  norm_n2_jastrow_cst_mu_on_grid = 0.d0
+ do i = 1, N_det
+  psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
+ enddo
+ touch psi_coef
+
  do istate =1, N_states
   do ipoint = 1, n_points_final_grid
    weight = final_weight_at_r_vector(ipoint)

@@ -2,9 +2,10 @@ program pouet
  implicit none
  read_wf = .True.
  touch read_wf
-  call routine
-  call test_pert
-  call test_eigv
+ call routine
+! call test_pert
+ call test_eigv
+ call plot_on_top_left_right
  integer :: ith
  ith = 1
 ! call test_left_right_eigenvalues(ith)
@@ -72,12 +73,12 @@ subroutine test_eigv
  print*,'leigvec_trans_norm ',leigvec_trans_norm(1)
  print*,''
  print*,'eigval_trans(1)  = ',eigval_trans(1)
- do i = 1, N_det
-  psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
+!do i = 1, N_det
+! psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
 ! psi_coef(i,1) = leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1))
- enddo
- touch psi_coef
- call save_wavefunction
+!enddo
+!touch psi_coef
+!call save_wavefunction
 end
 
 subroutine test_pert
@@ -201,57 +202,114 @@ subroutine print_mos
 
 end
 
-!subroutine non_hermit_term(r1,r2,i,j,mu_in,d_d_r12)
-!implicit none
-!integer, intent(in) :: i,j
-!double precision, intent(in) :: r1(3), r2(3) , mu_in
-!double precision, intent(out):: d_d_r12
-!double precision :: mos_array_r1(mo_num),mos_grad_array_r1(3,mo_num)
-!double precision :: mos_array_r2(mo_num),mos_grad_array_r2(3,mo_num)
-!double precision :: r12(3), dist_r12, dist_vec(3),poly(3)
-!double precision :: erf_mu_r12,derf_mu_x,poly_tot(3)
-!integer :: k
-!call give_all_mos_and_grad_at_r(r1,mos_array_r1,mos_grad_array_r1)
-!call give_all_mos_and_grad_at_r(r2,mos_array_r2,mos_grad_array_r2)
-!dist_r12 = 0.d0
-!do k = 1, 3
-! r12(k) = r1(k) - r2(k) 
-! dist_r12 += r12(k)*r12(k)
-!enddo
-!dist_r12 = dsqrt(dist_r12)
-!dist_vec(1) = dsqrt(r12(2)*r12(2) + r12(3)*r12(3))
-!dist_vec(2) = dsqrt(r12(1)*r12(1) + r12(3)*r12(3))
-!dist_vec(3) = dsqrt(r12(1)*r12(1) + r12(2)*r12(2))
-!erf_mu_r12 = derf_mu_x(mu_in,dist_r12)
-!call inv_r_times_poly(r12, dist_r12, dist_vec, poly)
-!! poly_tot(1) = (1 - erf(mu * r12))/(2 * r12) (x1 - x2)
-!do k = 1, 3
-! poly_tot(k) = 0.5d0 * (poly(k) - erf_mu_r12 * r12(k) )
-!enddo
-!d_d_r12 = 0.d0
-!do k = 1, 3
-! d_d_r12 += poly_tot(k) * (mos_grad_array_r1(k,i) - mos_grad_array_r2(k,j) )
-!enddo
-!end
+subroutine non_hermit_term(r1,r2,i,j,mu_in,d_d_r12)
+implicit none
+integer, intent(in) :: i,j
+double precision, intent(in) :: r1(3), r2(3) , mu_in
+double precision, intent(out):: d_d_r12
+double precision :: mos_array_r1(mo_num),mos_grad_array_r1(3,mo_num)
+double precision :: mos_array_r2(mo_num),mos_grad_array_r2(3,mo_num)
+double precision :: r12(3), dist_r12, dist_vec(3),poly(3)
+double precision :: erf_mu_r12,derf_mu_x,poly_tot(3)
+integer :: k
+call give_all_mos_and_grad_at_r(r1,mos_array_r1,mos_grad_array_r1)
+call give_all_mos_and_grad_at_r(r2,mos_array_r2,mos_grad_array_r2)
+dist_r12 = 0.d0
+do k = 1, 3
+ r12(k) = r1(k) - r2(k) 
+ dist_r12 += r12(k)*r12(k)
+enddo
+dist_r12 = dsqrt(dist_r12)
+dist_vec(1) = dsqrt(r12(2)*r12(2) + r12(3)*r12(3))
+dist_vec(2) = dsqrt(r12(1)*r12(1) + r12(3)*r12(3))
+dist_vec(3) = dsqrt(r12(1)*r12(1) + r12(2)*r12(2))
+erf_mu_r12 = derf_mu_x(mu_in,dist_r12)
+call inv_r_times_poly(r12, dist_r12, dist_vec, poly)
+! poly_tot(1) = (1 - erf(mu * r12))/(2 * r12) (x1 - x2)
+do k = 1, 3
+ poly_tot(k) = 0.5d0 * (poly(k) - erf_mu_r12 * r12(k) )
+enddo
+d_d_r12 = 0.d0
+do k = 1, 3
+ d_d_r12 += poly_tot(k) * (mos_grad_array_r1(k,i) - mos_grad_array_r2(k,j) )
+enddo
+end
 
-subroutine test_grad_mo
+subroutine plot_on_top_left_right
  implicit none
- integer :: ipoint,i,j
- double precision :: r1(3), accu(3),weight1
- double precision :: mos_array(mo_num),mos_grad_array(3,mo_num)
- accu = 0.d0
- do ipoint = 1, n_points_final_grid
-  r1(1) = final_grid_points(1,ipoint)
-  r1(2) = final_grid_points(2,ipoint)
-  r1(3) = final_grid_points(3,ipoint)
-  call give_all_mos_and_grad_at_r(r1,mos_array,mos_grad_array)
-  weight1 = final_weight_at_r_vector(ipoint)
-  do j = 1, mo_num
-   do i = 1, 3
-    accu(i) += weight1 * dabs(mos_grad_in_r_array_tranp(i,j,ipoint) - mos_grad_array(i,j))
-   enddo
-  enddo
+ integer :: i
+ integer                        :: i_unit_output,getUnitAndOpen
+ character*(128)                :: output
+ PROVIDE ezfio_filename
+ 
+ provide reigvec_trans_norm
+ double precision :: hmono,herf,heff,hderiv,h0i
+!print*,''
+!i = 2
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'<0|H|i>'
+!call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,h0i)
+!print*,'h0i   = ',h0i
+!print*,'*************'
+!print*,'*************'
+!print*,'<i|H|0>'
+!call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,h0i)
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+!print*,'*************'
+
+ print*,'Psi '
+ output=trim(ezfio_filename)//'.on_top_psi'
+ i_unit_output = getUnitAndOpen(output,'w')
+ call plot_on_top(i_unit_output)
+
+ print*,'Right eigenvector'
+ output=trim(ezfio_filename)//'.on_top_right'
+ i_unit_output = getUnitAndOpen(output,'w')
+ do i = 1, N_det
+  psi_coef(i,1) = reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1))
+! psi_coef(i,1) = leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1))
  enddo
- print*,'accu = '
- print*,accu
+ touch psi_coef
+ call plot_on_top(i_unit_output)
+
+
+ print*,'Left eigenvector'
+ output=trim(ezfio_filename)//'.on_top_left'
+ i_unit_output = getUnitAndOpen(output,'w')
+ do i = 1, N_det
+  psi_coef(i,1) = leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1))
+ enddo
+ touch psi_coef
+ call plot_on_top(i_unit_output)
+
+end
+
+subroutine plot_on_top(i_unit)
+ implicit none
+ integer, intent(in) :: i_unit
+ integer :: i,nx,istate 
+ double precision :: x,xmax,dx,r(3)
+ double precision :: on_top_in_r,dm_a,dm_b
+ istate = 1
+ nx = 1000
+ xmax = 3.d0
+ dx = xmax / dble(nx)
+ r = 0.d0
+ do i = 1, nx
+  call give_on_top_in_r_one_state(r,istate,on_top_in_r)
+  call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
+  write(i_unit,'(10(F16.10,X))')r(1), on_top_in_r , dm_a+dm_b
+  r(1) += dx 
+ enddo
 end

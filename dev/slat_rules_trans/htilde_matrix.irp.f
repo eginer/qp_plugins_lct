@@ -117,6 +117,22 @@ END_PROVIDER
 
 END_PROVIDER 
 
+
+subroutine write_left_right
+ implicit none
+ double precision, allocatable :: reigvec_trans_tmp(:,:),leigvec_trans_tmp(:,:)
+ allocate(leigvec_trans_tmp(N_det,N_states),reigvec_trans_tmp(N_det,N_states))
+ integer :: i,j
+ do i = 1, N_states
+  do j = 1, N_det
+   leigvec_trans_tmp(j,i) = leigvec_trans(j,i)
+   reigvec_trans_tmp(j,i) = reigvec_trans(j,i)
+  enddo
+ enddo
+ call ezfio_set_slat_rules_trans_reigvec_trans(reigvec_trans_tmp)
+ call ezfio_set_slat_rules_trans_leigvec_trans(leigvec_trans_tmp)
+end
+
 subroutine test_left_right_eigenvalues(ith)
  implicit none
  integer, intent(in) :: ith

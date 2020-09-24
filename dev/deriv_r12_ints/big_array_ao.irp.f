@@ -1,8 +1,8 @@
 BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao_num,ao_num)]
  implicit none
  BEGIN_DOC
-!   1 2                                1 2 
-! < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+                                       !   1 2                                1 2 
+! ao_two_e_eff_dr12_pot_array(k,l,i,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
  END_DOC
  integer :: i,j,k,l,m
  double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
@@ -32,6 +32,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
       do m = 1, 3
        accu += d_dr12(m) - d_dr12_large(m) 
       enddo
+      !                        < k l | d/dr12 | i j >
       !                           1 2 1 2 
       ao_two_e_eff_dr12_pot_array(k,l,i,j) = accu
     enddo
@@ -82,7 +83,7 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo_num,mo_num)]
  implicit none
  BEGIN_DOC
-! < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the MO basis
+! mo_two_e_eff_dr12_pot_array(k,l,i,j) = < i j | [erf( mu r12) - 1] d/d_r12 | k l > on the MO basis
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
@@ -96,6 +97,8 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
      do q = 1, ao_num
       ! <j p
       mo_tmp_1(p,n,m,i) += mo_coef(q,i) * ao_two_e_eff_dr12_pot_array(q,p,n,m)
+      !  1 2          1 2 
+      !mo_tmp_1(p,n,m,i) = \sum_q c_qi < q p |d/dr12| n m > = < i p | d/dr12 | n m >
 !      double precision :: get_ao_two_e_integral
 !      mo_tmp_1(p,n,m,i) += mo_coef(q,i) * get_ao_two_e_integral(q,p,n,m,ao_integrals_map)
      enddo
@@ -111,6 +114,7 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
     do m = 1, ao_num
      do n = 1, ao_num
       do p = 1, ao_num
+      !mo_tmp_2(n,m,j,i) = \sum_p c_pj < i p | d/dr12 | n m > = < i j | d/dr12 | n m >
        mo_tmp_2(n,m,j,i) += mo_tmp_1(p,n,m,i) * mo_coef(p,j)
       enddo
      enddo
@@ -125,6 +129,7 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
    do k = 1, mo_num
     do m = 1, ao_num
      do n = 1, ao_num
+     !mo_tmp_2(m,k,j,i) = \sum_n c_nk < i j | d/dr12 | n m > = < i j | d/dr12 | k m >
       mo_tmp_3(m,k,j,i) += mo_tmp_2(n,m,j,i) * mo_coef(n,k)
      enddo
     enddo
@@ -137,6 +142,7 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
    do k = 1, mo_num
     do l = 1, mo_num
      do m = 1, ao_num
+     !mo_tmp_2(m,k,j,i) = \sum_m c_ml < i j | d/dr12 | k m > = < i j | d/dr12 | k l >
       mo_two_e_eff_dr12_pot_array(l,k,j,i) += mo_coef(m,l) * mo_tmp_3(m,k,j,i)
      enddo
     enddo

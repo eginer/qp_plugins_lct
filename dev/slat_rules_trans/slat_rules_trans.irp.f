@@ -71,10 +71,10 @@ subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   call bitstring_to_list_ab(key_i,occ,Ne,N_int)
   call get_single_excitation(key_i,key_j,exc,phase,N_int)
 !  print*,'in get single '
-!  print*,'key_i :: ket '
-!  call debug_det(key_i,N_int)
 !  print*,'key_j :: bra '
 !  call debug_det(key_j,N_int)
+!  print*,'key_i :: ket '
+!  call debug_det(key_i,N_int)
   call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
 !  print*,'h1,p1',h1,p1
 
@@ -123,8 +123,14 @@ subroutine double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   if(degree.ne.2)then
    return
   endif
+  print*,'key_j :: bra '
+  call debug_det(key_j,N_int)
+  print*,'key_i :: ket '
+  call debug_det(key_i,N_int)
+!  call get_double_excitation(key_j,key_i,exc,phase,N_int)
   call get_double_excitation(key_i,key_j,exc,phase,N_int)
   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
+  print*,'h1,h2,p1,p2',h1,h2,p1,p2
   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
   hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) 
