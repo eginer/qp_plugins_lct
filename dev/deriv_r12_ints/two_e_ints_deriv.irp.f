@@ -82,11 +82,8 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
  allocate( P_l_dxyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
  allocate( P_l_xyz_k(0:max_dim,3,2,ao_prim_num_max,ao_prim_num_max) ) ! new polynom for each couple of prim
 
- print*,'coucou'
- print*,size(P_kl,1)
-!call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
-!call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
- stop
+ call give_poly_ij(k,l,P_kl,center_kl,p_exp_kl,fact_kl,iorder_kl,coef_prod_kl)
+ call give_poly_ij(i,j,P_ij,center_ij,p_exp_ij,fact_ij,iorder_ij,coef_prod_ij)
 
  integer          :: iorder_ij(3,ao_prim_num_max,ao_prim_num_max) ! order of the polynoms for each couple of prim
  double precision :: center_ij(3,ao_prim_num_max,ao_prim_num_max) ! new center for each couple of prim
@@ -476,6 +473,7 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
        P_kl(0,m),center_kl(m),q,iorder_kl(m),p10_1,p01_1,p10_2,p01_2,&
        n_Ixyz(m), Ixyz_pol(0,m))
    if(n_Ixyz(m) == -1) then
+    print*,'AHAHAAH le mal'
     return
    endif
   enddo

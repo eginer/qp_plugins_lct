@@ -6,7 +6,9 @@ subroutine big_thing
  integer :: ipoint,i,j,n_pt_in,jpoint,m
  double precision :: aos_array_r1(ao_num),aos_array_r2(ao_num),aos_grad_array_r1(3,ao_num),aos_grad_array_r2(3,ao_num)
  double precision :: accu_relat(3),accu_abs(3),err_relat,err_abs
- double precision :: accu_tmp(3),d_dr12(3),mu_in,derf_mu_x,accu_tmp_bis(3)
+ double precision :: accu_tmp(3),mu_in,derf_mu_x,accu_tmp_bis(3)
+ double precision :: d_dr12_large(3),d_dr12(3)
+ double precision :: d_dr12_large_2(3),d_dr12_2(3)
  include 'utils/constants.include.F'
  integer :: iao,jao,kao,lao
  double precision :: test, ao_two_e_integral_schwartz_accel_erf,num_int
@@ -14,13 +16,25 @@ subroutine big_thing
  accu_abs = 0.d0
  accu_relat = 0.d0
  num_int = 0.d0
- do jao = 1, ao_num ! r1
-  do lao = 1, ao_num ! r2
-   do iao = 1, ao_num ! r1
-    do kao = 1, ao_num ! r2
+ do jao = 2, ao_num ! r1
+  do lao = 2, ao_num ! r2
+   do iao = 2, ao_num ! r1
+    do kao = 6, ao_num ! r2
     num_int += 1.d0
      print*,'<ij|kl> = ',jao,lao,iao,kao
      call ao_two_e_d_dr12_int(iao,jao,kao,lao,mu_in,d_dr12)
+     call ao_two_e_d_dr12_int(iao,jao,kao,lao,1.d+9,d_dr12_large)
+     call ao_two_e_eff_dr12_pot(iao,jao,kao,lao,mu_in,d_dr12_2,d_dr12_large_2)
+     do m = 1, 3
+      if(dabs(d_dr12_2(m) - d_dr12(m)).gt.1.d-10)then
+       print*,'dabs(d_dr12_2(m) - d_dr12(m),d_dr12_2(m),d_dr12(m)'
+       print*, dabs(d_dr12_2(m) - d_dr12(m)),d_dr12_2(m),d_dr12(m) 
+      endif
+      if(dabs(d_dr12_large_2(m) - d_dr12_large(m)).gt.1.d-10)then
+       print*,'dabs(d_dr12_large_2(m) - d_dr12_large(m),d_dr12_large_2(m),d_dr12_large(m)'
+       print*, dabs(d_dr12_large_2(m) - d_dr12_large(m)),d_dr12_large_2(m),d_dr12_large(m) 
+      endif
+     enddo
      int_gauss_num = 0.d0
      accu_tmp = 0.d0
      accu_tmp_bis = 0.d0

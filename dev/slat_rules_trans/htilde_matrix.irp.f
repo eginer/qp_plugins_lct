@@ -103,6 +103,7 @@ END_PROVIDER
  double precision :: accu1, accu2
  do i = 1, n_good_trans_eigval
   eigval_trans(i) = ei(i)
+  print*,'e(i) = ',ei(i) + nuclear_repulsion
   accu1 = 0.d0
   accu2 = 0.d0
   do j = 1, n_det
