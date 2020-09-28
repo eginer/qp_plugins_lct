@@ -428,3 +428,37 @@ subroutine test_int_full_j
  print*,'relat_error_c_av = ',relat_error_c_av
 
 end
+
+
+subroutine test_overlap_gauss_r12_ao
+ implicit none
+ integer :: i,j
+ double precision :: D_center(3), delta
+ double precision :: weight, r(3),accu,overlap_gauss_r12_ao,exact,aos_array(ao_num)
+ double precision :: r12
+ integer :: ipoint
+
+ D_center = 0.d0
+ D_center(1) =  0.23d0
+ D_center(3) = -0.4d0
+ delta = 1.2d0
+ do i = 1, ao_num
+  do j = 1, ao_num
+   exact = overlap_gauss_r12_ao(D_center,delta,i,j)
+   accu = 0.d0
+   do ipoint = 1, n_points_final_grid
+    r(1) = final_grid_points(1,ipoint)
+    r(2) = final_grid_points(2,ipoint)
+    r(3) = final_grid_points(3,ipoint)
+    weight = final_weight_at_r_vector(ipoint)
+    r12 = (r(1) - D_center(1))**2.d0 + (r(2) - D_center(2))**2.d0 + (r(3) - D_center(3))**2.d0
+    call give_all_aos_at_r(r,aos_array)
+    accu += weight * aos_array(i) * aos_array(j) * dexp(-delta * r12)
+   enddo
+   print*,'i,j',i,j
+   print*,accu,exact,dabs(accu - exact)
+  enddo
+ enddo
+
+
+end
