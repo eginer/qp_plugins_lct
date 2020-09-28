@@ -24,11 +24,11 @@ subroutine test_int_f_special
  double precision, allocatable :: array(:)
  integer :: n_taylor
  double precision :: a0
- n_taylor = 4
+ n_taylor = 8
  allocate(array(0:n_taylor))
  mu = 1.5d0
  a0 = 1.d0/(2.d0*dsqrt(pi)*mu)
- call test_fit(mu)
+!call test_fit(mu)
  r1 = 0.1d0
 ! r1(1) = 0.1d0
 
@@ -41,7 +41,7 @@ subroutine test_int_f_special
 ! call give_jastrow2_ovlp_ints_ao(mu,r1,n_taylor,ao_ints)
 ! call give_jastrow2_erf_ints_ao(mu,r1,n_taylor,ao_erf_ints)
  call give_jastrow2_ovlp_ints_mo(mu,r1,n_taylor,mo_ints)
- call give_jastrow2_erf_ints_mo(mu,r1,n_taylor,mo_erf_ints)
+ call give_jastrow2_erf_ints_mo(mu,mu,r1,n_taylor,mo_erf_ints)
  do i = 1, mo_num
   do j = 1, mo_num
    print*,'i,j,mu',i,j,mu
