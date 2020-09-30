@@ -26,9 +26,15 @@
 \newcommand{\psiex}[0]{\Psi^{\text{ex}}_0}
 \newcommand{\phiex}[0]{\Phi^{\text{ex}}_0}
 \newcommand{\phimu}[0]{\Phi^{\text{ex},\mu}_0}
+\newcommand{\phimub}[0]{\Phi^{\mathcal{B},\mu}_0}
+\newcommand{\psimub}[0]{\Psi^{\mathcal{B},\mu}_0}
+\newcommand{\phiimub}[0]{\Phi^{\mathcal{B},\mu}_i}
+\newcommand{\basis}[0]{\mathcal{B}}
 \newcommand{\energyex}[0]{E^{\text{ex}}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\identity}{\mathds{1}}
+\newcommand{\mur}[1]{\mu({\bf r_{#1}})}
+
 
 
 \begin{document}	
@@ -415,14 +421,15 @@ The last term in Eq.\eqref{eq:bigJ_dl} modifies the curvature of the Coulomb hol
 Coming now to the behaviour of $j(r_{12};\mu)$as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, together with that of $\mathcal{J}(r_{12},\mu)$. 
 \begin{figure*}
  \label{fig_j_mu}
-        \includegraphics[width=0.60\linewidth]{small_mu_j.pdf}\\
-        \includegraphics[width=0.60\linewidth]{small_mu_exp_j.pdf}\\
+        \includegraphics[width=0.45\linewidth]{small_mu_j.pdf}
+        \includegraphics[width=0.45\linewidth]{small_mu_exp_j.pdf}\\
         \caption{Shape of $j(r_{12};\mu)$ (up) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(j(r_{12};\mu) \bigg) $ (bottom) for different values of $\mu$.}
 \end{figure*}
 From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $j(r_{12};\mu)$, ii) the larger the $\mu$, the closer $j(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function. 
 
 
-\subsubsection{The explicit form of  $\tilde{H}[\mu]$ and some of its properties}
+\subsection{Explicit form of  $\tilde{H}[\mu]$ and some of its properties}
+\subsubsection{Explicit form of $\tilde{H}[\mu]$ }
 Having established the explicit form of $j(r_{12};\mu)$ and some of its properties, one can now 
 look at the explicit form of the transcorrelated Hamiltonian obtained with $j(r_{12};\mu)$,  
 which, by injecting the form of \eqref{eq:def_j} in Eq.\eqref{eq:ht_phi}, reads 
@@ -441,19 +448,14 @@ From Eq.\eqref{eq:exp_ht_mu}, one can define an effective scalar electron-electr
 whose shape is illustrated in Fig\ref{fig_wee_mu}. 
 \begin{figure*}
  \label{fig_wee_mu}
-        \includegraphics[width=0.60\linewidth]{w_ee.pdf}\\
-        \includegraphics[width=0.60\linewidth]{w_ee_bis.pdf}\\
+        \includegraphics[width=0.45\linewidth]{w_ee.pdf}
+        \includegraphics[width=0.45\linewidth]{w_ee_bis.pdf}\\
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ (up) and comparison with $\frac{\text{erf}(\mu r_{12}}{r_{12}}$ (bottom) for different values of $\mu$.}
 \end{figure*}
 From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential 
 is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT. 
 Nevertheless, as observed from Fig.\ref{fig_wee_mu}, it is significantly different 
 from the long-range interaction at small $r_{12}$, 
-%\begin{equation}
-% \label{eq:lim_mu_2}
-% \lim_{r_{12} \rightarrow 0} \tilde{\mathcal{W}}_{ee}(r_{12}) = \frac{3 \mu}{\sqrt{\pi}} - \frac{1}{4}. 
-%\end{equation}
-%
 and it is not monotonic as it can be even slightly attractive for small values of $\mu$. 
 This difference with respect to the long-range interaction can be understood as the equation obtained to derive the Jastrow factor only takes into account the first-order derivative of $j(r_{12},\mu)$ (see Eqs.\eqref{def_j_00} and \eqref{def_j_0}). 
 If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\text{erf}(\mu r_{12})}{r_{12}}$, one would have to solve the non-linear differential equation 
@@ -461,10 +463,8 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
  2 \deriv{j(r_{12})}{r_{12}}{} + r_{12} \bigg( \deriv{j(r_{12})}{r_{12}}{2} + \bigg[ \deriv{j(r_{12})}{r_{12}}{} \bigg]^2\bigg) = 1 - \text{erf}(\mu r_{12}), 
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
-%To illustrate the shape of 
-%which does not diverge at $r_{12} = 0$
-%\end{equation}
-
+\subsubsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
+\label{sec:h_mu_lim}
 Coming now to the limits of $\tilde{H}[\mu]$ when $\mu \rightarrow \infty$, one expects that as
 \begin{equation}
  \label{eq:lim_mu_0}
@@ -516,6 +516,98 @@ do not diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one
  \int \text{d}r{}_{12}  \tilde{f}(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
 \end{equation}
 and therefore Eq.\eqref{eq:lim_mu_6} which implies Eq.\eqref{eq:lim_mu_1}. 
+
+In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu]$ becomes simply 
+\begin{equation}
+ \lim_{\mu \rightarrow 0} \tilde{H}[\mu] = h_c - \frac{1}{4} - \partial{}{r_{12}}{}, 
+\end{equation}
+which means that all scalar electron-electron interaction have been replaced by a differential operator. 
+
+At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent but can be either repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
+Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$.  
+
+\subsubsection{The eigenvectors of $\tilde{H}[\mu]$}
+As shown in the previous section, the form of $\tilde{H}[\mu]$ depends on $\mu$, going from the usual repulsive hermitian Hamiltonian to a non hermitian operator which can have   
+
+\section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
+The first part of our study concerns the convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
+Therefore, considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected in a given basis set by
+\begin{equation}
+ \tilde{H}[\mu]^{\basis} = P_\basis \tilde{H}[\mu] P_\basis,
+\end{equation}
+and its right eigenvectors and eigenvalues satisfy of course
+\begin{equation}
+ \tilde{H}[\mu]^{\basis} \ket{\phimub} = E_i^{\basis}[\mu] \ket{\phimub}. 
+\end{equation}
+
+As pointed in section \ref{sec:h_mu_lim}, by varying $\mu$ one can go from a relatively usual repulsive Hamiltonian (even though it is non hermitian an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
+Considering such variation of $\tilde{H}[\mu]$ when varying $\mu$,  
+its projection into a basis set $\tilde{H}[\mu]^{\basis}$ will behave differently as a function of $\mu$ 
+and so will $\ket{\phimub}$ and $E_i^{\basis}[\mu]$. 
+Therefore, we would like to study the mathematical behaviour of $\ket{\phimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $j(r_{12},\mu)$ can improve the convergence toward the exact ground state energy and eigenfunction. 
+\subsection{$\mu$ dependence of the convergence of the total energy with respect to the basis set }
+\subsubsection{Computational details}
+We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual orbital basis set (see annexes for more details) in the case of an atomic two electron systems, together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
+All implementation was done as a plugin of the program quantum package\cite{QP2}. 
+Once the matrix elements of $\tilde{H}[\mu]$ are built on a given MO basis, we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} it is expressed as a linear combination of all possible Slater determinants within a given Hilbert space defined with a MO basis) and use an non hermitian eigensolver to obtain both right and left eigenvectors. If not explicitly mentioned, the canonical RHF MOs are used in this work. 
+The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
+
+\subsubsection{Numerical results: ground state energies}
+\label{sec:total_e}
+We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_0^\mu$ of $\tilde{H}[\mu]$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. 
+Several observations can be done from these data. First, because of the loose of the variational principle, $E_0^{\mu}$ can take values below the exact non relativistic energy, and the smaller the $\mu$, the more pronounced is such effect. 
+Nevertheless, one can also observe that, for each $\mu$, the error with respect to the reference energy gets smaller  
+when enlarging the basis set. Also, qualitatively, one can observe that there are two regimes of $\mu$: that ranging from $\mu=0.05$ and $\mu=0.3$ where the $E_0^\mu$ is always below $E_0$ and those larger than $\mu=0.35$ where $E_0^\mu$ converges from above, as if the variational principle still applied. 
+Second, as $\mu$ increases, the difference between $E_0^\mu$ and $E_0^\text{FCI}$ in a given basis set diminishes, 
+which is expected as in the limit $\mu \rightarrow \infty$, one obtains that  $\tilde{H}[\mu] \rightarrow H$. 
+Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ as long as $\mu \ge 0.2$. 
+To quantify better such observations, one can look at the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
+For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used. For $0.5\ge \mu \ge 1.0$ such accuracy is reached at the aug-cc-pVTZ level. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
+Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom, specially for $\mu \in [0.4, 1.0]$ where an error below 1mH is reached within the aug-cc-pVTZ basis set, whereas such an error is reached at the aug-cc-pV5Z basis set. 
+\begin{figure*}
+ \label{fig_conv_e_mu}
+        \includegraphics[width=0.45\linewidth]{E_conv_basis_small_mu.pdf}
+        \includegraphics[width=0.45\linewidth]{E_conv_basis_large_mu.pdf}\\
+        \caption{Convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the AVXZ basis set series (X=D,T,Q,5) for different values of $\mu$.}
+\end{figure*}
+
+\begin{table*}
+\label{table_conv_e_mu}
+\caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy.}
+\begin{ruledtabular}
+\begin{tabular}{llllllllllll}
+ Basis/$\mu$&0.05                 & 0.2                   & 0.3                   & 0.35                  & 0.5                  & 0.7                   \\
+\hline
+ AVDZ       &  -2.909031 (-5.31)  &    -2.906309 (-2.58)  &    -2.904172 (-0.45)  &    -2.903317 (0.41)   &    -2.901420 (2.3)   &    -2.899516 (4.21)   \\
+ AVTZ       &  -2.905898 (-2.17)  &    -2.905278 (-1.55)  &    -2.904691 (-0.97)  &    -2.904468 (-0.74)  &    -2.903969 (-0.24) &    -2.903488 (0.24)   \\
+ AVQZ       &  -2.904621 (-0.9)   &    -2.904325 (-0.6)   &    -2.903986 (-0.26)  &    -2.903879 (-0.15)  &    -2.903702 (0.02)  &    -2.903620 (0.1)     \\
+ AV5Z       &  -2.904428 (-0.7)   &    -2.904229 (-0.51)  &    -2.903928 (-0.2)   &    -2.903834 (-0.11)  &    -2.903702 (0.02)  &    -2.903676 (0.05)   \\
+\hline
+ Basis/$\mu$ & 1.0                  & 1.6                  & 2.0                  & 3.0                  & $\infty$ (FCI)        & Exact NR              \\
+\hline
+ AVDZ        &    -2.896734 (6.99)  &    -2.892773 (10.95) &    -2.891477 (12.25) &    -2.890212 (13.51) &    -2.889548 (14.18)  & -2.903724             \\
+ AVTZ        &    -2.903069 (0.66)  &    -2.902421 (1.3)   &    -2.901932 (1.79)  &    -2.901159 (2.56)  &    -2.900598 (3.13)   &                       \\
+ AVQZ        &    -2.903558 (0.17)  &    -2.903359 (0.36)  &    -2.903244 (0.48)  &    -2.902951 (0.77)  &    -2.902534 (1.19)   &                       \\
+ AV5Z        &    -2.903675 (0.05)  &    -2.903634 (0.09)  &    -2.903592 (0.13)  &    -2.903479 (0.24)  &    -2.903201 (0.52)   &                       \\
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+\subsubsection{Numerical results: ground state eigenvectors}
+In Sec.\ref{sec:total_e} we shown the strong improvement of the speed of convergence of the total energy for the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=1.6$. 
+Nevertheless, one can wonder if this good behavior results from a kind of error cancellation or if there is indeed a deeper mathematical reason for such an improvement of speed of convergence. 
+Theoretically if, for a given value of $\mu$, $\tilde{H}[\mu]$ is perfectly well represented in a given basis set $\mathcal{B}$ (\textit{i.e.} $\tilde{H}[\mu]^{\basis} = H$), then all its eigenvalues coincide with that of the exact Hamiltonian (\textit{i.e.} developed in a complete basis set). If one focusses now on the exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$, it is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $j(r_{12},\mu)$ through 
+\begin{equation}
+ \psiex(\br{}_1,\br{}_2) = e^{j(r_{12},\mu)} \phimu(\br{}_1,\br{}_2). 
+\end{equation}
+Therefore, having obtained in a given basis set $\basis$ the right eigenvector $\phimub$, one can estimate the exact ground state eigenvector by 
+\begin{equation}
+ \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{j(r_{12},\mu)}\phimub(\br{}_1,\br{}_2)
+\end{equation}
+where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is imply
+\begin{equation}
+  \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 j(r_{12},\mu)}}{\phimub}.
+\end{equation}
 
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}
@@ -622,7 +714,7 @@ one obtains
 Similarly, 
 \begin{equation}
  \label{eq:dx2_u}
- \deriv{}{x_2}{}u(r_{12}) = \frac{\text{erf}(\mu r_{12})}{2 r_{12} -1 } \bigg(x_1 - x_2 \bigg).
+ \deriv{}{x_2}{}u(r_{12}) = -\frac{ 1 - \text{erf}(\mu r_{12})}{2 r_{12} } \bigg(x_1 - x_2 \bigg).
 \end{equation}
 Therefore, 
 \begin{equation}
@@ -1186,4 +1278,121 @@ and therefore the total potential is
 \end{equation}
 which coincides with Eq. \eqref{eq:one_e_3}. 
 \bibliography{srDFT_SC}
+
+\section{Derivation with a varying $\mu({\bf r})$}
+Let us assume one has a range separation parameter varying in space $\mur{}$ and that one knows its gradients and Laplacian. 
+Therefore, one would like to derive the same equations as for the constant $\mu$. 
+The Jastrow factor is therefore expressed as
+\begin{equation}
+ \tilde{j}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\bigg( j(r_{12};\mur{1}) + j(r_{12};\mur{2}) \bigg)
+\end{equation}
+where $j(r_{12};\mu)$ is the Jastrow factor defined in Eq. \eqref{eq:def_j}. 
+To derive properly the equations for such a new Jastrow factor, one needs to derive the different terms involving gradients and so on. 
+\subsection{Gradients of $\tilde{j}(\bd{r_1},\bd{r_2})$}
+A fundamental quantity is the gradient of $\tilde{j}(\bd{r_1},\bd{r_2})$ which is 
+\begin{equation}
+ \nabla_1 \tilde{j}(\bd{r_1},\bd{r_2}) = \deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{y_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{z_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) {\bf e}_{z1}.
+\end{equation}
+Therefore one needs to compute $\deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2})$
+\begin{equation}
+ \deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\deriv{}{x_1}{} j(r_{12};\mur{1}) 
+                                               +\frac{1}{2}\deriv{}{x_1}{} j(r_{12};\mur{2}) .
+\end{equation}
+Applying the chain rule 
+\begin{equation}
+ \deriv{}{x_1}{} j(r_{12};\mur{2}) = \deriv{}{r_{12}}{} j(r_{12};\mur{2})\deriv{r_{12}}{x_1}{} + \deriv{}{\mur{2}}{}j(r_{12};\mur{2}) \deriv{\mur{2}}{x_1}{},
+\end{equation}
+and as by definition $\deriv{\mur{2}}{x_1}{} = 0$, because 
+of the condition determining $j(r_{12};\mu)$ (see Eq.\eqref{def_j_0}) and according to Eq.\eqref{eq:dx1_u} one obtains that 
+\begin{equation}
+ \deriv{}{x_1}{} j(r_{12};\mur{2}) = \frac{1 - \text{erf}(\mur{2} r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg).
+\end{equation}
+Then, 
+\begin{equation}
+ \deriv{}{x_1}{} j(r_{12};\mur{1}) = \deriv{}{r_{12}}{} j(r_{12};\mur{1})\deriv{r_{12}}{x_1}{} + \deriv{}{\mur{1}}{}j(r_{12};\mur{1}) \deriv{\mur{1}}{x_1}{},
+\end{equation}
+and as 
+\begin{equation}
+ \label{eq:d_dmu_j}
+ \deriv{}{\mu}{}j(r_{12};\mu) = \frac{e^{-(\mu r_{12})^2}}{2\sqrt{\pi} \mu^2},
+\end{equation}
+one obtains 
+\begin{equation}
+ \deriv{}{x_1}{} j(r_{12};\mur{1}) = \frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg) + \frac{e^{-(\mur{1} r_{12})^2}}{2\sqrt{\pi} \mur{1}^2} \deriv{\mur{1}}{x_1}{}.
+\end{equation}
+Therefore, one obtains finally that 
+\begin{equation}
+ \label{eq:d_dx1_jtilde}
+ \begin{aligned}
+ \deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) = & \frac{(x_1 - x_2)}{2 r_{12}} 
+ \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{2} + \frac{1 - \text{erf}(\mur{2} r_{12})}{2}  \bigg) \\
+                 & + \frac{e^{-(\mur{1} r_{12})^2}}{2\sqrt{\pi} \mur{1}^2} \deriv{\mur{1}}{x_1}{},
+ \end{aligned}
+\end{equation}
+and similarly,
+\begin{equation}
+ \label{eq:d_dx2_jtilde}
+ \begin{aligned}
+ \deriv{}{x_2}{} \tilde{j}(\bd{r_1},\bd{r_2}) = & \frac{(x_2 - x_1)}{2 r_{12}} 
+ \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{2} + \frac{1 - \text{erf}(\mur{2} r_{12})}{2}  \bigg) \\
+                 & + \frac{e^{-(\mur{2} r_{12})^2}}{2\sqrt{\pi} \mur{2}^2} \deriv{\mur{2}}{x_2}{},
+ \end{aligned}
+\end{equation}
+
+\subsection{Computation of $\bigg(\nabla_1\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2$}
+Then one needs to compute 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\nabla_1\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
+& \bigg(\deriv{}{x_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{y_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{y_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{z_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{z_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2.
+ \end{aligned}
+\end{equation}
+According to Eq.\eqref{eq:d_dx1_jtilde}, 
+and defining the complementary error function as 
+\begin{equation}
+ \text{erfc}(x) = 1 - \text{erf}(x)
+\end{equation}
+one has that 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{1} r_{12}\big) \bigg)^2  \\
+ + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 \\
+ + & \frac{\big(x_1 - x_2\big)}{r_{12}} \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
+ \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
+ \end{aligned}
+\end{equation}
+Similarly 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2 \\
+ + & \frac{\big(x_2 - x_1\big)}{r_{12}} \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} 
+ \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
+ \end{aligned}
+\end{equation}
+Therefore, 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{2}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{\big(x_1 - x_2\big)}{2 \sqrt{\pi}r_{12}}  \frac{\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)}{2} \\
+&\bigg(   \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{\big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
+- \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{\big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} \bigg) \\
+ + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 
+ + \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2.
+ \end{aligned}
+\end{equation}
+
+Summing all terms and noticing that $\bigg(x_1 - x_2\bigg)^2 + \bigg(y_1 - y_2\bigg)^2 + \bigg(z_1 - z_2\bigg)^2 = \bigg(r_{12}\bigg)^2$ leads to 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\nabla_1\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
+& \frac{1}{8}\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{1} r_{12}\big) \bigg)^2 
+ \end{aligned}
+\end{equation}
+
 \end{document}
