@@ -530,26 +530,26 @@ Nevertheless, due to the property of the similarity transformation, in the limit
 As shown in the previous section, the form of $\tilde{H}[\mu]$ depends on $\mu$, going from the usual repulsive hermitian Hamiltonian to a non hermitian operator which can have   
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
-The first part of our study concerns the convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
+The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
 Therefore, considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected in a given basis set by
 \begin{equation}
  \tilde{H}[\mu]^{\basis} = P_\basis \tilde{H}[\mu] P_\basis,
 \end{equation}
-and its right eigenvectors and eigenvalues satisfy of course
+whose right eigenvectors and eigenvalues satisfy 
 \begin{equation}
  \tilde{H}[\mu]^{\basis} \ket{\phimub} = E_i^{\basis}[\mu] \ket{\phimub}. 
 \end{equation}
 
-As pointed in section \ref{sec:h_mu_lim}, by varying $\mu$ one can go from a relatively usual repulsive Hamiltonian (even though it is non hermitian an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
+As pointed in section \ref{sec:h_mu_lim}, by varying $\mu$ one can go from a relatively usual repulsive Hamiltonian at large $\mu$ (even though it is non hermitian an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
 Considering such variation of $\tilde{H}[\mu]$ when varying $\mu$,  
 its projection into a basis set $\tilde{H}[\mu]^{\basis}$ will behave differently as a function of $\mu$ 
-and so will $\ket{\phimub}$ and $E_i^{\basis}[\mu]$. 
-Therefore, we would like to study the mathematical behaviour of $\ket{\phimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $j(r_{12},\mu)$ can improve the convergence toward the exact ground state energy and eigenfunction. 
-\subsection{$\mu$ dependence of the convergence of the total energy with respect to the basis set }
+and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenvalues $E_i^{\basis}[\mu]$. 
+Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $j(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
+\subsection{$\mu$ dependence of the convergence of the ground state eigenvalue with respect to the basis set }
 \subsubsection{Computational details}
-We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual orbital basis set (see annexes for more details) in the case of an atomic two electron systems, together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
+We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) in the case of an atomic two electron systems, together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
-Once the matrix elements of $\tilde{H}[\mu]$ are built on a given MO basis, we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} it is expressed as a linear combination of all possible Slater determinants within a given Hilbert space defined with a MO basis) and use an non hermitian eigensolver to obtain both right and left eigenvectors. If not explicitly mentioned, the canonical RHF MOs are used in this work. 
+Once the matrix elements of $\tilde{H}[\mu]$ are built on a given MO basis, we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} $\Phi_\mu$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. If not explicitly mentioned, the canonical RHF MOs are used in this work. 
 The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
 
 \subsubsection{Numerical results: ground state energies}
@@ -557,13 +557,14 @@ The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5
 We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_0^\mu$ of $\tilde{H}[\mu]$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. 
 Several observations can be done from these data. First, because of the loose of the variational principle, $E_0^{\mu}$ can take values below the exact non relativistic energy, and the smaller the $\mu$, the more pronounced is such effect. 
 Nevertheless, one can also observe that, for each $\mu$, the error with respect to the reference energy gets smaller  
-when enlarging the basis set. Also, qualitatively, one can observe that there are two regimes of $\mu$: that ranging from $\mu=0.05$ and $\mu=0.3$ where the $E_0^\mu$ is always below $E_0$ and those larger than $\mu=0.35$ where $E_0^\mu$ converges from above, as if the variational principle still applied. 
-Second, as $\mu$ increases, the difference between $E_0^\mu$ and $E_0^\text{FCI}$ in a given basis set diminishes, 
-which is expected as in the limit $\mu \rightarrow \infty$, one obtains that  $\tilde{H}[\mu] \rightarrow H$. 
+when enlarging the basis set. Also, qualitatively, one can observe that there are two regimes of $\mu$: $\mu \in[0.05,0.7]$ where the $E_0^\mu$ is always below $E_0$ and $\mu\ge 0.7$ where $E_0^\mu$ converges from above, as if the variational principle still applied. 
+As $\mu$ increases, the difference between $E_0^\mu$ and $E_0^\text{FCI}$ in a given basis set diminishes, 
+which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\tilde{H}[\mu] \rightarrow H$. 
+
 Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ as long as $\mu \ge 0.2$. 
-To quantify better such observations, one can look at the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
-For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used. For $0.5\ge \mu \ge 1.0$ such accuracy is reached at the aug-cc-pVTZ level. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
-Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom, specially for $\mu \in [0.4, 1.0]$ where an error below 1mH is reached within the aug-cc-pVTZ basis set, whereas such an error is reached at the aug-cc-pV5Z basis set. 
+To quantify better such observations, one can identify the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
+For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ such the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
+Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
 \begin{figure*}
  \label{fig_conv_e_mu}
         \includegraphics[width=0.45\linewidth]{E_conv_basis_small_mu.pdf}
@@ -593,18 +594,22 @@ Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in
 \end{ruledtabular}
 \end{table*}
 
-\subsubsection{Numerical results: ground state eigenvectors}
+\subsection{Study of the ground state eigenvector}
 In Sec.\ref{sec:total_e} we shown the strong improvement of the speed of convergence of the total energy for the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=1.6$. 
 Nevertheless, one can wonder if this good behavior results from a kind of error cancellation or if there is indeed a deeper mathematical reason for such an improvement of speed of convergence. 
 Theoretically if, for a given value of $\mu$, $\tilde{H}[\mu]$ is perfectly well represented in a given basis set $\mathcal{B}$ (\textit{i.e.} $\tilde{H}[\mu]^{\basis} = H$), then all its eigenvalues coincide with that of the exact Hamiltonian (\textit{i.e.} developed in a complete basis set). If one focusses now on the exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$, it is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $j(r_{12},\mu)$ through 
 \begin{equation}
- \psiex(\br{}_1,\br{}_2) = e^{j(r_{12},\mu)} \phimu(\br{}_1,\br{}_2). 
+ \psiex(\br{}_1,\br{}_2) =  \frac{1}{\sqrt{\mathcal{N}^{\mu}}} e^{j(r_{12},\mu)} \phimu(\br{}_1,\br{}_2), 
 \end{equation}
-Therefore, having obtained in a given basis set $\basis$ the right eigenvector $\phimub$, one can estimate the exact ground state eigenvector by 
+where the normalization factor $\mathcal{N}^{\mu}$ is simply 
+\begin{equation}
+  \mathcal{N}^{\mu} = \matelem{\phimu}{e^{2 j(r_{12},\mu)}}{\phimu}.
+\end{equation}
+Therefore, having obtained in a given basis set $\basis$ the right eigenvector $\phimub$, one can estimate the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$ by 
 \begin{equation}
  \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{j(r_{12},\mu)}\phimub(\br{}_1,\br{}_2)
 \end{equation}
-where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is imply
+where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 j(r_{12},\mu)}}{\phimub}.
 \end{equation}

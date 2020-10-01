@@ -5,7 +5,7 @@ END_PROVIDER
 
 BEGIN_PROVIDER [integer, nr1_psi_ex]
  implicit none
- nr1_psi_ex = 5
+ nr1_psi_ex = 7
 END_PROVIDER 
 
 BEGIN_PROVIDER [double precision, r1_psi_ex, (3,nr1_psi_ex)]
@@ -16,6 +16,8 @@ BEGIN_PROVIDER [double precision, r1_psi_ex, (3,nr1_psi_ex)]
  r1_psi_ex(1,3) = 0.50d0
  r1_psi_ex(1,4) = 0.75d0
  r1_psi_ex(1,5) = 1.00d0
+ r1_psi_ex(1,6) = 1.50d0
+ r1_psi_ex(1,7) = 2.00d0
 END_PROVIDER 
 
 
@@ -30,6 +32,7 @@ END_PROVIDER
   do i = 1, ntheta_psi_ex
    r2_psi_ex(3,i,j) = r1_psi_ex(3,j)
    theta = theta_array_psi_ex(i,j)
+   r = r1_psi_ex(1,j) 
    r2_psi_ex(1,i,j) = r * dcos(theta)
    r2_psi_ex(2,i,j) = r * dsin(theta)
    r12_psi_ex(i,j) = dsqrt( (r1_psi_ex(1,j) - r2_psi_ex(1,i,j))**2.d0 +  (r1_psi_ex(2,j) - r2_psi_ex(2,i,j))**2.d0 + (r1_psi_ex(3,j) - r2_psi_ex(3,i,j))**2.d0 )
@@ -42,12 +45,7 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, psi_fci_array, (ntheta_psi_ex,nr1_psi_ex)]
  implicit none
  integer :: i , j
- do i = 1, N_states
-  do j = 1, N_det
-   psi_coef(j,i) =  CI_eigenvectors(j,i)
-  enddo
- enddo
- touch psi_coef
+ call diagonalize_CI
  double precision :: psi
  do j = 1, nr1_psi_ex
   do i = 1, ntheta_psi_ex
@@ -93,8 +91,9 @@ BEGIN_TEMPLATE
  print*,'output = ',trim(output)
  i_unit_output = getUnitAndOpen(output,'w')
  do i = 1, ntheta_psi_ex
-  write(i_unit_output,'($X00(F$X6.$X0,X))')theta_array_psi_ex(i,$X),r12_psi_ex(i,$X),array_psi_ex(i,$X), &
-                                        psi_fci_array(i,$X),psi_right_array(i,$X),                 &
+  write(i_unit_output,'(100(F16.10,X))')theta_array_psi_ex(i,$X),r12_psi_ex(i,$X),array_psi_ex(i,$X), & 
+                                        psi_fci_array(i,$X), &
+                                        psi_right_array(i,$X), &
                                         psi_right_jastrow_array(i,$X),psi_right_jastrow_norm_array(i,$X)
  enddo
 SUBST [ X]

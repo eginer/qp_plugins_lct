@@ -8,6 +8,9 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
  double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
  double precision, allocatable :: ao_ints(:)
  mu_in = mu_erf
+ double precision :: wall0,wall1
+ call wall_time(wall0)
+ print*,'Providing ao_two_e_eff_dr12_pot_array ...'
  PROVIDE ao_two_e_integrals_in_map ao_integrals_map
  !$OMP PARALLEL & 
  !$OMP DEFAULT(NONE) &
@@ -41,6 +44,8 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
  enddo
  !$OMP END DO
  !$OMP END PARALLEL
+ call wall_time(wall1)
+ print*,'ao_two_e_eff_dr12_pot_array provided in ',wall1 - wall0
 END_PROVIDER 
 
 BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_no_cycle, (ao_num,ao_num,ao_num,ao_num)]
@@ -87,6 +92,10 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_old, (mo_num,mo_nu
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
+ double precision :: wall0,wall1
+ provide ao_two_e_eff_dr12_pot_array
+ call wall_time(wall0)
+ print*,'Providing mo_two_e_eff_dr12_pot_array ...'
  mo_two_e_eff_dr12_pot_array_old = 0.d0
  allocate(mo_tmp_1(ao_num,ao_num,ao_num,mo_num))
  mo_tmp_1 = 0.d0
@@ -150,6 +159,8 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_old, (mo_num,mo_nu
   enddo
  enddo
  deallocate(mo_tmp_3)
+ call wall_time(wall1)
+ print*,'mo_two_e_eff_dr12_pot_array provided in ',wall1 - wall0
 
 END_PROVIDER 
 

@@ -47,17 +47,24 @@ END_PROVIDER
  if(read_rl_eigv)then
   reigvec_trans = 0.d0 
   leigvec_trans = 0.d0 
-  double precision, allocatable :: reigvec_trans_tmp(:,:),leigvec_trans(:,:)
+  double precision, allocatable :: reigvec_trans_tmp(:,:),leigvec_trans_tmp(:,:)
   allocate(reigvec_trans_tmp(N_det,N_states),leigvec_trans_tmp(N_det,N_states))
+  print*,'Reading the right/left eigenvectors in the EZFIO....'
    call ezfio_get_slat_rules_trans_reigvec_trans(reigvec_trans_tmp)
    call ezfio_get_slat_rules_trans_leigvec_trans(leigvec_trans_tmp)
+   reigvec_trans_norm = 0.d0
+   leigvec_trans_norm = 0.d0
    do i = 1, N_states
     do j = 1, N_det
      reigvec_trans(j,i) = reigvec_trans_tmp(j,i)
      leigvec_trans(j,i) = leigvec_trans_tmp(j,i)
+     reigvec_trans_norm(i) += reigvec_trans_tmp(j,i) * reigvec_trans_tmp(j,i)
+     leigvec_trans_norm(i) += leigvec_trans_tmp(j,i) * leigvec_trans_tmp(j,i)
+!     print*,j,reigvec_trans(j,i),leigvec_trans(j,i)
     enddo
    enddo
  else
+  print*,'Computing the left/right eigenvectors ...'
   character*1 :: JOBVL,JOBVR
   JOBVL = "V" ! computes the left  eigenvectors 
   JOBVR = "V" ! computes the right eigenvectors 
