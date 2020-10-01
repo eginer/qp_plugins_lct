@@ -27,6 +27,7 @@
 \newcommand{\phiex}[0]{\Phi^{\text{ex}}_0}
 \newcommand{\phimu}[0]{\Phi^{\text{ex},\mu}_0}
 \newcommand{\phimub}[0]{\Phi^{\mathcal{B},\mu}_0}
+\newcommand{\xhimub}[0]{X^{\mathcal{B},\mu}_0}
 \newcommand{\psimub}[0]{\Psi^{\mathcal{B},\mu}_0}
 \newcommand{\phiimub}[0]{\Phi^{\mathcal{B},\mu}_i}
 \newcommand{\basis}[0]{\mathcal{B}}
@@ -526,9 +527,6 @@ which means that all scalar electron-electron interaction have been replaced by 
 At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent but can be either repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
 Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$.  
 
-\subsubsection{The eigenvectors of $\tilde{H}[\mu]$}
-As shown in the previous section, the form of $\tilde{H}[\mu]$ depends on $\mu$, going from the usual repulsive hermitian Hamiltonian to a non hermitian operator which can have   
-
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
 The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
 Therefore, considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected in a given basis set by
@@ -536,11 +534,20 @@ Therefore, considering a given basis set $\basis$ and the corresponding projecto
  \tilde{H}[\mu]^{\basis} = P_\basis \tilde{H}[\mu] P_\basis,
 \end{equation}
 whose right eigenvectors and eigenvalues satisfy 
+In the present paper, we study the behaviour of $\tilde{H}[\mu]$ in the case of the isoelectronic series of the helium atom, and in that section we focus on the helium atom itself. 
+The first part of our study concerns the convergence of the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
+
+Considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected on $\basis$ by
 \begin{equation}
- \tilde{H}[\mu]^{\basis} \ket{\phimub} = E_i^{\basis}[\mu] \ket{\phimub}. 
+ \tilde{H}[\mu]^{\basis} = P_\basis \tilde{H}[\mu] P_\basis,
+\end{equation}
+and its eigenvalues $E_i^{\basis}[\mu]$ and right eigenvectors $\phiimub$ satisfy 
+\begin{equation}
+ \tilde{H}[\mu]^{\basis} \ket{\phimub} = E_i^{\basis}[\mu] \ket{\phiimub}. 
 \end{equation}
 
 As pointed in section \ref{sec:h_mu_lim}, by varying $\mu$ one can go from a relatively usual repulsive Hamiltonian at large $\mu$ (even though it is non hermitian an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
+As pointed in section \ref{sec:h_mu_lim}, even though $\tilde{H}[\mu]$ is still non hermitian as long as $\mu < \infty$, by varying $\mu$ one can change the nature of the electron-electron interaction in $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ from a repulsive and non divergent interaction at large $\mu$ (an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
 Considering such variation of $\tilde{H}[\mu]$ when varying $\mu$,  
 its projection into a basis set $\tilde{H}[\mu]^{\basis}$ will behave differently as a function of $\mu$ 
 and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenvalues $E_i^{\basis}[\mu]$. 
