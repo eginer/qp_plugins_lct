@@ -621,6 +621,28 @@ where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
   \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 j(r_{12},\mu)}}{\phimub}.
 \end{equation}
 
+Knowing that, one can directly compare $\psimub(\br{}_1,\br{}_2) $ in real space to the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$, which is approximated in the case of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits. 
+Therefore, we plotted cuttings of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cuttings used are the following: we set two electrons on a circle of radius $r$ from the nucleus, and use increasing values of $r$. 
+We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of the right eigenvector $\phimub(\br{}_1,\br{}_2)$, estimated exact wave function $\psimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ and $\mu=1.0$ (respectively) and compared to the exact wave function $\psiex(\br{}_1,\br{}_2)$ and FCI wave function for $r=0.5\,a.u.$. 
+From these figure, one can notice that: i) the right eigenvector $\phimub(\br{}_1,\br{}_2)$ converges faster than the FCI wave function with respect to the basis set, ii) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set, iii) that for $\mu=0.3$ the wave function $\phimub(\br{}_1,\br{}_2)$ increases while getting toward $r_{12}=0$, whereas it decreases for $\mu=1.0$ just as the FCI wave function, iii) the wave function $\phimub(\br{}_1,\br{}_2)$ is always larger that the FCI one when $r_{12}\approx 0$. 
+
+\begin{figure*}
+ \label{fig:mu_0.3_dz_3}
+        \includegraphics[width=0.45\linewidth]{He_mu_0_3_cusp_avdz_avtz_3.pdf}
+        \includegraphics[width=0.45\linewidth]{He_mu_0_3_cusp_avqz_av5z_3.pdf}\\
+        \caption{
+        Helium atom, radius $r=0.5$ a.u.: approximation of the exact wave function $\psimub(\br{}_1,\br{}_2)$ and right eigenvector $\phimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ in the AVDZ and AVTZ basis sets (left) and AVQZ and AV5Z (right). Comparison with the FCI wave function in the same basis sets and the estimated exact wave function $\psiex(\br{}_1,\br{}_2)$.  }
+\end{figure*}
+
+\begin{figure*}
+ \label{fig:mu_1.0_dz_3}
+        \includegraphics[width=0.45\linewidth]{He_mu_1_0_cusp_avdz_avtz_3.pdf}
+        \includegraphics[width=0.45\linewidth]{He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
+        \caption{
+        Helium atom, radius $r=0.5$ a.u.: approximation of the exact wave function $\psimub(\br{}_1,\br{}_2)$ and right eigenvector $\phimub(\br{}_1,\br{}_2)$ for $\mu=1.0$ in the AVDZ and AVTZ basis sets (left) and AVQZ and AV5Z (right). Comparison with the FCI wave function in the same basis sets and the estimated exact wave function $\psiex(\br{}_1,\br{}_2)$.  }
+\end{figure*}
+
+
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
