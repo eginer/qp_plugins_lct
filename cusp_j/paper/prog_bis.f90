@@ -4,7 +4,7 @@ program prog_bis
  integer :: i,nx
  double precision :: mu0,mu1,mu2,mu3,mu4,mu5,mu6
  double precision :: mu7, mu8, mu9,mu10,mu11, mu12, mu13, mu14
- xmax = 5.d0
+ xmax = 15.d0
  nx = 1000
  dx = xmax/dble(nx)
  x = dx

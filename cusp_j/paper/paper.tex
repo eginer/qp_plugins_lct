@@ -624,24 +624,43 @@ where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
 Knowing that, one can directly compare $\psimub(\br{}_1,\br{}_2) $ in real space to the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$, which is approximated in the case of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits. 
 Therefore, we plotted cuttings of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cuttings used are the following: we set two electrons on a circle of radius $r$ from the nucleus, and use increasing values of $r$. 
 We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of the right eigenvector $\phimub(\br{}_1,\br{}_2)$, estimated exact wave function $\psimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ and $\mu=1.0$ (respectively) and compared to the exact wave function $\psiex(\br{}_1,\br{}_2)$ and FCI wave function for $r=0.5\,a.u.$. 
-From these figure, one can notice that: i) the right eigenvector $\phimub(\br{}_1,\br{}_2)$ converges faster than the FCI wave function with respect to the basis set, ii) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set, iii) that for $\mu=0.3$ the wave function $\phimub(\br{}_1,\br{}_2)$ increases while getting toward $r_{12}=0$, whereas it decreases for $\mu=1.0$ just as the FCI wave function, iii) the wave function $\phimub(\br{}_1,\br{}_2)$ is always larger that the FCI one when $r_{12}\approx 0$. 
-
 \begin{figure*}
  \label{fig:mu_0.3_dz_3}
-        \includegraphics[width=0.45\linewidth]{He_mu_0_3_cusp_avdz_avtz_3.pdf}
-        \includegraphics[width=0.45\linewidth]{He_mu_0_3_cusp_avqz_av5z_3.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/He_mu_0_3_cusp_avdz_avtz_3.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/He_mu_0_3_cusp_avqz_av5z_3.pdf}\\
         \caption{
         Helium atom, radius $r=0.5$ a.u.: approximation of the exact wave function $\psimub(\br{}_1,\br{}_2)$ and right eigenvector $\phimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ in the AVDZ and AVTZ basis sets (left) and AVQZ and AV5Z (right). Comparison with the FCI wave function in the same basis sets and the estimated exact wave function $\psiex(\br{}_1,\br{}_2)$.  }
 \end{figure*}
 
 \begin{figure*}
  \label{fig:mu_1.0_dz_3}
-        \includegraphics[width=0.45\linewidth]{He_mu_1_0_cusp_avdz_avtz_3.pdf}
-        \includegraphics[width=0.45\linewidth]{He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/He_mu_1_0_cusp_avdz_avtz_3.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
         \caption{
         Helium atom, radius $r=0.5$ a.u.: approximation of the exact wave function $\psimub(\br{}_1,\br{}_2)$ and right eigenvector $\phimub(\br{}_1,\br{}_2)$ for $\mu=1.0$ in the AVDZ and AVTZ basis sets (left) and AVQZ and AV5Z (right). Comparison with the FCI wave function in the same basis sets and the estimated exact wave function $\psiex(\br{}_1,\br{}_2)$.  }
 \end{figure*}
 
+
+From these figure, one can notice that: 
+i) the right eigenvector $\phimub(\br{}_1,\br{}_2)$ converges faster than the FCI wave function with respect to the basis set, 
+ii) that for $\mu=0.3$ the wave function $\phimub(\br{}_1,\br{}_2)$ present a maximum at $r_{12}=0$, whereas for $\mu=1.0$ and the FCI wave function it has a minimum, 
+iii) the wave function $\phimub(\br{}_1,\br{}_2)$ is always larger that the FCI one when $r_{12}\approx 0$. 
+iv) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set, 
+
+The understanding of such observations can be provided by the mathematical and physical investigation of the construction of $\tilde{H}[\mu]$. 
+i) The shape of the Jastrow factor $j(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunction do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
+Nevertheless, one can also remark that for $\mu > 0.5$, the speed of convergence deteriorates as $\mu$ increases, even though it remains finite. This can be explained by the fact that even if $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ remains bounded from above, when $\mu$ is large such operator is poorly represented in a finite basis set. 
+
+ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is attractive for $\mu=0.3$ when $r_{12}\approx 0$ whereas it is repulsive when $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
+\begin{figure*}
+ \label{fig_wee_compare}
+        \includegraphics[width=1.00\linewidth]{w_ee_compare.pdf}
+%        \includegraphics[width=0.45\linewidth]{plots/He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
+        \caption{
+        Effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=0.3$ and $\mu=1.0$, compared to the usual $1/r_{12}$ Coulomb interaction.}
+\end{figure*}
+iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) <\frac{1}{r_{12}}$, the value of the eigenvector of $\phimub(\br{}_1,\br{}_2)$ is necessary larger than the FCI wave function at $r_{12}=0$ as in the latter the interaction is more repulsive. 
+iv) 
 
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}

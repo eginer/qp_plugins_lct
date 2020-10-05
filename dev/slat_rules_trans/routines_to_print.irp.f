@@ -191,36 +191,36 @@ subroutine print_mos
 end
 
 subroutine non_hermit_term(r1,r2,i,j,mu_in,d_d_r12)
-implicit none
-integer, intent(in) :: i,j
-double precision, intent(in) :: r1(3), r2(3) , mu_in
-double precision, intent(out):: d_d_r12
-double precision :: mos_array_r1(mo_num),mos_grad_array_r1(3,mo_num)
-double precision :: mos_array_r2(mo_num),mos_grad_array_r2(3,mo_num)
-double precision :: r12(3), dist_r12, dist_vec(3),poly(3)
-double precision :: erf_mu_r12,derf_mu_x,poly_tot(3)
-integer :: k
-call give_all_mos_and_grad_at_r(r1,mos_array_r1,mos_grad_array_r1)
-call give_all_mos_and_grad_at_r(r2,mos_array_r2,mos_grad_array_r2)
-dist_r12 = 0.d0
-do k = 1, 3
- r12(k) = r1(k) - r2(k) 
- dist_r12 += r12(k)*r12(k)
-enddo
-dist_r12 = dsqrt(dist_r12)
-dist_vec(1) = dsqrt(r12(2)*r12(2) + r12(3)*r12(3))
-dist_vec(2) = dsqrt(r12(1)*r12(1) + r12(3)*r12(3))
-dist_vec(3) = dsqrt(r12(1)*r12(1) + r12(2)*r12(2))
-erf_mu_r12 = derf_mu_x(mu_in,dist_r12)
-call inv_r_times_poly(r12, dist_r12, dist_vec, poly)
-! poly_tot(1) = (1 - erf(mu * r12))/(2 * r12) (x1 - x2)
-do k = 1, 3
- poly_tot(k) = 0.5d0 * (poly(k) - erf_mu_r12 * r12(k) )
-enddo
-d_d_r12 = 0.d0
-do k = 1, 3
- d_d_r12 += poly_tot(k) * (mos_grad_array_r1(k,i) - mos_grad_array_r2(k,j) )
-enddo
+ implicit none
+ integer, intent(in) :: i,j
+ double precision, intent(in) :: r1(3), r2(3) , mu_in
+ double precision, intent(out):: d_d_r12
+ double precision :: mos_array_r1(mo_num),mos_grad_array_r1(3,mo_num)
+ double precision :: mos_array_r2(mo_num),mos_grad_array_r2(3,mo_num)
+ double precision :: r12(3), dist_r12, dist_vec(3),poly(3)
+ double precision :: erf_mu_r12,derf_mu_x,poly_tot(3)
+ integer :: k
+ call give_all_mos_and_grad_at_r(r1,mos_array_r1,mos_grad_array_r1)
+ call give_all_mos_and_grad_at_r(r2,mos_array_r2,mos_grad_array_r2)
+ dist_r12 = 0.d0
+ do k = 1, 3
+  r12(k) = r1(k) - r2(k) 
+  dist_r12 += r12(k)*r12(k)
+ enddo
+ dist_r12 = dsqrt(dist_r12)
+ dist_vec(1) = dsqrt(r12(2)*r12(2) + r12(3)*r12(3))
+ dist_vec(2) = dsqrt(r12(1)*r12(1) + r12(3)*r12(3))
+ dist_vec(3) = dsqrt(r12(1)*r12(1) + r12(2)*r12(2))
+ erf_mu_r12 = derf_mu_x(mu_in,dist_r12)
+ call inv_r_times_poly(r12, dist_r12, dist_vec, poly)
+ ! poly_tot(1) = (1 - erf(mu * r12))/(2 * r12) (x1 - x2)
+ do k = 1, 3
+  poly_tot(k) = 0.5d0 * (poly(k) - erf_mu_r12 * r12(k) )
+ enddo
+ d_d_r12 = 0.d0
+ do k = 1, 3
+  d_d_r12 += poly_tot(k) * (mos_grad_array_r1(k,i) - mos_grad_array_r2(k,j) )
+ enddo
 end
 
 subroutine plot_on_top_left_right
