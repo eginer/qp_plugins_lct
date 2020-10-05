@@ -8,26 +8,35 @@ subroutine local_energy_htilde(r1,r2,mu_in,nstates,psi_occ,coefs,ndet,e_loc,kin_
  double precision, intent(in) :: coefs(ndet,nstates)
 
 
+ double precision :: r12,r,w_ee_eff
+ integer :: i,istate
  double precision :: grad_psi(3,nstates), lapl_psi(3,nstates), d_d_r12(nstates)
  call get_two_e_general_grad_lapl_psi_at_r1r2(r1,r2,mu_in,coefs,nstates,psi_occ,ndet,psi,grad_psi,lapl_psi,d_d_r12)
  do istate = 1, nstates
   kin_e(istate) = -0.5d0 * ( lapl_psi(1,istate) + lapl_psi(2,istate) + lapl_psi(3,istate) ) 
   non_hermit_e(istate) = - d_d_r12(istate)
  enddo
- double precision :: r12,r,w_ee_eff
- r12 = (r1(1) - r2(1))**2.D0 + (r1(2) - r2(2))**2.D0 + (r1(3) - r2(3))**2.D0
- r12 = dsqrt(r12)
- pot_ee = w_ee_eff(r12,mu_in)
- r = 0.d0
- integer :: i,istate
- pot_en = 0.d0
- do i = 1, nucl_num
-  r = dsqrt((r1(1) - nucl_coord_transp(1,i))**2.D0 + (r1(2) - nucl_coord_transp(2,i))**2.D0 + (r1(3) - nucl_coord_transp(3,i))**2.D0)
-  pot_en += -nucl_charge(i) / r
-  r = dsqrt((r2(1) - nucl_coord_transp(1,i))**2.D0 + (r2(2) - nucl_coord_transp(2,i))**2.D0 + (r2(3) - nucl_coord_transp(3,i))**2.D0)
-  pot_en += -nucl_charge(i) / r
- enddo
-
+ if(psi_occ(2,1).gt.0)then
+  r12 = (r1(1) - r2(1))**2.D0 + (r1(2) - r2(2))**2.D0 + (r1(3) - r2(3))**2.D0
+  r12 = dsqrt(r12)
+  pot_ee = w_ee_eff(r12,mu_in)
+  r = 0.d0
+  pot_en = 0.d0
+  do i = 1, nucl_num
+   r = dsqrt((r1(1) - nucl_coord_transp(1,i))**2.D0 + (r1(2) - nucl_coord_transp(2,i))**2.D0 + (r1(3) - nucl_coord_transp(3,i))**2.D0)
+   pot_en += -nucl_charge(i) / r
+   r = dsqrt((r2(1) - nucl_coord_transp(1,i))**2.D0 + (r2(2) - nucl_coord_transp(2,i))**2.D0 + (r2(3) - nucl_coord_transp(3,i))**2.D0)
+   pot_en += -nucl_charge(i) / r
+  enddo
+ else
+  pot_ee = 0.d0
+  pot_en = 0.d0
+  do i = 1, nucl_num
+   r = dsqrt((r1(1) - nucl_coord_transp(1,i))**2.D0 + (r1(2) - nucl_coord_transp(2,i))**2.D0 + (r1(3) - nucl_coord_transp(3,i))**2.D0)
+   pot_en += -nucl_charge(i) / r
+  enddo
+ endif
+ 
  do istate = 1, nstates
   e_loc(istate) = pot_en + pot_ee + (non_hermit_e(istate) + kin_e(istate))/psi(istate)
  enddo
@@ -59,11 +68,21 @@ subroutine get_two_e_general_grad_lapl_psi_at_r1r2(r1,r2,mu_in,coefs,nstates,psi
   do i = 1, ndet
    i_up   = psi_occ(1,i)
    i_down = psi_occ(2,i)
-   psi(istate) += mos_array_r1(i_up) * mos_array_r2(i_down) * coefs(i,istate)
-   do m = 1, 3
-    grad_psi(m,istate) += coefs(i,istate) * (mos_grad_array_r1(m,i_up) + mos_grad_array_r2(m,i_down))
-    lapl_psi(m,istate) += coefs(i,istate) * (mos_lapl_array_r1(m,i_up) + mos_lapl_array_r2(m,i_down))
-   enddo
+   if(i_down.gt.0)then
+    psi(istate) += mos_array_r1(i_up) * mos_array_r2(i_down) * coefs(i,istate)
+    do m = 1, 3
+     grad_psi(m,istate) += coefs(i,istate) * (mos_grad_array_r1(m,i_up)   * mos_array_r2(i_down) & 
+                                            + mos_grad_array_r2(m,i_down) * mos_array_r1(i_up)   )
+     lapl_psi(m,istate) += coefs(i,istate) * (mos_lapl_array_r1(m,i_up)   * mos_array_r2(i_down) &  
+                                            + mos_lapl_array_r2(m,i_down) * mos_array_r1(i_up)   )    
+    enddo
+   else
+    psi(istate) += mos_array_r1(i_up) * coefs(i,istate)
+    do m = 1, 3
+     grad_psi(m,istate) += coefs(i,istate) * mos_grad_array_r1(m,i_up)
+     lapl_psi(m,istate) += coefs(i,istate) * mos_lapl_array_r1(m,i_up)
+    enddo
+   endif
   enddo
  enddo
 
@@ -90,9 +109,14 @@ subroutine get_two_e_general_grad_lapl_psi_at_r1r2(r1,r2,mu_in,coefs,nstates,psi
   do i = 1, ndet
    i_up   = psi_occ(1,i)
    i_down = psi_occ(2,i)
-   do m = 1, 3
-    d_d_r12(istate) += poly_tot(m) * (mos_grad_array_r1(m,i_up) - mos_grad_array_r2(m,i_down) ) * coefs(i,istate)
-   enddo
+   if(i_down.gt.0)then
+    do m = 1, 3
+     d_d_r12(istate) += poly_tot(m) * (mos_grad_array_r1(m,i_up)   * mos_array_r2(i_down)  &
+                                     - mos_grad_array_r2(m,i_down) * mos_array_r1(i_up )) * coefs(i,istate)
+    enddo
+   else
+    d_d_r12 = 0.d0
+   endif
   enddo
  enddo
 
@@ -115,7 +139,11 @@ subroutine  give_occ_two_e_psi(dets,ndet,psi_occ)
  do i = 1, ndet
   call bitstring_to_list_ab(dets(1,1,i), occ, n_occ_ab, N_int)
   psi_occ(1,i) = occ(1,1)
-  psi_occ(2,i) = occ(1,2)
+  if(n_occ_ab(2)==0)then
+   psi_occ(2,i) = -1
+  else
+   psi_occ(2,i) = occ(1,2)
+  endif
  enddo
 end
 
