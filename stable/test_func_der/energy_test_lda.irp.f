@@ -37,7 +37,7 @@ subroutine int_potential_x_lda_test (delta_dm_a, delta_dm_b, int_vx_lda_test)
    weight = final_weight_at_r_vector(i)
 
    call de_dn_at_r(r, d_e_d_n)
-   int_vx_lda_test += (delta_dm_a(i) + delta_dm_b(i))*weight*d_e_d_n*0.5d0
+   int_vx_lda_test += (delta_dm_a(i) + delta_dm_b(i))*weight*d_e_d_n
   enddo
 end
 
@@ -58,7 +58,7 @@ subroutine de_dn_at_r(r, d_e_d_n)
 
  do k = 1, mo_num
   do l = 1, mo_num
-   d_e_d_n += (potential_x_alpha_mo_lda(l,k) + potential_x_beta_mo_lda(l,k)) * mo_k(k) * mo_l(l) * 0.5d0
+   d_e_d_n += (potential_x_alpha_mo_lda(l,k) + potential_x_beta_mo_lda(l,k)) * mo_k(k) * mo_l(l)! * 0.5d0
   enddo
  enddo
 
@@ -83,8 +83,8 @@ subroutine delta_density_for_energy_test (delta_rho_a, delta_rho_b, delta_rho_11
    r(3) = final_grid_points(3,i)
    call give_all_mos_at_r(r, mo_i)
 
-   delta_rho_a(i) = delta_rho_11 * mo_i(1) * mo_i(1)  *0.5d0 !delta_rho_ij = delta_rho_11 = kro(i1)kro(j1)*epsilon
-   delta_rho_b(i) = delta_rho_11 * mo_i(1) * mo_i(1)  *0.5d0
+   delta_rho_a(i) = delta_rho_11 * mo_i(1) * mo_i(1)!  *0.5d0 !delta_rho_ij = delta_rho_11 = kro(i1)kro(j1)*epsilon
+   delta_rho_b(i) = delta_rho_11 * mo_i(1) * mo_i(1)!  *0.5d0
 
   enddo
 end
