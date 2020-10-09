@@ -1,19 +1,36 @@
-subroutine energy_x_lda_test (rho_a, rho_b,ex_lda_test)
+subroutine energy_x_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, ex_pbe_test)
  implicit none
  BEGIN_DOC
 ! exchange energy with the lda functional
  END_DOC
- integer :: istate,i,j
- double precision, intent(in) :: rho_a(n_points_final_grid), rho_b(n_points_final_grid)
- double precision, intent(out) :: ex_lda_test
- double precision :: weight
- double precision :: e_x,vx_a,vx_b
+ integer :: i,j,m
+ double precision, intent(in) :: rho_a(n_points_final_grid), rho_b(n_points_final_grid), grad_rho_a(n_points_final_grid), grad_rho_b((n_points_final_grid)
+ double precision, intent(out) :: ex_pbe_test
+ double precision :: mu,weight
+ double precision :: e_x, e_c
+ double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
+ double precision :: vc_rho_a, vc_rho_b, vx_rho_a, vx_rho_b
+ double precision :: vx_grad_rho_a_2, vx_grad_rho_b_2, vx_grad_rho_a_b, vc_grad_rho_a_2, vc_grad_rho_b_2, vc_grad_rho_a_b
+
  
- ex_lda_test = 0.d0
+ ex_pbe_test = 0.d0
   do i = 1, n_points_final_grid
    weight = final_weight_at_r_vector(i)
-   call ex_lda(rho_a(i),rho_b(i),e_x,vx_a,vx_b)
-   ex_lda_test += weight * e_x
+   grad_rho_a_2 = 0.d0
+   grad_rho_b_2 = 0.d0
+   grad_rho_a_b = 0.d0
+   do m = 1, 3
+    grad_rho_a_2 += grad_rho_a(m) * grad_rho_a(m)
+    grad_rho_b_2 += grad_rho_b(m) * grad_rho_b(m)
+    grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
+   enddo
+
+                             ! inputs
+   call GGA_sr_type_functionals(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,                 &  ! outputs exchange
+                             ex,vx_rho_a,vx_rho_b,vx_grad_rho_a_2,vx_grad_rho_b_2,vx_grad_rho_a_b, &  ! outputs correlation
+                             ec,vc_rho_a,vc_rho_b,vc_grad_rho_a_2,vc_grad_rho_b_2,vc_grad_rho_a_b  )
+   ex_pbe_test += ex * weight
+ 
   enddo
 end
 
