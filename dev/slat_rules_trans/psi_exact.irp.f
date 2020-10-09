@@ -45,7 +45,7 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, psi_fci_array, (ntheta_psi_ex,nr1_psi_ex)]
  implicit none
  integer :: i , j
- call diagonalize_CI
+!call diagonalize_CI
  double precision :: psi
  do j = 1, nr1_psi_ex
   do i = 1, ntheta_psi_ex

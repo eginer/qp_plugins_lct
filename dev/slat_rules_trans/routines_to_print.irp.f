@@ -22,6 +22,7 @@ subroutine print_eigv
  print*,'******************'
  print*,'******************'
  print*,'******************'
+ print*,'Overlap betwwen psi_coef and the right eigenvector = ',overlap_psi_det_r_eigevec
  print*,'Eigenvectors '
  print*,'******************'
  print*,'Right eigenvector             Left eigenvector               psi_coef'

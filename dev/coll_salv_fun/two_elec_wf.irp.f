@@ -8,7 +8,7 @@ BEGIN_PROVIDER [integer, occ_two_e_psi, (2, N_det)]
   stop
  endif
  do i = 1, N_det
-  call bitstring_to_list_ab(psi_det_sorted(1,1,i), occ, n_occ_ab, N_int)
+  call bitstring_to_list_ab(psi_det(1,1,i), occ, n_occ_ab, N_int)
   occ_two_e_psi(1,i) = occ(1,1)
   occ_two_e_psi(2,i) = occ(1,2)
  enddo
@@ -29,7 +29,7 @@ subroutine get_two_e_psi_at_r1r2(r1,r2,psi)
   do i = 1, N_det
    i_up   = occ_two_e_psi(1,i)
    i_down = occ_two_e_psi(2,i)
-   psi(istate) += mos_array_r1(i_up) * mos_array_r2(i_down) * psi_coef_sorted(i,istate)
+   psi(istate) += mos_array_r1(i_up) * mos_array_r2(i_down) * psi_coef(i,istate)
   enddo
  enddo
 

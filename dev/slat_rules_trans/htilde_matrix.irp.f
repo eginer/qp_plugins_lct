@@ -273,3 +273,19 @@ subroutine test_overlap_matrix
   write(*,'(1000(F16.12,X))')overlap_lr(i,:)
  enddo
 end
+
+BEGIN_PROVIDER [double precision, overlap_psi_det_r_eigevec, (N_states)]
+ implicit none
+ double precision :: accu
+ BEGIN_DOC
+! overlap between psi_det and the right eigenvectors of Htilde
+ END_DOC
+ integer :: i,j
+ do i = 1, N_states
+  accu = 0.d0
+  do j = 1, N_det
+   accu += psi_coef(j,i) * reigvec_trans(j,i)
+  enddo
+  overlap_psi_det_r_eigevec(i) = accu
+ enddo
+END_PROVIDER 

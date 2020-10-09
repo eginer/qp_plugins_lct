@@ -212,6 +212,7 @@ Let us write the Hamiltonian of the He atom in the ${\bf r}_{12} = \big|{\bf r}_
 where 
 \begin{equation}
  \begin{aligned}
+ \label{def:h_c}
  h_c = &-\frac{1}{2} \sum_{i=1}^2 \bigg(\deriv{}{r_i}{2} + \frac{2}{r_i} \deriv{}{r_i}{} + \frac{2 Z}{r_i}\bigg) \\
      &-\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} \bigg) \\
      &-\bigg( \frac{\bd{r_1}}{r_1} \cdot \frac{\bd{r_{12}} }{r_{12}}  \deriv{}{r_1}{} + 
@@ -237,21 +238,21 @@ Let us compute the action of $\mathcal{T}[j]$ on a general function $\phi(\br{}_
  \mathcal{T}[j]\phi(\br{}_1,\br{}_2) & =- e^{-j(r_{12})} \bigg[ \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{}\bigg]  e^{j(r_{12})} \phi(\br{}_1,\br{}_2) \\ 
                             &=  -\deriv{\phi(\br{}_1,\br{}_2)}{r_{12}}{2} - \frac{2}{r_{12}} \deriv{\phi(\br{}_1,\br{}_2)}{r_{12}}{} \\
   &- 2 \deriv{j(r_{12})}{r_{12}}{} \deriv{\phi(\br{}_1,\br{}_2)}{r_{12}}{} \\ 
-  &- \bigg[ \frac{2}{r_{12}} \deriv{j(r_{12})}{r_{12}}{}  + \deriv{j(r_{12})}{r_{12}}{2} + \bigg( \deriv{j(r_{12})}{r_{12}}{} \bigg)^2\bigg] \phi(r_{12}). 
+  &- \bigg[ \frac{2}{r_{12}} \deriv{j(r_{12})}{r_{12}}{}  + \deriv{j(r_{12})}{r_{12}}{2} + \bigg( \deriv{j(r_{12})}{r_{12}}{} \bigg)^2\bigg] \phi(\br{}_1,\br{}_2). 
  \end{aligned}
 \end{equation}
 Now, by defining the following operators 
 \begin{equation}
  \label{eq:def_tt}
- \tilde{t}[j] = -2 \deriv{j}{r_{12}}{} \deriv{}{r_{12}}{},
+ \tilde{t}[j] = -2 \deriv{j(r_{12})}{r_{12}}{} \deriv{}{r_{12}}{},
 \end{equation}
 \begin{equation}
  \label{eq:def_wt}
- \tilde{W}[j] = -\frac{2}{r_{12}} \deriv{j}{r_{12}}{}  , 
+ \tilde{W}[j] = -\frac{2}{r_{12}} \deriv{j(r_{12})}{r_{12}}{}  , 
 \end{equation}
 \begin{equation}
  \label{eq:def_wt}
- \tilde{w}[j] = -\deriv{j}{r_{12}}{2} - \bigg( \deriv{j}{r_{12}}{} \bigg)^2. 
+ \tilde{w}[j] = -\deriv{j(r_{12})}{r_{12}}{2} - \bigg( \deriv{j(r_{12})}{r_{12}}{} \bigg)^2. 
 \end{equation}
 one can write the Similarity transformed Hamiltonian  as
 \begin{equation}
@@ -262,30 +263,34 @@ ore more explicitly
 \begin{equation}
  \tilde{H}[j] = h_c + \frac{1}{r_{12}}\bigg( 1 - 2 \deriv{j(r_{12})}{r_{12}}{}\bigg) + \tilde{t}[j] + \tilde{w}[j] .
 \end{equation}
-$\tilde{H}[j]$, because of the first-order differential operator in $\tilde{t}[j]$, is then non-hermitian.  
+$\tilde{H}[j]$, because of the first-order differential operator in $\tilde{t}[j]$, is then non-hermitian,   
+and the effective potential $ \frac{1}{r_{12}}  + \tilde{W}[j] + \tilde{w}[j]$ in $\tilde{H}[j]$ only depends on the shape of $j(r_{12})$. 
 
 \subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
 \label{sec:cusp}
-The exact ground state wave function $\psiex$ of the usual Hamiltonian must satisfy the Schroedinger equation in real space 
+Having established the general form of the transcorrelated Hamiltonian $\tilde{H}[j]$, in the case of the helium atom, one can then study the behaviour of the latter when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
+The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different conditions that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
+
+In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
 \begin{equation}
  H \psiex(\br{}_1,\br{}_2) = E_0 \psiex(\br{}_1,\br{}_2)\quad \forall (\br{}_1,\br{}_2).
 \end{equation}
-When looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $H \psiex(\br{}_1,\br{}_2)$ must remain finite, which translates into
+When looking at $r_{12}\approx 0$, all terms multiplying $\frac{1}{r_{12}}$ in $H \psiex(\br{}_1,\br{}_2)$ must remain finite, which, according to Eq.\eqref{def:h_c}, translates into
 \begin{equation}
  \label{eq:cusp_0}
- \lim_{r_{12}\rightarrow \infty}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
 \end{equation}
 or equivalently by multiplying by $r_{12}$
 \begin{equation}
- \lim_{r_{12}\rightarrow \infty}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
+ \lim_{r_{12}\rightarrow 0}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
 \end{equation}
-which translates into the famous cusp condition of Kato\cite{Kat-CPAM-57}, 
+which translates into the famous cusp condition for antiparallel spins of Kato\cite{Kat-CPAM-57}, 
 \begin{equation}
  \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
 \end{equation} 
 For a pedagogical and general introduction to the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
 
-Regarding now the similarity transformed Hamiltonians, their exact eigenvectors must also satisfy an eigenvalue equation. For instance, the right ground-state eigenvector becomes  
+Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
 \begin{equation}
  \label{eq:hpi0_ex}
  \tilde{H}[j] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
@@ -294,9 +299,9 @@ Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms
 which involves also the term $\tilde{W}[j]$ in $\tilde{H}[j]$ (see Eq.\eqref{eq:def_wt} and \eqref{eq:ht_phi}. Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
 \begin{equation}
  \label{eq:cusp_phi_0}
- \bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{j(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{j(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
 \end{equation}
-Interestingly, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{j(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction modified by the presence of the Jastrow factor in $\tilde{H}[j]$. 
+Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{j(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction modified by the presence of the Jastrow factor in $\tilde{H}[j]$. 
 Therefore, as long as one imposes that 
 \begin{equation}
  \label{eq:cusp_phi_1}
@@ -320,7 +325,7 @@ In practice, RS-DFT introduces a self-consistent Schroedinger-like equation whic
 Applied to a two electron system and looking in regions where $r_{12}\approx 0$, the leading terms of the self-consistent Schroedinger-like equation of RS-DFT reads 
 \begin{equation}
  \label{eq:cusp_psi_mu_0}
- \lim_{r_{12}\rightarrow \infty}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
 \end{equation}
 and as the long-range interaction is non divergent at $r_{12}=0$ as long as $\mu$ remains finite 
 \begin{equation}
@@ -333,6 +338,8 @@ one obtains that
 \end{equation}
 which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, because they deal with an effective non-divergent interaction. 
 
+Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
+
 \subsection{A new form of Jastrow factor $j(\mu,r_{12})$ mimicking a long-range interaction}
 In section \ref{sec:cusp} we reviewed the forms of limit conditions at $r_{12}=0$ involved in different eigenvalue equations, which of course depends on the nature of the interaction at $r_{12}=0$. 
 In that section we derive a new Jastrow factor inspired by the limit condition of the similarity transformed Hamiltonian (see Eq.\eqref{eq:cusp_phi_0}) which mimics that of RS-DFT (see Eq.\eqref{eq:cusp_psi_mu_0}), at least at leading order. 
@@ -341,7 +348,7 @@ Eq. \eqref{eq:ht_phi} gives the similarity transformed Hamiltonian for an arbitr
 and with respect to the usual Hamiltonian, $\tilde{H}[j]$ contains two new classes of terms: 
 a new electron-electron potential $\tilde{w}[j]+ \tilde{W}[j]$ and a new differential operator  $\tilde{t}[j]$. 
 Of course, these new terms depends on the explicit form of the Jastrow factor $j(r_{12})$ chosen. 
-Now, we impose the form of $j(r_{12})$ such that it mimics, at leading order, the long-range effective interaction of RS-DFT. 
+Now, we impose the form of $j(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction of RS-DFT. 
 Mathematically, this conditions implies that 
 \begin{equation}
  \begin{aligned}
@@ -371,17 +378,19 @@ Therefore, the right eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and
  \tilde{H}[\mu] \phimu(\br{}_{1},\br{}_{2}) = E_0 \phimu(\br{}_{1},\br{}_{2}), 
 \end{equation}
 where $E_0$ is the exact ground state energy. 
+As $\tilde{H}[\mu]$ originates from a similarity transformation, it conserves the same spectrum as $H$ as long as it is developed in a complete basis set. 
+
 
 \subsubsection{A few properties of $j(r_{12};\mu)$}
 The new Jastrow $j(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which controls the value of the leading term of the effective interaction at $r_{12}=0$ (see Eq.\eqref{def_j_00}). 
 To understand the physical content together with the mathematical properties of $j(r_{12};\mu)$, 
-one must keep in mind that the complete correlating factor $\mathcal{J}(r_{12},\mu)$ is 
+one must keep in mind that the complete correlating factor $\mathcal{J}(r_{12};\mu)$ is 
 \begin{equation}
- \mathcal{J}(r_{12},\mu) = \text{exp}\bigg(j(r_{12};\mu)\bigg),
+ \mathcal{J}(r_{12};\mu) = \text{exp}\bigg(j(r_{12};\mu)\bigg),
 \end{equation}
 and that the exact wave function $\psiex(\br{}_1,\br{}_2)$ is formally expressed as 
 \begin{equation}
- \psiex(\br{}_1,\br{}_2) = \mathcal{J}(r_{12},\mu) \phimu(\br{}_{1},\br{}_{2}).  
+ \psiex(\br{}_1,\br{}_2) = \mathcal{J}(r_{12};\mu) \phimu(\br{}_{1},\br{}_{2}).  
 \end{equation}
 From Eq.\eqref{eq:def_j} we can notice that 
 \begin{equation}
@@ -405,7 +414,7 @@ which leads for $\mathcal{J}(r_{12},\mu)$
  \label{eq:bigJ_dl}
  \mathcal{J}(r_{12};\mu) = e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2} + o(r_{12}^4) .
 \end{equation}
-Therefore, one can Taylor expand the exact wave function in the vicinity of $\br{}_1$ for small $r_{12}$ 
+Therefore, one can Taylor expand the exact wave function in the vicinity of $\br{}_1$ for small $r_{12}$, and noticing that $\phiex(\br{}_1,\br{}_2) $ is cusp less, one obtains 
 \begin{equation}
  \label{eq:psi0_ex_dl}
  \psiex(\br{}_1,\br{}_2) = \phiex(\br{}_1,\br{}_1)e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2} + o(r_{12}^4) .
@@ -419,14 +428,14 @@ The second term in \eqref{eq:bigJ_dl} is linked to the cusp condition.
 Indeed, as shown in section \ref{sec:cusp}, $\phiex(\br{}_1,\br{}_2)$ does not have a cusp, and therefore $\mathcal{J}(r_{12};\mu)$ mus restore it. This term is imposed by the term $\frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg)$ in the Jastrow factor. 
 The last term in Eq.\eqref{eq:bigJ_dl} modifies the curvature of the Coulomb hole. 
 
-Coming now to the behaviour of $j(r_{12};\mu)$as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, together with that of $\mathcal{J}(r_{12},\mu)$. 
+Coming now to the behaviour of $j(r_{12};\mu)$as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, together with that of $\mathcal{J}(r_{12};\mu)$. 
 \begin{figure*}
  \label{fig_j_mu}
         \includegraphics[width=0.45\linewidth]{small_mu_j.pdf}
         \includegraphics[width=0.45\linewidth]{small_mu_exp_j.pdf}\\
         \caption{Shape of $j(r_{12};\mu)$ (up) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(j(r_{12};\mu) \bigg) $ (bottom) for different values of $\mu$.}
 \end{figure*}
-From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $j(r_{12};\mu)$, ii) the larger the $\mu$, the closer $j(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function. 
+From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $j(r_{12};\mu)$, ii) the larger the $\mu$, the closer $j(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
 
 
 \subsection{Explicit form of  $\tilde{H}[\mu]$ and some of its properties}
@@ -545,6 +554,7 @@ and its eigenvalues $E_i^{\basis}[\mu]$ and right eigenvectors $\phiimub$ satisf
 \begin{equation}
  \tilde{H}[\mu]^{\basis} \ket{\phimub} = E_i^{\basis}[\mu] \ket{\phiimub}. 
 \end{equation}
+As long as the basis set $\basis$ is incomplete, because of its non hermitian nature, $\tilde{H}[\mu]^{\basis}$ looses the variational principle and therefore its eigenvalues have no reasons to be bounded from below.  
 
 As pointed in section \ref{sec:h_mu_lim}, by varying $\mu$ one can go from a relatively usual repulsive Hamiltonian at large $\mu$ (even though it is non hermitian an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
 As pointed in section \ref{sec:h_mu_lim}, even though $\tilde{H}[\mu]$ is still non hermitian as long as $\mu < \infty$, by varying $\mu$ one can change the nature of the electron-electron interaction in $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ from a repulsive and non divergent interaction at large $\mu$ (an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
@@ -648,19 +658,21 @@ iii) the wave function $\phimub(\br{}_1,\br{}_2)$ is always larger that the FCI 
 iv) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set, 
 
 The understanding of such observations can be provided by the mathematical and physical investigation of the construction of $\tilde{H}[\mu]$. 
-i) The shape of the Jastrow factor $j(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunction do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
+
+i) The shape of the Jastrow factor $j(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu < \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunctions do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
 Nevertheless, one can also remark that for $\mu > 0.5$, the speed of convergence deteriorates as $\mu$ increases, even though it remains finite. This can be explained by the fact that even if $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ remains bounded from above, when $\mu$ is large such operator is poorly represented in a finite basis set. 
 
-ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is attractive for $\mu=0.3$ when $r_{12}\approx 0$ whereas it is repulsive when $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
+ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is much more attractive when $r_{12}\approx 0$ for $\mu=0.3$ than for $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
+
+iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) <\frac{1}{r_{12}}$, the value of the eigenvector of $\phimub(\br{}_1,\br{}_2)$ is necessary larger than the FCI wave function at $r_{12}=0$ as in the latter the interaction is more repulsive. 
+
+iv) 
 \begin{figure*}
  \label{fig_wee_compare}
         \includegraphics[width=1.00\linewidth]{w_ee_compare.pdf}
-%        \includegraphics[width=0.45\linewidth]{plots/He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
         \caption{
         Effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=0.3$ and $\mu=1.0$, compared to the usual $1/r_{12}$ Coulomb interaction.}
 \end{figure*}
-iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) <\frac{1}{r_{12}}$, the value of the eigenvector of $\phimub(\br{}_1,\br{}_2)$ is necessary larger than the FCI wave function at $r_{12}=0$ as in the latter the interaction is more repulsive. 
-iv) 
 
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}
