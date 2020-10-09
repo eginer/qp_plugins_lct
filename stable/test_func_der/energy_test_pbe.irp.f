@@ -4,15 +4,14 @@ subroutine energy_x_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, ex_pbe_test)
 ! exchange energy with the lda functional
  END_DOC
  integer :: i,j,m
- double precision, intent(in) :: rho_a(n_points_final_grid), rho_b(n_points_final_grid), grad_rho_a(n_points_final_grid), grad_rho_b((n_points_final_grid)
+ double precision, intent(in) :: rho_a(n_points_final_grid), rho_b(n_points_final_grid), grad_rho_a(n_points_final_grid), grad_rho_b(n_points_final_grid)
  double precision, intent(out) :: ex_pbe_test
  double precision :: mu,weight
- double precision :: e_x, e_c
+ double precision :: ex, ec
  double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b
  double precision :: vc_rho_a, vc_rho_b, vx_rho_a, vx_rho_b
  double precision :: vx_grad_rho_a_2, vx_grad_rho_b_2, vx_grad_rho_a_b, vc_grad_rho_a_2, vc_grad_rho_b_2, vc_grad_rho_a_b
 
-aaaaa 
  ex_pbe_test = 0.d0
   do i = 1, n_points_final_grid
    weight = final_weight_at_r_vector(i)
@@ -34,7 +33,7 @@ aaaaa
   enddo
 end
 
-subroutine int_potential_x_lda_test (delta_rho_11, int_vx_lda_test)
+subroutine int_potential_x_pbe_test (delta_rho_11, int_vx_pbe_test)
  implicit none
  BEGIN_DOC
 ! delta_Ex[n] = int_dr delta_n(r) dEx/dn(r) 
@@ -43,22 +42,22 @@ subroutine int_potential_x_lda_test (delta_rho_11, int_vx_lda_test)
  END_DOC
  integer :: i
  double precision, intent(in) :: delta_rho_11
- double precision, intent(out):: int_vx_lda_test
+ double precision, intent(out):: int_vx_pbe_test
  double precision :: vx_i_j
  double precision :: delta_gamma_i_j(mo_num, mo_num)
  integer :: k,l
  
- int_vx_lda_test = 0.d0
+ int_vx_pbe_test = 0.d0
  call delta_gamma_i_j_for_energy_test (delta_rho_11,delta_gamma_i_j)
  do k=1, mo_num
   do l=1, mo_num
-   call potential_x_lda(k,l,vx_i_j)
-   int_vx_lda_test += delta_gamma_i_j(k,l)*vx_i_j
+   call potential_x_pbe(k,l,vx_i_j)
+   int_vx_pbe_test += delta_gamma_i_j(k,l)*vx_i_j
   enddo
  enddo
 end
 
-subroutine potential_x_lda(k,l,vx_i_j)
+subroutine potential_x_pbe(k,l,vx_i_j)
  implicit none
  BEGIN_DOC
 ! dEx/dn(r) = sum(k,l) {(vx_lda*mo_k*mo_l)}
@@ -80,73 +79,23 @@ subroutine potential_x_lda(k,l,vx_i_j)
    call give_all_mos_at_r(r, mo_k)
    call give_all_mos_at_r(r, mo_l)
 
-   vx_i_j += weight*(potential_x_alpha_mo_lda(k,l) + potential_x_beta_mo_lda(k,l)) * mo_k(k) * mo_l(l)! * 0.5d0
+   vx_i_j += weight*(potential_x_alpha_mo_pbe(k,l) + potential_x_beta_mo_pbe(k,l)) * mo_k(k) * mo_l(l)! * 0.5d0
  enddo
 end
 
-subroutine delta_gamma_i_j_for_energy_test (delta_rho_11,delta_gamma_i_j)
- implicit none
- BEGIN_DOC
-!
- END_DOC
 
- double precision, intent(in)  :: delta_rho_11
- double precision, intent(out) :: delta_gamma_i_j(mo_num,mo_num)
- 
- integer :: istate,i,j
- double precision :: r(3), mo_i(mo_num)
-
-
-!  do i = 1, n_points_final_grid
-!   r(1) = final_grid_points(1,i)   
-!   r(2) = final_grid_points(2,i) 
-!   r(3) = final_grid_points(3,i)
-!   call give_all_mos_at_r(r, mo_i)
-   do i=1, mo_num
-    do j=1, mo_num
-     delta_gamma_i_j(i,j) = 0.d0
-    enddo
-   enddo
-   delta_gamma_i_j(1,1) = delta_rho_11
-end
-
-subroutine delta_density_for_energy_test (delta_rho_a, delta_rho_b, delta_rho_11)
- implicit none
- BEGIN_DOC
-!
- END_DOC
-
- double precision, intent(in)  :: delta_rho_11
- double precision, intent(out) :: delta_rho_a(n_points_final_grid), delta_rho_b(n_points_final_grid)
- 
- integer :: istate,i,j
- double precision :: r(3), mo_i(mo_num)
-
-
-  do i = 1, n_points_final_grid
-   r(1) = final_grid_points(1,i)   
-   r(2) = final_grid_points(2,i) 
-   r(3) = final_grid_points(3,i)
-   call give_all_mos_at_r(r, mo_i)
-
-   delta_rho_a(i) = delta_rho_11  * mo_i(1) * mo_i(1)   !delta_rho_ij = delta_rho_11 = kro(i1)kro(j1)*epsilon
-   delta_rho_b(i) = delta_rho_11  * mo_i(1) * mo_i(1)  
-
-  enddo
-end
-
-BEGIN_PROVIDER [double precision, potential_x_alpha_mo_lda, (mo_num,mo_num)]
+BEGIN_PROVIDER [double precision, potential_x_alpha_mo_pbe, (mo_num,mo_num)]
  implicit none
  BEGIN_DOC
  ! Representation of vx_alpha in the molecular orbitals basis 
  END_DOC
- call ao_to_mo(potential_x_alpha_ao_lda,ao_num,potential_x_alpha_mo_lda,mo_num)
+ call ao_to_mo(potential_x_alpha_ao_pbe,ao_num,potential_x_alpha_mo_pbe,mo_num)
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, potential_x_beta_mo_lda, (mo_num,mo_num)]
+BEGIN_PROVIDER [double precision, potential_x_beta_mo_pbe, (mo_num,mo_num)]
  implicit none
  BEGIN_DOC
  ! Representation of vx_beta in the molecular orbitals basis 
  END_DOC
- call ao_to_mo(potential_x_beta_ao_lda,ao_num,potential_x_beta_mo_lda,mo_num)
+ call ao_to_mo(potential_x_beta_ao_pbe,ao_num,potential_x_beta_mo_pbe,mo_num)
 END_PROVIDER 
