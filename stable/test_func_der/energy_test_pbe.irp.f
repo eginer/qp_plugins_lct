@@ -12,7 +12,7 @@ subroutine energy_x_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, ex_pbe_test)
  double precision :: vc_rho_a, vc_rho_b, vx_rho_a, vx_rho_b
  double precision :: vx_grad_rho_a_2, vx_grad_rho_b_2, vx_grad_rho_a_b, vc_grad_rho_a_2, vc_grad_rho_b_2, vc_grad_rho_a_b
 
- 
+aaaaa 
  ex_pbe_test = 0.d0
   do i = 1, n_points_final_grid
    weight = final_weight_at_r_vector(i)
