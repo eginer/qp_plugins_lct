@@ -44,9 +44,9 @@ program test_energy_integral_lda
    dm_a_plus_delta(i) = dm_a(i) + delta_dm_a(i)
    dm_b_plus_delta(i) = dm_b(i) + delta_dm_b(i)
 
-   ex_lda_potential = -((3.d0/pi)**(1.d0/3.d0))*(dm_a(i) + dm_b(i))**(1.d0/3.d0)
+   ex_lda_potential = -((3.d0/pi)**(1.d0/3.d0))*(dm_a(i) + dm_b(i))**(1.d0/3.d0)*0.5d0
    weight = final_weight_at_r_vector(i)
-   integral_potential_lda += weight*(delta_dm_a(i) + delta_dm_b(i))*ex_lda_potential
+   integral_potential_lda += weight*(delta_dm_a(i) + delta_dm_b(i))*ex_lda_potential*0.5d0
  enddo 
    ! exLDA
    call energy_x_lda_test(dm_a, dm_b, ex_lda_test)
