@@ -67,57 +67,6 @@ subroutine potential_x_lda(k,l,vx_i_j)
  enddo
 end
 
-subroutine delta_gamma_i_j_for_energy_test (delta_rho_11,delta_gamma_i_j)
- implicit none
- BEGIN_DOC
-!
- END_DOC
-
- double precision, intent(in)  :: delta_rho_11
- double precision, intent(out) :: delta_gamma_i_j(mo_num,mo_num)
- 
- integer :: istate,i,j
- double precision :: r(3), mo_i(mo_num)
-
-
-!  do i = 1, n_points_final_grid
-!   r(1) = final_grid_points(1,i)   
-!   r(2) = final_grid_points(2,i) 
-!   r(3) = final_grid_points(3,i)
-!   call give_all_mos_at_r(r, mo_i)
-   do i=1, mo_num
-    do j=1, mo_num
-     delta_gamma_i_j(i,j) = 0.d0
-    enddo
-   enddo
-   delta_gamma_i_j(1,1) = delta_rho_11
-end
-
-subroutine delta_density_for_energy_test (delta_rho_a, delta_rho_b, delta_rho_11)
- implicit none
- BEGIN_DOC
-!
- END_DOC
-
- double precision, intent(in)  :: delta_rho_11
- double precision, intent(out) :: delta_rho_a(n_points_final_grid), delta_rho_b(n_points_final_grid)
- 
- integer :: istate,i,j
- double precision :: r(3), mo_i(mo_num)
-
-
-  do i = 1, n_points_final_grid
-   r(1) = final_grid_points(1,i)   
-   r(2) = final_grid_points(2,i) 
-   r(3) = final_grid_points(3,i)
-   call give_all_mos_at_r(r, mo_i)
-
-   delta_rho_a(i) = delta_rho_11  * mo_i(1) * mo_i(1)   !delta_rho_ij = delta_rho_11 = kro(i1)kro(j1)*epsilon
-   delta_rho_b(i) = delta_rho_11  * mo_i(1) * mo_i(1)  
-
-  enddo
-end
-
 BEGIN_PROVIDER [double precision, potential_x_alpha_mo_lda, (mo_num,mo_num)]
  implicit none
  BEGIN_DOC
