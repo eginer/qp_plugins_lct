@@ -26,18 +26,21 @@ program test_energy_integral_lda
  double precision :: dm_a(n_points_final_grid), dm_b(n_points_final_grid)
  double precision :: grad_dm_a(3,n_points_final_grid), grad_dm_b(3,n_points_final_grid)
  double precision :: aos_array(ao_num,n_points_final_grid), grad_aos_array(3,ao_num,n_points_final_grid)
- double precision :: delta_dm_a(n_points_final_grid), delta_dm_b(n_points_final_grid), dm_a_plus_delta(n_points_final_grid), dm_b_plus_delta(n_points_final_grid)
+ double precision :: delta_dm_a(n_points_final_grid), delta_dm_b(n_points_final_grid), delta_grad_dm_a(3,n_points_final_grid), delta_grad_dm_b(3,n_points_final_grid)
+ double precision :: dm_a_plus_delta(n_points_final_grid), dm_b_plus_delta(n_points_final_grid), grad_dm_a_plus_delta(3,n_points_final_grid), grad_dm_b_plus_delta(3,n_points_final_grid)
  double precision :: ex_lda_test, ex_lda_test_plus_delta, int_vx_lda_test
  double precision :: ex_pbe_test, ex_pbe_test_plus_delta, int_vx_pbe_test
  double precision :: ec_pbe_test, ec_pbe_test_plus_delta, int_vc_pbe_test
  double precision :: pi
- double precision :: delta_rho_11, integral_potential_lda, ex_lda_potential, weight
- integer :: i, istate
+ double precision :: delta_rho_11, delta_grad_rho_11, integral_potential_lda, ex_lda_potential, weight
+ integer :: i, m, istate
  pi = dacos(-1.d0)
  delta_rho_11 = 1.d-5
+ delta_grad_rho_11 = 1.d-5
  integral_potential_lda = 0.d0
  istate = 1
  call delta_density_for_energy_test(delta_dm_a, delta_dm_b, delta_rho_11)
+ call delta_grad_density_for_energy_test(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11)
  
  do i=1, n_points_final_grid
    r(1) = final_grid_points(1,i) 
@@ -48,7 +51,10 @@ program test_energy_integral_lda
    call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,dm_a(i),dm_b(i), grad_dm_a(:,i), grad_dm_b(:,i), aos_array(:,i), grad_aos_array(:,:,i))
    dm_a_plus_delta(i) = dm_a(i) + delta_dm_a(i)
    dm_b_plus_delta(i) = dm_b(i) + delta_dm_b(i)
-
+   do m=1,3
+    grad_dm_a_plus_delta(m,i) = grad_dm_a(m,i) + delta_grad_dm_a(m,i)
+    grad_dm_b_plus_delta(m,i) = grad_dm_b(m,i) + delta_grad_dm_b(m,i)
+   enddo
  !  weight = final_weight_at_r_vector(i)
    
  !  ex_lda_potential = -((3.d0/pi)**(1.d0/3.d0))*(dm_a(i) + dm_b(i))**(1.d0/3.d0)
@@ -62,7 +68,7 @@ program test_energy_integral_lda
 
    !excPBE
    call energy_xc_pbe_test (dm_a, dm_b, grad_dm_a, grad_dm_b, ex_pbe_test, ec_pbe_test)
-   call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a, grad_dm_b, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
+   call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a_plus_delta, grad_dm_b_plus_delta, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
    call int_potential_xc_pbe_test (delta_rho_11, int_vx_pbe_test, int_vc_pbe_test)
 
 
@@ -85,7 +91,7 @@ program test_energy_integral_lda
    write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vx_pbe_test - ex_pbe_test_plus_delta + ex_pbe_test)/(ex_pbe_test_plus_delta - ex_pbe_test)
 
    write(34,*) '------------------------------------------------'
-   write(34,*) '1st_method = ec_pbe [n + delta_n] - ex_pbe[n]                           =', ec_pbe_test_plus_delta - ec_pbe_test
+   write(34,*) '1st_method = ec_pbe [n + delta_n] - ec_pbe[n]                           =', ec_pbe_test_plus_delta - ec_pbe_test
    write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vc_pbe_test
    write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pbe_test - ec_pbe_test_plus_delta + ec_pbe_test)/(ec_pbe_test_plus_delta - ec_pbe_test)
 end program
