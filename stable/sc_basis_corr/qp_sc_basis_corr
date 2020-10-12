@@ -131,7 +131,7 @@ echo "NDETMAX for RS-DFT   :  "$ndetmax
 # value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
 if [[ -z $thresh ]]; then
  echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
- thresh=$pt2_max
+ thresh=$pt2max
 fi
 echo "thresh of convergence:  "$thresh
 threshmicro=1.e-6

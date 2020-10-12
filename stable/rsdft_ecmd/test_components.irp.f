@@ -47,7 +47,9 @@ program test_components
   mu5    = 5.d0
   mu10   = 10.d0
   istate = 1
-    write(41,*) '#r1(1)     Wee     Wee_lr_mu0_5     Wee_lr_mu1     Wee_lr_mu2     Wee_lr_mu5     Wee_lr_mu10     rho     on_top   rho_2  mosr1 mos_r2'
+!    write(41,*) '#r1(1)     Wee     Wee_lr_mu0_5     Wee_lr_mu1     Wee_lr_mu2     Wee_lr_mu5     Wee_lr_mu10     rho     on_top   rho_2  mosr1 mos_r2'
+
+    write(44,*)'#theta, rho, rho_2, Wee'
    ! do ipoint=1, nx ! vérifier le nom
    do itheta=1, ntheta
     r12 = dsqrt( (r1(1) - r2(1))**2 + (r1(2) - r2(2))**2  )
