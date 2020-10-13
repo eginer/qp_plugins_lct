@@ -22,9 +22,9 @@ subroutine energy_xc_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, ex_pbe_test
  mu = 0.d0
   do i = 1, n_points_final_grid
    weight = final_weight_at_r_vector(i)
-   r(1) = final_grid_points(1,i)   
-   r(2) = final_grid_points(2,i) 
-   r(3) = final_grid_points(3,i)
+!   r(1) = final_grid_points(1,i)   
+!   r(2) = final_grid_points(2,i) 
+!   r(3) = final_grid_points(3,i)
 
    grad_rho_a_2 = 0.d0
    grad_rho_b_2 = 0.d0

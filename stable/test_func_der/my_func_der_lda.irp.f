@@ -11,12 +11,14 @@ BEGIN_PROVIDER [double precision, delta_gamma, (mo_num, mo_num)]
  double precision :: eps
  integer :: i,j
  delta_gamma = 0.d0
- eps = delta_dm_input/dble(mo_num*mo_num)
- do i = 1, mo_num
-  do j = 1, mo_num
-   delta_gamma(j,i) = eps
-  enddo
- enddo
+!eps = delta_dm_input/dble(mo_num*mo_num)
+!do i = 1, mo_num
+! do j = 1, mo_num
+!  delta_gamma(j,i) = eps
+! enddo
+!enddo
+ eps = 1.d-5
+ delta_gamma(1,1) = eps
 END_PROVIDER 
 
 BEGIN_PROVIDER [double precision, delta_gamm_pot_x_lda]
@@ -26,6 +28,17 @@ BEGIN_PROVIDER [double precision, delta_gamm_pot_x_lda]
  do i = 1, mo_num
   do j = 1, mo_num
    delta_gamm_pot_x_lda += delta_gamma(j,i) * potential_x_mo_lda(j,i)
+  enddo
+ enddo
+END_PROVIDER 
+
+BEGIN_PROVIDER [double precision, delta_gamm_pot_x_pbe]
+ implicit none
+ integer :: i,j
+ delta_gamm_pot_x_pbe = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   delta_gamm_pot_x_pbe += delta_gamma(j,i) * (potential_x_alpha_mo_pbe(j,i) + potential_x_beta_mo_pbe(j,i))
   enddo
  enddo
 END_PROVIDER 
@@ -87,6 +100,8 @@ subroutine test_x_lda
  print*,'delta                  = ',delta
  print*,'delta_gamm_pot_x_lda   = ',delta_gamm_pot_x_lda
  print*,'delta/delta_gamma_x_lda= ',delta/delta_gamm_pot_x_lda
+ print*,'delta_gamm_pot_x_pbe   = ',delta_gamm_pot_x_pbe
+ stop
  call integrate_prods(delta_dm, d_exlda_dn,delta_num)
  print*,'delta_num              = ',delta_num
  call integrate_prods(delta_dm_a, d_exlda_dn_a,delta_num)
