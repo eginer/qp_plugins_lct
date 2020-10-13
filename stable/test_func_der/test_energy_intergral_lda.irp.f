@@ -64,35 +64,14 @@ program test_energy_integral_lda
    ! exLDA
    call energy_x_lda_test(dm_a, dm_b, ex_lda_test)
    call energy_x_lda_test(dm_a_plus_delta, dm_b_plus_delta, ex_lda_test_plus_delta)
-   call int_potential_x_lda_test (delta_rho_11, int_vx_lda_test) 
+   call int_potential_x_lda_test (delta_rho_11, dm_a, dm_b, int_vx_lda_test) 
 
    !excPBE
    call energy_xc_pbe_test (dm_a, dm_b, grad_dm_a, grad_dm_b, ex_pbe_test, ec_pbe_test)
    call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a_plus_delta, grad_dm_b_plus_delta, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
    call int_potential_xc_pbe_test (delta_rho_11, int_vx_pbe_test, int_vc_pbe_test)
-
-
-   write(34,*) 'gamma_i_j = epsilon*delta_kronecker(i,1)*delta_kronecker(1,j) with epsilon =', delta_rho_11
-   write(34,*) '----------------------------------------------LDA--------------------------------------------' 
-   write(34,*) 'ex_lda_test[n]                                                          =', ex_lda_test
-  ! write(34,*) 'ex_lda(provider)[n]                                                     =', energy_x_lda(1)
-   write(34,*) 'ex_lda_test[n + delta_n]                                                =', ex_lda_test_plus_delta
-   write(34,*) '------------------------------------------------'
-  ! write(34,*) 'Theoretical value : int (dr delta_n * [delta (E) / delta(n(r))] )       =', integral_potential_lda
-  ! write(34,*) 'We test the equality between the two following results :'
-   write(34,*) '1st_method = ex_lda [n + delta_n] - ex_lda[n]                           =', ex_lda_test_plus_delta - ex_lda_test
-   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vx_lda_test
-   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vx_lda_test - ex_lda_test_plus_delta + ex_lda_test)/(ex_lda_test_plus_delta - ex_lda_test)
-   write(34,*) '------------------------------------------------'
-   write(34,*) '------------------------------------------------'
-   write(34,*) '----------------------------------------------PBE--------------------------------------------'
-   write(34,*) '1st_method = ex_pbe [n + delta_n] - ex_pbe[n]                           =', ex_pbe_test_plus_delta - ex_pbe_test
-   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vx_pbe_test
-   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vx_pbe_test - ex_pbe_test_plus_delta + ex_pbe_test)/(ex_pbe_test_plus_delta - ex_pbe_test)
-
-   write(34,*) '------------------------------------------------'
-   write(34,*) '1st_method = ec_pbe [n + delta_n] - ec_pbe[n]                           =', ec_pbe_test_plus_delta - ec_pbe_test
-   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vc_pbe_test
-   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pbe_test - ec_pbe_test_plus_delta + ec_pbe_test)/(ec_pbe_test_plus_delta - ec_pbe_test)
+   
+   call write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test)
+ 
 end program
 
