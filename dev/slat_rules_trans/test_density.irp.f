@@ -31,6 +31,7 @@ subroutine routine_write
   write(33,'(100(F16.10,X))')x,on_top_psi(i),on_top_hf(i), on_top_g0(i), on_top_exact(i), &  
                              !                    6 
                                on_top_exact(i) * (1.d0 + 2.d0/(sqpi * mu_hf(i)))        , & 
+                             !  7 
                              g0_array(i), 2.d0 * on_top_exact(i)/ dm_array(i)**2.d0, dm_hf_array(i),dm_array(i)
   x += dx
  enddo
