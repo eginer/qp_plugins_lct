@@ -4,7 +4,7 @@
 """
 Usage:
        qp_cipsi_rsh [-f <functional>] [-m <mu>] [-p <pt2max>] [-t <thresh>]
-                    [-n <ndetmax>] [-r] EZFIO_DIR
+                    [-n <ndetmax>] [-r] [-i] EZFIO_DIR
 
 Options:
       -f <functional>  --functional=<functional>  Exchange/correlation functional.
@@ -15,6 +15,7 @@ Options:
                                                   Default=1.e-5
       -n <ndetmax>     --ndetmax=<ndetmax>        Max number of determinants.
                                                   Default=1000000
+      -i               --input_psi                Read the slater dets from input and do not change it
       -r               --readints                 Read integrals. Default=False
 """
 
@@ -115,6 +116,8 @@ def get_params(arguments):
 
     readints = arguments['-r']
 
+    input_psi= arguments['-i']
+
     print(f"""
 EZFIO      : {filename}
 Functional : {functional}
@@ -122,9 +125,10 @@ mu         : {mu}
 pt2max     : {pt2max}
 ndetmax    : {ndetmax}
 thresh     : {thresh}
-readints   : {readints}""")
+readints   : {readints}
+input_psi  : {input_psi}""")
 
-    return filename, functional, mu, pt2max, ndetmax, thresh, readints
+    return filename, functional, mu, pt2max, ndetmax, thresh, readints, input_psi
 
 
 def reset_ezfio():
@@ -183,9 +187,8 @@ def update_density(filename, diis=None):
 
 def main():
     arguments = docopt(__doc__)
-    filename, functional, mu, pt2max, ndetmax, thresh, readints = \
+    filename, functional, mu, pt2max, ndetmax, thresh, readints, input_psi  = \
         get_params(arguments)
-
     ezfio.set_file(filename)
     ezfio.set_dft_keywords_exchange_functional(functional)
     ezfio.set_dft_keywords_correlation_functional(functional)
@@ -222,7 +225,11 @@ def main():
             # Run the CIPSI calculation with the effective Hamiltonian
             # already stored in the EZFIO
 
-            ezfio.set_determinants_read_wf(False)
+            if input_psi == True: 
+             ezfio.set_determinants_read_wf(False)
+            else:
+             ezfio.set_determinants_read_wf(True)
+
             qp_run("fci", filename)
 
             update_density(filename, diis_macro)

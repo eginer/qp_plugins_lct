@@ -48,7 +48,7 @@ program test_energy_integral_lda
    r(3) = final_grid_points(3,i)
    
   ! call dm_dft_alpha_beta_at_r(r, dm_a(i), dm_b(i))
-   call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,dm_a(i),dm_b(i), grad_dm_a(:,i), grad_dm_b(:,i), aos_array(:,i), grad_aos_array(:,:,i))
+   call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,dm_a(i),dm_b(i), grad_dm_a(1,i), grad_dm_b(1,i), aos_array(1,i), grad_aos_array(1,1,i))
    dm_a_plus_delta(i) = dm_a(i) + delta_dm_a(i)
    dm_b_plus_delta(i) = dm_b(i) + delta_dm_b(i)
   
@@ -71,8 +71,19 @@ program test_energy_integral_lda
    !excPBE
    call energy_xc_pbe_test (dm_a, dm_b, grad_dm_a, grad_dm_b, ex_pbe_test, ec_pbe_test)
    call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a_plus_delta, grad_dm_b_plus_delta, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
-  ! call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a, grad_dm_b, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
    call int_potential_xc_pbe_test (delta_rho_11, int_vx_pbe_test, int_vc_pbe_test)
+   print*,'ex_lda_test            = ',ex_lda_test
+   print*,'ex_lda_test_plus_delta = ',ex_lda_test_plus_delta
+   print*,'delta e                = ',ex_lda_test_plus_delta - ex_lda_test
+   print*,'new method             = ',int_vx_lda_test
+!   print*,'delta_gamm_pot_x_lda   = ',delta_gamm_pot_x_lda
+   print*,''
+   print*,'ex_pbe_test            = ',ex_pbe_test
+   print*,'ex_pbe_test_plus_delta = ',ex_pbe_test_plus_delta
+   print*,'delta e                = ',ex_pbe_test_plus_delta - ex_pbe_test
+   print*,'new method             = ',int_vx_pbe_test
+!   print*,'delta_gamm_pot_x_pbe   = ',delta_gamm_pot_x_pbe
+  ! call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a, grad_dm_b, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
    
    call write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test)
  

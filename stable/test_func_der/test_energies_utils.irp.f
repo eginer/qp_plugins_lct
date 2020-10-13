@@ -85,7 +85,7 @@ subroutine delta_grad_density_for_energy_test (delta_grad_rho_a, delta_grad_rho_
  double precision, intent(in)  :: delta_grad_rho_11
  double precision, intent(out) :: delta_grad_rho_a(3,n_points_final_grid), delta_grad_rho_b(3,n_points_final_grid)
  integer :: i,m
- double precision :: r(3), mo_i(mo_num), mo_grad_i(mo_num,3)
+ double precision :: r(3), mo_i(mo_num), mo_grad_i(3,mo_num)
 
 
   do i = 1, n_points_final_grid
@@ -96,8 +96,8 @@ subroutine delta_grad_density_for_energy_test (delta_grad_rho_a, delta_grad_rho_
    call give_all_mos_and_grad_at_r(r,mo_i,mo_grad_i)
 
    do m=1,3
-     delta_grad_rho_a(m,i) = 2.d0 * delta_grad_rho_11 * mo_i(1) * mo_grad_i(1,m) 
-     delta_grad_rho_b(m,i) = 2.d0 * delta_grad_rho_11 * mo_i(1) * mo_grad_i(1,m)
+     delta_grad_rho_a(m,i) = 2.d0 * delta_grad_rho_11 * mo_i(1) * mo_grad_i(m,1) 
+     delta_grad_rho_b(m,i) = 2.d0 * delta_grad_rho_11 * mo_i(1) * mo_grad_i(m,1)
    enddo
 
   enddo

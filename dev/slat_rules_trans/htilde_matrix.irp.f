@@ -43,78 +43,101 @@ END_PROVIDER
 ! leigvec_trans_norm(i) = \sum_J |<J|Psi_i>|^2 (not normalized in principle)
 !
  END_DOC
- character*1 :: JOBVL,JOBVR
- JOBVL = "V" ! computes the left  eigenvectors 
- JOBVR = "V" ! computes the right eigenvectors 
- integer     :: n,lda,ldvl,ldvr,LWORK,INFO
- double precision, allocatable :: A(:,:),WR(:),WI(:),Vl(:,:),VR(:,:)
- double precision, allocatable :: WORK(:)
- integer :: i,j,k
- integer :: n_good
- integer, allocatable :: list_good(:), iorder(:)
- double precision, allocatable :: ei(:)
- ! Eigvalue(n) = WR(n) + i * WI(n)
- n = n_det
- allocate(A(n,n),WR(n),WI(n),VL(n,n),VR(n,n))
- lda  = n
- ldvl = n
- ldvr = n
- A = htilde_matrix_elmt
- allocate(WORK(1))
- LWORK = -1 ! to ask for the optimal size of WORK
- call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
- if(INFO.gt.0)then
-  print*,'dgeev failed !!',INFO
-  stop
- endif
- LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
- deallocate(WORK)
- allocate(WORK(LWORK))
- ! Actual diagonalization 
- A = htilde_matrix_elmt
- call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
- if(INFO.ne.0)then
-  print*,'dgeev failed !!',INFO
-  stop
- endif
 
- ! You track the real eigenvalues 
- n_good = 0
- do i = 1, n
-  if(dabs(WI(i)).lt.1.d-12)then
-   n_good += 1
+ if(read_rl_eigv)then
+  reigvec_trans = 0.d0 
+  leigvec_trans = 0.d0 
+  double precision, allocatable :: reigvec_trans_tmp(:,:),leigvec_trans_tmp(:,:)
+  allocate(reigvec_trans_tmp(N_det,N_states),leigvec_trans_tmp(N_det,N_states))
+  print*,'Reading the right/left eigenvectors in the EZFIO....'
+   call ezfio_get_slat_rules_trans_reigvec_trans(reigvec_trans_tmp)
+   call ezfio_get_slat_rules_trans_leigvec_trans(leigvec_trans_tmp)
+   reigvec_trans_norm = 0.d0
+   leigvec_trans_norm = 0.d0
+   do i = 1, N_states
+    do j = 1, N_det
+     reigvec_trans(j,i) = reigvec_trans_tmp(j,i)
+     leigvec_trans(j,i) = leigvec_trans_tmp(j,i)
+     reigvec_trans_norm(i) += reigvec_trans_tmp(j,i) * reigvec_trans_tmp(j,i)
+     leigvec_trans_norm(i) += leigvec_trans_tmp(j,i) * leigvec_trans_tmp(j,i)
+!     print*,j,reigvec_trans(j,i),leigvec_trans(j,i)
+    enddo
+   enddo
+ else
+  print*,'Computing the left/right eigenvectors ...'
+  character*1 :: JOBVL,JOBVR
+  JOBVL = "V" ! computes the left  eigenvectors 
+  JOBVR = "V" ! computes the right eigenvectors 
+  integer     :: n,lda,ldvl,ldvr,LWORK,INFO
+  double precision, allocatable :: A(:,:),WR(:),WI(:),Vl(:,:),VR(:,:)
+  double precision, allocatable :: WORK(:)
+  integer :: i,j,k
+  integer :: n_good
+  integer, allocatable :: list_good(:), iorder(:)
+  double precision, allocatable :: ei(:)
+  ! Eigvalue(n) = WR(n) + i * WI(n)
+  n = n_det
+  allocate(A(n,n),WR(n),WI(n),VL(n,n),VR(n,n))
+  lda  = n
+  ldvl = n
+  ldvr = n
+  A = htilde_matrix_elmt
+  allocate(WORK(1))
+  LWORK = -1 ! to ask for the optimal size of WORK
+  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
+  if(INFO.gt.0)then
+   print*,'dgeev failed !!',INFO
+   stop
   endif
- enddo
- allocate(list_good(n_good),iorder(n_good),ei(n_good))
- n_good = 0
- do i = 1, n
-  if(dabs(WI(i)).lt.1.d-12)then
-   n_good += 1
-   list_good(n_good) = i
-   ei(n_good) = WR(i)
+  LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
+  deallocate(WORK)
+  allocate(WORK(LWORK))
+  ! Actual diagonalization 
+  A = htilde_matrix_elmt
+  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
+  if(INFO.ne.0)then
+   print*,'dgeev failed !!',INFO
+   stop
   endif
- enddo
- n_good_trans_eigval = n_good 
- do i = 1, n_good
-  iorder(i) = i
- enddo
- ! You sort the real eigenvalues 
- call dsort(ei,iorder,n_good)
- double precision :: accu1, accu2
- do i = 1, n_good_trans_eigval
-  eigval_trans(i) = ei(i)
-  print*,'e(i) = ',ei(i) + nuclear_repulsion
-  accu1 = 0.d0
-  accu2 = 0.d0
-  do j = 1, n_det
-   reigvec_trans(j,i) = VR(j,list_good(iorder(i)))
-   leigvec_trans(j,i) = Vl(j,list_good(iorder(i)))
-   accu1 += reigvec_trans(j,i) * reigvec_trans(j,i)
-   accu2 += leigvec_trans(j,i) * leigvec_trans(j,i)
+ 
+  ! You track the real eigenvalues 
+  n_good = 0
+  do i = 1, n
+   if(dabs(WI(i)).lt.1.d-12)then
+    n_good += 1
+   endif
   enddo
-  reigvec_trans_norm(i) = accu1
-  leigvec_trans_norm(i) = accu2
- enddo
+  allocate(list_good(n_good),iorder(n_good),ei(n_good))
+  n_good = 0
+  do i = 1, n
+   if(dabs(WI(i)).lt.1.d-12)then
+    n_good += 1
+    list_good(n_good) = i
+    ei(n_good) = WR(i)
+   endif
+  enddo
+  n_good_trans_eigval = n_good 
+  do i = 1, n_good
+   iorder(i) = i
+  enddo
+  ! You sort the real eigenvalues 
+  call dsort(ei,iorder,n_good)
+  double precision :: accu1, accu2
+  do i = 1, n_good_trans_eigval
+   eigval_trans(i) = ei(i)
+   print*,'e(i) = ',ei(i) + nuclear_repulsion
+   accu1 = 0.d0
+   accu2 = 0.d0
+   do j = 1, n_det
+    reigvec_trans(j,i) = VR(j,list_good(iorder(i)))
+    leigvec_trans(j,i) = Vl(j,list_good(iorder(i)))
+    accu1 += reigvec_trans(j,i) * reigvec_trans(j,i)
+    accu2 += leigvec_trans(j,i) * leigvec_trans(j,i)
+   enddo
+   reigvec_trans_norm(i) = accu1
+   leigvec_trans_norm(i) = accu2
+  enddo
+ endif
 
 END_PROVIDER 
 
@@ -250,3 +273,19 @@ subroutine test_overlap_matrix
   write(*,'(1000(F16.12,X))')overlap_lr(i,:)
  enddo
 end
+
+BEGIN_PROVIDER [double precision, overlap_psi_det_r_eigevec, (N_states)]
+ implicit none
+ double precision :: accu
+ BEGIN_DOC
+! overlap between psi_det and the right eigenvectors of Htilde
+ END_DOC
+ integer :: i,j
+ do i = 1, N_states
+  accu = 0.d0
+  do j = 1, N_det
+   accu += psi_coef(j,i) * reigvec_trans(j,i)
+  enddo
+  overlap_psi_det_r_eigevec(i) = accu
+ enddo
+END_PROVIDER 
