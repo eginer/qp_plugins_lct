@@ -1,10 +1,9 @@
-subroutine energy_xc_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, k, l, ex_pbe_test, ec_pbe_test, vx_pbe_test, vc_pbe_test)
+subroutine energy_xc_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, ex_pbe_test, ec_pbe_test, vx_pbe_test, vc_pbe_test)
  implicit none
  BEGIN_DOC
 ! exchange energy with the lda functional
  END_DOC
  integer :: i,j,m
- integer, intent(in) :: k,l
  double precision, intent(in) :: rho_a(n_points_final_grid), rho_b(n_points_final_grid), grad_rho_a(3,n_points_final_grid), grad_rho_b(3,n_points_final_grid)
  double precision, intent(out) :: ex_pbe_test, ec_pbe_test, vx_pbe_test, vc_pbe_test
  double precision :: mu,weight, r(3)
@@ -42,8 +41,7 @@ subroutine energy_xc_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, k, l, ex_pb
                              ec,vc_rho_a,vc_rho_b,vc_grad_rho_a_2,vc_grad_rho_b_2,vc_grad_rho_a_b  )
    ex_pbe_test += ex * weight
    ec_pbe_test += ec * weight 
-
-!   call give_all_mos_at_r(r, mo_k)
+!    call give_all_mos_at_r(r, mo_k)
 !   vx_pbe_test += (vx_rho_a + vx_rho_b) * mo_k(k) * mo_k(l) * weight
 !   vc_pbe_test += (vc_rho_a + vc_rho_b) * mo_k(k) * mo_k(l) * weight
   enddo
