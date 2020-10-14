@@ -1,2 +1,5 @@
 dft_utils_in_r
 kohn_sham_rs
+func_ecmd
+eff_two_e
+func_mu_of_r
