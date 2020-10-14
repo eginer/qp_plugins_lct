@@ -104,7 +104,7 @@ subroutine delta_grad_density_for_energy_test (delta_grad_rho_a, delta_grad_rho_
 
 end
 
-subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test)
+subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test,ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test, ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test)
   implicit none
   BEGIN_DOC
   ! Write small variations of energies for the test of the energies potentials
@@ -114,6 +114,8 @@ subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_pl
   double precision, intent(in) :: ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test
   double precision, intent(in) :: ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test
   double precision, intent(in) :: ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test
+  double precision, intent(in) :: ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test
+  double precision, intent(in) :: ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test
   write(34,*) 'gamma_i_j = epsilon*delta_kronecker(i,1)*delta_kronecker(1,j) with epsilon =', delta_rho_11
    write(34,*) '----------------------------------------------LDA--------------------------------------------' 
    write(34,*) 'ex_lda_test[n]                                                          =', ex_lda_test
@@ -136,5 +138,16 @@ subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_pl
    write(34,*) '1st_method = ec_pbe [n + delta_n] - ec_pbe[n]                           =', ec_pbe_test_plus_delta - ec_pbe_test
    write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vc_pbe_test
    write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pbe_test - ec_pbe_test_plus_delta + ec_pbe_test)/(ec_pbe_test_plus_delta - ec_pbe_test)
+
+
+   write(34,*) '----------------------------------------------PBE--------------------------------------------'
+   write(34,*) '1st_method = ex_pbeUEG [n + delta_n] - ex_pbeUEG[n]                           =', ex_pbeUEG_test_plus_delta - ex_pbeUEG_test
+   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vx_pbeUEG_test
+   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vx_pbeUEG_test - ex_pbeUEG_test_plus_delta + ex_pbeUEG_test)/(ex_pbeUEG_test_plus_delta - ex_pbeUEG_test)
+   
+   write(34,*) '------------------------------------------------'                                        
+   write(34,*) '1st_method = ec_pbeUEG [n + delta_n] - ec_pbeUEG[n]                           =', ec_pbeUEG_test_plus_delta - ec_pbeUEG_test
+   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vc_pbeUEG_test
+   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pbeUEG_test - ec_pbeUEG_test_plus_delta + ec_pbeUEG_test)/(ec_pbeUEG_test_plus_delta - ec_pbeUEG_test)
 
 end
