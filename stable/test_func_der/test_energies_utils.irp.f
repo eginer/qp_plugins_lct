@@ -128,7 +128,7 @@ subroutine delta_n2_for_energy_test (delta_n2, delta_n2_11)
   enddo
 end
 
-subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test,ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test, ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test,ec_pben2_test, ec_pben2_test_plus_delta,int_vc_pben2_one_e_test,int_vc_pben2_two_e_test)
+subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test,ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test, ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test,ec_pben2_test, ec_pben2_test_plus_delta_n_n2, ec_pben2_test_plus_delta_n, ec_pben2_test_plus_delta_n2, int_vc_pben2_one_e_test, int_vc_pben2_two_e_test)
 
   implicit none
   BEGIN_DOC
@@ -141,8 +141,17 @@ subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_pl
   double precision, intent(in) :: ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test
   double precision, intent(in) :: ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test
   double precision, intent(in) :: ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test
-  double precision, intent(in) :: ec_pben2_test, ec_pben2_test_plus_delta,int_vc_pben2_one_e_test,int_vc_pben2_two_e_test
-  write(34,*) 'gamma_i_j = epsilon*delta_kronecker(i,1)*delta_kronecker(1,j) with epsilon =', delta_rho_11
+  double precision, intent(in) :: ec_pben2_test, ec_pben2_test_plus_delta_n_n2 ,ec_pben2_test_plus_delta_n ,ec_pben2_test_plus_delta_n2, int_vc_pben2_one_e_test, int_vc_pben2_two_e_test
+
+   write(34,*) 'v_ij_lda       = int (dr  d_e_d_n                     * Phi_i(r) * Phi_j(r))'
+   write(34,*) 'v_ij_pbe       = int (dr (d_e_d_n - grad d_e_d_gradn) * Phi_i(r) * Phi_j(r))'
+   write(34,*) 'v_ij_pbe_UEG   = int (dr (d_e_d_n - grad d_e_d_gradn) * Phi_i(r) * Phi_j(r))'
+   write(34,*) 'v_ijkl_pbe_n2  = int (dr  d_e_d_n2                    * Phi_i(r) * Phi_j(r)) * Phi_k(r) * Phi_l(r)'
+   write(34,*) 'gamma_i_j      = epsilon*delta_kronecker(i,1)*delta_kronecker(1,j) with epsilon =', delta_rho_11  
+   write(34,*) 'gamma_i_j_k_l  = epsilon*                                                        '
+   write(34,*) '--------------------------------------------------------------------------------------------------'
+   write(34,*) '--------------------------------------------------------------------------------------------------'
+   write(34,*) '--------------------------------------------------------------------------------------------------'
    write(34,*) '----------------------------------------------LDA--------------------------------------------' 
    write(34,*) 'ex_lda_test[n]                                                          =', ex_lda_test
   ! write(34,*) 'ex_lda(provider)[n]                                                     =', energy_x_lda(1)
@@ -151,13 +160,13 @@ subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_pl
   ! write(34,*) 'Theoretical value : int (dr delta_n * [delta (E) / delta(n(r))] )       =', integral_potential_lda
   ! write(34,*) 'We test the equality between the two following results :'
    write(34,*) '1st_method = ex_lda [n + delta_n] - ex_lda[n]                           =', ex_lda_test_plus_delta - ex_lda_test
-   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vx_lda_test
+   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j*v_ij_lda                              =', int_vx_lda_test
    write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vx_lda_test - ex_lda_test_plus_delta + ex_lda_test)/(ex_lda_test_plus_delta - ex_lda_test)
    write(34,*) '------------------------------------------------'
    write(34,*) '------------------------------------------------'
    write(34,*) '----------------------------------------------PBE--------------------------------------------'
    write(34,*) '1st_method = ex_pbe [n + delta_n] - ex_pbe[n]                           =', ex_pbe_test_plus_delta - ex_pbe_test
-   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) =', int_vx_pbe_test
+   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j*v_ij_pbe                          =', int_vx_pbe_test
    write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vx_pbe_test - ex_pbe_test_plus_delta + ex_pbe_test)/(ex_pbe_test_plus_delta - ex_pbe_test)
 
    write(34,*) '------------------------------------------------'
@@ -177,8 +186,16 @@ subroutine write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_pl
    write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pbeUEG_test - ec_pbeUEG_test_plus_delta + ec_pbeUEG_test)/(ec_pbeUEG_test_plus_delta - ec_pbeUEG_test)
 
    write(34,*) '----------------------------------------------PBEn2--------------------------------------------'
-   write(34,*) '1st_method = ec_pben2 [n + delta_n] - ec_pben2[n]                           =', ec_pben2_test_plus_delta - ec_pben2_test
-   write(34,*) '2nd method =                                                                =', int_vc_pben2_one_e_test + int_vc_pben2_two_e_test
-   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pben2_one_e_test + int_vc_pben2_two_e_test - ec_pben2_test_plus_delta + ec_pben2_test)/(ec_pben2_test_plus_delta - ec_pben2_test)
-
+   write(34,*) '1st_method = ec_pben2 [n + delta_n, n2 + delta_n2] - ec_pben2[n]                           =', ec_pben2_test_plus_delta_n_n2 - ec_pben2_test
+   write(34,*) '2nd method = sum(i,j) delta_gamma_i_j * int (dr phi_i(r) v(r) phi_j(r)) +'
+   write(34,*) 'sum (i,j,k,l) delta_g_ijkl * int (dr vn2(r) * phi_i(r) * phi_j(r) * phi_k(r) * phi_l(r))   =', int_vc_pben2_one_e_test + int_vc_pben2_two_e_test
+   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                                      =', (int_vc_pben2_one_e_test + int_vc_pben2_two_e_test - ec_pben2_test_plus_delta_n_n2 + ec_pben2_test)/(ec_pben2_test_plus_delta_n_n2 - ec_pben2_test)
+   write(34,*) '------------'
+   write(34,*) 'only n variation, method 1                                              : ', ec_pben2_test_plus_delta_n - ec_pben2_test
+   write(34,*) 'only n variation, method 2                                              : ', int_vc_pben2_one_e_test
+   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pben2_one_e_test - ec_pben2_test_plus_delta_n + ec_pben2_test)/(ec_pben2_test_plus_delta_n - ec_pben2_test)
+   write(34,*) '------------'
+   write(34,*) 'only n2 variation, method 1                                             : ', ec_pben2_test_plus_delta_n2 - ec_pben2_test
+   write(34,*) 'only n2 variation, method 2                                             : ', int_vc_pben2_two_e_test
+   write(34,*) 'Relative error : (1st_method - 2nd_method)/1st_method                   =', (int_vc_pben2_two_e_test - ec_pben2_test_plus_delta_n2 + ec_pben2_test)/(ec_pben2_test_plus_delta_n2 - ec_pben2_test)
 end

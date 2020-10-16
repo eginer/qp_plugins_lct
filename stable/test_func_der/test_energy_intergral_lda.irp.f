@@ -6,6 +6,9 @@ program test_energy_integral_lda
 
  read_wf = .true.
  touch read_wf
+ basis_cor_func = "su_pbe_ot"
+ touch basis_cor_func
+
  ! total one-e integrals 
  io_mo_one_e_integrals = "None"
  touch io_mo_one_e_integrals  
@@ -33,7 +36,8 @@ program test_energy_integral_lda
  double precision :: ec_pbe_test, ec_pbe_test_plus_delta, int_vc_pbe_test
  double precision :: ex_pbeUEG_test, ex_pbeUEG_test_plus_delta, int_vx_pbeUEG_test
  double precision :: ec_pbeUEG_test, ec_pbeUEG_test_plus_delta, int_vc_pbeUEG_test
- double precision :: ec_pben2_test, ec_pben2_test_plus_delta, int_vc_pben2_one_e_test, int_vc_pben2_two_e_test
+ double precision :: ec_pben2_test, ec_pben2_test_plus_delta_n_n2 ,ec_pben2_test_plus_delta_n ,ec_pben2_test_plus_delta_n2, int_vc_pben2_one_e_test, int_vc_pben2_two_e_test
+ double precision :: ex_pben2_test, ex_pben2_test_plus_delta_n_n2 ,ex_pben2_test_plus_delta_n ,ex_pben2_test_plus_delta_n2, int_vx_pben2_one_e_test, int_vx_pben2_two_e_test
 
  double precision :: pi
  double precision :: delta_rho_11, delta_grad_rho_11, delta_n2_11, integral_potential_lda, ex_lda_potential, weight
@@ -49,16 +53,13 @@ program test_energy_integral_lda
  call delta_n2_for_energy_test (delta_n2, delta_n2_11)
 
  do i=1, n_points_final_grid
-
-  !on_top = on_top_cas_mu_r(ipoint,istate) ! we use mu = cas_ful
    n2(i) = total_cas_on_top_density(i,1)
-
+   
    r(1) = final_grid_points(1,i) 
    r(2) = final_grid_points(2,i) 
    r(3) = final_grid_points(3,i)
-   
-  ! call dm_dft_alpha_beta_at_r(r, dm_a(i), dm_b(i))
    call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,dm_a(i),dm_b(i), grad_dm_a(1,i), grad_dm_b(1,i), aos_array(1,i), grad_aos_array(1,1,i))
+   
    dm_a_plus_delta(i) = dm_a(i) + delta_dm_a(i)
    dm_b_plus_delta(i) = dm_b(i) + delta_dm_b(i)
   
@@ -68,11 +69,6 @@ program test_energy_integral_lda
    enddo
     
    n2_plus_delta(i) = n2(i) + delta_n2(i)
-   
- !  weight = final_weight_at_r_vector(i)
-   
- !  ex_lda_potential = -((3.d0/pi)**(1.d0/3.d0))*(dm_a(i) + dm_b(i))**(1.d0/3.d0)
- !  integral_potential_lda += weight*(delta_dm_a(i) + delta_dm_b(i))*ex_lda_potential
  enddo 
    
    ! exLDA
@@ -91,24 +87,14 @@ program test_energy_integral_lda
    call int_potential_xc_pbeUEG_test (delta_rho_11, int_vx_pbeUEG_test, int_vc_pbeUEG_test)
 
    !excPBEn2
-   call energy_xc_pben2_test (dm_a,dm_b,grad_dm_a,grad_dm_b,n2,ec_pben2_test,ex_pben2_test)
-   call energy_xc_pben2_test (dm_a_plus_delta,dm_b_plus_delta,grad_dm_a_plus_delta,grad_dm_b_plus_delta,n2_plus_delta,ec_pben2_test_plus_delta,ex_pben2_test_plus_delta)
+   call energy_xc_pben2_test (dm_a           ,dm_b           ,grad_dm_a           ,grad_dm_b           ,n2           ,ec_pben2_test                ,ex_pben2_test)
+   call energy_xc_pben2_test (dm_a_plus_delta,dm_b_plus_delta,grad_dm_a_plus_delta,grad_dm_b_plus_delta,n2_plus_delta,ec_pben2_test_plus_delta_n_n2,ex_pben2_test_plus_delta_n_n2)
+   call energy_xc_pben2_test (dm_a_plus_delta,dm_b_plus_delta,grad_dm_a_plus_delta,grad_dm_b_plus_delta,n2           ,ec_pben2_test_plus_delta_n   ,ex_pben2_test_plus_delta_n)
+   call energy_xc_pben2_test (dm_a           ,dm_b           ,grad_dm_a           ,grad_dm_b           ,n2_plus_delta,ec_pben2_test_plus_delta_n2  ,ex_pben2_test_plus_delta_n2)
    call int_potential_c_pben2_two_e_test (delta_n2_11, int_vc_pben2_two_e_test)
    call int_potential_c_pben2_one_e_test (delta_rho_11, int_vc_pben2_one_e_test)
-  ! print*,'ex_lda_test            = ',ex_lda_test
-  ! print*,'ex_lda_test_plus_delta = ',ex_lda_test_plus_delta
-  ! print*,'delta e                = ',ex_lda_test_plus_delta - ex_lda_test
-  ! print*,'new method             = ',int_vx_lda_test
-!   print*,'delta_gamm_pot_x_lda   = ',delta_gamm_pot_x_lda
-  ! print*,''
-  !  print*,'ex_pbeUEG_test            = ',ex_pbeUEG_test
-  !  print*,'ex_pbeUEG_test_plus_delta = ',ex_pbeUEG_test_plus_delta
-  !  print*,'delta e                = ',ex_pbeUEG_test_plus_delta - ex_pbeUEG_test
-  !  print*,'new method             = ',int_vx_pbeUEG_test
-!   print*,'delta_gamm_pot_x_pbe   = ',delta_gamm_pot_x_pbe
-!    call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a, grad_dm_b, ex_pbe_test_plus_delta, ec_pbe_test_plus_delta)
    
-   call write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test,ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test, ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test,ec_pben2_test, ec_pben2_test_plus_delta,int_vc_pben2_one_e_test,int_vc_pben2_two_e_test)
+   call write_energies_test_on_file(delta_rho_11, ex_lda_test, ex_lda_test_plus_delta,int_vx_lda_test, ex_pbe_test, ex_pbe_test_plus_delta,int_vx_pbe_test, ec_pbe_test, ec_pbe_test_plus_delta,int_vc_pbe_test,ex_pbeUEG_test, ex_pbeUEG_test_plus_delta,int_vx_pbeUEG_test, ec_pbeUEG_test, ec_pbeUEG_test_plus_delta,int_vc_pbeUEG_test,ec_pben2_test, ec_pben2_test_plus_delta_n_n2, ec_pben2_test_plus_delta_n, ec_pben2_test_plus_delta_n2, int_vc_pben2_one_e_test, int_vc_pben2_two_e_test)
  
 end program
 

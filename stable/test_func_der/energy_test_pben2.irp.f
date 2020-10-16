@@ -11,11 +11,12 @@ subroutine energy_xc_pben2_test (rho_a,rho_b,grad_rho_a,grad_rho_b,rho2,ecmd_pbe
  double precision :: decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,ec, dexdgrad_rho_2,dexdrho2, dexdrho
  integer :: i, m 
  double precision :: weight, mu
- 
+ double precision :: on_top_extrap, mu_correction_of_on_top 
  ecmd_pben2_test = 0.d0
  exmd_pben2_test = 0.d0
  do i = 1, n_points_final_grid
-   mu = mu_erf_dft
+!  mu = mu_of_r_prov(i,1)
+   mu = mu_of_r_hf(i)
    weight = final_weight_at_r_vector(i)
    grad_rho_a_2 = 0.d0
    grad_rho_b_2 = 0.d0
@@ -30,10 +31,11 @@ subroutine energy_xc_pben2_test (rho_a,rho_b,grad_rho_a,grad_rho_b,rho2,ecmd_pbe
 !  We take the extrapolated on-top pair density (Eq. 29)
 !   on_top = total_cas_on_top_density(1,1) !! C'EST PAS LE BON MU ICI
 !  Multiplied by 2 because of difference of normalizations between the on_top of QP2 and that of JCP, 150, 084103 1-10 (2019)
-!   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
+!   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,rho2(i))
+   on_top_extrap = rho2(i)
 
-   call ecmdsrPBEn2(mu,rho_a(i),rho_b(i),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2(i),ec,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
-   call exmdsrPBEn2(mu,rho_a(i),rho_b(i),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2(i),ex,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
+   call ecmdsrPBEn2(mu,rho_a(i),rho_b(i),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,on_top_extrap,ec,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
+   call exmdsrPBEn2(mu,rho_a(i),rho_b(i),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,on_top_extrap,ex,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
 
    exmd_pben2_test += weight*ex
    ecmd_pben2_test += weight*ec
@@ -60,7 +62,7 @@ end
    do j=1, mo_num
     do k=1, mo_num
      do l=1, mo_num
-      int_vc_pben2_test += delta_gamma_i_j_k_l(i,j,k,l)*eff_two_e
+      int_vc_pben2_test += delta_gamma_i_j_k_l(i,j,k,l)*eff_two_e(i,j,k,l,1)
      enddo
     enddo
    enddo
@@ -83,6 +85,7 @@ end
 
  do k=1, mo_num
   do l=1, mo_num
+!   int_vc_pben2_test += delta_gamma_i_j(k,l)*(pot_basis_alpha_mo(k,l,1) + pot_basis_beta_mo(k,l,1))
    int_vc_pben2_test += delta_gamma_i_j(k,l)*(pot_basis_alpha_mo_su_pbe_ot(k,l,1) + pot_basis_beta_mo_su_pbe_ot(k,l,1))
   enddo
  enddo

@@ -124,11 +124,12 @@ END_PROVIDER
 
    ! The factor 2 is because the on-top is normalized to N(N-1)/2 
    ! whereas the routine ecmdsrPBEn2 assumes a on-top normalized to N(N-1)
-   rho2 = 2.d0*rho2
+!   rho2 = 2.d0*rho2
    ! mu = mu(r)
-   mu = mu_of_r_prov(ipoint,istate)
+  ! mu = mu_of_r_prov(ipoint,istate)
+   mu = mu_of_r_hf(ipoint)
    ! extrapolation toward the exact on-top based on mu(r)
-   rho2 = mu_correction_of_on_top(mu,rho2) 
+  ! rho2 = mu_correction_of_on_top(mu,rho2) 
 
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
 
