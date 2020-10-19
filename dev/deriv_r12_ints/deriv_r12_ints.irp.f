@@ -4,6 +4,7 @@ program deriv_r12_ints
 ! TODO : Put the documentation of the program here
   END_DOC
   print *, 'Hello world'
+ call test_all_prod_in_r
  call big_thing
  call big_thing_mo
 !provide ao_two_e_eff_dr12_pot_array

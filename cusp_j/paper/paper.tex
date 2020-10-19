@@ -611,9 +611,11 @@ Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in
 \end{ruledtabular}
 \end{table*}
 
-\subsection{Study of the ground state eigenvector}
-In Sec.\ref{sec:total_e} we shown the strong improvement of the speed of convergence of the total energy for the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=1.6$. 
+\subsection{Study of the ground state eigenvector in real space}
+In Sec.\ref{sec:total_e} we shown the strong improvement of the speed of convergence of the total energy for the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=3.0$. 
 Nevertheless, one can wonder if this good behavior results from a kind of error cancellation or if there is indeed a deeper mathematical reason for such an improvement of speed of convergence. 
+To answer that question, we investigate some properties of the ground state eigenvectors of different types of Hamiltonians in real space. 
+
 Theoretically if, for a given value of $\mu$, $\tilde{H}[\mu]$ is perfectly well represented in a given basis set $\mathcal{B}$ (\textit{i.e.} $\tilde{H}[\mu]^{\basis} = H$), then all its eigenvalues coincide with that of the exact Hamiltonian (\textit{i.e.} developed in a complete basis set). If one focusses now on the exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$, it is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $j(r_{12},\mu)$ through 
 \begin{equation}
  \psiex(\br{}_1,\br{}_2) =  \frac{1}{\sqrt{\mathcal{N}^{\mu}}} e^{j(r_{12},\mu)} \phimu(\br{}_1,\br{}_2), 
@@ -622,7 +624,7 @@ where the normalization factor $\mathcal{N}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}^{\mu} = \matelem{\phimu}{e^{2 j(r_{12},\mu)}}{\phimu}.
 \end{equation}
-Therefore, having obtained in a given basis set $\basis$ the right eigenvector $\phimub$, one can estimate the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$ by 
+Therefore, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to can estimate the exact ground state wave function $\psiex$ through 
 \begin{equation}
  \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{j(r_{12},\mu)}\phimub(\br{}_1,\br{}_2)
 \end{equation}
@@ -662,11 +664,20 @@ The understanding of such observations can be provided by the mathematical and p
 i) The shape of the Jastrow factor $j(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu < \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunctions do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
 Nevertheless, one can also remark that for $\mu > 0.5$, the speed of convergence deteriorates as $\mu$ increases, even though it remains finite. This can be explained by the fact that even if $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ remains bounded from above, when $\mu$ is large such operator is poorly represented in a finite basis set. 
 
-ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is much more attractive when $r_{12}\approx 0$ for $\mu=0.3$ than for $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
+ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ presents a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is much more attractive when $r_{12}\approx 0$ for $\mu=0.3$ than for $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
 
-iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) <\frac{1}{r_{12}}$, the value of the eigenvector of $\phimub(\br{}_1,\br{}_2)$ is necessary larger than the FCI wave function at $r_{12}=0$ as in the latter the interaction is more repulsive. 
+iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) <\frac{1}{r_{12}}$, the value of the eigenvector of $\phimub(\br{}_1,\br{}_2)$ is necessary larger than the FCI wave function at $r_{12}=0$ as in the latter the interaction is more repulsive. This implies that the on-top pair density (\textit{i.e.} the probability of finding two electrons at the same position) is necessary larger for the eigenvectors of $\tilde{H}[\mu]$ than that for the eigenvectors of $H$.
 
-iv) 
+iv) The fact that $\psimub(\br{}_1,\br{}_2)$ provides  such a good approximation of $\psiex(\br{}_1,\br{}_2)$ in real space can be investigate through the prism of the local energy. 
+The local energy $E_{\text{loc}}[\psi](\br{}_1,\br{}_2)$ associated to a given wave function $\psi$ is defined as 
+\begin{equation}
+ E_{\text{loc}}[\psi](\br{}_1,\br{}_2) = \frac{H\psi(\br{}_1,\br{}_2)}{\psi(\br{}_1,\br{}_2)},
+\end{equation}
+and is such that 
+\begin{equation}
+ \int \text{d}\br{}_1\,\,\text{d}\br{}_2\,\, E_{\text{loc}}[\psi](\br{}_1,\br{}_2) \big|\psi(\br{}_1,\br{}_2)\big|^2= \matelem{\psi}{H}{\psi}.
+\end{equation}
+Therefore, one can 
 \begin{figure*}
  \label{fig_wee_compare}
         \includegraphics[width=1.00\linewidth]{w_ee_compare.pdf}
@@ -675,12 +686,12 @@ iv)
 \end{figure*}
 
 \section{Study of the helium isoelectronic series}
-\begin{figure*}
- \label{fig_wee_compare}
-        \includegraphics[width=1.00\linewidth]{w_ee_compare.pdf}
-        \caption{
-        Effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=0.3$ and $\mu=1.0$, compared to the usual $1/r_{12}$ Coulomb interaction.}
-\end{figure*}
+%\begin{figure*}
+% \label{fig_wee_compare}
+%        \includegraphics[width=1.00\linewidth]{w_ee_compare.pdf}
+%        \caption{
+%        Effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=0.3$ and $\mu=1.0$, compared to the usual $1/r_{12}$ Coulomb interaction.}
+%\end{figure*}
 
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}
@@ -933,10 +944,17 @@ Therefore, Eq. \eqref{eq:d2_x1_0} becomes
 & \deriv{}{x_{1}}{2}  u(\br{}_1,\br{}_2) = \bigg( \deriv{}{x_1}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}\bigg) (x_1 - x_2 ) +  \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}  \\
 & = -\frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2}\bigg(\frac{1 - \text{erf}\big( \mu r_{12} \big)}{2 r_{12}}  + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \bigg) +  \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
 & = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bigg( 1 - \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2} \bigg) 
-- \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2}\frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} 
+- \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2}\frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2},
  \end{aligned}
 \end{equation}
-and so 
+implying that 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x1_3}
+ \bigg( \deriv{}{x_{1}}{2} + \deriv{}{y_{1}}{2} + \deriv{}{z_{1}}{2} \bigg)  u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12}\big)^2},
+ \end{aligned}
+\end{equation}
+and therefore 
 \begin{equation}
  \begin{aligned}
  \label{eq:lapl_u_final}
