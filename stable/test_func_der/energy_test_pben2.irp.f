@@ -15,8 +15,8 @@ subroutine energy_xc_pben2_test (rho_a,rho_b,grad_rho_a,grad_rho_b,rho2,ecmd_pbe
  ecmd_pben2_test = 0.d0
  exmd_pben2_test = 0.d0
  do i = 1, n_points_final_grid
-!  mu = mu_of_r_prov(i,1)
-   mu = mu_of_r_hf(i)
+  mu = mu_of_r_prov(i,1)
+!   mu = mu_of_r_hf(i)
    weight = final_weight_at_r_vector(i)
    grad_rho_a_2 = 0.d0
    grad_rho_b_2 = 0.d0
@@ -31,8 +31,10 @@ subroutine energy_xc_pben2_test (rho_a,rho_b,grad_rho_a,grad_rho_b,rho2,ecmd_pbe
 !  We take the extrapolated on-top pair density (Eq. 29)
 !   on_top = total_cas_on_top_density(1,1) !! C'EST PAS LE BON MU ICI
 !  Multiplied by 2 because of difference of normalizations between the on_top of QP2 and that of JCP, 150, 084103 1-10 (2019)
-!   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,rho2(i))
-   on_top_extrap = rho2(i)
+   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,rho2(i))
+!   on_top_extrap = rho2(i)
+!   on_top_extrap_alpha = rho2_alpha(i)
+!   on_top_extrap_beta = rho2_beta(i)
 
    call ecmdsrPBEn2(mu,rho_a(i),rho_b(i),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,on_top_extrap,ec,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
    call exmdsrPBEn2(mu,rho_a(i),rho_b(i),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,on_top_extrap,ex,dexdrho_a,dexdrho_b, dexdrho, dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2,dexdrho2)
@@ -69,62 +71,26 @@ end
   enddo
  end
 
- subroutine int_potential_c_pben2_one_e_test (delta_rho_11,int_vc_pben2_test)
+ subroutine int_potential_c_pben2_one_e_test (delta_rho_11_alpha, delta_rho_11_beta,int_vc_pben2_test)
  implicit none
  BEGIN_DOC
  ! 
  END_DOC
  integer :: i
- double precision, intent(in) :: delta_rho_11
+ double precision, intent(in) :: delta_rho_11_alpha, delta_rho_11_beta
  double precision, intent(out):: int_vc_pben2_test
- double precision :: delta_gamma_i_j(mo_num, mo_num)
+ double precision :: delta_gamma_i_j_alpha(mo_num, mo_num),delta_gamma_i_j_beta(mo_num, mo_num)
  integer :: k,l
 
  int_vc_pben2_test = 0.d0
- call delta_gamma_i_j_for_energy_test (delta_rho_11,delta_gamma_i_j)
+ call delta_gamma_i_j_for_energy_test_alpha_beta(delta_rho_11_alpha,delta_rho_11_beta,delta_gamma_i_j_alpha, delta_gamma_i_j_beta)
 
  do k=1, mo_num
   do l=1, mo_num
 !   int_vc_pben2_test += delta_gamma_i_j(k,l)*(pot_basis_alpha_mo(k,l,1) + pot_basis_beta_mo(k,l,1))
-   int_vc_pben2_test += delta_gamma_i_j(k,l)*(pot_basis_alpha_mo_su_pbe_ot(k,l,1) + pot_basis_beta_mo_su_pbe_ot(k,l,1))
+!   int_vc_pben2_test += delta_gamma_i_j_alpha(k,l)*(pot_basis_alpha_mo_su_pbe_ot(k,l,1) + pot_basis_beta_mo_su_pbe_ot(k,l,1))
+   int_vc_pben2_test += delta_gamma_i_j_alpha(k,l)*pot_basis_alpha_mo_su_pbe_ot(k,l,1) + delta_gamma_i_j_beta(k,l)*pot_basis_beta_mo_su_pbe_ot(k,l,1)
   enddo
  enddo
  end
 
-
-
-
-!BEGIN_PROVIDER [double precision, potential_x_alpha_mo_pben2, (mo_num,mo_num)]
-!implicit none
-!BEGIN_DOC
-!! Representation of vx_alpha in the molecular orbitals basis 
-!END_DOC
-!call ao_to_mo(potential_x_alpha_ao_pben2,ao_num,potential_x_alpha_mo_pben2,mo_num)
-!END_PROVIDER 
-
-!BEGIN_PROVIDER [double precision, potential_x_beta_mo_pben2, (mo_num,mo_num)]
-!implicit none
-!BEGIN_DOC
-!! Representation of vx_beta in the molecular orbitals basis 
-!END_DOC
-!call ao_to_mo(potential_x_beta_ao_pben2,ao_num,potential_x_beta_mo_pben2,mo_num)
-!END_PROVIDER
-
-!
-!BEGIN_PROVIDER [double precision, potential_c_alpha_mo_pben2, (mo_num,mo_num)]
-!implicit none
-!BEGIN_DOC
-!! Representation of vx_alpha in the molecular orbitals basis 
-!END_DOC
-!call ao_to_mo(potential_c_alpha_ao_pben2,ao_num,potential_c_alpha_mo_pben2,mo_num)
-!END_PROVIDER 
-
-!BEGIN_PROVIDER [double precision, potential_c_beta_mo_pben2, (mo_num,mo_num)]
-!implicit none
-!BEGIN_DOC
-!! Representation of vx_beta in the molecular orbitals basis 
-!END_DOC
-!call ao_to_mo(potential_c_beta_ao_pben2,ao_num,potential_c_beta_mo_pben2,mo_num)
-!END_PROVIDER
-
- 

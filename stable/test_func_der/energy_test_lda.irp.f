@@ -70,6 +70,7 @@ end
  enddo
  end
 
+
  BEGIN_PROVIDER [double precision, potential_x_alpha_mo_lda, (mo_num,mo_num)]
  implicit none
  BEGIN_DOC

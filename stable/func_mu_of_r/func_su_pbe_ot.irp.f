@@ -71,6 +71,7 @@ END_PROVIDER
 &BEGIN_PROVIDER[double precision, aos_d_vc_beta_su_pbe_ot_w   ,  (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, d_dn2_e_cmd_su_pbe_ot, (n_points_final_grid,N_states) ]
  implicit none
+ include 'constants.include.F'
  BEGIN_DOC
 ! Intermediates to compute the su-pbe-ot potentials 
 !
@@ -124,18 +125,18 @@ END_PROVIDER
 
    ! The factor 2 is because the on-top is normalized to N(N-1)/2 
    ! whereas the routine ecmdsrPBEn2 assumes a on-top normalized to N(N-1)
-!   rho2 = 2.d0*rho2
+   rho2 = 2.d0*rho2
    ! mu = mu(r)
-  ! mu = mu_of_r_prov(ipoint,istate)
-   mu = mu_of_r_hf(ipoint)
+   mu = mu_of_r_prov(ipoint,istate)
+  ! mu = mu_of_r_hf(ipoint)
    ! extrapolation toward the exact on-top based on mu(r)
-  ! rho2 = mu_correction_of_on_top(mu,rho2) 
+   rho2 = mu_correction_of_on_top(mu,rho2) 
 
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
 
    ! The factor 1 (and not 2) is because the output is with the correct normalization factor (i.e. N(N-1)) 
    ! for the computation of the effective operator of type 1/2  \sum_{ijkl} <ij|kl> a^k a^l a_j a_i
-   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 1.d0 * decdrho2
+   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
    
    decdrho_a *= weight
    decdrho_b *= weight
