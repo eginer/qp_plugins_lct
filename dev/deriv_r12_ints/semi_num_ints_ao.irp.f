@@ -68,13 +68,13 @@ BEGIN_PROVIDER [ double precision, v_ij_erf_rk, ( ao_num, ao_num,n_points_final_
  print*,'wall time for v_ij_erf_rk  ',wall1 - wall0
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk, (3,ao_num, ao_num,n_points_final_grid)]
+BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk, (ao_num, ao_num,n_points_final_grid,3)]
  implicit none
  BEGIN_DOC
 ! int dr x * phi_i(r) phi_j(r) erf(mu(R) |r - R|)/|r - R|
  END_DOC
  integer :: i,j,ipoint,m
- double precision :: mu,r(3),ints(3),ints_coulomb(3)
+ double precision :: mu,r(3),ints,ints_coulomb
  double precision :: wall0, wall1
  call wall_time(wall0)
  if(constant_mu)then
@@ -83,18 +83,18 @@ BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk, (3,ao_num, ao_num,n_points_fin
  !$OMP PRIVATE (i,j,ipoint,mu,r,ints,m,ints_coulomb) & 
  !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,x_v_ij_erf_rk,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = i, ao_num
-     mu = mu_erf 
-     r(1) = final_grid_points(1,ipoint)
-     r(2) = final_grid_points(2,ipoint)
-     r(3) = final_grid_points(3,ipoint)
-     call NAI_pol_x_mult_erf_ao(i,j,mu,r,ints)
-     call NAI_pol_x_mult_erf_ao(i,j,1.d+9,r,ints_coulomb)
-     do m = 1, 3
-      x_v_ij_erf_rk(m,j,i,ipoint)= ( ints(m) - ints_coulomb(m))
-     enddo
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+    do i = 1, ao_num
+     do j = i, ao_num
+      mu = mu_erf 
+      r(1) = final_grid_points(1,ipoint)
+      r(2) = final_grid_points(2,ipoint)
+      r(3) = final_grid_points(3,ipoint)
+      call NAI_pol_x_specify_mult_erf_ao(i,j,mu,r,m,ints)
+      call NAI_pol_x_specify_mult_erf_ao(i,j,1.d+9,r,m,ints_coulomb)
+      x_v_ij_erf_rk(j,i,ipoint,m) = ( ints - ints_coulomb)
+    enddo
    enddo
   enddo
  enddo
@@ -106,18 +106,18 @@ BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk, (3,ao_num, ao_num,n_points_fin
  !$OMP PRIVATE (i,j,ipoint,mu,r,ints,m,ints_coulomb) & 
  !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,x_v_ij_erf_rk,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = i, ao_num
-     mu = mu_of_r_prov(ipoint,1)
-     r(1) = final_grid_points(1,ipoint)
-     r(2) = final_grid_points(2,ipoint)
-     r(3) = final_grid_points(3,ipoint)
-     call NAI_pol_x_mult_erf_ao(i,j,mu,r,ints)
-     call NAI_pol_x_mult_erf_ao(i,j,1.d+9,r,ints_coulomb)
-     do m = 1, 3
-      x_v_ij_erf_rk(m,j,i,ipoint)= ( ints(m) - ints_coulomb(m))
-     enddo
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+    do i = 1, ao_num
+     do j = i, ao_num
+      mu = mu_of_r_prov(ipoint,1)
+      r(1) = final_grid_points(1,ipoint)
+      r(2) = final_grid_points(2,ipoint)
+      r(3) = final_grid_points(3,ipoint)
+      call NAI_pol_x_specify_mult_erf_ao(i,j,mu,r,m,ints)
+      call NAI_pol_x_specify_mult_erf_ao(i,j,1.d+9,r,m,ints_coulomb)
+      x_v_ij_erf_rk(j,i,ipoint,m) = ( ints - ints_coulomb)
+    enddo
    enddo
   enddo
  enddo
@@ -125,13 +125,15 @@ BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk, (3,ao_num, ao_num,n_points_fin
  !$OMP END PARALLEL
 
  endif
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, i-1
-     x_v_ij_erf_rk(:,j,i,ipoint)= x_v_ij_erf_rk(:,i,j,ipoint)
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = 1, i-1
+      x_v_ij_erf_rk(j,i,ipoint,m)= x_v_ij_erf_rk(i,j,ipoint,m)
     enddo
    enddo
   enddo
+ enddo
  call wall_time(wall1)
  print*,'wall time for x_v_ij_erf_rk',wall1 - wall0
 
@@ -218,7 +220,7 @@ subroutine NAI_pol_x_specify_mult_erf_ao(i_ao,j_ao,mu_in,C_center,m,ints)
       beta = ao_expo_ordered_transp(j,j_ao)
       ! First term = (x-Ax)**(ax+1)
       integral =  NAI_pol_mult_erf(A_center,B_center,power_xA,power_B,alpha,beta,C_center,n_pt_in,mu_in)
-      ints(m) += integral * ao_coef_normalized_ordered_transp(j,j_ao)*ao_coef_normalized_ordered_transp(i,i_ao)
+      ints += integral * ao_coef_normalized_ordered_transp(j,j_ao)*ao_coef_normalized_ordered_transp(i,i_ao)
       ! Second term = Ax * (x-Ax)**(ax)
       integral =  NAI_pol_mult_erf(A_center,B_center,power_A,power_B,alpha,beta,C_center,n_pt_in,mu_in)
       ints += A_center(m) * integral * ao_coef_normalized_ordered_transp(j,j_ao)*ao_coef_normalized_ordered_transp(i,i_ao)
@@ -226,29 +228,29 @@ subroutine NAI_pol_x_specify_mult_erf_ao(i_ao,j_ao,mu_in,C_center,m,ints)
  enddo
 end
 
-BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk_trans, (ao_num, ao_num,n_points_final_grid,3)]
- implicit none
- BEGIN_DOC
+!BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk_trans, (ao_num, ao_num,n_points_final_grid,3)]
+! implicit none
+! BEGIN_DOC
 ! int dr x * phi_i(r) phi_j(r) erf(mu(R) |r - R|)/|r - R|
- END_DOC
- integer :: i,j,ipoint
- !$OMP PARALLEL                  &
- !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint) & 
- !$OMP SHARED (ao_num,n_points_final_grid,x_v_ij_erf_rk,x_v_ij_erf_rk_trans)
- !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, ao_num
-     x_v_ij_erf_rk_trans(j,i,ipoint,:)= x_v_ij_erf_rk(:,j,i,ipoint)
-    enddo
-   enddo
-  enddo
- !$OMP END DO
- !$OMP END PARALLEL
-  FREE x_v_ij_erf_rk
-
-END_PROVIDER 
-
-
+! END_DOC
+! integer :: i,j,ipoint
+! !$OMP PARALLEL                  &
+! !$OMP DEFAULT (NONE)            &
+! !$OMP PRIVATE (i,j,ipoint) & 
+! !$OMP SHARED (ao_num,n_points_final_grid,x_v_ij_erf_rk,x_v_ij_erf_rk_trans)
+! !$OMP DO SCHEDULE (dynamic)
+! do ipoint = 1, n_points_final_grid
+!  do i = 1, ao_num
+!   do j = 1, ao_num
+!     x_v_ij_erf_rk_trans(j,i,ipoint,:)= x_v_ij_erf_rk(:,j,i,ipoint)
+!    enddo
+!   enddo
+!  enddo
+! !$OMP END DO
+! !$OMP END PARALLEL
+!  FREE x_v_ij_erf_rk
+!
+!END_PROVIDER 
+!
+!
 

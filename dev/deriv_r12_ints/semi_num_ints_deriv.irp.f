@@ -7,7 +7,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
  thr = 1.d-8
  ao_two_e_eff_dr12_pot_array_new = 0.d0
  double precision, allocatable :: b_mat(:,:,:,:)
- provide v_ij_erf_rk x_v_ij_erf_rk_trans
+ provide v_ij_erf_rk x_v_ij_erf_rk
  call wall_time(wall0)
  allocate(b_mat(ao_num,ao_num,n_points_final_grid,3))
  do m = 1, 3
@@ -80,7 +80,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                        [k*x*i](1)       * [l *  grad_x j](2)
-        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk_trans(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
+        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
        enddo
       enddo
      enddo
@@ -97,7 +97,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
 ! !     if(dabs(aos_grad_in_r_array(i,ipoint,m)*v_ij_erf_rk(l,j,ipoint)).lt.thr)cycle
        do k = 1, ao_num ! 1
         !                               1 1 2 2                [l*x*j](2)     * [k * grad_x i](1)
-        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk_trans(l,j,ipoint,m) * b_mat(k,i,ipoint,m) 
+        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk(l,j,ipoint,m) * b_mat(k,i,ipoint,m) 
        enddo
       enddo
      enddo
@@ -173,7 +173,7 @@ END_DOC
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                        [k*x*i](1)       * [l *  grad_x j](2)
-        ac_mat(k,i,l,j) -= x_v_ij_erf_rk_trans(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
+        ac_mat(k,i,l,j) -= x_v_ij_erf_rk(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
        enddo
       enddo
      enddo
@@ -203,7 +203,7 @@ END_DOC
  double precision :: weight1,thr,r(3)
  thr = 1.d-8
  double precision, allocatable :: b_mat(:,:,:,:),ac_mat(:,:,:,:)
- provide v_ij_erf_rk x_v_ij_erf_rk_trans
+ provide v_ij_erf_rk x_v_ij_erf_rk
   call wall_time(wall0)
  allocate(b_mat(n_points_final_grid,ao_num,ao_num,3),ac_mat(ao_num, ao_num, ao_num, ao_num))
  !$OMP PARALLEL                  &
@@ -255,7 +255,7 @@ END_DOC
 
   do m = 1, 3
    !           A   B^T  dim(A,1)       dim(B,2)       dim(A,2)        alpha * A                LDA 
-   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,-1.d0,x_v_ij_erf_rk_trans(1,1,1,m),ao_num*ao_num & 
+   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,-1.d0,x_v_ij_erf_rk(1,1,1,m),ao_num*ao_num & 
                      ,b_mat(1,1,1,m),n_points_final_grid,1.d0,ac_mat,ao_num*ao_num)
   enddo
 
