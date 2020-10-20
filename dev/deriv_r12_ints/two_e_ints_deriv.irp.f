@@ -167,9 +167,6 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
                  P_l_xyz_dxyz_k(0,1,1,r,s), iorder_l_xyz_dxyz_k(1,1,r,s)) 
             do mm = 1, 3
              d_dr12(mm) += d_dr12_tmp(mm) * coef4
-             if(mm==2)then
-              print*, d_dr12_tmp(mm),coef4,d_dr12(mm)
-             endif
             enddo
            enddo ! s
          enddo  ! r
@@ -475,10 +472,10 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
        P_ij(0,m),center_ij(m),p,iorder_ij(m),pq_inv,pq_inv_2,        &
        P_kl(0,m),center_kl(m),q,iorder_kl(m),p10_1,p01_1,p10_2,p01_2,&
        n_Ixyz(m), Ixyz_pol(0,m))
-   if(n_Ixyz(m) == -1) then
-    print*,'AHAHAAH le mal'
-    return
-   endif
+!   if(n_Ixyz(m) == -1) then
+!    print*,'AHAHAAH le mal'
+!    return
+!   endif
   enddo
 
   

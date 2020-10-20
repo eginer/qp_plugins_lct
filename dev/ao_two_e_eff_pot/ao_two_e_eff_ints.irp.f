@@ -1,7 +1,7 @@
 program ao_two_e_eff_ints
  implicit none
-! call test_new_erf_ints
-! call test_gauss_ints_aos
+ call test_new_erf_ints
+ call test_gauss_ints_aos
  call test_gauss_ints_map
 end
 subroutine test_fits
