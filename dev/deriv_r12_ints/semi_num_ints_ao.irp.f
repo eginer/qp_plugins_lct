@@ -228,29 +228,3 @@ subroutine NAI_pol_x_specify_mult_erf_ao(i_ao,j_ao,mu_in,C_center,m,ints)
  enddo
 end
 
-!BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk_trans, (ao_num, ao_num,n_points_final_grid,3)]
-! implicit none
-! BEGIN_DOC
-! int dr x * phi_i(r) phi_j(r) erf(mu(R) |r - R|)/|r - R|
-! END_DOC
-! integer :: i,j,ipoint
-! !$OMP PARALLEL                  &
-! !$OMP DEFAULT (NONE)            &
-! !$OMP PRIVATE (i,j,ipoint) & 
-! !$OMP SHARED (ao_num,n_points_final_grid,x_v_ij_erf_rk,x_v_ij_erf_rk_trans)
-! !$OMP DO SCHEDULE (dynamic)
-! do ipoint = 1, n_points_final_grid
-!  do i = 1, ao_num
-!   do j = 1, ao_num
-!     x_v_ij_erf_rk_trans(j,i,ipoint,:)= x_v_ij_erf_rk(:,j,i,ipoint)
-!    enddo
-!   enddo
-!  enddo
-! !$OMP END DO
-! !$OMP END PARALLEL
-!  FREE x_v_ij_erf_rk
-!
-!END_PROVIDER 
-!
-!
-

@@ -1,10 +1,11 @@
 program pouet
  implicit none
- provide x_v_ij_erf_rk v_ij_erf_rk
+! provide x_v_ij_erf_rk v_ij_erf_rk
 ! call test_ints_semi
 ! call test_semi_num_bis
  call test_new_ints
 
+! provide ao_two_e_eff_dr12_pot_array
 end
 
 subroutine test_ints_semi

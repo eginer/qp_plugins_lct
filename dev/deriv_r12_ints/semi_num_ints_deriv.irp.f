@@ -203,6 +203,7 @@ END_DOC
  double precision :: weight1,thr,r(3)
  thr = 1.d-8
  double precision, allocatable :: b_mat(:,:,:,:),ac_mat(:,:,:,:)
+! provide v_ij_erf_rk 
  provide v_ij_erf_rk x_v_ij_erf_rk
   call wall_time(wall0)
  allocate(b_mat(n_points_final_grid,ao_num,ao_num,3),ac_mat(ao_num, ao_num, ao_num, ao_num))
