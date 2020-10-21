@@ -13,7 +13,7 @@ subroutine print_energy
  i = 1
  print*,'E0_tilde = ',eigval_trans(i) + nuclear_repulsion
  print*,''
- print*,'Delta E  = ',eigval_trans(i) - CI_energy(i)
+ print*,'Delta E  = ',(eigval_trans(i) + nuclear_repulsion) - CI_energy(i)
 end
 
 subroutine print_eigv

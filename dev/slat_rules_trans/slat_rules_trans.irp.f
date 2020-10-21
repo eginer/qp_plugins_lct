@@ -32,7 +32,7 @@ subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
     jj = occ(j,jspin) 
     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map)
     heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) 
-    hderiv += mo_two_e_eff_dr12_pot_array(ii,jj,ii,jj) 
+    hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) 
    enddo
   enddo
   htot = hmono + herf + heff + hderiv
@@ -86,7 +86,7 @@ subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
    ii = occ(i,ispin) 
    herf   += get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map)
    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) 
-   hderiv += mo_two_e_eff_dr12_pot_array(ii,p1,ii,h1) 
+   hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1) 
   enddo
   herf    *= phase
   heff    *= phase
@@ -132,7 +132,7 @@ subroutine double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
 !  print*,'h1,h2,p1,p2',h1,h2,p1,p2
   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
-  hderiv  = mo_two_e_eff_dr12_pot_array(p1,p2,h1,h2) 
+  hderiv  = mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h1,h2) 
   herf   *= phase
   heff   *= phase
   hderiv *= phase

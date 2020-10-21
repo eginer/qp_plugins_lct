@@ -3,8 +3,9 @@ program pouet
 ! provide x_v_ij_erf_rk v_ij_erf_rk
 ! call test_ints_semi
 ! call test_semi_num_bis
- call test_new_ints
+! call test_new_ints
 
+ call test_new_old_ints
 ! provide ao_two_e_eff_dr12_pot_array
 end
 
@@ -194,21 +195,45 @@ subroutine test_new_ints
  double precision :: accu,err
  integer :: i,j,k,l
  provide ao_two_e_eff_dr12_pot_array_new_3
-! accu = 0.d0
-! do j = 1, ao_num
-!  do l = 1, ao_num
-!   do i = 1, ao_num
-!    do k = 1, ao_num
-!     err = dabs(ao_two_e_eff_dr12_pot_array_new(k,i,l,j) - ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j))
-!     if(err.gt.1.d-10)then
-!      print*,'k,i,l,j',k,i,l,j
-!      print*,err,ao_two_e_eff_dr12_pot_array_new(k,i,l,j),ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j)
-!     endif
-!     accu += err
-!    enddo
-!   enddo
-!  enddo
-! enddo
-! print*,'accu = ',accu
+ accu = 0.d0
+ do j = 1, ao_num
+  do l = 1, ao_num
+   do i = 1, ao_num
+    do k = 1, ao_num
+     err = dabs(ao_two_e_eff_dr12_pot_array_new(k,i,l,j) - ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j))
+     if(err.gt.1.d-10)then
+      print*,'k,i,l,j',k,i,l,j
+      print*,err,ao_two_e_eff_dr12_pot_array_new(k,i,l,j),ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j)
+     endif
+     accu += err
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu
+
+end
+
+subroutine test_new_old_ints
+ implicit none
+ integer :: i,j,k,l
+ double precision :: accu,err
+ accu = 0.d0
+ do j = 1, mo_num
+  do i = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     err = dabs(mo_two_e_eff_dr12_pot_array_physicist(k,l,i,j) -  &
+                mo_two_e_eff_dr12_pot_array(k,l,i,j) ) 
+     if(err.gt.1.d-10)then
+      print*,'k,l,i,j',k,l,i,j
+      print*,err,mo_two_e_eff_dr12_pot_array_physicist(k,l,i,j),mo_two_e_eff_dr12_pot_array(k,l,i,j)
+     endif
+     accu += err
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu
 
 end
