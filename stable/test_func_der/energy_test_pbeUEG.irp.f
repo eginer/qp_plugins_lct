@@ -53,7 +53,7 @@ subroutine int_potential_xc_pbeUEG_test (delta_rho_11,int_vx_pbeUEG_test, int_vc
 
  int_vx_pbeUEG_test = 0.d0
  int_vc_pbeUEG_test = 0.d0
- call delta_gamma_i_j_for_energy_test (delta_rho_11,delta_gamma_i_j)
+ call delta_gamma_i_j_for_energy_test_general (delta_rho_11,delta_gamma_i_j)
 
  do k=1, mo_num
   do l=1, mo_num

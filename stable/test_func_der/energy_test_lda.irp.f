@@ -33,7 +33,7 @@ subroutine int_potential_x_lda_test (delta_rho_11,rho_a,rho_b,int_vx_lda_test)
  integer :: k,l
  
  int_vx_lda_test = 0.d0
- call delta_gamma_i_j_for_energy_test (delta_rho_11,delta_gamma_i_j)
+ call delta_gamma_i_j_for_energy_test_general (delta_rho_11,delta_gamma_i_j)
  do k=1, mo_num
   do l=1, mo_num
    call potential_x_lda(k,l,rho_a,rho_b,vx_i_j)

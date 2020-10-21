@@ -11,7 +11,7 @@
    double precision :: delta_dm_a(n_points_final_grid), delta_dm_b(n_points_final_grid) 
    integer :: i
    delta_rho_11 = 1.d-5
-   call delta_density_for_energy_test(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
+   call delta_density_for_energy_test_general(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
    do i=1, n_points_final_grid
     r(1) = final_grid_points(1,i) 
     r(2) = final_grid_points(2,i) 
@@ -47,8 +47,8 @@
    integer :: i,m
    delta_rho_11 = 1.d-5
    delta_grad_rho_11 = 1.d-5
-   call delta_density_for_energy_test(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
-   call delta_grad_density_for_energy_test(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11, delta_grad_rho_11)
+   call delta_density_for_energy_test_general(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
+   call delta_grad_density_for_energy_test_general(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11, delta_grad_rho_11)
    do i=1, n_points_final_grid
     r(1) = final_grid_points(1,i) 
     r(2) = final_grid_points(2,i) 
@@ -63,7 +63,7 @@
    enddo
    call energy_xc_pbe_test (dm_a, dm_b, grad_dm_a, grad_dm_b, ex_pbe_at_n, ec_pbe_at_n)
    call energy_xc_pbe_test (dm_a_plus_delta, dm_b_plus_delta, grad_dm_a_plus_delta, grad_dm_b_plus_delta, ex_pbe_at_n_plus_delta_n, ec_pbe_at_n_plus_delta_n)
-   call int_potential_xc_pbe_test (delta_rho_11, int_vx_pbe_at_n, int_vc_pbe_at_n)
+   call int_potential_xc_pbe_test (delta_rho_11, delta_rho_11, int_vx_pbe_at_n, int_vc_pbe_at_n)
  END_PROVIDER
 
  BEGIN_PROVIDER  [ double precision , ex_pbeUEG_at_n ]
@@ -86,8 +86,8 @@
    integer :: i, m
    delta_rho_11 = 1.d-5
    delta_grad_rho_11 = 1.d-5
-   call delta_density_for_energy_test(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
-   call delta_grad_density_for_energy_test(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11, delta_grad_rho_11)
+   call delta_density_for_energy_test_general(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
+   call delta_grad_density_for_energy_test_general(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11, delta_grad_rho_11)
    do i=1, n_points_final_grid
      r(1) = final_grid_points(1,i) 
      r(2) = final_grid_points(2,i) 
@@ -125,16 +125,19 @@
    double precision :: aos_array(ao_num,n_points_final_grid), grad_aos_array(3,ao_num,n_points_final_grid)
    double precision :: delta_dm_a(n_points_final_grid), delta_dm_b(n_points_final_grid), delta_grad_dm_a(3,n_points_final_grid), delta_grad_dm_b(3,n_points_final_grid), delta_n2(n_points_final_grid)
    double precision :: dm_a_plus_delta(n_points_final_grid), dm_b_plus_delta(n_points_final_grid), grad_dm_a_plus_delta(3,n_points_final_grid), grad_dm_b_plus_delta(3,n_points_final_grid), n2_plus_delta(n_points_final_grid)
-   double precision :: delta_rho_11, delta_rho_11_alpha, delta_rho_11_beta, delta_grad_rho_11, delta_n2_11
+   double precision :: delta_rho_11, delta_rho_11_alpha, delta_rho_11_beta, delta_grad_rho_11, delta_grad_rho_11_alpha, delta_grad_rho_11_beta, delta_n2_11
   integer :: i, m
   delta_rho_11 = 1.d-5
-  delta_rho_11_alpha = 1.d-5
+  delta_rho_11_alpha = 1.d-2
   delta_rho_11_beta = 1.d-5
   delta_n2_11 = 1.d-5
   delta_grad_rho_11 = 1.d-5
-  call delta_density_for_energy_test(delta_dm_a, delta_dm_b, delta_rho_11, delta_rho_11)
-  call delta_grad_density_for_energy_test(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11, delta_grad_rho_11)
-  call delta_n2_for_energy_test (delta_n2, delta_n2_11)
+  delta_grad_rho_11_alpha = 1.d-2
+  delta_grad_rho_11_beta = 1.d-5
+
+  call delta_density_for_energy_test_general(delta_dm_a, delta_dm_b, delta_rho_11_alpha, delta_rho_11_beta)
+  call delta_grad_density_for_energy_test_general(delta_grad_dm_a, delta_grad_dm_b, delta_grad_rho_11_alpha, delta_grad_rho_11_beta)
+  call delta_n2_for_energy_test_general (delta_n2, delta_n2_11)
   do i=1, n_points_final_grid
     n2(i) = total_cas_on_top_density(i,1)
     r(1) = final_grid_points(1,i) 

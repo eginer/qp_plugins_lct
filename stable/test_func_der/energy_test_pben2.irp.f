@@ -58,7 +58,7 @@ end
  integer :: i,j,k,l
 
  int_vc_pben2_test = 0.d0
- call delta_gamma_i_j_k_l_for_energy_test (delta_n2_11,delta_gamma_i_j_k_l)
+ call delta_gamma_i_j_k_l_for_energy_test_general (delta_n2_11,delta_gamma_i_j_k_l)
 
   do i=1, mo_num
    do j=1, mo_num
@@ -83,7 +83,7 @@ end
  integer :: k,l
 
  int_vc_pben2_test = 0.d0
- call delta_gamma_i_j_for_energy_test_alpha_beta(delta_rho_11_alpha,delta_rho_11_beta,delta_gamma_i_j_alpha, delta_gamma_i_j_beta)
+ call delta_gamma_i_j_for_energy_test_alpha_beta_general(delta_rho_11_alpha,delta_rho_11_beta,delta_gamma_i_j_alpha, delta_gamma_i_j_beta)
 
  do k=1, mo_num
   do l=1, mo_num
