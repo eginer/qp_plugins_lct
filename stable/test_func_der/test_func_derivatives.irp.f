@@ -107,7 +107,7 @@ subroutine routine
 
    factor = 1.d0/(1.d0 + 2.d0/(sqpi*mu))
    !                            1    2            3           4         5           6      7     8            9                         10
-   write(44,'(100(F16.10,X))') r(3), decdrho2, factor, decdrho2*factor,rho_2,on_top_extrap,mu,rho_a+rho_b, 2.d0 * mos_array(1)**2.d0,mos_array(1)**4.d0
+   write(44,'(100(F16.10,X))') r(3), decdrho2, factor, decdrho2*factor,rho_2,on_top_extrap,mu,rho_a+rho_b, 2.d0 * mos_array(1)**2.d0,mos_array(1)**4.d0, rho_a, rho_b
    r(3) += dx
   enddo
 end program

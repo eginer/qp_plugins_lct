@@ -31,7 +31,7 @@ subroutine delta_gamma_i_j_for_energy_test_general (delta_rho_11,delta_gamma_i_j
  integer :: i,j
    do i=1, mo_num
     do j=1, mo_num
-     delta_gamma_i_j(i,j) = delta_rho_11 / (mo_num**2)
+     delta_gamma_i_j(i,j) = delta_rho_11 / (mo_num)
     enddo
    enddo
 end
@@ -75,7 +75,7 @@ subroutine delta_gamma_i_j_k_l_for_energy_test_general (delta_rho2_1111,delta_ga
     do k=1, mo_num
      do l=1, mo_num
       do m=1, mo_num
-       delta_gamma_i_j_k_l(j,k,l,m) = delta_rho2_1111 / (mo_num**4)
+       delta_gamma_i_j_k_l(j,k,l,m) = delta_rho2_1111 / (mo_num**2)
       enddo
      enddo
     enddo
@@ -112,8 +112,8 @@ subroutine delta_gamma_i_j_for_energy_test_alpha_beta_general (delta_rho_11_alph
 
    do i=1, mo_num
     do j=1, mo_num
-     delta_gamma_i_j_alpha(i,j) = delta_rho_11_alpha / (mo_num**2)
-     delta_gamma_i_j_beta(i,j) = delta_rho_11_beta / (mo_num**2)
+     delta_gamma_i_j_alpha(i,j) = delta_rho_11_alpha / (mo_num)
+     delta_gamma_i_j_beta(i,j) = delta_rho_11_beta / (mo_num)
     enddo
    enddo
 end
@@ -160,8 +160,8 @@ subroutine delta_density_for_energy_test_general (delta_rho_a, delta_rho_b, delt
    delta_rho_b(i)=0.d0
    do j=1, mo_num
     do k=1, mo_num
-     delta_rho_a(i) += (delta_rho_11_alpha/(mo_num**2))  * mo_i(j) * mo_i(k)
-     delta_rho_b(i) += (delta_rho_11_beta /(mo_num**2))  * mo_i(j) * mo_i(k)  
+     delta_rho_a(i) += (delta_rho_11_alpha/(mo_num))  * mo_i(j) * mo_i(k)
+     delta_rho_b(i) += (delta_rho_11_beta /(mo_num))  * mo_i(j) * mo_i(k)  
     enddo
    enddo
   enddo
@@ -214,8 +214,8 @@ subroutine delta_grad_density_for_energy_test_general (delta_grad_rho_a, delta_g
     delta_grad_rho_b(m,i) = 0.d0
     do j=1, mo_num
      do k=1, mo_num
-      delta_grad_rho_a(m,i) += delta_grad_rho_11_alpha/(mo_num**2) * (mo_i(j) * mo_grad_i(m,k) + mo_i(k) * mo_grad_i(m,j))
-      delta_grad_rho_b(m,i) += delta_grad_rho_11_beta/(mo_num**2) *  (mo_i(j) * mo_grad_i(m,k) + mo_i(k) * mo_grad_i(m,j))
+      delta_grad_rho_a(m,i) += delta_grad_rho_11_alpha/(mo_num) * (mo_i(j) * mo_grad_i(m,k) + mo_i(k) * mo_grad_i(m,j))
+      delta_grad_rho_b(m,i) += delta_grad_rho_11_beta/(mo_num) *  (mo_i(j) * mo_grad_i(m,k) + mo_i(k) * mo_grad_i(m,j))
      enddo
     enddo
    enddo
@@ -265,7 +265,7 @@ subroutine delta_n2_for_energy_test_general (delta_n2, delta_n2_11)
     do k = 1, mo_num
      do l = 1, mo_num
       do m = 1, mo_num
-       delta_n2(i) += (delta_n2_11/(mo_num**4)) * mo_i(j) * mo_i(k) * mo_i(l) * mo_i(m)
+       delta_n2(i) += (delta_n2_11/(mo_num**2)) * mo_i(j) * mo_i(k) * mo_i(l) * mo_i(m)
       enddo
      enddo
     enddo
