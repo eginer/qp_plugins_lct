@@ -36,37 +36,6 @@ subroutine energy_xc_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, ex_pbe_test
   enddo
 end
 
-subroutine int_potential_xc_pbe_test (delta_rho_11_alpha, delta_rho_11_beta,int_vx_pbe_test, int_vc_pbe_test)
- implicit none
- BEGIN_DOC
-! delta_Ex[n] = int_dr delta_n(r) dEx/dn(r) 
-! delta_n(r) <- subroutine delta_density_for_energy_test
-! d_e_d_n    <- subroutine de_dn_at_r
- END_DOC
- integer :: i
- double precision, intent(in) :: delta_rho_11_alpha, delta_rho_11_beta
- double precision, intent(out):: int_vx_pbe_test, int_vc_pbe_test
- double precision :: vx_i_j, vc_i_j
- double precision :: delta_gamma_i_j_alpha(mo_num, mo_num)
- double precision :: delta_gamma_i_j_beta(mo_num, mo_num)
- integer :: k,l
-! double precision, intent(in) :: rho_a(n_points_final_grid), rho_b(n_points_final_grid), grad_rho_a(3,n_points_final_grid), grad_rho_b(3,n_points_final_grid)
- double precision :: ex_pbe_test, ec_pbe_test, vx_pbe_test, vc_pbe_test
-
- int_vx_pbe_test = 0.d0
- int_vc_pbe_test = 0.d0
- call delta_gamma_i_j_for_energy_test_alpha_beta_general (delta_rho_11_alpha,delta_rho_11_beta,delta_gamma_i_j_alpha,delta_gamma_i_j_beta)
-
- do k=1, mo_num
-  do l=1, mo_num
-!   call energy_xc_pbe_test (rho_a, rho_b, grad_rho_a, grad_rho_b, k, l, ex_pbe_test, ec_pbe_test, vx_pbe_test, vc_pbe_test)
-   int_vx_pbe_test += delta_gamma_i_j_alpha(k,l)*potential_x_alpha_mo_pbe(k,l) + delta_gamma_i_j_beta(k,l)*potential_x_beta_mo_pbe(k,l)
-   int_vc_pbe_test += delta_gamma_i_j_alpha(k,l)*potential_c_alpha_mo_pbe(k,l) + delta_gamma_i_j_beta(k,l)*potential_c_beta_mo_pbe(k,l)
-  enddo
- enddo
-end
-
-
 BEGIN_PROVIDER [double precision, potential_x_alpha_mo_pbe, (mo_num,mo_num)]
  implicit none
  BEGIN_DOC

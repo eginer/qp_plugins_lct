@@ -136,7 +136,8 @@ END_PROVIDER
 
    ! The factor 1 (and not 2) is because the output is with the correct normalization factor (i.e. N(N-1)) 
    ! for the computation of the effective operator of type 1/2  \sum_{ijkl} <ij|kl> a^k a^l a_j a_i
-   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
+    d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
+   !d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2/((1.d0 + 2.d0/(sqpi*mu))**2)
    
    decdrho_a *= weight
    decdrho_b *= weight
