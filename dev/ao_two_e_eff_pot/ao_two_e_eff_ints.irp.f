@@ -1,8 +1,9 @@
 program ao_two_e_eff_ints
  implicit none
- call test_new_erf_ints
- call test_gauss_ints_aos
- call test_gauss_ints_map
+! call test_new_erf_ints
+! call test_gauss_ints_aos
+! call test_gauss_ints_map
+ call test_fits
 end
 subroutine test_fits
   implicit none
@@ -18,7 +19,10 @@ subroutine test_fits
   dx = xmax/dble(nx)
   x = dx
   do i = 1, nx
-   write(33,'(100(F16.10,X))')x,(1.d0 - derf(mu_erf*x)),fit_1_erf_x(x),(1.d0 - derf(mu_erf*x))**2.d0,fit_1_erf_x_2(x),eff_pot_gauss(x,mu_erf),eff_pot_fit_gauss(x)
+   !                          1               2                3                  4                          5
+   write(33,'(100(F16.10,X))')x,(1.d0 - derf(mu_erf*x)),fit_1_erf_x(x),(1.d0 - derf(mu_erf*x))**2.d0,fit_1_erf_x_2(x),&
+                              !    6                      7
+                              eff_pot_gauss(x,mu_erf),eff_pot_fit_gauss(x)
    x += dx
   enddo
 end

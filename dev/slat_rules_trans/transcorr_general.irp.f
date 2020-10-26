@@ -4,6 +4,7 @@ program transcorr_h
  touch read_wf
  call provide_all
  call print_energy
+ call print_e_comp_transcorr
  call print_eigv
  call print_pert
 ! call plot_on_top_left_right
