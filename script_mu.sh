@@ -11,7 +11,7 @@ for i in $basis
  cd $dir
  ezfio=H_$dir
  qp set_file $ezfio
- qp run test_density | tee ${ezfio}.mu_av.out 
+ qp run mu_lda_average | tee ${ezfio}.mu_av.out 
  mu_av=`grep "average_mu_lda ="  ${ezfio}.mu_av.out | cut -d "=" -f 2`
  mu_av=${mu_av:0:10}
  mu_av="$(echo -e "${mu_av}" | tr -d '[:space:]')"
