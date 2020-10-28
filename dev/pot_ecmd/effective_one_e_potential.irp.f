@@ -34,9 +34,9 @@ END_PROVIDER
   do i = 1, mo_num
    do j = 1, mo_num
     effective_one_e_potential_ecmd_pbe_ueg(i,j,istate) = mo_integrals_n_e(i,j) + mo_kinetic_integrals(i,j) &
-                                   + 0.5d0 * (pot_basis_alpha_mo_pbe_ueg(i,j,istate) + pot_basis_beta_mo_pbe_ueg(i,j,istate))
+                                   + 0.5d0 * (pot_basis_alpha_mo_sp_pbe_ueg(i,j,istate) + pot_basis_beta_mo_sp_pbe_ueg(i,j,istate))
     effective_one_e_potential_without_kin_ecmd_pbe_ueg(i,j,istate) =  mo_integrals_n_e(i,j)  &
-                                   + 0.5d0 * (pot_basis_alpha_mo_pbe_ueg(i,j,istate) + pot_basis_beta_mo_pbe_ueg(i,j,istate))
+                                   + 0.5d0 * (pot_basis_alpha_mo_sp_pbe_ueg(i,j,istate) + pot_basis_beta_mo_sp_pbe_ueg(i,j,istate))
    enddo
   enddo
  enddo
