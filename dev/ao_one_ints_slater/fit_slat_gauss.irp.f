@@ -5,7 +5,7 @@
 !
 ! I took the 8 gaussians of the ANO-RCC basis set of the H atom
  END_DOC
- n_max_fit_slat = 8
+ n_max_fit_slat = 20
  END_PROVIDER
 
  BEGIN_PROVIDER [double precision, coef_fit_slat_gauss, (n_max_fit_slat)]
@@ -20,25 +20,68 @@
  ! The coefficient are taken from the ano-rcc expansion of the hydrogen 1s orbital
  END_DOC
 
- coef_fit_slat_gauss(1) =  2.6032524673598918d-002
- coef_fit_slat_gauss(2) =  4.8538671362083070d-002
- coef_fit_slat_gauss(3) =  8.1756487143886281d-002
- coef_fit_slat_gauss(4) = 0.1220544746390489d0    
- coef_fit_slat_gauss(5) = 0.1443695761749570d0    
- coef_fit_slat_gauss(6) = 0.1056239657977568d0    
- coef_fit_slat_gauss(7) =  2.3962067692955683d-002
- coef_fit_slat_gauss(8) =  1.0571415716647108d-004
+! coef_fit_slat_gauss(1) =  2.6032524673598918d-002
+! coef_fit_slat_gauss(2) =  4.8538671362083070d-002
+! coef_fit_slat_gauss(3) =  8.1756487143886281d-002
+! coef_fit_slat_gauss(4) = 0.1220544746390489d0    
+! coef_fit_slat_gauss(5) = 0.1443695761749570d0    
+! coef_fit_slat_gauss(6) = 0.1056239657977568d0    
+! coef_fit_slat_gauss(7) =  2.3962067692955683d-002
+! coef_fit_slat_gauss(8) =  1.0571415716647108d-004
+!
+! coef_fit_slat_gauss *= sqpi ! for normalization
+!
+! expo_fit_slat_gauss(1)  = 188.61445d0    
+! expo_fit_slat_gauss(2)  =  28.276596d0  
+! expo_fit_slat_gauss(3)  =   6.4248300d0  
+! expo_fit_slat_gauss(4)  =   1.8150410d0 
+! expo_fit_slat_gauss(5)  =    .59106300d0 
+! expo_fit_slat_gauss(6)  =    .21214900d0 
+! expo_fit_slat_gauss(7)  =    .07989100d0 
+! expo_fit_slat_gauss(8)  =    .02796200d0 
 
- coef_fit_slat_gauss *= sqpi ! for normalization
 
- expo_fit_slat_gauss(1)  = 188.61445d0    
- expo_fit_slat_gauss(2)  =  28.276596d0  
- expo_fit_slat_gauss(3)  =   6.4248300d0  
- expo_fit_slat_gauss(4)  =   1.8150410d0 
- expo_fit_slat_gauss(5)  =    .59106300d0 
- expo_fit_slat_gauss(6)  =    .21214900d0 
- expo_fit_slat_gauss(7)  =    .07989100d0 
- expo_fit_slat_gauss(8)  =    .02796200d0 
+      expo_fit_slat_gauss(01)=30573.77073000000
+      coef_fit_slat_gauss(01)=0.00338925525
+      expo_fit_slat_gauss(02)=5608.45238100000
+      coef_fit_slat_gauss(02)=0.00536433869
+      expo_fit_slat_gauss(03)=1570.95673400000
+      coef_fit_slat_gauss(03)=0.00818702846
+      expo_fit_slat_gauss(04)=541.39785110000
+      coef_fit_slat_gauss(04)=0.01202047655
+      expo_fit_slat_gauss(05)=212.43469630000
+      coef_fit_slat_gauss(05)=0.01711289568
+      expo_fit_slat_gauss(06)=91.31444574000
+      coef_fit_slat_gauss(06)=0.02376001022
+      expo_fit_slat_gauss(07)=42.04087246000
+      coef_fit_slat_gauss(07)=0.03229121736
+      expo_fit_slat_gauss(08)=20.43200443000
+      coef_fit_slat_gauss(08)=0.04303646818
+      expo_fit_slat_gauss(09)=10.37775161000
+      coef_fit_slat_gauss(09)=0.05624657578
+      expo_fit_slat_gauss(10)=5.46880754500
+      coef_fit_slat_gauss(10)=0.07192311571
+      expo_fit_slat_gauss(11)=2.97373529200
+      coef_fit_slat_gauss(11)=0.08949389001
+      expo_fit_slat_gauss(12)=1.66144190200
+      coef_fit_slat_gauss(12)=0.10727599240
+      expo_fit_slat_gauss(13)=0.95052560820
+      coef_fit_slat_gauss(13)=0.12178961750
+      expo_fit_slat_gauss(14)=0.55528683970
+      coef_fit_slat_gauss(14)=0.12740141870
+      expo_fit_slat_gauss(15)=0.33043360020
+      coef_fit_slat_gauss(15)=0.11759168160
+      expo_fit_slat_gauss(16)=0.19982303230
+      coef_fit_slat_gauss(16)=0.08953504394
+      expo_fit_slat_gauss(17)=0.12246840760
+      coef_fit_slat_gauss(17)=0.05066721317
+      expo_fit_slat_gauss(18)=0.07575825322
+      coef_fit_slat_gauss(18)=0.01806363869
+      expo_fit_slat_gauss(19)=0.04690146243
+      coef_fit_slat_gauss(19)=0.00305632563
+      expo_fit_slat_gauss(20)=0.02834749861
+      coef_fit_slat_gauss(20)=0.00013317513
+
 
 
 END_PROVIDER 
