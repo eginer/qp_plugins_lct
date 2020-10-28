@@ -3,6 +3,8 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array, (ao_num,ao_num,ao
  BEGIN_DOC
                                        !   1 2                                1 2 
 ! ao_two_e_eff_dr12_pot_array(k,l,i,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+!
+! WARNING !!!!!! ONLY WORKS FOR ATOMIC SYSTEMS, NOT MOLECULAR SYSTEMS 
  END_DOC
  integer :: i,j,k,l,m
  double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
@@ -53,6 +55,8 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_no_cycle, (ao_num,
  BEGIN_DOC
 !   1 2                                1 2 
 ! < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+!
+! WARNING !!!!!! ONLY WORKS FOR ATOMIC SYSTEMS, NOT MOLECULAR SYSTEMS 
  END_DOC
  integer :: i,j,k,l,m
  double precision :: mu_in,d_dr12(3),d_dr12_large(3),accu
@@ -89,6 +93,9 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_old, (mo_num,mo_nu
  implicit none
  BEGIN_DOC
 ! mo_two_e_eff_dr12_pot_array_old(k,l,i,j) = < i j | [erf( mu r12) - 1] d/d_r12 | k l > on the MO basis
+!
+!
+! WARNING !!!!!! ONLY WORKS FOR ATOMIC SYSTEMS, NOT MOLECULAR SYSTEMS 
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
@@ -168,6 +175,9 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array, (mo_num,mo_num,mo
  implicit none
  BEGIN_DOC
 ! mo_two_e_eff_dr12_pot_array(k,l,i,j) = < i j | [erf( mu r12) - 1] d/d_r12 | k l > on the MO basis
+!
+!
+! WARNING !!!!!! ONLY WORKS FOR ATOMIC SYSTEMS, NOT MOLECULAR SYSTEMS 
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  mo_two_e_eff_dr12_pot_array = 0.d0

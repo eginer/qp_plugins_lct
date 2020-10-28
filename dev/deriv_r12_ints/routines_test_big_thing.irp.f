@@ -16,13 +16,14 @@ subroutine big_thing
  accu_abs = 0.d0
  accu_relat = 0.d0
  num_int = 0.d0
- do jao = 2, ao_num ! r1
+ do jao = 1, ao_num ! r1
   do lao = 2, ao_num ! r2
    do iao = 2, ao_num ! r1
-    do kao = 6, ao_num ! r2
+    do kao = 1, ao_num ! r2
     num_int += 1.d0
      print*,'<ij|kl> = ',jao,lao,iao,kao
      call ao_two_e_d_dr12_int(iao,jao,kao,lao,mu_in,d_dr12)
+     print*,'d_dr12(2) = ',d_dr12(2)
      call ao_two_e_d_dr12_int(iao,jao,kao,lao,1.d+9,d_dr12_large)
      call ao_two_e_eff_dr12_pot(iao,jao,kao,lao,mu_in,d_dr12_2,d_dr12_large_2)
      do m = 1, 3
@@ -65,21 +66,21 @@ subroutine big_thing
                              * r1(m) * aos_grad_array_r1(m,iao)  & 
                              *  aos_array_r2(kao)                & 
                              *  aos_array_r1(jao) * aos_array_r2(lao)  
-       !!!!!!!!! x2 dx2 k(r2)
+!       !!!!!!!!! x2 dx2 k(r2)
         int_r2(m) += weight2 * 0.5d0 * derf_mu_x(mu_in,r12)      & 
                              * r2(m) * aos_grad_array_r2(m,kao)  & 
                              *  aos_array_r1(iao)                & 
                              *  aos_array_r1(jao) * aos_array_r2(lao)  
 !       !!!!!!!!! x1 i(r1) dx2 k(r1)
         int_r2(m) -= weight2 * 0.5d0 * derf_mu_x(mu_in,r12)      & 
-                             * r1(m) * aos_array_r1(iao)  & 
-                             *  aos_grad_array_r2(m,kao)                & 
-                             *  aos_array_r1(jao) * aos_array_r2(lao)  
+                             * r1(m) * aos_array_r1(iao)         & 
+                             * aos_grad_array_r2(m,kao)          & 
+                             * aos_array_r1(jao) * aos_array_r2(lao)  
 !       !!!!!!!!! x2 k(r2) dx1 i(r1)
         int_r2(m) -= weight2 * 0.5d0 * derf_mu_x(mu_in,r12)      & 
                              * r2(m) * aos_array_r2(kao)  & 
-                             *  aos_grad_array_r1(m,iao)                & 
-                             *  aos_array_r1(jao) * aos_array_r2(lao)  
+                             * aos_grad_array_r1(m,iao)                & 
+                             * aos_array_r1(jao) * aos_array_r2(lao)  
        enddo
       enddo
       do m = 1, 3
@@ -98,11 +99,11 @@ subroutine big_thing
       endif
       print*,'m = ',m
       print*,'int_gauss_num = ',int_gauss_num
-      print*,'accu_tmp_bis(m)=',accu_tmp_bis(m)
+!      print*,'accu_tmp_bis(m)=',accu_tmp_bis(m)
       print*,'int_ao        = ',int_ao
       print*,'abs error     = ',err_abs
       print*,'err_relat     = ',err_relat
-      if(err_relat .gt. 1.d-2)then
+      if(err_relat .gt. 1.d-1)then
        print*,'AHAHAHAAH'
        stop
       endif

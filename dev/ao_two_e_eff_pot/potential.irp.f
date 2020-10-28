@@ -39,6 +39,7 @@ END_PROVIDER
  do i = 1, n_max_fit_slat
   expo_gauss_eff_pot(i) = expo_gauss_1_erf_x_2(i) 
   coef_gauss_eff_pot(i) = -0.25d0 * coef_gauss_1_erf_x_2(i) ! -1/4 * (1 - erf(mu*x))^2
+!  coef_gauss_eff_pot(i) = 0.d0
  enddo
 
  ! then you have the \mu/sqrt(pi) * exp(-mu^2*x^2)

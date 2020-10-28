@@ -130,9 +130,9 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
        schwartz_kl(0,0) = max(schwartz_kl(0,r),schwartz_kl(0,0))
      enddo
  
-     do p = 1, ao_prim_num(i)
+     do p = 1, ao_prim_num(i)   ! i(1) : deriv acting on it 
        coef1 = ao_coef_normalized_ordered_transp(p,i)
-       do q = 1, ao_prim_num(j)
+       do q = 1, ao_prim_num(j) ! j(1) 
          coef2 = coef1*ao_coef_normalized_ordered_transp(q,j)
          pp = p_exp_ij(p,q)
          p_inv = 1.d0/pp
@@ -141,18 +141,18 @@ subroutine ao_two_e_d_dr12_int(i,j,k,l,mu_in,d_dr12)
              P_ij(0,1,p,q),center_ij(1,p,q),fact_ij(p,q),p_exp_ij(p,q),p_inv,iorder_ij(1,p,q)) *               &
              coef2*coef2
          schwartz_ij = dabs( schwartz_ij )
-         if (schwartz_kl(0,0)*schwartz_ij < thr) then
-            cycle
-         endif
-         do r = 1, ao_prim_num(k)
-           if (schwartz_kl(0,r)*schwartz_ij < thr) then
-              cycle
-           endif
+!         if (schwartz_kl(0,0)*schwartz_ij < thr) then
+!            cycle
+!         endif
+         do r = 1, ao_prim_num(k) ! k(2) :: deriv acting on it 
+!           if (schwartz_kl(0,r)*schwartz_ij < thr) then
+!              cycle
+!           endif
            coef3 = coef2*ao_coef_normalized_ordered_transp(r,k)
-           do s = 1, ao_prim_num(l)
-             if (schwartz_kl(s,r)*schwartz_ij < thr) then
-                cycle
-             endif
+           do s = 1, ao_prim_num(l) ! l(2) 
+!             if (schwartz_kl(s,r)*schwartz_ij < thr) then
+!                cycle
+!             endif
              coef4 = coef3*ao_coef_normalized_ordered_transp(s,l)
              qq = p_exp_kl(r,s)
              q_inv = 1.d0/qq
@@ -472,10 +472,10 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
        P_ij(0,m),center_ij(m),p,iorder_ij(m),pq_inv,pq_inv_2,        &
        P_kl(0,m),center_kl(m),q,iorder_kl(m),p10_1,p01_1,p10_2,p01_2,&
        n_Ixyz(m), Ixyz_pol(0,m))
-   if(n_Ixyz(m) == -1) then
-    print*,'AHAHAAH le mal'
-    return
-   endif
+!   if(n_Ixyz(m) == -1) then
+!    print*,'AHAHAAH le mal'
+!    return
+!   endif
   enddo
 
   
@@ -507,9 +507,9 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
   do m = 1, 3
   ! computing the X part of the r12 derivative : j(r1) l(r2) (x1 - x2)(dx1 - dx2) i(r1) k(r2)
   !
-!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!  ! j(r1) l(r2) (x1 dx1 i(r1) ) k(r2)
-!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! j(r1) l(r2) (x1 dx1 i(r1) ) k(r2)
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 4 ! you loop over the four polynoms of P_j_xyz_dxyz_i
     ! the polynom in x1 is [j(r1) (x1 dx1 i(r1))] 
     ! the polynom in x2 is l(r2) k(r2)
@@ -527,9 +527,9 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
     ! you sum up dtmp into dsum to accumulate 
     call add_poly_multiply(dtmp,n_dtmp,1.d0,dsum(0,m),n_dsum(m))
    enddo
-!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!  ! j(r1) l(r2) (x2 dx2 k(r2) ) i(r2)
-!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! j(r1) l(r2) (x2 dx2 k(r2) ) i(r2)
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 4 ! you loop over the four polynoms of P_l_xyz_dxyz_k
     ! the polynom in x1 is j(r1) i(r1)
     ! the polynom in x2 is l(r2) (x2 dx2 k(r2))
@@ -547,9 +547,9 @@ subroutine general_primitive_integral_d_dr12(d_dr12,mu_in,            &
     ! you sum up dtmp into dsum to accumulate 
     call add_poly_multiply(dtmp,n_dtmp,1.d0,dsum(0,m),n_dsum(m))
    enddo
-!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !   ! - j(r1) l(r2) (x1 i(r1)) (dx2 k(r2))
-!  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    do kk = 1, 2 ! you loop over the two polynoms of P_j_xyz_i 
     do ll = 1, 2 ! you loop over two polynoms of P_l_dxyz_k
      ! the polynom in x1 is [j(r1) (x1 i(r1))] 
