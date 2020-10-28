@@ -31,7 +31,7 @@ subroutine give_polynom_x_for_erf_int(                           &
   integer                        :: n_pt_tmp,n_pt_out, iorder
 
 
-  !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: dx,Ix_pol
+! !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: dx,Ix_pol
   if(iorder_p .lt.0 .or. iorder_q .lt.0 )then
    n_Ix = -1
    Ix_pol = 0.d0
@@ -86,8 +86,8 @@ double precision function general_primitive_integral_erf_new(dim,            &
 
   general_primitive_integral_erf_new = 0.d0
 
-  !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: dx,Ix_pol,dy,Iy_pol,dz,Iz_pol
-  !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: d1, d_poly
+! !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: dx,Ix_pol
+! !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: d1, d_poly
 
   ! Gaussian Product
   ! ----------------
