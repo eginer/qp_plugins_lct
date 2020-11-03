@@ -9,12 +9,13 @@ rm hcore*
 rm pouet 
 
 
-#qp create_ezfio -b aug-cc-pvtz B2.xyz
-qp create_ezfio -b 6-31g B2.xyz
+qp create_ezfio -b 6-31g B2.xyz 
 qp run scf 
-qp set_frozen_core 
+#qp set_frozen_core -l
+qp set_mo_class -c "[1-4]" -a "[5-18]"
 qp set davidson threshold_davidson 1.e-18 
 qp run cisd | tee ${EZFIO_FILE}.cisd.out
+#qp run cisd | tee ${EZFIO_FILE}.cisd.out
 qp set mu_of_r mu_of_r_potential cas_ful 
 qp set becke_numerical_grid grid_type_sgn 0 
 qp run basis_correction | tee ${EZFIO_FILE}.DFT_before.out 
@@ -33,5 +34,5 @@ qp reset -d
 # Testing the alpha-beta two-e energy 
 qp run test_e_two_rdm | tee ${EZFIO_FILE}.test_two_e
 # Testing the new MOs overlap 
-# You compute the basis set correction with a frozen core FCI in the natural orbitals basis 
+# You compute the basis set correction with a frozen core cisd in the natural orbitals basis 
 qp run basis_correction | tee ${EZFIO_FILE}.DFT_after.out 
