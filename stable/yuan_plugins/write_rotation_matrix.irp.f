@@ -42,7 +42,8 @@ subroutine write_rotation_matrix
   write(1,'(100(F16.10,X))')new_mo_coef_tmp(i,1:mo_num)
  enddo
  close(1) 
- double precision :: mo_overlap_tmp(mo_num, mo_num), hcore_mo(mo_num, mo_num)
+ double precision :: mo_overlap_tmp(mo_num, mo_num)
+ double precision :: one_e_rdm_alpha(n_act_orb, n_act_orb), one_e_rdm_beta(n_act_orb, n_act_orb)
  print*,'Computing the new overlap '
  call new_one_e_mat(ao_overlap, new_mo_coef_tmp, mo_overlap_tmp)
  open(1, file = 'mo_overlap_guess') 
@@ -50,19 +51,23 @@ subroutine write_rotation_matrix
   write(1,'(100(F16.13,X))')mo_overlap_tmp(i,:)
  enddo
  close(1) 
- call new_one_e_mat(ao_one_e_integrals, new_mo_coef_tmp, hcore_mo)
- open(1, file = 'new_hcore') 
- do i = 1, mo_num
-  write(1,'(100(F16.10,X))')hcore_mo(i,1:mo_num)
+ print*,'computing the new one-rdm alpha'
+! call new_one_e_mat_act(one_e_dm_mo_alpha_average, rot_mat_act, one_e_rdm_alpha)
+ call new_one_e_mat_act(one_e_dm_mo_alpha, rot_mat_act, one_e_rdm_alpha)
+ open(1, file = 'one_rdm_a') 
+ do i = 1, n_act_orb
+  write(1,'(100(F16.10,X))')one_e_rdm_alpha(i,1:n_act_orb)
  enddo
  close(1) 
- double precision :: hcore_mo_2(mo_num, mo_num)
- call new_one_e_mat_bis(mo_one_e_integrals, rot_mat_tmp, hcore_mo_2)
- open(1, file = 'new_hcore_2') 
- do i = 1, mo_num
-  write(1,'(100(F16.10,X))')hcore_mo_2(i,1:mo_num)
+
+ print*,'computing the new one-rdm beta'
+ call new_one_e_mat_act(one_e_dm_mo_beta, rot_mat_act, one_e_rdm_beta)
+ open(1, file = 'one_rdm_b') 
+ do i = 1, n_act_orb
+  write(1,'(100(F16.10,X))')one_e_rdm_beta(i,1:n_act_orb)
  enddo
  close(1) 
+
  call routine_active_only_test(act_2_rdm_ab_mo)
  double precision, allocatable :: two_rdm(:, :, :, :), two_e_ints(:,:,:,:)
  allocate( two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb) )
@@ -113,6 +118,36 @@ subroutine new_one_e_mat_bis(one_e_mat_mo, rot_mat, one_e_mat_mo_2)
   enddo
  enddo
 end
+
+subroutine new_one_e_mat_act(one_e_mat_mo, rot_mat, one_e_mat_mo_2)
+ implicit none
+ double precision, intent(in) :: one_e_mat_mo(mo_num,mo_num), rot_mat(n_act_orb, n_act_orb)
+ double precision, intent(out):: one_e_mat_mo_2(n_act_orb, n_act_orb)
+ integer :: i,j,k,l
+ double precision :: mo_act_array(n_act_orb,n_act_orb)
+
+ do i = 1, n_act_orb
+  j = list_act(i)
+  do k = 1, n_act_orb
+   l = list_act(k)
+   mo_act_array(i,k) = one_e_mat_mo(j,l)
+  enddo
+ enddo
+! do i =1, n_act_orb
+!  print*,'',mo_act_array(i,:)
+! enddo
+ one_e_mat_mo_2 = 0.d0
+ do i = 1, n_act_orb
+  do j = 1, n_act_orb
+   do k = 1, n_act_orb
+    do l = 1, n_act_orb
+     one_e_mat_mo_2(j,i) += rot_mat(l,j) * rot_mat(k,i) * mo_act_array(l,k)
+    enddo
+   enddo
+  enddo
+ enddo
+end
+
 
 subroutine new_two_e_mat(rot_mat,two_e_array_in,two_e_array)
  implicit none

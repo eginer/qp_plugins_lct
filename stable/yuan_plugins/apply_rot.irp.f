@@ -15,10 +15,7 @@ BEGIN_PROVIDER [double precision, new_mo_coefs_rot_mat, (ao_num, mo_num)]
  do j = 1, mo_num ! 
   do i = 1, mo_num
    do k = 1, ao_num
-!    do l = 1, ao_num
-!     new_mo_coefs_rot_mat(k,j) += mo_coef(k,i) * rotation_matrix(i,j) * ao_overlap(l,k)
      new_mo_coefs_rot_mat(k,j) += mo_coef(k,i) * rotation_matrix(i,j) 
-!    enddo
    enddo
   enddo
  enddo

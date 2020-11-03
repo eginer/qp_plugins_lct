@@ -6,4 +6,5 @@ program yuan_plugins
   print *, 'Hello world'
   call save_new_mo_coefs
   call read_two_rdm_and_write_to_ezfio(dim_two_rdm,n_act_orb)
+  call read_one_rdm_and_write_to_ezfio(n_act_orb)
 end
