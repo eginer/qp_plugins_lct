@@ -3,8 +3,91 @@ program write_rot_mat
  read_wf = .True.
  touch read_wf
 ! call write_rotation_matrix
- call write_rotation_matrix_total_one_e_rdm
+! call write_rotation_matrix_total_one_e_rdm
+ call write_rotation_matrix_total_one_e_rdm_uniq
 end
+
+subroutine write_rotation_matrix_total_one_e_rdm_uniq
+ implicit none
+ integer :: i,j,k,l
+ integer :: iorb,jorb
+ double precision :: eigvalues(mo_num),rot_mat_tmp(mo_num,mo_num), mo_array(mo_num, mo_num)
+ double precision :: rot_mat_act(n_act_orb, n_act_orb)
+
+ mo_array = -one_e_dm_mo
+ print*,'Write rotation matrix from current orbitals to natural orbitals '
+! call lapack_diagd(eigvalues,rot_mat_tmp,mo_array,mo_num,mo_num) 
+ !!!!!!!!!!!!
+ ! identity rotation matrix 
+ rot_mat_tmp = 0.d0
+ do i = 1, mo_num
+  rot_mat_tmp(i,i) = 1.d0
+ enddo
+ !!!!!!!!!!!!
+ do i = 1, n_act_orb
+  iorb = list_act(i)
+  do j = 1, n_act_orb
+   jorb = list_act(j)
+   rot_mat_act(j,i) = rot_mat_tmp(jorb,iorb)
+  enddo
+ enddo
+ open(1, file = 'rotation_matrix') 
+ do i = 1, n_act_orb
+  write(1,*)rot_mat_act(i,1:n_act_orb)
+ enddo
+ close(1) 
+ double precision :: new_mo_coef_tmp(ao_num, mo_num)
+ ! <AO_k| new_mo_j> = \sum_i U_ij <AO_k| old_mo_i>
+ new_mo_coef_tmp = 0.d0
+ do j = 1, mo_num ! 
+  do i = 1, mo_num
+   do k = 1, ao_num
+     new_mo_coef_tmp(k,j) += mo_coef(k,i) * rot_mat_tmp(i,j) 
+   enddo
+  enddo
+ enddo
+ open(1, file = 'new_mo_coef') 
+ do i = 1, mo_num
+  write(1,'(100(F16.10,X))')new_mo_coef_tmp(i,1:mo_num)
+ enddo
+ close(1) 
+ double precision :: mo_overlap_tmp(mo_num, mo_num)
+ double precision :: one_e_rdm_alpha(n_act_orb, n_act_orb), one_e_rdm_beta(n_act_orb, n_act_orb)
+ print*,'Computing the new overlap '
+ call new_one_e_mat(ao_overlap, new_mo_coef_tmp, mo_overlap_tmp)
+ open(1, file = 'mo_overlap_guess') 
+ do i = 1, mo_num
+  write(1,'(100(F16.13,X))')mo_overlap_tmp(i,:)
+ enddo
+ close(1) 
+ print*,'computing the new one-rdm '
+ call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm_alpha)
+ open(1, file = 'one_rdm') 
+ do i = 1, n_act_orb
+  do j = i, n_act_orb
+   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm_alpha(j,i)
+  enddo
+ enddo
+ close(1) 
+
+ call routine_active_only_test(act_2_rdm_ab_mo)
+ double precision, allocatable :: two_rdm(:, :, :, :), two_e_ints(:,:,:,:)
+ allocate( two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb) )
+ allocate( two_e_ints(n_act_orb, n_act_orb, n_act_orb, n_act_orb) )
+
+ ! transforming the two RDM with the new MOs
+ call new_two_e_mat(rot_mat_act,act_2_rdm_ab_mo,two_rdm)
+ ! transforming the two e integrals with the new MOs
+ call new_two_e_mat(rot_mat_act,vee_big_array,two_e_ints)
+ ! testing the alpha-beta two e energy
+ call routine_active_only_test_bis(two_rdm, two_e_ints)
+ ! writing in plain text the two RDM
+ call write_two_rdm_yuan_uniq(two_rdm)
+! call write_two_rdm_yuan(two_rdm)
+ deallocate(two_rdm)
+end
+
+
 
 subroutine write_rotation_matrix
  implicit none
@@ -360,3 +443,82 @@ end
  close(1)
 
  end
+
+
+ subroutine write_two_rdm_yuan(two_rdm)
+ implicit none
+ integer :: i,j,k,l
+ double precision, intent(in) :: two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb)
+ double precision :: value_rdm
+ character*(1) :: coma
+ coma = ","
+ open(1, file = 'two_rdm') 
+ do i = 1, n_act_orb
+  do j = 1, n_act_orb
+   do k = 1, n_act_orb
+    do l = 1, n_act_orb
+     value_rdm = two_rdm(l,k,j,i)
+     write(1,'(4(I3,A1),F16.13)')l,coma, k, coma, i, coma, j, coma, value_rdm
+    enddo
+   enddo
+  enddo
+ enddo
+ close(1)
+
+ end
+
+
+
+ subroutine write_two_rdm_yuan_uniq(two_rdm)
+ implicit none
+ integer :: p,q,r,s
+ double precision, intent(in) :: two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb)
+ double precision :: value_rdm,yuan_2rdm
+ character*(1) :: coma
+ coma = ","
+ open(1, file = 'two_rdm') 
+ do p = 1, n_act_orb
+  do q = p, n_act_orb
+   do s = 1, n_act_orb
+    do r = 1, n_act_orb
+     if(p==q .and. s.gt.r)cycle
+     value_rdm = yuan_2rdm(two_rdm,p,q,r,s,n_act_orb)
+     if(dabs(value_rdm).lt.1.d-9)cycle
+     write(1,'(4(I3,A1),F16.13)')p,coma, q, coma, r, coma, s, coma, value_rdm
+    enddo
+   enddo
+  enddo
+ enddo
+ close(1)
+
+ end
+
+ double precision function yuan_2rdm(two_rdm,p,q,r,s,n_mo)
+ implicit none
+ integer, intent(in) :: p,q,r,s,n_mo
+ double precision, intent(in) :: two_rdm(n_mo,n_mo,n_mo,n_mo)
+ yuan_2rdm = two_rdm(p,q,s,r) 
+ end
+
+
+ subroutine write_two_rdm_uniq(two_rdm)
+ implicit none
+ integer :: p,q,r,s
+ double precision, intent(in) :: two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb)
+ double precision :: value_rdm,yuan_2rdm
+ character*(1) :: coma
+ coma = ","
+ open(1, file = 'two_rdm') 
+ do p = 1, n_act_orb
+  do q = p, n_act_orb
+   do s = 1, n_act_orb
+    do r = 1, n_act_orb
+     if(p==q .and. s.gt.r)cycle
+     value_rdm = yuan_2rdm(two_rdm,p,q,r,s,n_act_orb)
+     if(dabs(value_rdm).lt.1.d-9)cycle
+     write(1,'(4(I3,A1),F16.13)')p,coma, q, coma, r, coma, s, coma, value_rdm
+    enddo
+   enddo
+  enddo
+ enddo
+ close(1)
