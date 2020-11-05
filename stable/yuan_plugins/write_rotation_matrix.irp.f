@@ -2,7 +2,7 @@ program write_rot_mat
  implicit none
  read_wf = .True.
  touch read_wf
- call write_rotation_matrix
+! call write_rotation_matrix
  call write_rotation_matrix_total_one_e_rdm_uniq
 ! call write_rotation_matrix_total_one_e_rdm
 end
@@ -64,19 +64,11 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm)
  open(1, file = 'one_rdm') 
  do i = 1, n_act_orb
-  do j = i, n_act_orb
-   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
-   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm(j,i)
-  enddo
- enddo
- close(1) 
-
- open(1, file = 'one_rdm_bis') 
- do i = 1, n_act_orb
-  do j = i, n_act_orb
-   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
-   write(1,'(2(I3,X),F16.13)')j-1,i-1,one_e_rdm(j,i)
-  enddo
+!  do j = i, n_act_orb
+!   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
+!   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm(j,i)
+   write(1,'(1000(F16.10,X))')one_e_rdm(i,:)
+!  enddo
  enddo
  close(1) 
 
@@ -93,7 +85,7 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  call routine_active_only_test_bis(two_rdm, two_e_ints)
  ! writing in plain text the two RDM
 ! call write_two_rdm_yuan_uniq(two_rdm)
- call write_two_rdm_yuan(two_rdm)
+ call write_two_rdm(two_rdm)
  deallocate(two_rdm)
 end
 
@@ -498,30 +490,40 @@ end
  double precision :: value_rdm,yuan_2rdm
  character*(1) :: coma
  coma = ","
+ double precision, allocatable :: two_rdm_tmp(:, :, :, :)
+ allocate(two_rdm_tmp(n_act_orb, n_act_orb, n_act_orb, n_act_orb))
+ two_rdm_tmp = 0.d0
  open(1, file = 'two_rdm') 
+ open(2, file = 'two_rdm_bis') 
  do p = 1, n_act_orb
   do q = p, n_act_orb
-   do s = 1, n_act_orb
-    do r = 1, n_act_orb
-     if(p==q .and. s.gt.r)cycle
-     value_rdm = yuan_2rdm(two_rdm,p,q,r,s,n_act_orb)
+   do r = 1, n_act_orb
+    do s = 1, n_act_orb
+     value_rdm = two_rdm(p,q,r,s)
+     print*,p-1,q-1,r-1,s-1,value_rdm
+     print*,s.gt.r
+!     if(p==q .and. s.gt.r)cycle
+     if(s.gt.r)cycle
      if(dabs(value_rdm).lt.1.d-9)cycle
-     write(1,'(4(I3,A1),F16.13)')p,coma, q, coma, r, coma, s, coma, value_rdm
+     write(1,'(4(I3,A1),F16.13)')p  ,coma, q  , coma, r  , coma, s  , coma, value_rdm
+     write(2,'(4(I3,A1),F16.13)')p-1,coma, q-1, coma, r-1, coma, s-1, coma, 2.d0 * value_rdm
+     two_rdm_tmp(p,q,r,s) = value_rdm
     enddo
    enddo
   enddo
  enddo
  close(1)
 
- open(1, file = 'two_rdm_bis') 
- do p = 1, n_act_orb
-  do q = p, n_act_orb
-   do s = 1, n_act_orb
-    do r = 1, n_act_orb
-     if(p==q .and. s.gt.r)cycle
-     value_rdm = yuan_2rdm(two_rdm,p,q,r,s,n_act_orb)
-     if(dabs(value_rdm).lt.1.d-9)cycle
-     write(1,'(4(I3,A1),F16.13)')p-1,coma, q-1, coma, r-1, coma, s-1, coma, 2.d0 * value_rdm
+ open(1, file = 'two_rdm_tris') 
+ integer :: i,j,k,l
+ do i = 1, n_act_orb
+  do j = 1, n_act_orb
+   do k = 1, n_act_orb
+    do l = 1, n_act_orb
+     value_rdm = two_rdm(l,k,j,i)
+     value_rdm = yuan_2rdm(two_rdm,l,k,j,i,n_act_orb)
+!     write(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i, coma, value_rdm
+     write(1,'(4(I3,A1),F16.13)')l-1,coma, k-1, coma, j-1, coma, i-1, coma, value_rdm
     enddo
    enddo
   enddo

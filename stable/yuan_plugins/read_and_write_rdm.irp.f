@@ -12,13 +12,32 @@ subroutine read_two_rdm_yuan_uniq_and_write_to_ezfio(n,n_mo_tmp)
  open(1, file = 'two_rdm') 
  do m = 1, n
    ! a^{k}a^{l} a_j a_i = <kl|ij>
-  read(1,'(4(I3,A1),F16.13)')k,coma, l, coma, j, coma, i,coma,value_rdm
+  read(1,'(4(I3,A1),F16.13)')k,coma, l, coma, i, coma, j,coma,value_rdm
+  k += 1
+  l += 1
+  i += 1
+  j += 1
   two_rdm(k,l,i,j) = value_rdm
   two_rdm(l,k,j,i) = value_rdm
   two_rdm(i,j,k,l) = value_rdm
   two_rdm(j,i,l,k) = value_rdm
  enddo
  close(1)
+
+ open(1, file = 'two_rdm_read') 
+ do i = 1, n_act_orb
+  do j = 1, n_act_orb
+   do k = 1, n_act_orb
+    do l = 1, n_act_orb
+     value_rdm = two_rdm(l,k,j,i)
+     write(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i, coma, value_rdm
+    enddo
+   enddo
+  enddo
+ enddo
+ close(1)
+
+
 
  ! Writting the two rdm on the alpha/beta
  call ezfio_set_two_body_rdm_two_rdm_ab_disk(two_rdm)
@@ -198,9 +217,15 @@ subroutine read_one_rdm_sp_tr_uniq_and_write_to_ezfio(n_mo_tmp,n_elements)
  ncore = mo_num - n_mo_tmp
  character*(1) :: coma
  one_rdm = 0.d0
+ print*,'n_elements = ',n_elements
  open(1, file = 'one_rdm') 
  do m = 1, n_elements
   read(1,'(2(I3,A1),F16.13)')l,coma, k, coma,value_rdm
+!  read(1,*)l,coma, k, coma,value_rdm
+  print*,l,k,value_rdm
+  l += 1
+  k += 1
+  print*,l,k,value_rdm
   one_rdm(l,k) = value_rdm
   one_rdm(k,l) = value_rdm
  enddo
