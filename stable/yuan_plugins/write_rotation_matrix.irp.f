@@ -449,7 +449,7 @@ end
    do k = 1, n_act_orb
     do l = 1, n_act_orb
      value_rdm = two_rdm(l,k,j,i)
-!     write(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i, coma, value_rdm
+     if(dabs(value_rdm).lt.1.d-10)cycle
      write(1,*)l,k,j,i,value_rdm
     enddo
    enddo

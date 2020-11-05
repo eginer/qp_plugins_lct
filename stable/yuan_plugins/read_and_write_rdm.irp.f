@@ -60,6 +60,7 @@ subroutine read_two_rdm_and_write_to_ezfio(n,n_mo_tmp)
  double precision :: value_rdm
  character*(1) :: coma
  open(1, file = 'two_rdm') 
+ two_rdm = 0.d0
  do m = 1, n
    ! a^{l}a^{k} a_i a_j
 !  read(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i,coma,value_rdm
