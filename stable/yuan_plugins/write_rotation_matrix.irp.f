@@ -449,7 +449,8 @@ end
    do k = 1, n_act_orb
     do l = 1, n_act_orb
      value_rdm = two_rdm(l,k,j,i)
-     write(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i, coma, value_rdm
+!     write(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i, coma, value_rdm
+     write(1,*)l,k,j,i,value_rdm
     enddo
    enddo
   enddo

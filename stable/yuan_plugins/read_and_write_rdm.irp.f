@@ -62,7 +62,8 @@ subroutine read_two_rdm_and_write_to_ezfio(n,n_mo_tmp)
  open(1, file = 'two_rdm') 
  do m = 1, n
    ! a^{l}a^{k} a_i a_j
-  read(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i,coma,value_rdm
+!  read(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i,coma,value_rdm
+  read(1,*)l, k,  j,  i,value_rdm
   two_rdm(l,k,j,i) = value_rdm
  enddo
  close(1)
