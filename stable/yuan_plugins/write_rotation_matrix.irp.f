@@ -2,9 +2,9 @@ program write_rot_mat
  implicit none
  read_wf = .True.
  touch read_wf
-! call write_rotation_matrix
+ call write_rotation_matrix
 ! call write_rotation_matrix_total_one_e_rdm
- call write_rotation_matrix_total_one_e_rdm_uniq
+! call write_rotation_matrix_total_one_e_rdm_uniq
 end
 
 subroutine write_rotation_matrix_total_one_e_rdm_uniq
@@ -52,7 +52,7 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  enddo
  close(1) 
  double precision :: mo_overlap_tmp(mo_num, mo_num)
- double precision :: one_e_rdm_alpha(n_act_orb, n_act_orb), one_e_rdm_beta(n_act_orb, n_act_orb)
+ double precision :: one_e_rdm(n_act_orb, n_act_orb)
  print*,'Computing the new overlap '
  call new_one_e_mat(ao_overlap, new_mo_coef_tmp, mo_overlap_tmp)
  open(1, file = 'mo_overlap_guess') 
@@ -61,11 +61,21 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  enddo
  close(1) 
  print*,'computing the new one-rdm '
- call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm_alpha)
+ call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm)
  open(1, file = 'one_rdm') 
  do i = 1, n_act_orb
   do j = i, n_act_orb
-   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm_alpha(j,i)
+   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
+   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm(j,i)
+  enddo
+ enddo
+ close(1) 
+
+ open(1, file = 'one_rdm_bis') 
+ do i = 1, n_act_orb
+  do j = i, n_act_orb
+   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
+   write(1,'(2(I3,X),F16.13)')j-1,i-1,one_e_rdm(j,i)
   enddo
  enddo
  close(1) 
@@ -206,7 +216,7 @@ subroutine write_rotation_matrix_total_one_e_rdm
  enddo
  close(1) 
  double precision :: mo_overlap_tmp(mo_num, mo_num)
- double precision :: one_e_rdm_alpha(n_act_orb, n_act_orb), one_e_rdm_beta(n_act_orb, n_act_orb)
+ double precision :: one_e_rdm(n_act_orb, n_act_orb)
  print*,'Computing the new overlap '
  call new_one_e_mat(ao_overlap, new_mo_coef_tmp, mo_overlap_tmp)
  open(1, file = 'mo_overlap_guess') 
@@ -215,10 +225,22 @@ subroutine write_rotation_matrix_total_one_e_rdm
  enddo
  close(1) 
  print*,'computing the new one-rdm '
- call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm_alpha)
+ call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm)
  open(1, file = 'one_rdm') 
  do i = 1, n_act_orb
-  write(1,'(100(F16.10,X))')one_e_rdm_alpha(i,1:n_act_orb)
+  do j = i, n_act_orb
+   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
+   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm(j,i)
+  enddo
+ enddo
+ close(1) 
+
+ open(1, file = 'one_rdm_bis') 
+ do i = 1, n_act_orb
+  do j = i, n_act_orb
+   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
+   write(1,'(2(I3,X),F16.13)')j-1,i-1,one_e_rdm(j,i)
+  enddo
  enddo
  close(1) 
 
@@ -234,7 +256,7 @@ subroutine write_rotation_matrix_total_one_e_rdm
  ! testing the alpha-beta two e energy
  call routine_active_only_test_bis(two_rdm, two_e_ints)
  ! writing in plain text the two RDM
- call write_two_rdm(two_rdm)
+ call write_two_rdm_yuan(two_rdm)
  deallocate(two_rdm)
 end
 
@@ -491,6 +513,21 @@ end
  enddo
  close(1)
 
+ open(1, file = 'two_rdm_bis') 
+ do p = 1, n_act_orb
+  do q = p, n_act_orb
+   do s = 1, n_act_orb
+    do r = 1, n_act_orb
+     if(p==q .and. s.gt.r)cycle
+     value_rdm = yuan_2rdm(two_rdm,p,q,r,s,n_act_orb)
+     if(dabs(value_rdm).lt.1.d-9)cycle
+     write(1,'(4(I3,A1),F16.13)')p-1,coma, q-1, coma, r-1, coma, s-1, coma, 2.d0 * value_rdm
+    enddo
+   enddo
+  enddo
+ enddo
+ close(1)
+
  end
 
  double precision function yuan_2rdm(two_rdm,p,q,r,s,n_mo)
@@ -501,24 +538,3 @@ end
  end
 
 
- subroutine write_two_rdm_uniq(two_rdm)
- implicit none
- integer :: p,q,r,s
- double precision, intent(in) :: two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb)
- double precision :: value_rdm,yuan_2rdm
- character*(1) :: coma
- coma = ","
- open(1, file = 'two_rdm') 
- do p = 1, n_act_orb
-  do q = p, n_act_orb
-   do s = 1, n_act_orb
-    do r = 1, n_act_orb
-     if(p==q .and. s.gt.r)cycle
-     value_rdm = yuan_2rdm(two_rdm,p,q,r,s,n_act_orb)
-     if(dabs(value_rdm).lt.1.d-9)cycle
-     write(1,'(4(I3,A1),F16.13)')p,coma, q, coma, r, coma, s, coma, value_rdm
-    enddo
-   enddo
-  enddo
- enddo
- close(1)

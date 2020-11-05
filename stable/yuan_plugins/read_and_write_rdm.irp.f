@@ -217,6 +217,10 @@ subroutine read_one_rdm_sp_tr_uniq_and_write_to_ezfio(n_mo_tmp,n_elements)
   enddo
  enddo
  one_rdm_full = one_rdm_full * 0.5d0
+ print*,'one_rdm_full = '
+ do k = 1, mo_num
+  write(*,'(100(F16.10,X))')one_rdm_full(k,:)
+ enddo
 
  ! Writting the one rdm on the alpha/beta
  call ezfio_set_aux_quantities_data_one_e_dm_alpha_mo(one_rdm_full)
