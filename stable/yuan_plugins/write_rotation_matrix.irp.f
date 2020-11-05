@@ -3,8 +3,8 @@ program write_rot_mat
  read_wf = .True.
  touch read_wf
  call write_rotation_matrix
+ call write_rotation_matrix_total_one_e_rdm_uniq
 ! call write_rotation_matrix_total_one_e_rdm
-! call write_rotation_matrix_total_one_e_rdm_uniq
 end
 
 subroutine write_rotation_matrix_total_one_e_rdm_uniq
@@ -92,8 +92,8 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  ! testing the alpha-beta two e energy
  call routine_active_only_test_bis(two_rdm, two_e_ints)
  ! writing in plain text the two RDM
- call write_two_rdm_yuan_uniq(two_rdm)
-! call write_two_rdm_yuan(two_rdm)
+! call write_two_rdm_yuan_uniq(two_rdm)
+ call write_two_rdm(two_rdm)
  deallocate(two_rdm)
 end
 

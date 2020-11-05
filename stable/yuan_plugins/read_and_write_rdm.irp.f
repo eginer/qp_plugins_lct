@@ -196,6 +196,7 @@ subroutine read_one_rdm_sp_tr_uniq_and_write_to_ezfio(n_mo_tmp,n_elements)
  integer :: ncore
  ncore = mo_num - n_mo_tmp
  character*(1) :: coma
+ one_rdm = 0.d0
  open(1, file = 'one_rdm') 
  do m = 1, n_elements
   read(1,'(2(I3,A1),F16.13)')l,coma, k, coma,value_rdm
@@ -214,6 +215,7 @@ subroutine read_one_rdm_sp_tr_uniq_and_write_to_ezfio(n_mo_tmp,n_elements)
   do l = ncore+1 , n_mo_tmp
    n += 1
    one_rdm_full(l,k) = one_rdm(n,m)
+   one_rdm_full(k,l) = one_rdm(n,m)
   enddo
  enddo
  one_rdm_full = one_rdm_full * 0.5d0
