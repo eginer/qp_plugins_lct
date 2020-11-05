@@ -69,6 +69,7 @@ subroutine read_two_rdm_yuan_and_write_to_ezfio(n,n_mo_tmp)
  integer :: i,j,k,l,m
  double precision :: value_rdm
  character*(1) :: coma
+ two_rdm = 0.d0
  open(1, file = 'two_rdm') 
  do m = 1, n
    ! a^{l}a^{k} a_i a_j

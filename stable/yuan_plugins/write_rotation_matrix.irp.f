@@ -93,7 +93,7 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  call routine_active_only_test_bis(two_rdm, two_e_ints)
  ! writing in plain text the two RDM
 ! call write_two_rdm_yuan_uniq(two_rdm)
- call write_two_rdm(two_rdm)
+ call write_two_rdm_yuan(two_rdm)
  deallocate(two_rdm)
 end
 
