@@ -2,9 +2,8 @@ program write_rot_mat
  implicit none
  read_wf = .True.
  touch read_wf
-! call write_rotation_matrix
+! call routine_active_only_test(act_2_rdm_ab_mo)
  call write_rotation_matrix_total_one_e_rdm_uniq
-! call write_rotation_matrix_total_one_e_rdm
 end
 
 subroutine write_rotation_matrix_total_one_e_rdm_uniq
@@ -13,17 +12,18 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  integer :: iorb,jorb
  double precision :: eigvalues(mo_num),rot_mat_tmp(mo_num,mo_num), mo_array(mo_num, mo_num)
  double precision :: rot_mat_act(n_act_orb, n_act_orb)
+ double precision :: vijkl,get_two_e_integral
 
- !!!!!!!!!!!!
- ! identity rotation matrix 
-!rot_mat_tmp = 0.d0
-!do i = 1, mo_num
-! rot_mat_tmp(i,i) = 1.d0
-!enddo
+! !!!!!!!!!!!!
+! ! identity rotation matrix 
+ rot_mat_tmp = 0.d0
+ do i = 1, mo_num
+  rot_mat_tmp(i,i) = 1.d0
+ enddo
 
- mo_array = -one_e_dm_mo
+! mo_array = -one_e_dm_mo
  print*,'Write rotation matrix from current orbitals to natural orbitals '
- call lapack_diagd(eigvalues,rot_mat_tmp,mo_array,mo_num,mo_num) 
+! call lapack_diagd(eigvalues,rot_mat_tmp,mo_array,mo_num,mo_num) 
  !!!!!!!!!!!!
  do i = 1, n_act_orb
   iorb = list_act(i)
@@ -69,20 +69,20 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  enddo
  close(1) 
 
- call routine_active_only_test(act_2_rdm_ab_mo)
  double precision, allocatable :: two_rdm(:, :, :, :), two_e_ints(:,:,:,:)
+
+ call routine_active_only_test(act_2_rdm_ab_mo)
  allocate( two_rdm(n_act_orb, n_act_orb, n_act_orb, n_act_orb) )
  allocate( two_e_ints(n_act_orb, n_act_orb, n_act_orb, n_act_orb) )
 
  ! transforming the two RDM with the new MOs
+! call new_two_e_mat(rot_mat_act,act_2_rdm_ab_mo,two_rdm)
  call new_two_e_mat(rot_mat_act,act_2_rdm_ab_mo,two_rdm)
-! call new_two_e_mat(rot_mat_act,act_2_rdm_spin_trace_mo,two_rdm)
  ! transforming the two e integrals with the new MOs
  call new_two_e_mat(rot_mat_act,vee_big_array,two_e_ints)
- ! testing the alpha-beta two e energy
+! ! testing the alpha-beta two e energy
  call routine_active_only_test_bis(two_rdm, two_e_ints)
  ! writing in plain text the two RDM
-! call write_two_rdm_yuan_uniq(two_rdm)
  call write_two_rdm(two_rdm)
  deallocate(two_rdm)
 end
@@ -383,7 +383,7 @@ BEGIN_PROVIDER [double precision, vee_big_array, (n_act_orb, n_act_orb, n_act_or
  implicit none
  integer :: i,j,k,l,iorb,jorb,korb,lorb,istate
  double precision :: vijkl,get_two_e_integral
-
+ provide mo_two_e_integrals_in_map
    do i = 1, n_act_orb
     iorb = list_act(i)
     do j = 1, n_act_orb
@@ -423,6 +423,11 @@ subroutine routine_active_only_test_bis(two_rdm, two_e_ints)
       do lorb = 1, n_act_orb
        vijkl = two_e_ints(lorb,korb,jorb,iorb)
        rdmab =  two_rdm(lorb,korb,jorb,iorb)
+!      if(dabs(rdmab).gt.1.d-10)then
+!        print*,iorb,jorb,korb,lorb
+!        print*,rdmab
+!        print*,vijkl
+!      endif
        wee_ab             += vijkl * rdmab
       enddo
      enddo

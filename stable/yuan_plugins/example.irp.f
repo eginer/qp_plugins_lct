@@ -10,17 +10,15 @@ subroutine routine_active_only_test(two_rdm)
 
  double precision :: vijkl,get_two_e_integral
  double precision :: wee_ab(N_states),rdmab
- double precision :: wee_tot(N_states),rdmtot
 
  wee_ab  = 0.d0
- wee_tot = 0.d0
 
  iorb = 1
  jorb = 1
  korb = 1
  lorb = 1
  vijkl = get_two_e_integral(lorb,korb,jorb,iorb,mo_integrals_map)                                 
-!provide act_2_rdm_ab_mo  act_2_rdm_spin_trace_mo 
+! call diagonalize_ci
  print*,'**************************'
  print*,'**************************'
  do istate = 1, N_states
@@ -39,9 +37,12 @@ subroutine routine_active_only_test(two_rdm)
 
 
        rdmab   =  two_rdm(l,k,j,i)
-!      print*,i,j,k,l
-!      print*,rdmab
-!      print*,vijkl
+!      if(dabs(rdmab).gt.1.d-10)then
+!        print*,i,j,k,l
+!        print*,iorb,jorb,korb,lorb
+!        print*,rdmab
+!        print*,vijkl
+!      endif
 
 
        wee_ab(istate)     += vijkl * rdmab
