@@ -76,6 +76,7 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
 
  ! transforming the two RDM with the new MOs
  call new_two_e_mat(rot_mat_act,act_2_rdm_ab_mo,two_rdm)
+! call new_two_e_mat(rot_mat_act,act_2_rdm_spin_trace_mo,two_rdm)
  ! transforming the two e integrals with the new MOs
  call new_two_e_mat(rot_mat_act,vee_big_array,two_e_ints)
  ! testing the alpha-beta two e energy
