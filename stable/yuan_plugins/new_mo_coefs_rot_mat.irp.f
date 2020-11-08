@@ -6,7 +6,7 @@ program yuan_plugins
 ! There is a file called "rotation_matrix" 
   END_DOC
   print *, 'Hello world'
-  call save_new_mo_coefs
+ call save_new_mo_coefs
 
 
   call read_one_rdm_sp_tr_and_write_to_ezfio(n_act_orb)

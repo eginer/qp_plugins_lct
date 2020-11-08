@@ -11,7 +11,7 @@ subroutine test_one_e
  accu = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
-   accu+= (one_e_dm_mo_alpha_for_dft(j,i,1) + one_e_dm_mo_alpha_for_dft(j,i,1)) * mo_one_e_integrals(j,i)
+   accu+= (one_e_dm_mo_alpha_for_dft(j,i,1) + one_e_dm_mo_beta_for_dft(j,i,1)) * mo_one_e_integrals(j,i)
   enddo
  enddo
  print*,'accu = ',accu

@@ -65,7 +65,7 @@ subroutine read_two_rdm_and_write_to_ezfio(n,n_mo_tmp)
    ! a^{l}a^{k} a_i a_j
 !  read(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i,coma,value_rdm
   read(1,*)l, k,  j,  i,value_rdm
-  two_rdm(l,k,j,i) = value_rdm
+  two_rdm(l,k,j,i) = 0.5d0 * value_rdm
  enddo
  close(1)
 
@@ -185,14 +185,14 @@ subroutine read_one_rdm_sp_tr_and_write_to_ezfio(n_mo_tmp)
  close(1)
  one_rdm_full = 0.d0
  do k = 1, ncore
-  one_rdm_full(k,k) = 1.d0
+  one_rdm_full(k,k) = 2.d0
  enddo
  m = 0
- do k = ncore+1, n_mo_tmp
+ do k = ncore+1, ncore + n_mo_tmp
   m += 1
   write(*,'(100(F16.10,X))')one_rdm(m,:)
   n = 0
-  do l = ncore+1 , n_mo_tmp
+  do l = ncore+1 , ncore + n_mo_tmp
    n += 1
    one_rdm_full(l,k) = one_rdm(n,m)
   enddo

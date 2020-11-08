@@ -14,15 +14,16 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  double precision :: eigvalues(mo_num),rot_mat_tmp(mo_num,mo_num), mo_array(mo_num, mo_num)
  double precision :: rot_mat_act(n_act_orb, n_act_orb)
 
- mo_array = -one_e_dm_mo
- print*,'Write rotation matrix from current orbitals to natural orbitals '
-! call lapack_diagd(eigvalues,rot_mat_tmp,mo_array,mo_num,mo_num) 
  !!!!!!!!!!!!
  ! identity rotation matrix 
- rot_mat_tmp = 0.d0
- do i = 1, mo_num
-  rot_mat_tmp(i,i) = 1.d0
- enddo
+!rot_mat_tmp = 0.d0
+!do i = 1, mo_num
+! rot_mat_tmp(i,i) = 1.d0
+!enddo
+
+ mo_array = -one_e_dm_mo
+ print*,'Write rotation matrix from current orbitals to natural orbitals '
+ call lapack_diagd(eigvalues,rot_mat_tmp,mo_array,mo_num,mo_num) 
  !!!!!!!!!!!!
  do i = 1, n_act_orb
   iorb = list_act(i)
@@ -64,11 +65,7 @@ subroutine write_rotation_matrix_total_one_e_rdm_uniq
  call new_one_e_mat_act(one_e_dm_mo, rot_mat_act, one_e_rdm)
  open(1, file = 'one_rdm') 
  do i = 1, n_act_orb
-!  do j = i, n_act_orb
-!   if(dabs(one_e_rdm(j,i)).lt.1.d-9)cycle
-!   write(1,'(2(I3,X),F16.13)')j,i,one_e_rdm(j,i)
    write(1,'(1000(F16.10,X))')one_e_rdm(i,:)
-!  enddo
  enddo
  close(1) 
 
@@ -450,7 +447,7 @@ end
     do l = 1, n_act_orb
      value_rdm = two_rdm(l,k,j,i)
      if(dabs(value_rdm).lt.1.d-10)cycle
-     write(1,*)l,k,j,i,value_rdm
+     write(1,*)l,k,j,i,value_rdm*2.d0
     enddo
    enddo
   enddo
