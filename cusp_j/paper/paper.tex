@@ -425,7 +425,7 @@ Therefore, one can Taylor expand the exact wave function in the vicinity of $\br
 As one can see from Eq.\eqref{eq:bigJ_dl} and Eq.\eqref{eq:psi0_ex_dl}, the first term $e^{-\frac{1}{2\sqrt{\pi}\mu}}$ defines the depth of the Coulomb hole induced by the correlating factor $\mathcal{J}(r_{12};\mu)$ at $r_{12}=0$. 
 This term is imposed by the term $- \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2}$ in the Jastrow factor. 
 Therefore, the probability of finding two electrons at $r_{12}=0$ (\textit{i.e.} the on-top pair density) is larger for $\phiex(\br{}_1,\br{}_2)$ than for $\psiex(\br{}_1,\br{}_2)$.  
-This can be easily understood noticing that, by construction, $\tilde{H}[\mu]$ does not contain any divergent potential term at $r_{12}=0$, and therefore the electrons repels less each other.  
+This can be easily understood noticing that, by construction, $\tilde{H}[\mu]$ does not contain any divergent potential term at $r_{12}=0$, and therefore the electrons repels less each other in  $\tilde{H}[\mu]$.  
 
 The second term in \eqref{eq:bigJ_dl} is linked to the cusp condition. 
 Indeed, as shown in section \ref{sec:cusp}, $\phiex(\br{}_1,\br{}_2)$ does not have a cusp, and therefore $\mathcal{J}(r_{12};\mu)$ mus restore it. This term is imposed by the term $\frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg)$ in the Jastrow factor. 
@@ -466,7 +466,7 @@ whose shape is illustrated in Fig\ref{fig_wee_mu}.
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ (up) and comparison with $\frac{\text{erf}(\mu r_{12}}{r_{12}}$ (bottom) for different values of $\mu$.}
 \end{figure*}
 From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential 
-is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT. 
+is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT at large $r_{12}$. 
 Nevertheless, as observed from Fig.\ref{fig_wee_mu}, it is significantly different 
 from the long-range interaction at small $r_{12}$, 
 and it is not monotonic as it can be even slightly attractive for small values of $\mu$. 
@@ -541,13 +541,6 @@ Nevertheless, due to the property of the similarity transformation, in the limit
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
 The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
-Therefore, considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected in a given basis set by
-\begin{equation}
- \tilde{H}[\mu]^{\basis} = P_\basis \tilde{H}[\mu] P_\basis,
-\end{equation}
-whose right eigenvectors and eigenvalues satisfy 
-In the present paper, we study the behaviour of $\tilde{H}[\mu]$ in the case of the isoelectronic series of the helium atom, and in that section we focus on the helium atom itself. 
-The first part of our study concerns the convergence of the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
 
 Considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected on $\basis$ by
 \begin{equation}
@@ -567,10 +560,10 @@ and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenv
 Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $j(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
 \subsection{$\mu$ dependence of the convergence of the ground state eigenvalue with respect to the basis set }
 \subsubsection{Computational details}
-We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) in the case of an atomic two electron systems, together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
+We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
-Once the matrix elements of $\tilde{H}[\mu]$ are built on a given MO basis, we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} $\Phi_\mu$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. If not explicitly mentioned, the canonical RHF MOs are used in this work. 
-The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
+We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} $\Phi_\mu$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
+%The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
 
 \subsubsection{Numerical results: ground state energies}
 \label{sec:total_e}
@@ -583,7 +576,7 @@ which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\
 
 Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ as long as $\mu \ge 0.2$. 
 To quantify better such observations, one can identify the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
-For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ such the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
+For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
 Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
 \begin{figure*}
  \label{fig_conv_e_mu}
@@ -627,7 +620,7 @@ where the normalization factor $\mathcal{N}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}^{\mu} = \matelem{\phimu}{e^{2 j(r_{12},\mu)}}{\phimu}.
 \end{equation}
-Therefore, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to can estimate the exact ground state wave function $\psiex$ through 
+Therefore, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to estimate the exact ground state wave function $\psiex$ through 
 \begin{equation}
  \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{j(r_{12},\mu)}\phimub(\br{}_1,\br{}_2)
 \end{equation}
@@ -635,9 +628,9 @@ where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 j(r_{12},\mu)}}{\phimub}.
 \end{equation}
-
-Knowing that, one can directly compare $\psimub(\br{}_1,\br{}_2) $ in real space to the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$, which is approximated in the case of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits. 
-Therefore, we plotted cuttings of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cuttings used are the following: we set two electrons on a circle of radius $r$ from the nucleus, and use increasing values of $r$. 
+Then, the quality of a given basis set $\basis$ for a given $\mu$ can be also observed from the vicinity between $\psimub(\br{}_1,\br{}_2)$ and the exact wave function $\psiex(\br{}_1,\br{}_2)$. 
+For this study, we approximate the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$ of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits.  
+We plotted cuttings of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cuttings used are the following: we set two electrons on a circle of radius $r$ from the nucleus, and use increasing values of $r$. 
 We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of the right eigenvector $\phimub(\br{}_1,\br{}_2)$, estimated exact wave function $\psimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ and $\mu=1.0$ (respectively) and compared to the exact wave function $\psiex(\br{}_1,\br{}_2)$ and FCI wave function for $r=0.5\,a.u.$. 
 \begin{figure*}
  \label{fig:mu_0.3_dz_3}
