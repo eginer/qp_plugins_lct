@@ -35,6 +35,9 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\identity}{\mathds{1}}
 \newcommand{\mur}[1]{\mu({\bf r_{#1}})}
+\newcommand{\muueg}{\langle \mu_{\text{UEG}}\rangle}
+\newcommand{\mursc}{\langle \mu_{r_{s,c}}\rangle}
+\newcommand{\mursclda}{\langle \mu_{r_{s,c}^{\text{UEG}}}\rangle}
 
 
 
@@ -422,7 +425,7 @@ Therefore, one can Taylor expand the exact wave function in the vicinity of $\br
 As one can see from Eq.\eqref{eq:bigJ_dl} and Eq.\eqref{eq:psi0_ex_dl}, the first term $e^{-\frac{1}{2\sqrt{\pi}\mu}}$ defines the depth of the Coulomb hole induced by the correlating factor $\mathcal{J}(r_{12};\mu)$ at $r_{12}=0$. 
 This term is imposed by the term $- \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2}$ in the Jastrow factor. 
 Therefore, the probability of finding two electrons at $r_{12}=0$ (\textit{i.e.} the on-top pair density) is larger for $\phiex(\br{}_1,\br{}_2)$ than for $\psiex(\br{}_1,\br{}_2)$.  
-This can be easily understood noticing that, by construction, $\tilde{H}[\mu]$ does not contain any divergent potential term at $r_{12}=0$, and therefore the electrons repels less each other.  
+This can be easily understood noticing that, by construction, $\tilde{H}[\mu]$ does not contain any divergent potential term at $r_{12}=0$, and therefore the electrons repels less each other in  $\tilde{H}[\mu]$.  
 
 The second term in \eqref{eq:bigJ_dl} is linked to the cusp condition. 
 Indeed, as shown in section \ref{sec:cusp}, $\phiex(\br{}_1,\br{}_2)$ does not have a cusp, and therefore $\mathcal{J}(r_{12};\mu)$ mus restore it. This term is imposed by the term $\frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg)$ in the Jastrow factor. 
@@ -463,7 +466,7 @@ whose shape is illustrated in Fig\ref{fig_wee_mu}.
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ (up) and comparison with $\frac{\text{erf}(\mu r_{12}}{r_{12}}$ (bottom) for different values of $\mu$.}
 \end{figure*}
 From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential 
-is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT. 
+is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT at large $r_{12}$. 
 Nevertheless, as observed from Fig.\ref{fig_wee_mu}, it is significantly different 
 from the long-range interaction at small $r_{12}$, 
 and it is not monotonic as it can be even slightly attractive for small values of $\mu$. 
@@ -538,13 +541,6 @@ Nevertheless, due to the property of the similarity transformation, in the limit
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
 The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
-Therefore, considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected in a given basis set by
-\begin{equation}
- \tilde{H}[\mu]^{\basis} = P_\basis \tilde{H}[\mu] P_\basis,
-\end{equation}
-whose right eigenvectors and eigenvalues satisfy 
-In the present paper, we study the behaviour of $\tilde{H}[\mu]$ in the case of the isoelectronic series of the helium atom, and in that section we focus on the helium atom itself. 
-The first part of our study concerns the convergence of the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
 
 Considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected on $\basis$ by
 \begin{equation}
@@ -564,10 +560,10 @@ and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenv
 Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $j(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
 \subsection{$\mu$ dependence of the convergence of the ground state eigenvalue with respect to the basis set }
 \subsubsection{Computational details}
-We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) in the case of an atomic two electron systems, together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
+We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
-Once the matrix elements of $\tilde{H}[\mu]$ are built on a given MO basis, we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} $\Phi_\mu$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. If not explicitly mentioned, the canonical RHF MOs are used in this work. 
-The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
+We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} $\Phi_\mu$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
+%The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
 
 \subsubsection{Numerical results: ground state energies}
 \label{sec:total_e}
@@ -580,7 +576,7 @@ which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\
 
 Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ as long as $\mu \ge 0.2$. 
 To quantify better such observations, one can identify the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
-For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ such the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
+For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
 Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
 \begin{figure*}
  \label{fig_conv_e_mu}
@@ -624,7 +620,7 @@ where the normalization factor $\mathcal{N}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}^{\mu} = \matelem{\phimu}{e^{2 j(r_{12},\mu)}}{\phimu}.
 \end{equation}
-Therefore, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to can estimate the exact ground state wave function $\psiex$ through 
+Therefore, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to estimate the exact ground state wave function $\psiex$ through 
 \begin{equation}
  \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{j(r_{12},\mu)}\phimub(\br{}_1,\br{}_2)
 \end{equation}
@@ -632,9 +628,9 @@ where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 j(r_{12},\mu)}}{\phimub}.
 \end{equation}
-
-Knowing that, one can directly compare $\psimub(\br{}_1,\br{}_2) $ in real space to the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$, which is approximated in the case of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits. 
-Therefore, we plotted cuttings of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cuttings used are the following: we set two electrons on a circle of radius $r$ from the nucleus, and use increasing values of $r$. 
+Then, the quality of a given basis set $\basis$ for a given $\mu$ can be also observed from the vicinity between $\psimub(\br{}_1,\br{}_2)$ and the exact wave function $\psiex(\br{}_1,\br{}_2)$. 
+For this study, we approximate the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$ of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits.  
+We plotted cuttings of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cuttings used are the following: we set two electrons on a circle of radius $r$ from the nucleus, and use increasing values of $r$. 
 We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of the right eigenvector $\phimub(\br{}_1,\br{}_2)$, estimated exact wave function $\psimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ and $\mu=1.0$ (respectively) and compared to the exact wave function $\psiex(\br{}_1,\br{}_2)$ and FCI wave function for $r=0.5\,a.u.$. 
 \begin{figure*}
  \label{fig:mu_0.3_dz_3}
@@ -686,13 +682,108 @@ Therefore, one can
 \end{figure*}
 
 \section{Study of the helium isoelectronic series}
-%\begin{figure*}
-% \label{fig_wee_compare}
-%        \includegraphics[width=1.00\linewidth]{w_ee_compare.pdf}
-%        \caption{
-%        Effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=0.3$ and $\mu=1.0$, compared to the usual $1/r_{12}$ Coulomb interaction.}
-%\end{figure*}
+%\begin{table*}
+%\label{table_conv_e_mu}
+%\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used.}
+%\begin{ruledtabular}
+%\begin{tabular}{l|ccc|}
+%H-           &         &          &          \\
+%FCI          &   DZ    &  TZ      &   QZ     \\               
+%LDA          &   3.72  &    1.19  &   0.61   \\      
+%RSC          &   1.69  &    0.6   &   0.38   \\      
+%RSC/LDA      &   2.3   &    0.67  &   0.39   \\      
+%\hline       &   2.03  &    0.64  &   0.39   \\      
+%He           &         &          &          \\                              
+% FCI         &         &          &          \\        
+% LDA         &  14.18  &   3.13   &  1.19    \\     
+% RSC         &  5.28   &   0.44   &  0.12    \\     
+% RSC/LDA     &  4.87   &   0.37   &  0.12    \\     
+%\hline       &  5.07   &   0.4    &  0.12    \\     
+%Li+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  10.72  &   3.35   &  1.58    \\     
+% RSC         &  0.9    &   0.09   & -0.02    \\     
+% RSC/LDA     &  -0.82  &  -0.38   & -0.14    \\     
+%\hline       &  0.04   &  -0.12   & -0.08    \\     
+%Be2+         &         &          &          \\                                  
+% FCI         &         &          &          \\        
+% LDA         &  11.35  &   3.62   & 1.41     \\     
+% RSC         &  1.2    &   0.17   & -0.02    \\     
+% RSC/LDA     &  -1.5   &  -0.53   & -0.17    \\     
+%\hline       &  -0.08  &  -0.15   & -0.09    \\     
+%B3+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  11.91  &   4.21   &  1.53    \\     
+% RSC         &  1.41   &   0.43   &  -0.01   \\      
+% RSC/LDA     &  -2.16  &  -0.34   &  -0.22   \\      
+%\hline       &  -0.18  &   0.09   &  -0.11   \\      
+%C4+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  12.46  &   4.76   &  1.67    \\     
+% RSC         &  1.67   &   0.37   &  0.01    \\     
+% RSC/LDA     &  -2.69  &  -0.4    & -0.25    \\     
+%\hline       &  -0.19  &   0.01   &  -0.1    \\     
+%N5+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  13.1   &   5.71   &  1.79    \\     
+% RSC         &  2.06   &   0.45   &  0.01    \\     
+% RSC/LDA     &  -2.97  &  -0.64   &  -0.26   \\      
+%\hline       &  -0.01  &  -0.15   &  -0.09   \\      
+%O6+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  13.84  &   6.47   &  2.02    \\     
+% RSC         &  2.54   &   0.77   & -0.02    \\     
+% RSC/LDA     &  -3.13  &  -0.7    & -0.31    \\     
+%\hline       &  0.27   &  -0.04   & -0.12    \\     
+%F7+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  14.68  &   7.06   &  2.25    \\     
+% RSC         &  3.14   &   1.15   & -0.02    \\     
+% RSC/LDA     &  -3.1   &  -0.54   & -0.36    \\     
+%\hline       &  0.69   &   0.23   & -0.14    \\     
+%Ne8+         &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  15.66  &   7.61   &  2.36    \\     
+% RSC         &  3.89   &   1.57   &  0.03    \\     
+% RSC/LDA     &  -2.85  &  -0.28   & -0.35    \\     
+%\hline       &  1.26   &   0.57   & -0.1     \\     
+%\end{tabular}
+%\end{ruledtabular}
+%\end{table*}
 
+\begin{table*}
+\label{table_conv_e_mu}
+\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. }
+\begin{ruledtabular}
+\begin{tabular}{l|rrr||rrr||rrr|}
+             &\multicolumn{3}{c}{H$^-$}      & \multicolumn{3}{c}{He}       & \multicolumn{3}{c}{Li$^+$}    \\
+             &   DZ    &  TZ      &   QZ     &  DZ     &   TZ     &  QZ     &   DZ    &   TZ     &  QZ      \\                   
+\hline
+ FCI         &   3.72  &    1.19  &   0.61   &  14.18  &   3.13   &  1.19   &  10.72  &   3.35   &  1.58    \\      
+$\muueg$     &   1.69  &    0.60  &   0.38   &  5.28   &   0.44   &  0.12   &  0.9    &   0.09   & -0.02    \\      
+$\mursc$     &   2.30  &    0.67  &   0.39   &  4.87   &   0.37   &  0.12   &  -0.82  &  -0.38   & -0.14    \\      
+$\mursclda$  &   2.03  &    0.64  &   0.39   &  5.07   &   0.40   &  0.12   &  0.04   &  -0.12   & -0.08    \\      
+\hline
+             &\multicolumn{3}{c}{Be$^{2+}$}  & \multicolumn{3}{c}{B$^{3+}$} & \multicolumn{3}{c}{C$^{4+}$}    \\
+ FCI         &  11.35  &   3.62   &  1.41    &  11.91  &   4.21   &  1.53   &  12.46  &   4.76   &  1.67    \\  
+$\muueg$     &  1.2    &   0.17   & -0.02    &  1.41   &   0.43   &  -0.01  &  1.67   &   0.37   &  0.01    \\  
+$\mursc$     &  -1.5   &  -0.53   & -0.17    &  -2.16  &  -0.34   &  -0.22  &  -2.69  &  -0.4    & -0.25    \\  
+$\mursclda$  &  -0.08  &  -0.15   & -0.09    &  -0.18  &   0.09   &  -0.11  &  -0.19  &   0.01   &  -0.1    \\  
+\hline
+             &\multicolumn{3}{c}{N$^{5+}$}   & \multicolumn{3}{c}{O$^{6+}$} & \multicolumn{3}{c}{F$^{7+}$}    \\
+ FCI         &  13.1   &   5.71   &  1.79    &  13.84  &   6.47   &  2.02   &  14.68  &   7.06   &  2.25    \\  
+$\muueg$     &  2.06   &   0.45   &  0.01    &  2.54   &   0.77   & -0.02   &  3.14   &   1.15   & -0.02    \\  
+$\mursc$     &  -2.97  &  -0.64   &  -0.26   &  -3.13  &  -0.7    & -0.31   &  -3.1   &  -0.54   & -0.36    \\  
+$\mursclda$  &  -0.01  &  -0.15   &  -0.09   &  0.27   &  -0.04   & -0.12   &  0.69   &   0.23   & -0.14    \\  
+\hline
+             &\multicolumn{3}{c}{Ne$^{8+}$}  & \multicolumn{3}{c}{MAD} & \multicolumn{3}{c}{MSD}    \\
+ FCI         &  15.66  &   7.61   &  2.36    & 12.16   &    4.71  &    1.64   &  12.16   &   4.71   &    1.64   \\   
+$\muueg$     &  3.89   &   1.57   &  0.03    & 4.23    &    1.11  &    0.13   &   4.23   &   1.11   &    0.13   \\   
+$\mursc$     &  -2.85  &  -0.28   & -0.35    & 2.64    &    0.48  &    0.26   &  -1.21   &  -0.28   &   -0.16   \\   
+$\mursclda$  &  1.26   &   0.57   & -0.1     & 2.38    &    0.60  &    0.07   &   2.38   &   0.60   &    0.05   \\   
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 

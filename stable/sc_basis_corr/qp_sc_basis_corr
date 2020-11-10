@@ -162,7 +162,8 @@ qp  set  density_for_dft    density_for_dft         "WFT"
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
 
 
-  for i in {1..100}
+# for i in {1..100}
+  for i in {1..1}
    do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      qp set determinants read_wf "False"
@@ -201,6 +202,7 @@ qp  set  density_for_dft    density_for_dft         "WFT"
       DEabs=`echo "print(abs(${DE}))" | python `
       CONV=`echo "print(${DEabs} < ${thresh})" | python`
       echo $i $EV_macro $EV_new_macro $DE $thresh >> ${file_final}
+      CONV="True"
       if [ "$CONV" = "True" ]; then
         break
       fi
