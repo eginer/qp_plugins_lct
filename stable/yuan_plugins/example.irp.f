@@ -37,12 +37,12 @@ subroutine routine_active_only_test(two_rdm)
 
 
        rdmab   =  two_rdm(l,k,j,i)
-!      if(dabs(rdmab).gt.1.d-10)then
-!        print*,i,j,k,l
-!        print*,iorb,jorb,korb,lorb
-!        print*,rdmab
-!        print*,vijkl
-!      endif
+       if(dabs(rdmab).gt.1.d-10)then
+         print*,i,j,k,l
+         print*,iorb,jorb,korb,lorb
+         print*,rdmab
+         print*,vijkl
+       endif
 
 
        wee_ab(istate)     += vijkl * rdmab
