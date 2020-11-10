@@ -35,6 +35,9 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\identity}{\mathds{1}}
 \newcommand{\mur}[1]{\mu({\bf r_{#1}})}
+\newcommand{\muueg}{\langle \mu_{\text{UEG}}\rangle}
+\newcommand{\mursc}{\langle \mu_{r_{s,c}}\rangle}
+\newcommand{\mursclda}{\langle \mu_{r_{s,c}^{\text{UEG}}}\rangle}
 
 
 
@@ -686,75 +689,108 @@ Therefore, one can
 \end{figure*}
 
 \section{Study of the helium isoelectronic series}
-\begin{table}
+%\begin{table*}
+%\label{table_conv_e_mu}
+%\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used.}
+%\begin{ruledtabular}
+%\begin{tabular}{l|ccc|}
+%H-           &         &          &          \\
+%FCI          &   DZ    &  TZ      &   QZ     \\               
+%LDA          &   3.72  &    1.19  &   0.61   \\      
+%RSC          &   1.69  &    0.6   &   0.38   \\      
+%RSC/LDA      &   2.3   &    0.67  &   0.39   \\      
+%\hline       &   2.03  &    0.64  &   0.39   \\      
+%He           &         &          &          \\                              
+% FCI         &         &          &          \\        
+% LDA         &  14.18  &   3.13   &  1.19    \\     
+% RSC         &  5.28   &   0.44   &  0.12    \\     
+% RSC/LDA     &  4.87   &   0.37   &  0.12    \\     
+%\hline       &  5.07   &   0.4    &  0.12    \\     
+%Li+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  10.72  &   3.35   &  1.58    \\     
+% RSC         &  0.9    &   0.09   & -0.02    \\     
+% RSC/LDA     &  -0.82  &  -0.38   & -0.14    \\     
+%\hline       &  0.04   &  -0.12   & -0.08    \\     
+%Be2+         &         &          &          \\                                  
+% FCI         &         &          &          \\        
+% LDA         &  11.35  &   3.62   & 1.41     \\     
+% RSC         &  1.2    &   0.17   & -0.02    \\     
+% RSC/LDA     &  -1.5   &  -0.53   & -0.17    \\     
+%\hline       &  -0.08  &  -0.15   & -0.09    \\     
+%B3+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  11.91  &   4.21   &  1.53    \\     
+% RSC         &  1.41   &   0.43   &  -0.01   \\      
+% RSC/LDA     &  -2.16  &  -0.34   &  -0.22   \\      
+%\hline       &  -0.18  &   0.09   &  -0.11   \\      
+%C4+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  12.46  &   4.76   &  1.67    \\     
+% RSC         &  1.67   &   0.37   &  0.01    \\     
+% RSC/LDA     &  -2.69  &  -0.4    & -0.25    \\     
+%\hline       &  -0.19  &   0.01   &  -0.1    \\     
+%N5+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  13.1   &   5.71   &  1.79    \\     
+% RSC         &  2.06   &   0.45   &  0.01    \\     
+% RSC/LDA     &  -2.97  &  -0.64   &  -0.26   \\      
+%\hline       &  -0.01  &  -0.15   &  -0.09   \\      
+%O6+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  13.84  &   6.47   &  2.02    \\     
+% RSC         &  2.54   &   0.77   & -0.02    \\     
+% RSC/LDA     &  -3.13  &  -0.7    & -0.31    \\     
+%\hline       &  0.27   &  -0.04   & -0.12    \\     
+%F7+          &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  14.68  &   7.06   &  2.25    \\     
+% RSC         &  3.14   &   1.15   & -0.02    \\     
+% RSC/LDA     &  -3.1   &  -0.54   & -0.36    \\     
+%\hline       &  0.69   &   0.23   & -0.14    \\     
+%Ne8+         &         &          &          \\                               
+% FCI         &         &          &          \\        
+% LDA         &  15.66  &   7.61   &  2.36    \\     
+% RSC         &  3.89   &   1.57   &  0.03    \\     
+% RSC/LDA     &  -2.85  &  -0.28   & -0.35    \\     
+%\hline       &  1.26   &   0.57   & -0.1     \\     
+%\end{tabular}
+%\end{ruledtabular}
+%\end{table*}
+
+\begin{table*}
 \label{table_conv_e_mu}
-\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used.}
+\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. }
 \begin{ruledtabular}
-\begin{tabular}{l|ccc|}
-H-           &         &          &          \\
-FCI          &   DZ    &  TZ      &   QZ     \\               
-LDA          &   3.72  &    1.19  &   0.61   \\      
-RSC          &   1.69  &    0.6   &   0.38   \\      
-RSC/LDA      &   2.3   &    0.67  &   0.39   \\      
-\hline       &   2.03  &    0.64  &   0.39   \\      
-He           &         &          &          \\                              
- FCI         &         &          &          \\        
- LDA         &  14.18  &   3.13   &  1.19    \\     
- RSC         &  5.28   &   0.44   &  0.12    \\     
- RSC/LDA     &  4.87   &   0.37   &  0.12    \\     
-\hline       &  5.07   &   0.4    &  0.12    \\     
-Li+          &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  10.72  &   3.35   &  1.58    \\     
- RSC         &  0.9    &   0.09   & -0.02    \\     
- RSC/LDA     &  -0.82  &  -0.38   & -0.14    \\     
-\hline       &  0.04   &  -0.12   & -0.08    \\     
-Be2+         &         &          &          \\                                  
- FCI         &         &          &          \\        
- LDA         &  11.35  &   3.62   & 1.41     \\     
- RSC         &  1.2    &   0.17   & -0.02    \\     
- RSC/LDA     &  -1.5   &  -0.53   & -0.17    \\     
-\hline       &  -0.08  &  -0.15   & -0.09    \\     
-B3+          &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  11.91  &   4.21   &  1.53    \\     
- RSC         &  1.41   &   0.43   &  -0.01   \\      
- RSC/LDA     &  -2.16  &  -0.34   &  -0.22   \\      
-\hline       &  -0.18  &   0.09   &  -0.11   \\      
-C4+          &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  12.46  &   4.76   &  1.67    \\     
- RSC         &  1.67   &   0.37   &  0.01    \\     
- RSC/LDA     &  -2.69  &  -0.4    & -0.25    \\     
-\hline       &  -0.19  &   0.01   &  -0.1    \\     
-N5+          &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  13.1   &   5.71   &  1.79    \\     
- RSC         &  2.06   &   0.45   &  0.01    \\     
- RSC/LDA     &  -2.97  &  -0.64   &  -0.26   \\      
-\hline       &  -0.01  &  -0.15   &  -0.09   \\      
-O6+          &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  13.84  &   6.47   &  2.02    \\     
- RSC         &  2.54   &   0.77   & -0.02    \\     
- RSC/LDA     &  -3.13  &  -0.7    & -0.31    \\     
-\hline       &  0.27   &  -0.04   & -0.12    \\     
-F7+          &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  14.68  &   7.06   &  2.25    \\     
- RSC         &  3.14   &   1.15   & -0.02    \\     
- RSC/LDA     &  -3.1   &  -0.54   & -0.36    \\     
-\hline       &  0.69   &   0.23   & -0.14    \\     
-Ne8+         &         &          &          \\                               
- FCI         &         &          &          \\        
- LDA         &  15.66  &   7.61   &  2.36    \\     
- RSC         &  3.89   &   1.57   &  0.03    \\     
- RSC/LDA     &  -2.85  &  -0.28   & -0.35    \\     
-\hline       &  1.26   &   0.57   & -0.1     \\     
+\begin{tabular}{l|rrr||rrr||rrr|}
+             &\multicolumn{3}{c}{H$^-$}      & \multicolumn{3}{c}{He}       & \multicolumn{3}{c}{Li$^+$}    \\
+             &   DZ    &  TZ      &   QZ     &  DZ     &   TZ     &  QZ     &   DZ    &   TZ     &  QZ      \\                   
+\hline
+ FCI         &   3.72  &    1.19  &   0.61   &  14.18  &   3.13   &  1.19   &  10.72  &   3.35   &  1.58    \\      
+$\muueg$     &   1.69  &    0.60  &   0.38   &  5.28   &   0.44   &  0.12   &  0.9    &   0.09   & -0.02    \\      
+$\mursc$     &   2.30  &    0.67  &   0.39   &  4.87   &   0.37   &  0.12   &  -0.82  &  -0.38   & -0.14    \\      
+$\mursclda$  &   2.03  &    0.64  &   0.39   &  5.07   &   0.40   &  0.12   &  0.04   &  -0.12   & -0.08    \\      
+\hline
+             &\multicolumn{3}{c}{Be$^{2+}$}  & \multicolumn{3}{c}{B$^{3+}$} & \multicolumn{3}{c}{C$^{4+}$}    \\
+ FCI         &  11.35  &   3.62   &  1.41    &  11.91  &   4.21   &  1.53   &  12.46  &   4.76   &  1.67    \\  
+$\muueg$     &  1.2    &   0.17   & -0.02    &  1.41   &   0.43   &  -0.01  &  1.67   &   0.37   &  0.01    \\  
+$\mursc$     &  -1.5   &  -0.53   & -0.17    &  -2.16  &  -0.34   &  -0.22  &  -2.69  &  -0.4    & -0.25    \\  
+$\mursclda$  &  -0.08  &  -0.15   & -0.09    &  -0.18  &   0.09   &  -0.11  &  -0.19  &   0.01   &  -0.1    \\  
+\hline
+             &\multicolumn{3}{c}{N$^{5+}$}   & \multicolumn{3}{c}{O$^{6+}$} & \multicolumn{3}{c}{F$^{7+}$}    \\
+ FCI         &  13.1   &   5.71   &  1.79    &  13.84  &   6.47   &  2.02   &  14.68  &   7.06   &  2.25    \\  
+$\muueg$     &  2.06   &   0.45   &  0.01    &  2.54   &   0.77   & -0.02   &  3.14   &   1.15   & -0.02    \\  
+$\mursc$     &  -2.97  &  -0.64   &  -0.26   &  -3.13  &  -0.7    & -0.31   &  -3.1   &  -0.54   & -0.36    \\  
+$\mursclda$  &  -0.01  &  -0.15   &  -0.09   &  0.27   &  -0.04   & -0.12   &  0.69   &   0.23   & -0.14    \\  
+\hline
+             &\multicolumn{3}{c}{Ne$^{8+}$}  & \multicolumn{3}{c}{MAD} & \multicolumn{3}{c}{MSD}    \\
+ FCI         &  15.66  &   7.61   &  2.36    & 12.16   &    4.71  &    1.64   &  12.16   &   4.71   &    1.64   \\   
+$\muueg$     &  3.89   &   1.57   &  0.03    & 4.23    &    1.11  &    0.13   &   4.23   &   1.11   &    0.13   \\   
+$\mursc$     &  -2.85  &  -0.28   & -0.35    & 2.64    &    0.48  &    0.26   &  -1.21   &  -0.28   &   -0.16   \\   
+$\mursclda$  &  1.26   &   0.57   & -0.1     & 2.38    &    0.60  &    0.07   &   2.38   &   0.60   &    0.05   \\   
 \end{tabular}
 \end{ruledtabular}
-\end{table}
-
+\end{table*}
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a two-electron system}
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
