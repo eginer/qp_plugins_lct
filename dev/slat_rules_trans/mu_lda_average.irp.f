@@ -8,12 +8,12 @@ program test_density
 !  touch read_wf
 !  read_rl_eigv = .True.
 !  touch read_rl_eigv
-!  call routine_write
-   print*,'average_mu_lda       = ',average_mu_lda
-   print*,'average_mu_rs        = ',average_mu_rs 
-   print*,'average_mu_rs_c      = ',average_mu_rs_c
-   print*,'average_mu_grad_n    = ',average_mu_grad_n
-   print*,'average_mu_lda * 1/2 = ',average_mu_lda * 0.5d0
+  call routine_write
+!   print*,'average_mu_lda       = ',average_mu_lda
+!   print*,'average_mu_rs        = ',average_mu_rs 
+!   print*,'average_mu_rs_c      = ',average_mu_rs_c
+!   print*,'average_mu_grad_n    = ',average_mu_grad_n
+!   print*,'average_mu_lda * 1/2 = ',average_mu_lda * 0.5d0
 end
 
 subroutine routine_write

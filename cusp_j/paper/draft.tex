@@ -23,7 +23,7 @@
 \newcommand{\br}[0]{{\bf {r}}}
 \newcommand{\bri}[1]{{\bf r}_{#1}}
 \newcommand{\bs}[0]{{\bf {s}}}
-\newcommand{\dr}[1]{\text{d}{\bf r_{#1}}}
+\newcommand{\dr}[1]{\text{d}{\bf {#1}}}
 \newcommand{\psiex}[0]{\Psi^{\text{ex}}_0}
 \newcommand{\phiex}[0]{\Phi^{\text{ex}}_0}
 \newcommand{\phimu}[0]{\Phi^{\text{ex},\mu}_0}
@@ -756,7 +756,7 @@ $\mursclda$  &  1.26   &   0.57   & -0.1     & 2.38    &    0.60  &    0.07   & 
 \end{ruledtabular}
 \end{table*}
 \section{General formulation of similarity transformed Hamiltonian}
-\subsection{General equations for a $N$-electron system}
+\subsection{General equations for a two-electron system}
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
 \begin{equation}
  \label{ht_def_g}
@@ -774,55 +774,165 @@ where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
-                                               + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
-                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1  \\
+  \hat{K}(\bri{i},\bri{j}) ) = \frac{1}{2} \bigg( &\nabla_i^2 u(\bri{i},\bri{j}) + \nabla_j^2u(\bri{i},\bri{j}) \\
+                                               + &\big(\nabla_i u(\bri{i},\bri{j}) \big) ^2 + \big(\nabla_i u(\bri{i},\bri{j}) \big) ^2 \bigg) \\
+                                               + &\nabla_i u(\bri{i},\bri{j}) \cdot \nabla_j + \nabla_j u(\bri{i},\bri{j}) \cdot \nabla_i  \\
  \end{aligned}
 \end{equation}
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}(\bri{1},\bri{2},\bri{3}) ) = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
-                                     + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
+  \hat{L}(\bri{i},\bri{j},\bri{k}) ) = & \nabla_i u(\bri{i},\bri{j}) \cdot \nabla_i u(\bri{i},\bri{k}) + \nabla_j u(\bri{j},\bri{i}) \cdot \nabla_j u(\bri{j},\bri{k})  \\
+                                     + & \nabla_k u(\bri{k},\bri{i}) \cdot \nabla_k u(\bri{k},\bri{j})
  \end{aligned}
 \end{equation}
-Therefore, to obtain the general formulation of the $\tilde{H}[\mu]$ one needs to compute the general form of the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) )$ when $u(\bri{1},\bri{2}) = j(r_{12},\mu)$. 
 
-\subsection{Explicit form for the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
-\subsubsection{Intermediate quantities}
-To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $j(r_{12},\mu)$ with respect to a $\bri{1}$ which, after some derivation reads 
+Of course, only the differential terms do not commute in Eq. \eqref{ht_def_g}. 
+Let us compute each terms, beginning with the action of $\big[ H,\hat{\tau} \big]$ on a function $\phi(\br{}_1,\hdots \br{}_N)$.
+\begin{equation}
+ \label{eq:com1_1}
+ \begin{aligned}
+ \bigg[ H,\hat{\tau} \bigg]\phi(\br{}_1,\hdots \br{}_N) & = \bigg[ -\frac{1}{2} \sum_i \nabla^2_i, \sum_{j>k} u(\br{}_j,\br{}_k) \bigg] \phi(\br{}_1,\hdots \br{}_N) \\
+  & = -\frac{1}{2} \sum_i \nabla^2_i\bigg( \sum_{j>k} u(\br{}_j,\br{}_k) \phi(\br{}_1,\hdots \br{}_N) \bigg) \\
+  & +  \frac{1}{2} \sum_{j>k} u(\br{}_j,\br{}_k) \sum_i \nabla^2_i \phi(\br{}_1,\hdots \br{}_N). 
+ \end{aligned}
+\end{equation}
+The first term in the right-hand side of Eq. \eqref{eq:com1_1} is 
+\begin{equation}
+ \label{eq:com1_2}
+ \begin{aligned}
+&  -\frac{1}{2} \sum_i \nabla^2_i\bigg( \sum_{j>k} u(\br{}_j,\br{}_k) \phi(\br{}_1,\hdots \br{}_N) \bigg) \\ 
+= &-\frac{1}{2}\sum_{j>k} u(\br{}_j,\br{}_k) \sum_i \bigg( \nabla^2_i \phi(\br{}_1,\hdots \br{}_N)\bigg) \\
+  &-\frac{1}{2}\phi(\br{}_1,\hdots \br{}_N) \bigg( \sum_i \nabla^2_i \sum_{j>k} u(\br{}_j,\br{}_k) \bigg) \\
+  &-\sum_i \bigg(\nabla_i \sum_{j>k}u(\br{}_j,\br{}_k) \bigg) \cdot \bigg( \nabla_i \phi(\br{}_1,\hdots \br{}_N) \bigg).
+ \end{aligned}
+\end{equation}
+Inserting Eq. \eqref{eq:com1_2} in Eq. \eqref{eq:com1_1} leads to cancellation of the terms involving $\nabla^2_i \phi(\br{}_1,\hdots \br{}_N)$
+\begin{equation}
+ \label{eq:com1_3}
+  \begin{aligned}
+ \big[ H,\hat{\tau} \big]\phi(\br{}_1,\hdots \br{}_N) & =  \frac{1}{2}\phi(\br{}_1,\hdots \br{}_N) \bigg( \sum_i \nabla^2_i \sum_{j>k} u(\br{}_j,\br{}_k) \bigg) \\
+  & -\sum_i \bigg(\nabla_i \sum_{j>k} u(\br{}_j,\br{}_k) \bigg) \cdot \bigg( \nabla_i \phi(\br{}_1,\hdots \br{}_N) \bigg)
+ \end{aligned}
+\end{equation}
+and therefore one can write the first commutator of Eq. \eqref{ht_def_g} as 
+\begin{equation}
+ \label{eq:com1_4}
+ \begin{aligned}
+  \big[ H,\hat{\tau} \big] =& -\frac{1}{2} \bigg( \sum_i \nabla^2_i \sum_{j>k} u(\br{}_j,\br{}_k) \bigg) \\
+                            & -\sum_i \bigg(\nabla_i \sum_{j>k} u(\br{}_j,\br{}_k) \bigg) \cdot \bigg( \nabla_i  \bigg),
+ \end{aligned}
+\end{equation}
+and as $\nabla_i f(\br{}_j) = \delta_{ij} \nabla_i f(\br{}_i)$ one obtains 
+\begin{equation}
+ \label{eq:com1_5}
+ \begin{aligned}
+  \big[ H,\hat{\tau} \big] =& -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i,\br{}_j) + \sum_j \nabla^2_j u(\br{}_i,\br{}_j) ) \bigg) \\
+                            & -\sum_i \bigg(\nabla_i u(\br{}_i,\br{}_j)\bigg) \cdot \bigg( \nabla_i  \bigg) \\
+                            & -\sum_i \bigg(\nabla_j u(\br{}_i,\br{}_j)\bigg) \cdot \bigg( \nabla_j  \bigg).  
+ \end{aligned}
+\end{equation}
+Then, one has to compute the second-order commutator in Eq. \eqref{ht_def_g}: 
+\begin{equation}
+ \label{eq:com2_1}
+ \begin{aligned}
+ & \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] \phi(\br{}_1,\hdots \br{}_N) = \\
+ & \bigg[ -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i,\br{}_j) + \sum_j \nabla^2_j u(\br{}_i,\br{}_j) ) \bigg), \sum_{j>k} u(\br{}_j,\br{}_k)  \bigg] \phi(\br{}_1,\hdots \br{}_N) \\
++& \bigg[ -\sum_i \bigg(\nabla_i u(\br{}_i,\br{}_j)\bigg) \cdot \bigg( \nabla_i  \bigg), \sum_{j>k} u(\br{}_j,\br{}_k) \bigg] \phi(\br{}_1,\hdots \br{}_N) \\
++& \bigg[ -\sum_i \bigg(\nabla_j u(\br{}_i,\br{}_j)\bigg) \cdot \bigg( \nabla_j  \bigg), \sum_{j>k} u(\br{}_j,\br{}_k) \bigg] \phi(\br{}_1,\hdots \br{}_N). 
+ \end{aligned}
+\end{equation}
+The first term in Eq. \eqref{eq:com2_1} is actually a potential term and therefore it cancels out, then it comes
+\begin{equation}
+ \label{eq:com2_2}
+ \begin{aligned}
+  \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = -\sum_i \bigg( \nabla_i u(\br{}_i,\br{}_j) \bigg)^2 - \sum_j \bigg( \nabla_i u(\br{}_i,\br{}_j) \bigg)^2 
+ \end{aligned}
+\end{equation}
+and so the two commutators become
+\begin{equation}
+ \begin{aligned}
+ \label{eq:comtot}
+& \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = \\
+   &\sum_{i>j} -\frac{1}{2} \bigg( \nabla^2_i u(\br{}_i,\br{}_j) +  \nabla^2_j u(\br{}_i,\br{}_j) 
+    + \bigg( \nabla_i u(\br{}_i,\br{}_j) \bigg)^2 + \bigg( \nabla_j u(\br{}_i, \br{}_j) \bigg)^2  \bigg) \\
+   & -\bigg(\nabla_i u(\br{}_i,\br{}_j)\bigg) \cdot \bigg( \nabla_i  \bigg) -\bigg(\nabla_j u(\br{}_i,\br{}_j)\bigg) \cdot \bigg( \nabla_j  \bigg). 
+ \end{aligned}
+\end{equation}
+
+\section{Computations of integrals}
+\subsection{$\nabla_i u(\br{}_i,\br{}_j)$}
+\begin{equation}
+ \nabla_1 u(\br{}_1,\br{}_2) = \deriv{}{x_1}{}u(r_{12}) {\bf e}_{x1} + \deriv{}{y_1}{}u(r_{12}) {\bf e}_{y1} + \deriv{}{z_1}{}u(r_{12}) {\bf e}_{z1},
+\end{equation}
+and 
+\begin{equation}
+ \deriv{}{x_1}{}u(r_{12}) = \deriv{}{r_{12}}{}u(r_{12}) \deriv{r_{12}}{x_1}{},
+\end{equation}
+and as $r_{12} = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2 + (z_1 - z_2)^2} $ one has
+\begin{equation}
+ \deriv{r_{12}}{x_1}{} = \frac{x_1 - x_2}{r_{12}} = -\deriv{r_{12}}{x_2}{},
+\end{equation}
+and according to Eq. \eqref{def_j_0}
+\begin{equation}
+ \deriv{u}{r_{12}}{} = \frac{1 - \text{erf}(\mu r_{12})}{2},
+\end{equation}
+one obtains 
+\begin{equation}
+ \label{eq:dx1_u}
+ \deriv{}{x_1}{}u(r_{12}) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg).
+\end{equation}
+Similarly, 
+\begin{equation}
+ \label{eq:dx2_u}
+ \deriv{}{x_2}{}u(r_{12}) = -\frac{ 1 - \text{erf}(\mu r_{12})}{2 r_{12} } \bigg(x_1 - x_2 \bigg).
+\end{equation}
+Therefore, 
 \begin{equation}
  \label{eq:nabla_u}
  \begin{aligned}
- \nabla_1 u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
+ \nabla_1 u(\br{}_1,\br{}_2) = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
+ & \bigg( (x_1 - x_2) {\bf e}_{x1} + (y_1 - y_2) {\bf e}_{y1} + (z_1 - z_2) {\bf e}_{z1}\bigg) \\
+ &=  \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big)
  \end{aligned}
 \end{equation}
-Then, the terms $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2$ is simply 
+
+\subsection{$\bigg(\nabla_i u(\br{}_i,\br{}_j)\bigg)^2$}
+According to Eq. \eqref{eq:nabla_u}, one obtains 
 \begin{equation}
+ \label{eq:nabla_u2_0}
  \begin{aligned}
- \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_2 u(\bri{1},\bri{2}) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
+ \bigg(\nabla_1 u(\br{}_1,\br{}_2)\bigg)^2 & = \bigg( \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bigg)^2\\
+ & \bigg( (x_1 - x_2)^2 + (y_1 - y_2)^2 + (z_1 - z_2)^2 \bigg) \\
+                                           &  \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{4 \big(r_{12}\big)^2} \times \big(r_{12}\big)^2 \\
+                                           & = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{4}
  \end{aligned}
 \end{equation}
-Then, to compute the  non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ one needs to compute 
+and therefore 
+\begin{equation}
+ \label{eq:nabla_u2}
+ \bigg(\nabla_1 u(\br{}_1,\br{}_2)\bigg)^2  + \bigg(\nabla_2 u(\br{}_1,\br{}_2)\bigg)^2 = 2 \times \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{4}
+\end{equation}
+
+\subsection{$\nabla_i u(\br{}_i,\br{}_j) \cdot \bigg( \nabla_i   \bigg)$}
+According to Eq. \eqref{eq:nabla_u}, one obtains 
+Therefore, 
 \begin{equation}
  \begin{aligned}
  \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
-                                          &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
+                                          &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg).
  \end{aligned}
 \end{equation}
-and as $\nabla_1 u(\br{}_1,\br{}_2) = - \nabla_2 u(\br{}_1,\br{}_2)$,   
-the total non hermitian operator in $\hat{K}(\bri{1},\bri{2})$ can be written as 
+And noticing the minus sign coming from the derivative in $\br{}_2$, the total operator can be written as 
 \begin{equation}
  \begin{aligned}
- \label{def_non_hermit}
 & \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
 & \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
-         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
-&  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).
+         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big) +
+         (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg),
  \end{aligned}
 \end{equation}
-One can notice that the form of Eq. \eqref{def_non_hermit} provides an explicit form to compute analytical integrals with Gaussian types functions. 
-Nevertheless, one can notice that as 
+but as 
 \begin{equation}
  \deriv{}{r_{12}^x}{} = \frac{1}{2} \bigg( \deriv{}{x_1}{} - \deriv{}{x_2}{} \bigg),
 \end{equation}
@@ -846,126 +956,113 @@ and therefore
  \begin{aligned}
  \label{eq:nabla_i_nabla1}
 & \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} r_{12} \deriv{}{r_{12}}{} \\
- = & \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
+ = & \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{}. 
  \end{aligned}
 \end{equation}
-which is a more compact expression. 
 
-The computation of the Laplacian is a little more tedious, but after some derivations it comes  
+
+\subsection{$\nabla^2_i u(\br{}_i,\br{}_j)$}
+\begin{equation}
+ \begin{aligned}
+ &\nabla^2_1 u(\br{}_1,\br{}_2) =  \deriv{}{x_{1}}{2}  u(\br{}_1,\br{}_2) + \deriv{}{y_{1}}{2}  u(\br{}_1,\br{}_2) + \deriv{}{z_{1}}{2}  u(\br{}_1,\br{}_2) \\
+                                 = & \deriv{}{x_{1}}{}\bigg( \deriv{}{x_{1}}{}u(\br{}_1,\br{}_2) \bigg)  + 
+                                   \deriv{}{y_{1}}{}\bigg( \deriv{}{y_{1}}{}u(\br{}_1,\br{}_2) \bigg)  + 
+                                   \deriv{}{z_{1}}{}\bigg( \deriv{}{z_{1}}{}u(\br{}_1,\br{}_2) \bigg). 
+ \end{aligned}
+\end{equation}
+But according to Eq. \eqref{eq:dx1_u}, one obtains 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x1_0}
+& \deriv{}{x_{1}}{2}  u(\br{}_1,\br{}_2) = \deriv{}{x_{1}}{}\bigg(\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big(x_1 - x_2 \big) \bigg) \\
+& = \bigg( \deriv{}{x_1}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}\bigg) (x_1 - x_2 ) +  \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}.
+ \end{aligned}
+\end{equation}
+Similarly, according to Eq. \eqref{eq:dx2_u} one obtains for the second order derivative in $x_2$
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x2_0}
+& \deriv{}{x_{2}}{2}  u(\br{}_1,\br{}_2) = \deriv{}{x_{2}}{}\bigg(\frac{\text{erf}(\mu r_{12}) - 1}{2 r_{12}} \big(x_1 - x_2 \big) \bigg) \\
+& = \bigg( \deriv{}{x_2}{} \frac{\text{erf}(\mu r_{12}) -1 }{2 r_{12}}\bigg) (x_1 - x_2 ) -  \frac{\text{erf}(\mu r_{12}) -1}{2 r_{12}} \\
+& = \bigg( \deriv{}{x_2}{} \frac{\text{erf}(\mu r_{12}) -1 }{2 r_{12}}\bigg) (x_1 - x_2 ) +  \frac{ 1 - \text{erf}(\mu r_{12})}{2 r_{12}}. 
+ \end{aligned}
+\end{equation}
+Also
+\begin{equation}
+ \label{eq:d2_x1_1}
+ \begin{aligned}
+ \deriv{}{x_1}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} = & \deriv{}{r_{12}}{}\bigg( \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}\bigg) \deriv{r_{12}}{x_1}{} \\
+      = & \frac{x_1 - x_2}{r_{12}} \deriv{}{r_{12}}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} 
+ \end{aligned}
+\end{equation}
+and similarly
+\begin{equation}
+ \label{eq:d2_x2_1}
+ \begin{aligned}
+ \deriv{}{x_2}{} \frac{\text{erf}(\mu r_{12}) -  1}{2 r_{12}}  = &\deriv{}{r_{12}}{}\bigg( \frac{\text{erf}(\mu r_{12}) - 1}{2 r_{12}}\bigg) \deriv{r_{12}}{x_2}{} \\
+              = & (-1) \frac{x_1 - x_2}{r_{12}} (-1)  \deriv{}{r_{12}}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+              = & \frac{x_1 - x_2}{r_{12}} \deriv{}{r_{12}}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+              = & \deriv{}{x_1}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}},
+ \end{aligned}
+\end{equation}
+which implies that 
+\begin{equation}
+  \label{eq:d2_x2_2}
+ \deriv{}{x_{2}}{2}  u(\br{}_1,\br{}_2) = \deriv{}{x_{1}}{2}  u(\br{}_1,\br{}_2).
+\end{equation}
+
+To continue, as 
+\begin{equation}
+ \deriv{}{r_{12}}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} = -\frac{1}{r_{12}}\bigg(\frac{1 - \text{erf}\big( \mu r_{12} \big)}{2 r_{12}}  + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \bigg), 
+\end{equation}
+one obtains 
+\begin{equation}
+ \label{eq:d2_x1_2}
+ \begin{aligned}
+ \deriv{}{x_1}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} & = \frac{x_1 - x_2}{r_{12}} \deriv{}{r_{12}}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+ & =  -\frac{(x_1 - x_2)}{\big( r_{12} \big)^2}\bigg(\frac{1 - \text{erf}\big( \mu r_{12} \big)}{2 r_{12}}  + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \bigg). 
+ \end{aligned}
+\end{equation}
+
+Therefore, Eq. \eqref{eq:d2_x1_0} becomes 
 \begin{equation}
  \begin{aligned}
  \label{eq:d2_x1_2}
- &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})\\ 
+& \deriv{}{x_{1}}{2}  u(\br{}_1,\br{}_2) = \bigg( \deriv{}{x_1}{} \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}\bigg) (x_1 - x_2 ) +  \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}  \\
+& = -\frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2}\bigg(\frac{1 - \text{erf}\big( \mu r_{12} \big)}{2 r_{12}}  + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \bigg) +  \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+& = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bigg( 1 - \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2} \bigg) 
+- \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2}\frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2},
+ \end{aligned}
+\end{equation}
+implying that 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x1_3}
+ \bigg( \deriv{}{x_{1}}{2} + \deriv{}{y_{1}}{2} + \deriv{}{z_{1}}{2} \bigg)  u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12}\big)^2},
+ \end{aligned}
+\end{equation}
+and therefore 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:lapl_u_final}
+ \bigg( \deriv{}{x_{1}}{2} + \deriv{}{x_{2}}{2} \bigg) u(\br{}_1,\br{}_2) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \bigg( 1 - \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2} \bigg) \\ 
+&- 2 \frac{(x_1 - x_2)^2}{\big( r_{12} \big)^2}\frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}.
+ \end{aligned}
+\end{equation}
+Therefore, 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x1_2}
+ &\bigg( \deriv{}{x_{1}}{2} + \deriv{}{x_{2}}{2} + \deriv{}{y_{1}}{2} + \deriv{}{y_{2}}{2} + \deriv{}{z_{1}}{2} + \deriv{}{z_{2}}{2} \bigg) u(\br{}_1,\br{}_2) \\ 
+ & =\frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \bigg( 3 - \frac{(x_1 - x_2)^2 + (y_1 - y_2)^2 + (z_1 - z_2)^2}{\big( r_{12} \big)^2} \bigg) \\ 
+&- 2 \frac{(x_1 - x_2)^2 + (y_1 - y_2)^2 + (z_1 - z_2)^2}{\big( r_{12} \big)^2}\frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \\
+ & =\frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \bigg( 3 - \frac{\big(r_{12}\big)^2}{\big( r_{12} \big)^2} \bigg) 
+- 2 \frac{\big(r_{12}\big)^2}{\big( r_{12} \big)^2}\frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \\
+ & =\frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \times 2 - 2 \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} \\
  & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg)
  \end{aligned}
 \end{equation}
-\subsubsection{Explicit form }
-Summing all terms to recombine $\hat{K}(\bri{1},\bri{2})$ reads 
-\begin{equation}
-  \begin{aligned}
-   \hat{K}(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
-& - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}
-  \end{aligned}
-\end{equation}
-Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $ 
-\begin{equation}
- \begin{aligned}
- \hat{L}(\bri{1},\bri{2},\bri{3}) = & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{12} \cdot \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{13} \\
-                                  + & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{21} \cdot \frac{1 - \text{erf}(\mu r_{23})}{2 r_{23}} \bri{23} \\
-                                  + & \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{31} \cdot \frac{1 - \text{erf}(\mu r_{32})}{2 r_{32}} \bri{32}
- \end{aligned}                    
-\end{equation}
-
-\subsubsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
-We need to compute the following integral 
-\begin{equation}
- \label{eq:l_ijmkln}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_2(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_3(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} 
- \end{aligned}
-\end{equation}
-where 
-\begin{equation}
- \hat{L}_1(\bri{1},\bri{2},\bri{3}) = w_\mu(\bri{12}) w_\mu(\bri{13}) \bri{12} \cdot \bri{13}
-\end{equation}
-with 
-\begin{equation}
- w_\mu(\bri{13}) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}.
-\end{equation}
-Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
-\begin{equation}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
- & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
- &\bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
- \end{aligned}
-\end{equation}
-Such matrix element can be further decomposed into
-\begin{equation}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n}  \\
- =& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
-+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^y(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
-+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^z(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n},  
- \end{aligned}
-\end{equation}
-where 
-\begin{equation}
- \begin{aligned}
- \label{eq:l_1x}
-& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
- = & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
- &(x_1 - x_2) (x_1 - x_3) \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
- \end{aligned}
-\end{equation}
-If we define the following function 
-\begin{equation}
- W_{mn}^x({\bf r})  = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'}) (x - x'),  
-\end{equation}
-it can be calculated easily by
-\begin{equation}
- W_{mn}^x({\bf r})  = x \, w_{mn}({\bf r}) - w_{mn}^x({\bf r})
-\end{equation}
-with 
-\begin{equation}
- w_{mn}({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'}), 
-\end{equation}
-and 
-\begin{equation}
-  w_{mn}^x({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'})  x'.
-\end{equation}
-Then, one can rewrite the matrix element of Eq. \eqref{eq:l_1x} as
-\begin{equation}
- \begin{aligned}
- \label{eq:l_1x_2}
-& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
- = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) W_{mn}^x({\bf r}) W_{jl}^x({\bf r}),
- \end{aligned}
-\end{equation}
-which can be easily evaluated numerically. 
-Therefore, the matrix element of the $\hat{L}_1(\bri{1},\bri{2},\bri{3})$ is simply 
-\begin{equation}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg),
- \end{aligned}
-\end{equation}
-which can be numerically evaluated easily. 
-The total matrix element of the full operator is then 
-\begin{equation}
- \label{eq:l_ijmkln_final}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg) \\
- + & \int \text{d}{\bf r}\phi_j({\bf r})  \phi_l({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{ik}^x({\bf r}) + W_{mn}^y({\bf r}) W_{ik}^y({\bf r}) + W_{mn}^z({\bf r}) W_{ik}^z({\bf r})\bigg) \\
- + & \int \text{d}{\bf r} \phi_m({\bf r})  \phi_n({\bf r}) \bigg( W_{jl}^x({\bf r}) W_{ik}^x({\bf r}) + W_{jl}^y({\bf r}) W_{ik}^y({\bf r}) + W_{jl}^z({\bf r}) W_{ik}^z({\bf r})\bigg), 
- \end{aligned}
-\end{equation}
-which can be computed on the fly through a simple numerical integration. 
-
+\subsection{Sum of all terms}
 According to Eq. \eqref{eq:comtot}, Eq. \eqref{eq:nabla_i_nabla1}, Eq. \eqref{eq:nabla_u2} and Eq. \eqref{eq:lapl_u_final}, the additional terms arising from the commutators in $\tilde{H}[j]$ are (for a two-electron system) 
 \begin{equation}
  \begin{aligned}
