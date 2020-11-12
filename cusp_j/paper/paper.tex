@@ -61,156 +61,27 @@ blabla
 Two formulation : the "pseudo orbital" (\textit{i.e.} usual common set of orbitals for bra and ket) and "biorthonormal orbitals" (\textit{i.e.} a different set of orbitals for bra and ket having the biorthonormal property). 
 In the limit of the FCI wave function, these two formulations coincide, therefore we keep the "pseudo orbital" theory for the sake of simplicity. 
 
-\section{Brief overview of mathematical properties of similarity transformed Hamiltonian}
-\subsection{Definition of the similarity transformation}
-Assume an \textit{Hermitian operator} $H$ whose spectral representation reads 
-\begin{equation}
- \label{eq:h_spectr}
- H  = \sum_n E_n \ket{\Psi_n}\bra{\Psi_n}
-\end{equation}
-with $\ket{\Psi_n}$ being its orthonormal eigenvectors 
-\begin{equation}
- \bra{\Psi_n} \Psi_m \rangle = \delta_{mn},
-\end{equation}
-and $E_n \in \R$ its real eigenvalues. 
-
-Let us consider now an \textit{Hermitian} and \textit{invertible} operator $U$, \textit{i.e.} an operator $U$ such that there exists $U^{-1}$ such that 
-\begin{equation}
- \label{eq:u_def_1}
- U^{-1} U = U \, U^{-1} = 1,
-\end{equation}
-and that 
-\begin{equation}
- \begin{aligned}
- \label{eq:u_def_2}
- & U^\dagger = U \\
- & \big(U^{-1}\big)^{\dagger} = U^{-1}.
- \end{aligned}
-\end{equation}
-Then, the similarity transformed Hamiltonian $\tilde{H}$ is defined as
-\begin{equation}
- \label{eq:def_htilde}
- \tilde{H} = U^{-1}\, H \, U.
-\end{equation}
-\subsection{Eigenvalues ans eigenvectors of $\tilde{H}$}
-\subsubsection{Definition of left and right eigenvectors}
-Regarding the properties of $\tilde{H}$, a first remark is that it is not Hermitian anymore
-\begin{equation}
- \begin{aligned}
- \tilde{H}^\dagger & = \bigg(  U^{-1} \, H \,U \bigg)^\dagger \\
-                   & = U\, H \, U^{-1}  \\
-                   & \ne \tilde{H}.
- \end{aligned}
-\end{equation}
-Even though $\tilde{H}$ is not hermitian, it conserves the same eigenvalues than the original Hamiltonian $H$. 
-The main difference with the original Hamiltonian are its eigenvectors: because $\tilde{H}$ is not Hermitian anymore, it possesses \textit{right} eigenvectors and \textit{left} eigenvectors. 
-The right eigenvectors of a given operator $A$ are defined by
-\begin{equation}
- A \ket{\Phi_n} = A_n \ket{\Phi_n}, 
-\end{equation}
-whereas the left eigenvectors of such operator are defined through
-\begin{equation}
- A^{\dagger} \ket{X_n} = A_n \ket{X_n}.
-\end{equation}
-Therefore, if $A$ is hermitian, $A = A^{\dagger}$ and therefore $\ket{\Phi_n} = \ket{X_n} $, but for a non hermitian operator, the left and right eigenvectors do not coincide.
-
-To find the right and left eigenvectors of $\tilde{H}$, one can insert the definition of $\tilde{H}$ (see Eq. \eqref{eq:def_htilde}) in Eq. \eqref{eq:h_spectr}
-\begin{equation}
- \label{eq:tilde_1}
- \begin{aligned}
- \tilde{H} & = \sum_n E_n \, U^{-1} \, \ket{\Psi_n} \bra{\Psi_n}U.
- \end{aligned}
-\end{equation}
-We can define the right eigenvectors $\ket{\Phi_n}$ as
-\begin{equation}
- \label{eq:def_right}
- \ket{\Phi_n} = U^{-1} \ket{\Psi_n},
-\end{equation}
- because  from Eq. \eqref{eq:tilde_1}, we notice that the $\ket{\Phi_n}$ fulfil the right eigenvector relationship
-\begin{equation}
- \begin{aligned}
- \tilde{H} \ket{\Phi_n} & = \sum_m E_m \,U^{-1} \, \ket{\Psi_m} \bra{\Psi_m} U\ket{\Phi_n} \\
-                        & = \sum_m E_m \,U^{-1} \, \ket{\Psi_m} \bra{\Psi_m} U \bigg( U^{-1} \ket{\Psi_n} \bigg) \\
-                        & = \sum_m E_m \,U^{-1} \, \ket{\Psi_m} \bra{\Psi_m} \Psi_n \rangle \\
-                        & = E_n          U^{-1} \ket{\Psi_n} \\
-                        & = E_n  \ket{\Phi_n} \\
- \end{aligned}
-\end{equation}
-In a similar way, we can define the left eigenvectors $\ket{X_n}$ as 
-\begin{equation}
- \label{eq:def_left}
- \ket{X_n} = U \ket{\Psi_n},
-\end{equation}
-because they fulfil the left eigenvalue equation
-\begin{equation}
- \begin{aligned}
- \tilde{H}^{\dagger} \ket{X_n}  = E_n \, \ket{X_n}. 
- \end{aligned}
-\end{equation}
-\subsubsection{Biorthogonality, spectral representation and loose of the variational principle}
-The left and right eigenvectors fulfill the so-called \textit{biorthogonal} property, as 
-from Eqs. \eqref{eq:def_right} and \eqref{eq:def_left} one obtains 
-\begin{equation}
- \overlap{X_j}{\Phi_i} = \bigg(U \ket{\Psi_n} \bigg)^\dagger \bigg(U^{-1}\ket{\Psi_J}\bigg)
-\end{equation}
-which, according to the Hermitian property of $U$ (see Eq.\eqref{eq:u_def_2}) simply becomes 
-\begin{equation}
- \begin{aligned}
- \overlap{X_j}{\Phi_i} &= \matelem{\Psi_j}{U\,U^{-1}}{\Psi_i} \\
-                       &= \overlap{\Psi_j}{\Psi_i} \\
-                       &= \delta_{ji}.
- \end{aligned}
-\end{equation}
-Nevertheless, the right and left eigenvectors among themselves are not orthonormal as 
-\begin{equation}
- \begin{aligned}
-  \overlap{\Phi_j}{\Phi_i} & = \matelem{\Psi_j}{U^{-1}\,U^{-1}}{\Psi_i} \\
-                           & = \matelem{\Psi_j}{U^{-2}}{\Psi_i},  
- \end{aligned}
-\end{equation}
-and 
-\begin{equation}
- \begin{aligned}
-  \overlap{X_j}{X_i} & = \matelem{\Psi_j}{U\,U}{\Psi_i} \\
-                           & = \matelem{\Psi_j}{U^{2}}{\Psi_i}.  
- \end{aligned}
-\end{equation}
-Having obtained biorthonormal left and right eigenvectors, one can then obtain a spectral representation of the similarity transformed Hamiltonian 
-\begin{equation}
- \tilde{H} = \sum_i E_i \ket{\Phi_i} \bra{X_i}, 
-\end{equation}
-which is very useful to study the variational principle, an important aspect of quantum chemistry. 
-Let us consider a wave function $\Psi$ developed on the eigenvectors of $H$
-\begin{equation}
- \ket{\Psi} = \sum_i c_i \ket{\Psi_i}.
-\end{equation}
-The expectation value of $H$ over $\Psi$ is then 
-\begin{equation}
- \begin{aligned}
-  \matelem{\Psi}{H}{\Psi} & = \sum_{i,j} c_i c_j \matelem{\Psi_j}{H}{\Psi_i} \\
-                          & = \sum_{i,j} c_i c_j  E_i \overlap{\Psi_j}{\Psi_i} \\
-                          & = \sum_{i} |c_i|^2 E_i \\
-                          & \ge E_0
- \end{aligned}
-\end{equation}
-which gives the variational principle because of the orthogonality of eigenvectors of an \textit{Hermitian} operator. 
-Now let us decompose the same wave function $\Psi$ on the right-eigenvectors of $\tilde{H}$ 
-\begin{equation}
- \ket{\Psi} = \sum_i \tilde{c}_i \ket{\Phi_i},
-\end{equation}
-and consider the expectation value of $\tilde{H}$ over $\Psi$
-\begin{equation}
- \begin{aligned}
-  \matelem{\Psi}{\tilde{H}}{\Psi} & = \sum_{i,j} \tilde{c}_i \tilde{c}_j \matelem{\Phi_j}{\tilde{H}}{\Phi_i} \\
-                                  & = \sum_{i,j} \tilde{c}_i \tilde{c}_j E_i \overlap{\Phi_j}{\Phi_i} 
- \end{aligned}
-\end{equation}
-which has no reason to be an upper bound to $E_0$ as $\overlap{\Phi_j}{\Phi_i} \ne \delta_{i,j}$. 
-Therefore, we see that we cannot apply straightforwardly the variational principle 
-to similarity transformed Hamiltonians, because of the lack of orthonormality of the right eigenvectors.  
+The paper is organized as follows. 
+In the first section, we derive the analytical form of a new Jastrow factor and the corresponding transcorrelated Hamiltonian. 
+The, we perform a detailed numerical study of the behaviour of the solution of $\tilde{H}[\mu]$ on the helium atom: 
+in the first part we analyze the speed of convergence of the ground state energy with respect to the basis set and the parameter $\mu$, 
+then we study the behaviour of the right eigenvectors in real space and compare it with the exact ground state wave function. 
+We show that the rapid convergence of the total energies coincides with a rapid convergence of the right eigenvectors in real space. 
+Based on such encouraging results, we study the helium isoelectronic series from Li$^+$ to Ne$^{8+}$ and compare different schemes to obtain 
+a value of $\mu$ which depends on the system and still provides a fast convergence of the total energies. 
+Eventually, we study the H$_2$ molecule and compare different regimes of correlation. 
 
 \section{A new form of Jastrow factor for transcorrelated Hamiltonian}
-\subsection{The similarity transformed Hamiltonian}
+This section is dedicated to the derivation of a new form of Jastrow factor mimicking at short range the correlation effects of RS-DFT. 
+For the sake of simplicity and to remain as close as possible to the physical picture of the electronic correlation problem, 
+we derive the equations of the transcorrelated Hamiltonian for the helium atom for a general Jastrow factor depending on the inter electronic distance.  
+Thanks to the simplicity of the equations, we focus on the behaviour at small $r_{12}$ of different flavours of Hamiltonians 
+and the corresponding discontinuity in their eigenvectors. 
+We browse three different types of Hamiltonians: the usual physical Hamiltonian, the transcorrelated Hamiltonian together with the effective Hamiltonian used in RS-DFT.
+Then, we derive the general analytical form of the corresponding new transcorrelated Hamiltonians $\tilde{H}[\mu]$, and its dependence as function of the parameter $\mu$. 
+
+\subsection{A simple physical picture: the case of the helium atom}
+\subsubsection{The transcorrelated Hamiltonian for helium atom}
 Let us write the Hamiltonian of the He atom in the ${\bf r}_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinate 
 \begin{equation}
  H  = h_c + \frac{1}{r_{12}},
@@ -272,7 +143,7 @@ ore more explicitly
 $\tilde{H}[j]$, because of the first-order differential operator in $\tilde{t}[j]$, is then non-hermitian,   
 and the effective potential $ \frac{1}{r_{12}}  + \tilde{W}[j] + \tilde{w}[j]$ in $\tilde{H}[j]$ only depends on the shape of $j(r_{12})$. 
 
-\subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
+\subsubsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
 \label{sec:cusp}
 Having established the general form of the transcorrelated Hamiltonian $\tilde{H}[j]$, in the case of the helium atom, one can then study the behaviour of the latter when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
 The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different conditions that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
@@ -322,7 +193,6 @@ Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\e
 which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[j]$ are cuspless. 
 For instance, a simple Jastrow factor of the form $j(r_{12}) = \frac{1}{2} r_{12}$ release $\phiex(\br{}_1,\br{}_2)$ from 
 the constraint of fulfilling the cusp condition. 
-%Another way to phrase Eq.\eqref{eq:cusp_phi_1} and Eq.\eqref{eq:cusp_phi_2} is that because of the Jastrow factor, the similarity transformed Hamiltonian exhibits an effective non-divergent electron-electron interaction, which does not impose any cusp condition to the eigenfunctions of $\tilde{H}[j]$. 
 
 Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
 where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
@@ -444,31 +314,161 @@ Coming now to the behaviour of $j(r_{12};\mu)$as a function of the parameter $\m
 From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $j(r_{12};\mu)$, ii) the larger the $\mu$, the closer $j(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
 
 
-\subsection{Explicit form of  $\tilde{H}[\mu]$ and some of its properties}
+\subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
 \subsubsection{Explicit form of $\tilde{H}[\mu]$ }
-Having established the explicit form of $j(r_{12};\mu)$ and some of its properties, one can now 
-look at the explicit form of the transcorrelated Hamiltonian obtained with $j(r_{12};\mu)$,  
-which, by injecting the form of \eqref{eq:def_j} in Eq.\eqref{eq:ht_phi}, reads 
+Having established the analytical expression of $j(r_{12};\mu)$, one can derive the general expression of the associated transcorrelated Hamiltonian.  
+According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
+\begin{equation}
+ \label{ht_def_g}
+ e^{-\hat{\tau}} \hat{H} e^{\hat{\tau}} = H + \big[ H,\hat{\tau} \big] + \frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]
+\end{equation}
+where $\hat{\hat{\tau}} = \sum_{i>j}u(\br{}_i,\br{}_j)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i>j} \frac{1}{r_{ij}}$. 
+This leads to the following similarity transformed Hamiltonian 
+\begin{equation}
+ \begin{aligned}
+ \label{ht_def_gu}
+ \tilde{H} & = H - \sum_i \bigg( \frac{1}{2} \nabla_i^2 \hat{\tau} + \big(\nabla_i \hat{\tau} \big) + \frac{1}{2} \big(\nabla_i \hat{\tau} \big)  \bigg) \\
+           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{j},\bri{k}),
+ \end{aligned}
+\end{equation}
+where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and $\hat{L}(\bri{i},\bri{j},\bri{k})$ are defined as
+\begin{equation}
+ \begin{aligned}
+ \label{def_k}
+  \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
+                                               + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
+                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1  \\
+ \end{aligned}
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+ \label{def_k}
+  \hat{L}(\bri{1},\bri{2},\bri{3}) ) = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
+                                     + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
+ \end{aligned}
+\end{equation}
+Therefore, to obtain the general formulation of the $\tilde{H}[\mu]$ one needs to compute the actual form of the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ when $u(\bri{1},\bri{2}) = j(r_{12},\mu)$. 
+
+\subsection{Explicit form for the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
+\subsubsection{Intermediate quantities}
+To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $j(r_{12},\mu)$ with respect to a $\bri{1}$ which, after some derivation reads 
+\begin{equation}
+ \label{eq:nabla_u}
+ \begin{aligned}
+ \nabla_1 u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
+ \end{aligned}
+\end{equation}
+Then, the terms $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2$ is simply 
+\begin{equation}
+ \begin{aligned}
+ \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_2 u(\bri{1},\bri{2}) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
+ \end{aligned}
+\end{equation}
+Then, to compute the  non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ one needs to compute 
+\begin{equation}
+ \begin{aligned}
+ \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
+                                          &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
+ \end{aligned}
+\end{equation}
+and as $\nabla_1 u(\br{}_1,\br{}_2) = - \nabla_2 u(\br{}_1,\br{}_2)$,   
+the total non hermitian operator in $\hat{K}(\bri{1},\bri{2})$ can be written as 
+\begin{equation}
+ \begin{aligned}
+ \label{def_non_hermit}
+& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+& \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
+         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
+&  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).
+ \end{aligned}
+\end{equation}
+One can notice that the form of Eq. \eqref{def_non_hermit} provides an explicit form to compute analytical integrals with Gaussian types functions. 
+Nevertheless, one can notice that as 
+\begin{equation}
+ \deriv{}{r_{12}^x}{} = \frac{1}{2} \bigg( \deriv{}{x_1}{} - \deriv{}{x_2}{} \bigg),
+\end{equation}
+one can write 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:nabla_i_nabla0}
+& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}}.
+ \end{aligned}
+\end{equation}
+Then, introducing the spherical coordinate system for $\br{}_1 - \br{}_2$ in terms of ${\bf e}_u= \frac{\br{}_1 - \br{}_2}{r_{12}}$ and the angle $\theta$ and $\phi$, one can write 
+\begin{equation}
+ \nabla_{\br{}_{12}} = \deriv{}{r_{12}}{} {\bf e}_u + \frac{1}{r_{12}} \deriv{}{\theta}{} {\bf e}_{\theta} + \frac{1}{r_{12} \sin(\theta)} \deriv{}{\phi}{} {\bf e}_\phi,
+\end{equation}
+and as $\br{}_1 - \br{}_2 = r_{12} {\bf e}_u$ one obtains
+\begin{equation}
+ \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}} = r_{12} \deriv{}{r_{12}}{},
+\end{equation}
+and therefore 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:nabla_i_nabla1}
+& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} r_{12} \deriv{}{r_{12}}{} \\
+ = & \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
+ \end{aligned}
+\end{equation}
+which is a more compact expression than Eq.\eqref{def_non_hermit}
+
+The computation of the Laplacian is a little more tedious, but after some derivations it comes  
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x1_2}
+ &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})\\ 
+ & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg)
+ \end{aligned}
+\end{equation}
+\subsubsection{Explicit form of $\tilde{H}[\mu]$}
+Summing all terms to recombine $\hat{K}(\bri{1},\bri{2})$ reads 
+\begin{equation}
+ \label{eq:k_final}
+  \begin{aligned}
+   \hat{K}(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+& - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}
+  \end{aligned}
+\end{equation}
+Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $ 
+\begin{equation}
+ \label{eq:l_final}
+ \begin{aligned}
+ \hat{L}_\mu(\bri{1},\bri{2},\bri{3}) = & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{12} \cdot \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{13} \\
+                                      + & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{21} \cdot \frac{1 - \text{erf}(\mu r_{23})}{2 r_{23}} \bri{23} \\
+                                      + & \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{31} \cdot \frac{1 - \text{erf}(\mu r_{32})}{2 r_{32}} \bri{32}
+ \end{aligned}                    
+\end{equation}
+
+Having established the explicit form of $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$, one can now 
+look at the explicit analytical form of the transcorrelated Hamiltonian $\tilde{H}[\mu]$ obtained with $j(r_{12};\mu)$,  
+which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, which gives
 \begin{equation}
   \begin{aligned}
  \label{eq:exp_ht_mu}
-   \tilde{H}[\mu] = & h_c + \frac{\text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
-& + \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}.
+   \tilde{H}[\mu] = & h_c + \sum_{i<j} \bigg( \tilde{\mathcal{W}}_{ee}(r_{ij},\mu) + \tilde{t}[\mu] \bigg) - \sum_{i<j<k} \hat{L}_\mu(\bri{1},\bri{2},\bri{3})
   \end{aligned}
 \end{equation}
-From Eq.\eqref{eq:exp_ht_mu}, one can define an effective scalar electron-electron interaction $\tilde{\mathcal{W}}_{ee}(r_{12}) $ 
+where $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$ is a scalar effective two-body potential
 \begin{equation}
- \label{eq:deff_w_new}
- \tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4},
+ \begin{aligned}
+ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)  =  \frac{\text{erf}(\mu r_{ij})}{r_{ij}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{ij} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{ij}) \bigg)^2}{4}, 
+ \end{aligned}
 \end{equation}
-whose shape is illustrated in Fig\ref{fig_wee_mu}. 
+and $\tilde{t}[\mu]$ is non hermitian two-body differential operator 
+\begin{equation}
+ \begin{aligned}
+ \tilde{t}[\mu] =  \bigg( \text{erf}(\mu r_{ij}) - 1\bigg) \deriv{}{r_{ij}}{}.
+ \end{aligned}
+\end{equation}
+
+In order to have a pictorial representation of $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$, we illustrate in Fig\ref{fig_wee_mu} its shape for different values of $\mu$. 
 \begin{figure*}
  \label{fig_wee_mu}
         \includegraphics[width=0.45\linewidth]{w_ee.pdf}
         \includegraphics[width=0.45\linewidth]{w_ee_bis.pdf}\\
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ (up) and comparison with $\frac{\text{erf}(\mu r_{12}}{r_{12}}$ (bottom) for different values of $\mu$.}
 \end{figure*}
-From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential 
+From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$ 
 is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT at large $r_{12}$. 
 Nevertheless, as observed from Fig.\ref{fig_wee_mu}, it is significantly different 
 from the long-range interaction at small $r_{12}$, 
@@ -481,12 +481,12 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
 whose solution is unknown to the best of the author knowledge. 
 \subsubsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
-Coming now to the limits of $\tilde{H}[\mu]$ when $\mu \rightarrow \infty$, one expects that as
+Regarding now the variation of $\tilde{H}[\mu]$, one expects as 
 \begin{equation}
  \label{eq:lim_mu_0}
  \lim_{\mu  \rightarrow \infty }j(\mu,r_{12}) = 0, 
 \end{equation}
-one recovers the usual Hamiltonian in that limit
+one recovers the usual Hamiltonian in the ${\mu  \rightarrow \infty }$ limit
 \begin{equation}
  \label{eq:lim_mu_1}
  \lim_{\mu \rightarrow \infty} \tilde{H}[\mu] = H.
@@ -535,9 +535,14 @@ and therefore Eq.\eqref{eq:lim_mu_6} which implies Eq.\eqref{eq:lim_mu_1}.
 
 In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu]$ becomes simply 
 \begin{equation}
- \lim_{\mu \rightarrow 0} \tilde{H}[\mu] = h_c - \frac{1}{4} - \partial{}{r_{12}}{}, 
+ \label{eq:htilde_mu_low}
+ \begin{aligned}
+&\lim_{\mu \rightarrow 0} \tilde{H}[\mu] = h_c - \frac{1}{4} - \sum_{i<j}\deriv{}{r_{ij}}{} \\
+ & - \sum_{i<j<k}  \bigg(\frac{1}{2 r_{ij}} \frac{1}{2 r_{ik}} \bri{ij} \cdot \bri{ik} + \frac{1}{2 r_{ji}} \frac{1}{2 r_{jk}} \bri{ji} \cdot \bri{jk}  + \frac{1}{2 r_{ki}} \frac{1}{2 r_{kj}} \bri{ki} \cdot \bri{kj} \bigg)
+ \end{aligned}
 \end{equation}
-which means that all scalar electron-electron interaction have been replaced by a differential operator. 
+which means that all scalar electron-electron repulsive interaction have been replaced by a differential operator and an attractive three electron interaction. 
+It should be stressed that even if the $\mu \rightarrow 0$ limit of $\tilde{H}[\mu]$ of Eq. \eqref{eq:htilde_mu_low} is very unphysical, it conserves exactly the same spectrum than the usual Hamiltonian because it originates from a similarity transformation. 
 
 At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent but can be either repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
 Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$.  
@@ -757,125 +762,6 @@ $\mursclda$  &  1.26   &   0.57   & -0.1     & 2.38    &    0.60  &    0.07   & 
 \end{table*}
 \section{General formulation of similarity transformed Hamiltonian}
 \subsection{General equations for a $N$-electron system}
-According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
-\begin{equation}
- \label{ht_def_g}
- e^{-\hat{\tau}} \hat{H} e^{\hat{\tau}} = H + \big[ H,\hat{\tau} \big] + \frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]
-\end{equation}
-where $\hat{\hat{\tau}} = \sum_{i>j}u(\br{}_i,\br{}_j)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i>j \frac{1}{r_{ij}}}$. 
-This leads to the following similarity transformed Hamiltonian 
-\begin{equation}
- \begin{aligned}
- \tilde{H} & = H - \sum_i \bigg( \frac{1}{2} \nabla_i^2 \hat{\tau} + \big(\nabla_i \hat{\tau} \big) + \frac{1}{2} \big(\nabla_i \hat{\tau} \big)  \bigg) \\
-           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{j},\bri{k}),
- \end{aligned}
-\end{equation}
-where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and $\hat{L}(\bri{i},\bri{j},\bri{k})$ are defined as
-\begin{equation}
- \begin{aligned}
- \label{def_k}
-  \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
-                                               + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
-                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1  \\
- \end{aligned}
-\end{equation}
-\begin{equation}
- \begin{aligned}
- \label{def_k}
-  \hat{L}(\bri{1},\bri{2},\bri{3}) ) = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
-                                     + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
- \end{aligned}
-\end{equation}
-Therefore, to obtain the general formulation of the $\tilde{H}[\mu]$ one needs to compute the general form of the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) )$ when $u(\bri{1},\bri{2}) = j(r_{12},\mu)$. 
-
-\subsection{Explicit form for the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
-\subsubsection{Intermediate quantities}
-To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $j(r_{12},\mu)$ with respect to a $\bri{1}$ which, after some derivation reads 
-\begin{equation}
- \label{eq:nabla_u}
- \begin{aligned}
- \nabla_1 u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
- \end{aligned}
-\end{equation}
-Then, the terms $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2$ is simply 
-\begin{equation}
- \begin{aligned}
- \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_2 u(\bri{1},\bri{2}) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
- \end{aligned}
-\end{equation}
-Then, to compute the  non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ one needs to compute 
-\begin{equation}
- \begin{aligned}
- \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
-                                          &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
- \end{aligned}
-\end{equation}
-and as $\nabla_1 u(\br{}_1,\br{}_2) = - \nabla_2 u(\br{}_1,\br{}_2)$,   
-the total non hermitian operator in $\hat{K}(\bri{1},\bri{2})$ can be written as 
-\begin{equation}
- \begin{aligned}
- \label{def_non_hermit}
-& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
-& \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
-         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
-&  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).
- \end{aligned}
-\end{equation}
-One can notice that the form of Eq. \eqref{def_non_hermit} provides an explicit form to compute analytical integrals with Gaussian types functions. 
-Nevertheless, one can notice that as 
-\begin{equation}
- \deriv{}{r_{12}^x}{} = \frac{1}{2} \bigg( \deriv{}{x_1}{} - \deriv{}{x_2}{} \bigg),
-\end{equation}
-one can rewrite as 
-\begin{equation}
- \begin{aligned}
- \label{eq:nabla_i_nabla0}
-& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}}.
- \end{aligned}
-\end{equation}
-Then, introducing ${\bf e}_u= \frac{\br{}_1 - \br{}_2}{r_{12}}$, can notice that 
-\begin{equation}
- \nabla_{\br{}_{12}} = \deriv{}{r_{12}}{} {\bf e}_u + \frac{1}{r_{12}} \deriv{}{\theta}{} {\bf e}_{\theta} + \frac{1}{r_{12} \sin(\theta)} \deriv{}{\phi}{} {\bf e}_\phi,
-\end{equation}
-and as $\br{}_1 - \br{}_2 = r_{12} {\bf e}_u$ one obtains
-\begin{equation}
- \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}} = r_{12} \deriv{}{r_{12}}{},
-\end{equation}
-and therefore 
-\begin{equation}
- \begin{aligned}
- \label{eq:nabla_i_nabla1}
-& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} r_{12} \deriv{}{r_{12}}{} \\
- = & \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
- \end{aligned}
-\end{equation}
-which is a more compact expression. 
-
-The computation of the Laplacian is a little more tedious, but after some derivations it comes  
-\begin{equation}
- \begin{aligned}
- \label{eq:d2_x1_2}
- &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})\\ 
- & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg)
- \end{aligned}
-\end{equation}
-\subsubsection{Explicit form }
-Summing all terms to recombine $\hat{K}(\bri{1},\bri{2})$ reads 
-\begin{equation}
-  \begin{aligned}
-   \hat{K}(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
-& - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}
-  \end{aligned}
-\end{equation}
-Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $ 
-\begin{equation}
- \begin{aligned}
- \hat{L}(\bri{1},\bri{2},\bri{3}) = & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{12} \cdot \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{13} \\
-                                  + & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{21} \cdot \frac{1 - \text{erf}(\mu r_{23})}{2 r_{23}} \bri{23} \\
-                                  + & \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{31} \cdot \frac{1 - \text{erf}(\mu r_{32})}{2 r_{32}} \bri{32}
- \end{aligned}                    
-\end{equation}
-
 \subsubsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
 We need to compute the following integral 
 \begin{equation}
