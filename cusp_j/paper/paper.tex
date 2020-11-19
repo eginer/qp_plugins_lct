@@ -62,27 +62,29 @@ Two formulation : the "pseudo orbital" (\textit{i.e.} usual common set of orbita
 In the limit of the FCI wave function, these two formulations coincide, therefore we keep the "pseudo orbital" theory for the sake of simplicity. 
 
 The paper is organized as follows. 
-In the first section, we derive the analytical form of a new Jastrow factor and the corresponding transcorrelated Hamiltonian. 
-The, we perform a detailed numerical study of the behaviour of the solution of $\tilde{H}[\mu]$ on the helium atom: 
+In the first section, inspired by the short-range behaviour of RS-DFT effective wave functions,  
+we derive the analytical form of a new Jastrow factor tuned by a unique parameter $\mu$, and discuss the physical content of such a simple Jastrow factor. 
+We show then that the corresponding transcorrelated Hamiltonian has a straightforward analytical structure, which is briefly reviewed as a function of the $\mu$ parameter. 
+Then, we perform a numerical study of the behaviour of the ground state eigenpair of $\tilde{H}[\mu]$ for the helium atom: 
 in the first part we analyze the speed of convergence of the ground state energy with respect to the basis set and the parameter $\mu$, 
-then we study the behaviour of the right eigenvectors in real space and compare it with the exact ground state wave function. 
-We show that the rapid convergence of the total energies coincides with a rapid convergence of the right eigenvectors in real space. 
-Based on such encouraging results, we study the helium isoelectronic series from Li$^+$ to Ne$^{8+}$ and compare different schemes to obtain 
+then we study the behaviour of the right eigenvectors in real space and compare it with the numerically exact ground state wave function. 
+We show that the rapid convergence of the total energies coincides with a rapid convergence of the right eigenvectors in real space, and how to recover a very good approximation of the exact ground state wave function. 
+Based on such encouraging results, we study the ground state energy of the helium isoelectronic series from Li$^+$ to Ne$^{8+}$ and compare different schemes to obtain 
 a value of $\mu$ which depends on the system and still provides a fast convergence of the total energies. 
 Eventually, we study the H$_2$ molecule and compare different regimes of correlation. 
 
 \section{A new form of Jastrow factor for transcorrelated Hamiltonian}
 This section is dedicated to the derivation of a new form of Jastrow factor mimicking at short range the correlation effects of RS-DFT. 
-For the sake of simplicity and to remain as close as possible to the physical picture of the electronic correlation problem, 
-we derive the equations of the transcorrelated Hamiltonian for the helium atom for a general Jastrow factor depending on the inter electronic distance.  
-Thanks to the simplicity of the equations, we focus on the behaviour at small $r_{12}$ of different flavours of Hamiltonians 
+For the sake of simplicity, we derive the transcorrelated Hamiltonian for the helium atom for a general Jastrow factor depending on the inter electronic distance.  
+Then we focus on the behaviour at small $r_{12}$ of different flavours of Hamiltonians 
 and the corresponding discontinuity in their eigenvectors. 
 We browse three different types of Hamiltonians: the usual physical Hamiltonian, the transcorrelated Hamiltonian together with the effective Hamiltonian used in RS-DFT.
-Then, we derive the general analytical form of the corresponding new transcorrelated Hamiltonians $\tilde{H}[\mu]$, and its dependence as function of the parameter $\mu$. 
+Based on such consideration, we propose a new Jastrow factor mimicking RS-DFT Hamiltonian at small $r_{12}$. 
+Then, we derive the analytical form of the corresponding new transcorrelated Hamiltonians $\tilde{H}[\mu]$ in the case of a general $N$-electron system, and study its physical content as a  function of the parameter $\mu$. 
 
 \subsection{A simple physical picture: the case of the helium atom}
 \subsubsection{The transcorrelated Hamiltonian for helium atom}
-Let us write the Hamiltonian of the He atom in the ${\bf r}_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinate 
+Let us write the Hamiltonian of the helium atom in the $ r_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinate 
 \begin{equation}
  H  = h_c + \frac{1}{r_{12}},
 \end{equation}
@@ -97,56 +99,42 @@ where
  \end{aligned}
 \end{equation}
 \label{sec:he_j}
-Now let us consider the Similarity transformed Hamiltonian $\tilde{H}[j]$
+Now let us consider the transcorrelated Hamiltonian $\tilde{H}[u]$ obtained by a similarity transformation of the usual Hamiltonian by a general Jastrow factor $u(r_{12})$ depending only on $r_{12}$: 
 \begin{equation}
  \label{eq:ht_0}
  \begin{aligned}
- \tilde{H}[j]&= e^{-j(r_{12})} H e^{j(r_{12})},
+ \tilde{H}[u]&= e^{-u(r_{12})} H e^{u(r_{12})}.
  \end{aligned}
 \end{equation}
-where $j(r_{12})$ is a general Jastrow factor depending only on $r_{12}$. 
-Therefore, the only new terms arising in $\tilde{H}[j]$ with respect to $H$ are those coming from the differential operator in $r_{12}$,
+The only additional terms arising in $\tilde{H}[u]$ with respect to $H$ are those coming from the action of the differential operator in $r_{12}$,
 \begin{equation}
- \mathcal{T}[j] =  -e^{-j(r_{12})}\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} \bigg)e^{j(r_{12})}.  
+ \mathcal{T}[u] =  -e^{-u(r_{12})}\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} \bigg)e^{u(r_{12})}.  
 \end{equation}
-Let us compute the action of $\mathcal{T}[j]$ on a general function $\phi(\br{}_1,\br{}_2)$ 
-\begin{equation}
- \begin{aligned}
- \mathcal{T}[j]\phi(\br{}_1,\br{}_2) & =- e^{-j(r_{12})} \bigg[ \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{}\bigg]  e^{j(r_{12})} \phi(\br{}_1,\br{}_2) \\ 
-                            &=  -\deriv{\phi(\br{}_1,\br{}_2)}{r_{12}}{2} - \frac{2}{r_{12}} \deriv{\phi(\br{}_1,\br{}_2)}{r_{12}}{} \\
-  &- 2 \deriv{j(r_{12})}{r_{12}}{} \deriv{\phi(\br{}_1,\br{}_2)}{r_{12}}{} \\ 
-  &- \bigg[ \frac{2}{r_{12}} \deriv{j(r_{12})}{r_{12}}{}  + \deriv{j(r_{12})}{r_{12}}{2} + \bigg( \deriv{j(r_{12})}{r_{12}}{} \bigg)^2\bigg] \phi(\br{}_1,\br{}_2). 
- \end{aligned}
-\end{equation}
-Now, by defining the following operators 
+After some derivation, one can notice that by defining the following operators 
 \begin{equation}
  \label{eq:def_tt}
- \tilde{t}[j] = -2 \deriv{j(r_{12})}{r_{12}}{} \deriv{}{r_{12}}{},
+ \tilde{t}[u] = -2 \deriv{u(r_{12})}{r_{12}}{} \deriv{}{r_{12}}{},
 \end{equation}
 \begin{equation}
  \label{eq:def_wt}
- \tilde{W}[j] = -\frac{2}{r_{12}} \deriv{j(r_{12})}{r_{12}}{}  , 
+ \tilde{W}[u] = -\frac{2}{r_{12}} \deriv{u(r_{12})}{r_{12}}{}  , 
 \end{equation}
 \begin{equation}
  \label{eq:def_wt}
- \tilde{w}[j] = -\deriv{j(r_{12})}{r_{12}}{2} - \bigg( \deriv{j(r_{12})}{r_{12}}{} \bigg)^2. 
+ \tilde{w}[u] = -\deriv{u(r_{12})}{r_{12}}{2} - \bigg( \deriv{u(r_{12})}{r_{12}}{} \bigg)^2, 
 \end{equation}
 one can write the Similarity transformed Hamiltonian  as
 \begin{equation}
- \label{eq:ht_phi}
- \tilde{H}[j] = h_c + \frac{1}{r_{12}}  + \tilde{W}[j] + \tilde{t}[j] + \tilde{w}[j] ,
+ \label{eq:ht_general}
+ \tilde{H}[u] = h_c + \frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] + \tilde{t}[u] ,
 \end{equation}
-ore more explicitly 
-\begin{equation}
- \tilde{H}[j] = h_c + \frac{1}{r_{12}}\bigg( 1 - 2 \deriv{j(r_{12})}{r_{12}}{}\bigg) + \tilde{t}[j] + \tilde{w}[j] .
-\end{equation}
-$\tilde{H}[j]$, because of the first-order differential operator in $\tilde{t}[j]$, is then non-hermitian,   
-and the effective potential $ \frac{1}{r_{12}}  + \tilde{W}[j] + \tilde{w}[j]$ in $\tilde{H}[j]$ only depends on the shape of $j(r_{12})$. 
+Therefore, one can see from Eq. \eqref{eq:ht_general} that the two electrons experience a modified scalar potential given by $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u]$, and an additional differential operator $\tilde{t}[u]$, 
+the latter making $\tilde{H}[u]$ non-hermitian.   
 
 \subsubsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
 \label{sec:cusp}
-Having established the general form of the transcorrelated Hamiltonian $\tilde{H}[j]$, in the case of the helium atom, one can then study the behaviour of the latter when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
-The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different conditions that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
+Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
+The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
 
 In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
 \begin{equation}
@@ -157,7 +145,7 @@ When looking at $r_{12}\approx 0$, all terms multiplying $\frac{1}{r_{12}}$ in $
  \label{eq:cusp_0}
  \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
 \end{equation}
-or equivalently by multiplying by $r_{12}$
+or equivalently by multiplying Eq. \eqref{eq:cusp_0} by $r_{12}$
 \begin{equation}
  \lim_{r_{12}\rightarrow 0}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
 \end{equation}
@@ -165,45 +153,45 @@ which translates into the famous cusp condition for antiparallel spins of Kato\c
 \begin{equation}
  \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
 \end{equation} 
-For a pedagogical and general introduction to the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
+For an excellent pedagogical and general derivation of the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
 
 Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
 \begin{equation}
  \label{eq:hpi0_ex}
- \tilde{H}[j] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
+ \tilde{H}[u] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
 \end{equation}
-Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $\tilde{H}[j]\phiex(\br{}_1,\br{}_2)$ must remain finite, 
-which involves also the term $\tilde{W}[j]$ in $\tilde{H}[j]$ (see Eq.\eqref{eq:def_wt} and \eqref{eq:ht_phi}. Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
+Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $\tilde{H}[u]\phiex(\br{}_1,\br{}_2)$ must remain finite, 
+which involves also the term $\tilde{W}[u]$ in $\tilde{H}[u]$ (see Eq.\eqref{eq:def_wt}). Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
 \begin{equation}
  \label{eq:cusp_phi_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{j(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{u(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
 \end{equation}
-Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{j(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction modified by the presence of the Jastrow factor in $\tilde{H}[j]$. 
+Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{u(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction induced by the presence of the Jastrow factor in $\tilde{H}[u]$. 
 Therefore, as long as one imposes that 
 \begin{equation}
  \label{eq:cusp_phi_1}
-  \deriv{j(r_{12})}{r_{12}}{}\bigg|_{r_{12}=0} = \frac{1}{2},
+  \deriv{u(r_{12})}{r_{12}}{}\bigg|_{r_{12}=0} = \frac{1}{2},
 \end{equation}
-which is nothing but the cusp condition for the Jastrow factor $j(r_{12})$, the scalar term proportional to $\frac{1}{r_{12}}$ in Eq.\eqref{eq:cusp_phi_0} vanishes at $r_{12}=0$, and then obtain a non-divergent effective electron-electron interaction. 
+which is nothing but the cusp condition for the Jastrow factor $u(r_{12})$, the scalar term proportional to $\frac{1}{r_{12}}$ in Eq.\eqref{eq:cusp_phi_0} vanishes at $r_{12}=0$, and then one obtains a non-divergent effective electron-electron interaction. 
 Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\eqref{eq:cusp_phi_0} becomes 
 \begin{equation}
  \label{eq:cusp_phi_2}
  \deriv{\phiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
 \end{equation}
-which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[j]$ are cuspless. 
-For instance, a simple Jastrow factor of the form $j(r_{12}) = \frac{1}{2} r_{12}$ release $\phiex(\br{}_1,\br{}_2)$ from 
+which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[u]$ is cuspless. 
+For instance, a simple Jastrow factor of the form $u(r_{12}) = \frac{1}{2} r_{12}$ releases $\phiex(\br{}_1,\br{}_2)$ from 
 the constraint of fulfilling the cusp condition. 
 
 Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
 where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
-The parameter which controls such a splitting is the so-called range separation parameter $\mu$:  RS-DFT reduces the usual WFT when $\mu \rightarrow \infty$, and $\mu \rightarrow 0$ gives back the usual Kohn-Sham theory.  
+The parameter which controls such a splitting is the so-called range separation parameter $\mu$:  RS-DFT reduces the usual WFT when $\mu \rightarrow \infty$, and $\mu \rightarrow 0$ it gives back the usual Kohn-Sham theory.  
 In practice, RS-DFT introduces a self-consistent Schroedinger-like equation which must be fulfilled by an effective wave function  $\Psi^\mu$.
 Applied to a two electron system and looking in regions where $r_{12}\approx 0$, the leading terms of the self-consistent Schroedinger-like equation of RS-DFT reads 
 \begin{equation}
  \label{eq:cusp_psi_mu_0}
  \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
 \end{equation}
-and as the long-range interaction is non divergent at $r_{12}=0$ as long as $\mu$ remains finite 
+and as the effective interaction $\frac{\text{erf}(\mu r_{12})}{r_{12}}$ is non divergent at $r_{12}=0$ for finite values of $\mu$
 \begin{equation}
  \lim_{r_{12} \rightarrow 0} \frac{\text{erf}(\mu r_{12})}{r_{12}} = \frac{2 \mu}{\sqrt{\pi}} , 
 \end{equation}
@@ -216,38 +204,38 @@ which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, b
 
 Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
 
-\subsection{A new form of Jastrow factor $j(\mu,r_{12})$ mimicking a long-range interaction}
+\subsection{A new form of Jastrow factor $u(\mu,r_{12})$ mimicking a long-range interaction}
 In section \ref{sec:cusp} we reviewed the forms of limit conditions at $r_{12}=0$ involved in different eigenvalue equations, which of course depends on the nature of the interaction at $r_{12}=0$. 
-In that section we derive a new Jastrow factor inspired by the limit condition of the similarity transformed Hamiltonian (see Eq.\eqref{eq:cusp_phi_0}) which mimics that of RS-DFT (see Eq.\eqref{eq:cusp_psi_mu_0}), at least at leading order. 
-\subsubsection{The working equation for $j(\mu,r_{12})$ }
-Eq. \eqref{eq:ht_phi} gives the similarity transformed Hamiltonian for an arbitrary Jastrow factor, 
-and with respect to the usual Hamiltonian, $\tilde{H}[j]$ contains two new classes of terms: 
-a new electron-electron potential $\tilde{w}[j]+ \tilde{W}[j]$ and a new differential operator  $\tilde{t}[j]$. 
-Of course, these new terms depends on the explicit form of the Jastrow factor $j(r_{12})$ chosen. 
-Now, we impose the form of $j(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction of RS-DFT. 
+In that section we derive a new Jastrow factor inspired by the limit condition of the similarity transformed Hamiltonian (see Eq.\eqref{eq:cusp_phi_0}) which mimics that of RS-DFT (see Eq.\eqref{eq:cusp_psi_mu_0}), at least at leading order in $1/r_{12}$. 
+\subsubsection{The working equation for $u(\mu,r_{12})$ }
+Eq. \eqref{eq:ht_general} gives the similarity transformed Hamiltonian for an arbitrary Jastrow factor, 
+and with respect to the usual Hamiltonian, $\tilde{H}[u]$ contains two new classes of terms: 
+a new electron-electron potential $1/r_{12} + \tilde{w}[u]+ \tilde{W}[u]$ and a new differential operator  $\tilde{t}[u]$. 
+Of course, these new terms depends on the explicit form of the Jastrow factor $u(r_{12})$ chosen. 
+Now, we impose the form of $u(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction of RS-DFT. 
 Mathematically, this conditions implies that 
 \begin{equation}
  \begin{aligned}
  \label{def_j_00}
- \tilde{W}[j] + \frac{1}{r_{12}}&= \frac{\text{erf}(\mu r_{12})}{r_{12}} \\ 
-\Leftrightarrow -\frac{2}{r_{12}} \deriv{j(r_{12},\mu)}{r_{12}}{} + \frac{1}{r_{12}} & = \frac{\text{erf}(\mu r_{12})}{r_{12}}, 
+ \tilde{W}[u] + \frac{1}{r_{12}}&= \frac{\text{erf}(\mu r_{12})}{r_{12}} \\ 
+\Leftrightarrow -\frac{2}{r_{12}} \deriv{u(r_{12},\mu)}{r_{12}}{} + \frac{1}{r_{12}} & = \frac{\text{erf}(\mu r_{12})}{r_{12}}, 
  \end{aligned}
 \end{equation}
 which is equivalent to 
 \begin{equation}
  \label{def_j_0}
- \deriv{j(r_{12},\mu)}{r_{12}}{} = \frac{1 - \text{erf}(\mu r_{12})}{2}.
+ \deriv{u(r_{12},\mu)}{r_{12}}{} = \frac{1 - \text{erf}(\mu r_{12})}{2}.
 \end{equation}
 The solution to Eq. \eqref{def_j_0} is 
 \begin{equation}
  \label{eq:def_j}
- j(r_{12};\mu) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg) - \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2},
+ u(r_{12};\mu) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg) - \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2},
 \end{equation}
 which depends on a unique parameter $\mu$, 
-and the associated transcorrelated Hamiltonians obtained with $j(r_{12};\mu)$ is also controlled by $\mu$
+and the associated transcorrelated Hamiltonians obtained with $u(r_{12};\mu)$ is also controlled by $\mu$
 \begin{equation}
  \label{eq:def_ht_mu}
- \tilde{H}[\mu] = e^{-j(r_{12};\mu)} H e^{j(r_{12};\mu)}. 
+ \tilde{H}[\mu] = e^{-u(r_{12};\mu)} H e^{u(r_{12};\mu)}. 
 \end{equation}
 Therefore, the right eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and the ground state eigenvector is defined by 
 \begin{equation}
@@ -257,12 +245,12 @@ where $E_0$ is the exact ground state energy.
 As $\tilde{H}[\mu]$ originates from a similarity transformation, it conserves the same spectrum as $H$ as long as it is developed in a complete basis set. 
 
 
-\subsubsection{A few properties of $j(r_{12};\mu)$}
-The new Jastrow $j(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which controls the value of the leading term of the effective interaction at $r_{12}=0$ (see Eq.\eqref{def_j_00}). 
-To understand the physical content together with the mathematical properties of $j(r_{12};\mu)$, 
+\subsubsection{A few properties of $u(r_{12};\mu)$}
+The new Jastrow $u(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which controls the value of the leading term of the effective interaction at $r_{12}=0$ (see Eq.\eqref{def_j_00}). 
+To understand the physical content together with the mathematical properties of $u(r_{12};\mu)$, 
 one must keep in mind that the complete correlating factor $\mathcal{J}(r_{12};\mu)$ is 
 \begin{equation}
- \mathcal{J}(r_{12};\mu) = \text{exp}\bigg(j(r_{12};\mu)\bigg),
+ \mathcal{J}(r_{12};\mu) = \text{exp}\big(u(r_{12};\mu)\big),
 \end{equation}
 and that the exact wave function $\psiex(\br{}_1,\br{}_2)$ is formally expressed as 
 \begin{equation}
@@ -270,74 +258,63 @@ and that the exact wave function $\psiex(\br{}_1,\br{}_2)$ is formally expressed
 \end{equation}
 From Eq.\eqref{eq:def_j} we can notice that 
 \begin{equation}
- \lim_{r_{12} \rightarrow \infty}j(r_{12};\mu) = 0,
+ \lim_{r_{12} \rightarrow \infty}u(r_{12};\mu) = 0,
 \end{equation}
 which means that 
 \begin{equation}
  \lim_{r_{12} \rightarrow \infty}\mathcal{J}(r_{12};\mu) = 1,
 \end{equation}
-and therefore $j(r_{12};\mu)$ impacts only the small $r_{12}$ behaviour,  
-which is expected since the equation determining $j(r_{12},\mu)$ is obtained from the small $r_{12}$ limit of the Schroedinger equation (see Eq.\eqref{def_j_00}). 
+and therefore $u(r_{12};\mu)$ impacts only the small $r_{12}$ behaviour,  
+which is expected since the equation determining $u(r_{12},\mu)$ is obtained from the small $r_{12}$ limit of the Schroedinger equation (see Eq.\eqref{def_j_00}). 
 
 To better understand the physical content of at $r_{12}\approx 0$,  
-let us Taylor expand the function $j(r_{12};\mu)$ 
+let us Taylor expand the function $u(r_{12};\mu)$ 
 \begin{equation}
  \label{eq:j_dl}
- j(r_{12};\mu) = -\frac{1}{2\sqrt{\pi}\mu} + \frac{1}{2}r_{12} - \frac{\mu}{2\sqrt{\pi}} r_{12}^2 + o(r_{12}^4).
+ u(r_{12};\mu) = -\frac{1}{2\sqrt{\pi}\mu} + \frac{1}{2}r_{12} - \frac{\mu}{2\sqrt{\pi}} r_{12}^2 + o(r_{12}^4).
 \end{equation}
 which leads for $\mathcal{J}(r_{12},\mu)$
 \begin{equation}
  \label{eq:bigJ_dl}
  \mathcal{J}(r_{12};\mu) = e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2} + o(r_{12}^4) .
 \end{equation}
-Therefore, one can Taylor expand the exact wave function in the vicinity of $\br{}_1$ for small $r_{12}$, and noticing that $\phiex(\br{}_1,\br{}_2) $ is cusp less, one obtains 
-\begin{equation}
- \label{eq:psi0_ex_dl}
- \psiex(\br{}_1,\br{}_2) = \phiex(\br{}_1,\br{}_1)e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2} + o(r_{12}^4) .
-\end{equation}
-As one can see from Eq.\eqref{eq:bigJ_dl} and Eq.\eqref{eq:psi0_ex_dl}, the first term $e^{-\frac{1}{2\sqrt{\pi}\mu}}$ defines the depth of the Coulomb hole induced by the correlating factor $\mathcal{J}(r_{12};\mu)$ at $r_{12}=0$. 
-This term is imposed by the term $- \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2}$ in the Jastrow factor. 
-Therefore, the probability of finding two electrons at $r_{12}=0$ (\textit{i.e.} the on-top pair density) is larger for $\phiex(\br{}_1,\br{}_2)$ than for $\psiex(\br{}_1,\br{}_2)$.  
-This can be easily understood noticing that, by construction, $\tilde{H}[\mu]$ does not contain any divergent potential term at $r_{12}=0$, and therefore the electrons repels less each other in  $\tilde{H}[\mu]$.  
+From Eq. \eqref{eq:bigJ_dl} one can analyze each term: a) as $e^{-\frac{1}{2\sqrt{\pi}\mu}}<1$, the effective wave function  $\phiex(\br{}_1,\br{}_2)$ has necessary a larger value at coalescence (\textit{i.e.} $\br{}_1=\br{}_2)$), which can be intuitively understood as the electrons in $\tilde{H}[\mu]$ experience an effective non divergent interaction; 
+b) the term in $e^{ \frac{1}{2}r_{12}} $ restores exactly the lack of cusp of $\phiex(\br{}_1,\br{}_2)$ (see Eq. \eqref{eq:cusp_phi_2}); and eventually last term reshapes the curvature of the $\phiex(\br{}_1,\br{}_2)$. 
 
-The second term in \eqref{eq:bigJ_dl} is linked to the cusp condition. 
-Indeed, as shown in section \ref{sec:cusp}, $\phiex(\br{}_1,\br{}_2)$ does not have a cusp, and therefore $\mathcal{J}(r_{12};\mu)$ mus restore it. This term is imposed by the term $\frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg)$ in the Jastrow factor. 
-The last term in Eq.\eqref{eq:bigJ_dl} modifies the curvature of the Coulomb hole. 
-
-Coming now to the behaviour of $j(r_{12};\mu)$as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, together with that of $\mathcal{J}(r_{12};\mu)$. 
+Coming now to the behaviour of $u(r_{12};\mu)$as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, together with that of $\mathcal{J}(r_{12};\mu)$. 
 \begin{figure*}
  \label{fig_j_mu}
         \includegraphics[width=0.45\linewidth]{small_mu_j.pdf}
         \includegraphics[width=0.45\linewidth]{small_mu_exp_j.pdf}\\
-        \caption{Shape of $j(r_{12};\mu)$ (up) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(j(r_{12};\mu) \bigg) $ (bottom) for different values of $\mu$.}
+        \caption{Shape of $u(r_{12};\mu)$ (up) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(u(r_{12};\mu) \bigg) $ (bottom) for different values of $\mu$.}
 \end{figure*}
-From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $j(r_{12};\mu)$, ii) the larger the $\mu$, the closer $j(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
+From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $u(r_{12};\mu)$, ii) the larger the $\mu$, the closer $u(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
 
 
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
 \subsubsection{Explicit form of $\tilde{H}[\mu]$ }
-Having established the analytical expression of $j(r_{12};\mu)$, one can derive the general expression of the associated transcorrelated Hamiltonian.  
+Having established the analytical expression of $u(r_{12};\mu)$, one can derive the general expression of the associated transcorrelated Hamiltonian.  
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
 \begin{equation}
  \label{ht_def_g}
  e^{-\hat{\tau}} \hat{H} e^{\hat{\tau}} = H + \big[ H,\hat{\tau} \big] + \frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]
 \end{equation}
-where $\hat{\hat{\tau}} = \sum_{i>j}u(\br{}_i,\br{}_j)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i>j} \frac{1}{r_{ij}}$. 
+where $\hat{\tau} = \sum_{i<j}u(\br{}_i,\br{}_j)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i<j} \frac{1}{r_{ij}}$. 
 This leads to the following similarity transformed Hamiltonian 
 \begin{equation}
  \begin{aligned}
  \label{ht_def_gu}
  \tilde{H} & = H - \sum_i \bigg( \frac{1}{2} \nabla_i^2 \hat{\tau} + \big(\nabla_i \hat{\tau} \big) + \frac{1}{2} \big(\nabla_i \hat{\tau} \big)  \bigg) \\
-           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{j},\bri{k}),
+           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{u}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{u},\bri{k}),
  \end{aligned}
 \end{equation}
-where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and $\hat{L}(\bri{i},\bri{j},\bri{k})$ are defined as
+where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{u})$ and $\hat{L}(\bri{i},\bri{u},\bri{k})$ are defined as
 \begin{equation}
  \begin{aligned}
  \label{def_k}
   \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
                                                + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
-                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1  \\
+                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1,
  \end{aligned}
 \end{equation}
 \begin{equation}
@@ -347,24 +324,25 @@ where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and
                                      + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
  \end{aligned}
 \end{equation}
-Therefore, to obtain the general formulation of the $\tilde{H}[\mu]$ one needs to compute the actual form of the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ when $u(\bri{1},\bri{2}) = j(r_{12},\mu)$. 
+Therefore, to obtain the analytical expression of the $\tilde{H}[\mu]$ for a general $N$-electron system, 
+one needs to compute the actual form of the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ when $u(\bri{1},\bri{2}) = u(r_{12},\mu)$. 
 
 \subsection{Explicit form for the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
 \subsubsection{Intermediate quantities}
-To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $j(r_{12},\mu)$ with respect to a $\bri{1}$ which, after some derivation reads 
+To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to a $\bri{1}$ which reads 
 \begin{equation}
  \label{eq:nabla_u}
  \begin{aligned}
  \nabla_1 u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
  \end{aligned}
 \end{equation}
-Then, the terms $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2$ is simply 
+Then, the term $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2$ is simply 
 \begin{equation}
  \begin{aligned}
  \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_2 u(\bri{1},\bri{2}) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
  \end{aligned}
 \end{equation}
-Then, to compute the  non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ one needs to compute 
+Then, the non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ contains 
 \begin{equation}
  \begin{aligned}
  \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
@@ -406,7 +384,7 @@ and therefore
 \begin{equation}
  \begin{aligned}
  \label{eq:nabla_i_nabla1}
-& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} r_{12} \deriv{}{r_{12}}{} \\
+ \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} r_{12} \deriv{}{r_{12}}{} \\
  = & \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
  \end{aligned}
 \end{equation}
@@ -417,7 +395,7 @@ The computation of the Laplacian is a little more tedious, but after some deriva
  \begin{aligned}
  \label{eq:d2_x1_2}
  &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})\\ 
- & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg)
+ & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
  \end{aligned}
 \end{equation}
 \subsubsection{Explicit form of $\tilde{H}[\mu]$}
@@ -440,7 +418,7 @@ Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $
 \end{equation}
 
 Having established the explicit form of $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$, one can now 
-look at the explicit analytical form of the transcorrelated Hamiltonian $\tilde{H}[\mu]$ obtained with $j(r_{12};\mu)$,  
+look at the explicit analytical form of the transcorrelated Hamiltonian $\tilde{H}[\mu]$ obtained with $u(r_{12};\mu)$,  
 which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, which gives
 \begin{equation}
   \begin{aligned}
@@ -448,13 +426,13 @@ which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} i
    \tilde{H}[\mu] = & h_c + \sum_{i<j} \bigg( \tilde{\mathcal{W}}_{ee}(r_{ij},\mu) + \tilde{t}[\mu] \bigg) - \sum_{i<j<k} \hat{L}_\mu(\bri{1},\bri{2},\bri{3})
   \end{aligned}
 \end{equation}
-where $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$ is a scalar effective two-body potential
+where $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$ is the scalar effective two-body potential of  $\tilde{H}[\mu]$
 \begin{equation}
  \begin{aligned}
  \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)  =  \frac{\text{erf}(\mu r_{ij})}{r_{ij}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{ij} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{ij}) \bigg)^2}{4}, 
  \end{aligned}
 \end{equation}
-and $\tilde{t}[\mu]$ is non hermitian two-body differential operator 
+and $\tilde{t}[\mu]$ is a non hermitian two-body differential operator 
 \begin{equation}
  \begin{aligned}
  \tilde{t}[\mu] =  \bigg( \text{erf}(\mu r_{ij}) - 1\bigg) \deriv{}{r_{ij}}{}.
@@ -472,21 +450,21 @@ From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential $ \til
 is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT at large $r_{12}$. 
 Nevertheless, as observed from Fig.\ref{fig_wee_mu}, it is significantly different 
 from the long-range interaction at small $r_{12}$, 
-and it is not monotonic as it can be even slightly attractive for small values of $\mu$. 
-This difference with respect to the long-range interaction can be understood as the equation obtained to derive the Jastrow factor only takes into account the first-order derivative of $j(r_{12},\mu)$ (see Eqs.\eqref{def_j_00} and \eqref{def_j_0}). 
+and it is not monotonic and attractive (\textit{i.e.} $\lim_{r_{12} \rightarrow 0} \deriv{}{r_{12}}{} \tilde{\mathcal{W}}_{ee}(r_{ij},\mu) >0 $). 
+This difference with respect to the long-range interaction can be understood as the equation obtained to derive the Jastrow factor only takes into account the first-order derivative of $u(r_{12},\mu)$ (see Eqs.\eqref{def_j_00} and \eqref{def_j_0}). 
 If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\text{erf}(\mu r_{12})}{r_{12}}$, one would have to solve the non-linear differential equation 
 \begin{equation}
- 2 \deriv{j(r_{12})}{r_{12}}{} + r_{12} \bigg( \deriv{j(r_{12})}{r_{12}}{2} + \bigg[ \deriv{j(r_{12})}{r_{12}}{} \bigg]^2\bigg) = 1 - \text{erf}(\mu r_{12}), 
+ 2 \deriv{u(r_{12})}{r_{12}}{} + r_{12} \bigg( \deriv{u(r_{12})}{r_{12}}{2} + \bigg[ \deriv{u(r_{12})}{r_{12}}{} \bigg]^2\bigg) = 1 - \text{erf}(\mu r_{12}), 
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
 \subsubsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
-Regarding now the variation of $\tilde{H}[\mu]$, one expects as 
+Regarding now the variation of $\tilde{H}[\mu]$, one expects that as 
 \begin{equation}
  \label{eq:lim_mu_0}
- \lim_{\mu  \rightarrow \infty }j(\mu,r_{12}) = 0, 
+ \lim_{\mu  \rightarrow \infty }u(\mu,r_{12}) = 0, 
 \end{equation}
-one recovers the usual Hamiltonian in the ${\mu  \rightarrow \infty }$ limit
+one recovers the usual Hamiltonian in the ${\mu  \rightarrow \infty }$ limit:
 \begin{equation}
  \label{eq:lim_mu_1}
  \lim_{\mu \rightarrow \infty} \tilde{H}[\mu] = H.
@@ -506,46 +484,47 @@ where $\delta(r_{12})$ is the Dirac distribution, and as the firs-order differen
  \end{aligned}
 \end{equation}
 which seems to contradict the intuitive limit of Eq.\eqref{eq:lim_mu_1}. 
+
 Nevertheless, as the right hand side of Eq.\eqref{eq:lim_mu_4} contains a Delta distribution, it must be considered in the sense of distributions an not point wise. 
-Therefore, considering $f(\br{}_1,\br{}_2)$, a bounded generic square integrable function in $\R^6$, the equality between $\tilde{H}[\mu]$ and $H$ is, in the sense of distributions, defined by the following equality 
+Therefore, considering a generic bounded square integrable wave function $\psi(\br{}_1,\hdots,\br{}_N)$ yielding to a integrable pair density $n_2(\br{}_1,\br{}_2)$, the equality between $\tilde{H}[\mu]$ and $H$ is, in the sense of distributions, defined by the following equality 
 \begin{equation}
  \label{eq:lim_mu_5}
  \begin{aligned}
-& \matelem{f}{H}{f} = \lim_{\mu \rightarrow \infty} \matelem{f}{\tilde{H}[\mu]}{f} \\
+& \matelem{\psi}{H}{\psi} = \lim_{\mu \rightarrow \infty} \matelem{\psi}{\tilde{H}[\mu]}{\psi} \\
 & \Leftrightarrow H = \tilde{H}[\mu],
  \end{aligned}
 \end{equation}
 and considering the limit for of $\tilde{H}[\mu]$ (see Eq.\eqref{eq:lim_mu_4}), it implies that 
 \begin{equation}
  \label{eq:lim_mu_6}
- \int \text{d}\br{}_1 \text{d}\br{}_2 f(\br{}_1,\br{}_2) \delta(r_{12}) = 0.
+ \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = 0.
 \end{equation}
-To intuitively show Eq.\eqref{eq:lim_mu_6}, one can perform a series of change of variable $(\br{}_1,\br{}_2)\rightarrow (\br{}_{12},\frac{1}{2}(\br{}_1 + \br{}_2))$ and then use the spherical coordinates for $\br{}_{12}$ and show that 
+To intuitively show Eq.\eqref{eq:lim_mu_6}, one can perform a series of change of variable $(\br{}_1,\br{}_2)\rightarrow (\br{}_{12},\frac{1}{2}(\br{}_1 + \br{}_2))$ and then use the spherical coordinates for $\br{}_{12}$ 
 \begin{equation}
- \int \text{d}\br{}_1 \text{d}\br{}_2 f(\br{}_1,\br{}_2) \delta(r_{12}) = \int \text{d}r{}_{12}  \tilde{f}(r_{12}) \delta(r_{12}) r_{12}^2 
+ \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 
 \end{equation}
-where $\tilde{f}(x)$ is the function $f(\br{}_1,\br{}_2)$ integrated over $(\br{}_1,\br{}_2)$ with the constraint that 
+where $\tilde{n_2}(x)$ is the function $n_2(\br{}_1,\br{}_2)$ integrated over $(\br{}_1,\br{}_2)$ with the constraint that 
 $|\br{}_1-\br{}_2| = x$. 
-As the $f(\br{}_1,\br{}_2)$ remain finite for all $(\br{}_1,\br{}_2)$, the function $\tilde{f}(x)$ 
-do not diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one obtains that 
+As the pair density $n_2(\br{}_1,\br{}_2)$ remains finite and is integrable, the function $\tilde{n}_2(x)$ 
+cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one obtains that 
 \begin{equation}
- \int \text{d}r{}_{12}  \tilde{f}(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
+ \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
 \end{equation}
-and therefore Eq.\eqref{eq:lim_mu_6} which implies Eq.\eqref{eq:lim_mu_1}. 
+which implies Eq.\eqref{eq:lim_mu_1}. 
 
 In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu]$ becomes simply 
 \begin{equation}
  \label{eq:htilde_mu_low}
  \begin{aligned}
 &\lim_{\mu \rightarrow 0} \tilde{H}[\mu] = h_c - \frac{1}{4} - \sum_{i<j}\deriv{}{r_{ij}}{} \\
- & - \sum_{i<j<k}  \bigg(\frac{1}{2 r_{ij}} \frac{1}{2 r_{ik}} \bri{ij} \cdot \bri{ik} + \frac{1}{2 r_{ji}} \frac{1}{2 r_{jk}} \bri{ji} \cdot \bri{jk}  + \frac{1}{2 r_{ki}} \frac{1}{2 r_{kj}} \bri{ki} \cdot \bri{kj} \bigg)
+ & - \frac{1}{4}\sum_{i<j<k}  \bigg(\frac{\bri{ij} }{ r_{ij}} \cdot \frac{\bri{ik} }{ r_{ik}} + \frac{\bri{ji} }{ r_{ji}} \cdot \frac{\bri{jk}  }{ r_{jk}} + \frac{\bri{ki} }{ r_{ki}} \cdot  \frac{\bri{kj} }{ r_{kj}} \bigg),
  \end{aligned}
 \end{equation}
-which means that all scalar electron-electron repulsive interaction have been replaced by a differential operator and an attractive three electron interaction. 
-It should be stressed that even if the $\mu \rightarrow 0$ limit of $\tilde{H}[\mu]$ of Eq. \eqref{eq:htilde_mu_low} is very unphysical, it conserves exactly the same spectrum than the usual Hamiltonian because it originates from a similarity transformation. 
+which means that all scalar electron-electron repulsive interaction have been replaced by a differential operator and a three electron interaction. 
+It should be stressed that even if the $\mu \rightarrow 0$ limit of $\tilde{H}[\mu]$ is very unphysical, it conserves exactly the same spectrum than the usual Hamiltonian because it originates from a similarity transformation. 
 
-At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent but can be either repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
-Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$.  
+At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent, and can be repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
+Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$, which is tested for wide variety of two-electron systems in the next sections. 
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
 The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
@@ -565,19 +544,19 @@ As pointed in section \ref{sec:h_mu_lim}, even though $\tilde{H}[\mu]$ is still 
 Considering such variation of $\tilde{H}[\mu]$ when varying $\mu$,  
 its projection into a basis set $\tilde{H}[\mu]^{\basis}$ will behave differently as a function of $\mu$ 
 and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenvalues $E_i^{\basis}[\mu]$. 
-Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $j(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
+Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $u(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
 \subsection{$\mu$ dependence of the convergence of the ground state eigenvalue with respect to the basis set }
 \subsubsection{Computational details}
 We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
-We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\Phi_\mu$ (\textit{i.e.} $\Phi_\mu$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
+We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\phiimub$ (\textit{i.e.} $\phiimub$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
 %The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
 
 \subsubsection{Numerical results: ground state energies}
 \label{sec:total_e}
-We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_0^\mu$ of $\tilde{H}[\mu]$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. 
+We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_i^{\basis}[\mu]$ of $\tilde{H}[\mu]^{\basis}$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. 
 Several observations can be done from these data. First, because of the loose of the variational principle, $E_0^{\mu}$ can take values below the exact non relativistic energy, and the smaller the $\mu$, the more pronounced is such effect. 
-Nevertheless, one can also observe that, for each $\mu$, the error with respect to the reference energy gets smaller  
+Nevertheless, one can also observe that, for each $\mu$, the error with respect to the exact energy gets smaller  
 when enlarging the basis set. Also, qualitatively, one can observe that there are two regimes of $\mu$: $\mu \in[0.05,0.7]$ where the $E_0^\mu$ is always below $E_0$ and $\mu\ge 0.7$ where $E_0^\mu$ converges from above, as if the variational principle still applied. 
 As $\mu$ increases, the difference between $E_0^\mu$ and $E_0^\text{FCI}$ in a given basis set diminishes, 
 which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\tilde{H}[\mu] \rightarrow H$. 
@@ -585,7 +564,7 @@ which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\
 Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ as long as $\mu \ge 0.2$. 
 To quantify better such observations, one can identify the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
 For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
-Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
+Therefore one can conclude that the use of a simple Jastrow factor such as $u(r_{12};\mu)$ within the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
 \begin{figure*}
  \label{fig_conv_e_mu}
         \includegraphics[width=0.45\linewidth]{E_conv_basis_small_mu.pdf}
@@ -616,29 +595,29 @@ Therefore one can conclude that the use of the Jastrow factor $j(r_{12};\mu)$ in
 \end{table*}
 
 \subsection{Study of the ground state eigenvector in real space}
-In Sec.\ref{sec:total_e} we shown the strong improvement of the speed of convergence of the total energy for the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=3.0$. 
+In Sec.\ref{sec:total_e} we shown the improvement of the speed of convergence of the ground state energies $E_i^{\basis}[\mu]$ of the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=3.0$. 
 Nevertheless, one can wonder if this good behavior results from a kind of error cancellation or if there is indeed a deeper mathematical reason for such an improvement of speed of convergence. 
 To answer that question, we investigate some properties of the ground state eigenvectors of different types of Hamiltonians in real space. 
 
-Theoretically if, for a given value of $\mu$, $\tilde{H}[\mu]$ is perfectly well represented in a given basis set $\mathcal{B}$ (\textit{i.e.} $\tilde{H}[\mu]^{\basis} = H$), then all its eigenvalues coincide with that of the exact Hamiltonian (\textit{i.e.} developed in a complete basis set). If one focusses now on the exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$, it is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $j(r_{12},\mu)$ through 
+Theoretically if, for a given value of $\mu$, $\tilde{H}[\mu]$ is perfectly well represented in a given basis set $\mathcal{B}$ (\textit{i.e.} $\tilde{H}[\mu]^{\basis} = \tilde{H}[\mu]$), then all its eigenvalues coincide with that of the exact Hamiltonian (\textit{i.e.} developed in a complete basis set). If one focusses now on the exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$, it is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $u(r_{12},\mu)$ through 
 \begin{equation}
- \psiex(\br{}_1,\br{}_2) =  \frac{1}{\sqrt{\mathcal{N}^{\mu}}} e^{j(r_{12},\mu)} \phimu(\br{}_1,\br{}_2), 
+ \psiex(\br{}_1,\br{}_2) =  \frac{1}{\sqrt{\mathcal{N}^{\mu}}} e^{u(r_{12},\mu)} \phimu(\br{}_1,\br{}_2), 
 \end{equation}
 where the normalization factor $\mathcal{N}^{\mu}$ is simply 
 \begin{equation}
-  \mathcal{N}^{\mu} = \matelem{\phimu}{e^{2 j(r_{12},\mu)}}{\phimu}.
+  \mathcal{N}^{\mu} = \matelem{\phimu}{e^{2 u(r_{12},\mu)}}{\phimu}.
 \end{equation}
-Therefore, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to estimate the exact ground state wave function $\psiex$ through 
+Therefore, in a given basis set $\basis$, the right eigenvector $\phimub$ of $\tilde{H}[\mu]^{\basis}$ can be used to estimate the exact ground state wave function $\psiex$ through 
 \begin{equation}
- \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{j(r_{12},\mu)}\phimub(\br{}_1,\br{}_2)
+ \psimub(\br{}_1,\br{}_2) = \frac{1}{\sqrt{\mathcal{N}_{\basis}^{\mu}}}e^{u(r_{12},\mu)}\phimub(\br{}_1,\br{}_2),
 \end{equation}
 where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
 \begin{equation}
-  \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 j(r_{12},\mu)}}{\phimub}.
+  \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 u(r_{12},\mu)}}{\phimub}.
 \end{equation}
-Then, the quality of a given basis set $\basis$ for a given $\mu$ can be also observed from the vicinity between $\psimub(\br{}_1,\br{}_2)$ and the exact wave function $\psiex(\br{}_1,\br{}_2)$. 
+Then, the quality of a given basis set $\basis$ for a given $\mu$ can be also quantified from the vicinity between $\psimub(\br{}_1,\br{}_2)$ and the exact wave function $\psiex(\br{}_1,\br{}_2)$, in the $L^2$ sense for instance. 
 For this study, we approximate the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$ of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits.  
-We plotted a cutting of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cutting used is the following: we set two electrons on a circle of radius $r=0.5$ a.u. from the nucleus and look at the wave functions as a function of the angle $\theta_{12}$ between the electrons. 
+We plotted a cutting of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cutting used is the following: we set two electrons on a circle of radius $r=0.5$ a.u. from the nucleus and look at the wave functions as a function of the angle $\theta_{12}$ between the $\bri{1}$ and $\bri{2}$. 
 
 We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of the right eigenvector $\phimub(\br{}_1,\br{}_2)$, estimated exact wave function $\psimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ and $\mu=1.0$ (respectively) and compared to the exact wave function $\psiex(\br{}_1,\br{}_2)$ and FCI wave function for $r=0.5\,a.u.$. 
 \begin{figure*}
@@ -660,13 +639,13 @@ We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of th
 
 From these figure, one can notice that: 
 i) the right eigenvector $\phimub(\br{}_1,\br{}_2)$ converges faster than the FCI wave function with respect to the basis set, 
-ii) that for $\mu=0.3$ the wave function $\phimub(\br{}_1,\br{}_2)$ present a maximum at $r_{12}=0$, whereas for $\mu=1.0$ and the FCI wave function it has a minimum, 
+ii) that for $\mu=0.3$ the wave function $\phimub(\br{}_1,\br{}_2)$ presents a maximum at $r_{12}=0$, whereas for $\mu=1.0$ it has a minimum at coalescence just as the FCI wave function, 
 iii) the wave function $\phimub(\br{}_1,\br{}_2)$ is always larger that the FCI one when $r_{12}\approx 0$. 
 iv) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set, 
 
 The understanding of such observations can be provided by the mathematical and physical investigation of the construction of $\tilde{H}[\mu]$. 
 
-i) The shape of the Jastrow factor $j(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu < \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunctions do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
+i) The shape of the Jastrow factor $u(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu < \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunctions do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
 Nevertheless, one can also remark that for $\mu > 0.5$, the speed of convergence deteriorates as $\mu$ increases, even though it remains finite. This can be explained by the fact that even if $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ remains bounded from above, when $\mu$ is large such operator is poorly represented in a finite basis set. 
 
 ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ presents a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is much more attractive when $r_{12}\approx 0$ for $\mu=0.3$ than for $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
@@ -704,6 +683,7 @@ with $\alpha = (9 \pi/4)^{-1/3}$ and $r_s = (4 \pi n/3)^{-1/3}$.
 Such function $\mursc({\bf r})$ depends on the system and on the position in space through the density $n({\bf r})$ of the system at a given point ${\bf r}$. 
 Therefore, we propose here to use the average value of $\mursc({\bf r})$ over the Hartree Fock electronic density to define the value of $\mu$ for a specific system in a given basis set:
 \begin{equation}
+ \label{eq:mu_av_rsc}
  \murscav = \frac{1}{N_e}\int \text{d}{\bf r} \mursc({\bf r}) n_{\text{HF}}({\bf r}) 
 \end{equation}
 where $n_{\text{HF}}({\bf r})$ is the HF density and $N_e$ the number of electrons in the system. 
@@ -711,7 +691,6 @@ We report in Table \ref{table_conv_e_mu_iso} the convergence with respect to the
 As one can observe from  Table \ref{table_conv_e_mu_iso}, the ground state energies of $\tilde{H}[\murscav]$ converge much faster than that of the usual Hamiltonian as the MAD for the ground state energies is of 2.64 mH, 0.48 mH and 0.26 mH in the double-, triple- and quadruple zeta quality basis sets (respectively) whereas it is of 12.16 mH, 4.71 mH and 1.64 mH for the usual Hamiltonian. Also, one can observe that, except for the low density systems such as the H${^-}$ and He species, it converges from below the exact ground state energy. 
 
 In the present context, we propose the derivation of another value of $\mu$ based on the mapping of the on-top pair density of the UEG and a model built with the Jastrow factor defined by \eqref{eq:def_j}. 
-For a given point in space ${\bf r}$, we estimate the 
 Assuming a single Slater determinant ansatz for a Jastrow Slater wave function with a Jastrow factor defined in \eqref{eq:def_j}, the on-top pair density is 
 \begin{equation}
  n_2^\mu({\bf r}) = \frac{1}{2}\big(n({\bf r})\big)^2 e^{-\frac{1}{\sqrt{\pi}\mu}}
@@ -725,7 +704,20 @@ Therefore, one can then find the value $\mu$ such that the two on-top pair densi
 \begin{equation}
  \muueg({\bf r}) = \frac{\text{log}\bigg(2 g_0(n({\bf r}))\bigg) }{\sqrt{\pi}}.
 \end{equation}
-Therefore one can define an average UEG value of $\mu$.
+Therefore one can define an average UEG value of $\mu$ 
+\begin{equation}
+ \label{eq:mu_av_ueg}
+ \muuegav = \frac{1}{N_e}\int \text{d}{\bf r} \muueg({\bf r}) n_{\text{HF}}({\bf r}).
+\end{equation}
+We report in Table \ref{table_conv_e_mu_iso} for different basis sets the error with respect to the exact ground state energy of $E_0^{\basis}[\muuegav]$ for the isoelectronic series studied here. 
+From these data, one can see that MAD is sensibly the same than that with the $\murscav$ but with a MSD of opposite sign with respect to the latter. This implies that the values of $\muuegav$ are in general larger than that of $\murscav$, which was observed in the present calculations. 
+Because the MAD are essentially the same but that the MSD are of opposite sign, it means that there exists an optimal value of $\mu$ between $\murscav$ and $\muuegav$ which might be optimal. 
+Therefore, we propose to define the average between $\murscav$ and $\muuegav$ 
+\begin{equation}
+ \label{eq:mu_av_ueg_rsc}
+  \mursclda = \frac{\murscav   +   \muuegav }{2},
+\end{equation}
+and the results obtained are represented in Table \ref{table_conv_e_mu_iso}. From this data, one can clearly see that $\mursclda$ gives a better MAD and MSD as it is below 1 mH from the aug-cc-pVDZ basis set and still improve when enlarging the basis set. 
 
 \begin{table*}
 \label{table_conv_e_mu_iso}
@@ -754,15 +746,15 @@ $\mursclda$  &  -0.01  &  -0.15   &  -0.09   &  0.27   &  -0.04   & -0.12   &  0
 \hline
              &\multicolumn{3}{c}{Ne$^{8+}$}  & \multicolumn{3}{c}{MAD} & \multicolumn{3}{c}{MSD}    \\
  FCI         &  15.66  &   7.61   &  2.36    & 12.16   &    4.71  &    1.64   &  12.16   &   4.71   &    1.64   \\   
-$\muueg$     &  3.89   &   1.57   &  0.03    & 4.23    &    1.11  &    0.13   &   4.23   &   1.11   &    0.13   \\   
+$\muueg$     &  3.89   &   1.57   &  0.03    & 2.38    &    0.60  &    0.07   &   2.38   &   0.60   &    0.07   \\   
 $\murscav$   &  -2.85  &  -0.28   & -0.35    & 2.64    &    0.48  &    0.26   &  -1.21   &  -0.28   &   -0.16   \\   
-$\mursclda$  &  1.26   &   0.57   & -0.1     & 2.38    &    0.60  &    0.07   &   2.38   &   0.60   &    0.05   \\   
+$\mursclda$  &  1.26   &   0.57   & -0.1     & 0.98    &    0.24  &    0.13   &   0.89   &   0.15   &   -0.03   \\   
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
-\section{General formulation of similarity transformed Hamiltonian}
-\subsection{General equations for a $N$-electron system}
-\subsubsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
+
+\section{Computation of integrals}
+\subsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
 We need to compute the following integral 
 \begin{equation}
  \label{eq:l_ijmkln}
@@ -785,7 +777,7 @@ Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
 \begin{equation}
  \begin{aligned}
  & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
- & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
+ & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
  &\bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
  \end{aligned}
 \end{equation}
@@ -803,7 +795,7 @@ where
  \begin{aligned}
  \label{eq:l_1x}
 & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
- = & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
+ = & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
  &(x_1 - x_2) (x_1 - x_3) \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
  \end{aligned}
 \end{equation}
@@ -846,13 +838,13 @@ The total matrix element of the full operator is then
  \begin{aligned}
  & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
  = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg) \\
- + & \int \text{d}{\bf r}\phi_j({\bf r})  \phi_l({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{ik}^x({\bf r}) + W_{mn}^y({\bf r}) W_{ik}^y({\bf r}) + W_{mn}^z({\bf r}) W_{ik}^z({\bf r})\bigg) \\
+ + & \int \text{d}{\bf r}\phi_u({\bf r})  \phi_l({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{ik}^x({\bf r}) + W_{mn}^y({\bf r}) W_{ik}^y({\bf r}) + W_{mn}^z({\bf r}) W_{ik}^z({\bf r})\bigg) \\
  + & \int \text{d}{\bf r} \phi_m({\bf r})  \phi_n({\bf r}) \bigg( W_{jl}^x({\bf r}) W_{ik}^x({\bf r}) + W_{jl}^y({\bf r}) W_{ik}^y({\bf r}) + W_{jl}^z({\bf r}) W_{ik}^z({\bf r})\bigg), 
  \end{aligned}
 \end{equation}
 which can be computed on the fly through a simple numerical integration. 
 
-According to Eq. \eqref{eq:comtot}, Eq. \eqref{eq:nabla_i_nabla1}, Eq. \eqref{eq:nabla_u2} and Eq. \eqref{eq:lapl_u_final}, the additional terms arising from the commutators in $\tilde{H}[j]$ are (for a two-electron system) 
+According to Eq. \eqref{eq:comtot}, Eq. \eqref{eq:nabla_i_nabla1}, Eq. \eqref{eq:nabla_u2} and Eq. \eqref{eq:lapl_u_final}, the additional terms arising from the commutators in $\tilde{H}[u]$ are (for a two-electron system) 
 \begin{equation}
  \begin{aligned}
  \label{eq:comtot2}
@@ -873,7 +865,7 @@ or equivalently
 Therefore, the full similarity transformed Hamiltonian can be written as
 \begin{equation}
   \begin{aligned}
-   \tilde{H}[j] = & \sum_{i = 1,2} \bigg( -\frac{1}{2} \big(\nabla_i\big)^2 + v(\br{}_i)  \bigg) + \frac{1}{r_{12}} \\
+   \tilde{H}[u] = & \sum_{i = 1,2} \bigg( -\frac{1}{2} \big(\nabla_i\big)^2 + v(\br{}_i)  \bigg) + \frac{1}{r_{12}} \\
 &   -\frac{1 - \text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
 & + \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}
   \end{aligned}
@@ -881,7 +873,7 @@ Therefore, the full similarity transformed Hamiltonian can be written as
 or equivalently 
 \begin{equation}
   \begin{aligned}
-   \tilde{H}[j] = & h_c + \frac{\text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+   \tilde{H}[u] = & h_c + \frac{\text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
 & + \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{},
   \end{aligned}
 \end{equation}
@@ -951,21 +943,21 @@ which can be transformed into product of types
 \end{equation}
 
 \section{New form of jastrow factor}
-We want the jastrow factor $j(r_{12})$ to fulfil such equation
+We want the jastrow factor $u(r_{12})$ to fulfil such equation
 \begin{equation}
- - \bigg[ \frac{2}{r_{12}} \deriv{j}{r_{12}}{}  + \deriv{j}{r_{12}}{2} \bigg] + \frac{1}{r_{12}} = \frac{\text{erf}\big( \mu r_{12} \big)}{r_{12}}.
+ - \bigg[ \frac{2}{r_{12}} \deriv{u}{r_{12}}{}  + \deriv{u}{r_{12}}{2} \bigg] + \frac{1}{r_{12}} = \frac{\text{erf}\big( \mu r_{12} \big)}{r_{12}}.
 \end{equation}
 The solution for such an equation is 
 \begin{equation}
- j(r_{12}) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - \frac{1}{2\sqrt{\pi} \mu} e^{-\big( \mu r_{12}\big)^2} + \frac{1}{4 r_{12}} \bigg(c_1 - \frac{\text{erf}\big(\mu r_{12} \big)}{\mu^2} \bigg).
+ u(r_{12}) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - \frac{1}{2\sqrt{\pi} \mu} e^{-\big( \mu r_{12}\big)^2} + \frac{1}{4 r_{12}} \bigg(c_1 - \frac{\text{erf}\big(\mu r_{12} \big)}{\mu^2} \bigg).
 \end{equation}
 The constant $c_1$ can be found to impose that 
 \begin{equation}
- \lim_{r_{12} \rightarrow 0 } j(r_{12}) < \infty,
+ \lim_{r_{12} \rightarrow 0 } u(r_{12}) < \infty,
 \end{equation}
 which means $c_1 = 0$. Therefore the new jastrow factor is 
 \begin{equation}
- j(r_{12}) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - \frac{1}{2\sqrt{\pi} \mu} e^{-\big( \mu r_{12}\big)^2}  - \frac{\text{erf}\big(\mu r_{12} \big)}{4 \mu^2 r_{12}}.
+ u(r_{12}) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - \frac{1}{2\sqrt{\pi} \mu} e^{-\big( \mu r_{12}\big)^2}  - \frac{\text{erf}\big(\mu r_{12} \big)}{4 \mu^2 r_{12}}.
 \end{equation}
 
 \section{One body term jastrow}
@@ -980,46 +972,46 @@ To do so, we have to compute the kinetic part acting on the Jastrow factor actin
 \begin{equation}
  \label{eq:h_atom_j}
  \begin{aligned}
- & -\frac{1}{2}e^{-j(r)}\big(\deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) e^{j(r)}\phi(r)  = \\
+ & -\frac{1}{2}e^{-u(r)}\big(\deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) e^{u(r)}\phi(r)  = \\
  & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) \phi(r) \\
- &-\deriv{j(r)}{r}{}\deriv{}{r}{}\phi(r) \\
- &-\frac{1}{r}\deriv{j(r)}{r}{}\phi(r)  - \frac{1}{2}\deriv{j(r)}{r}{2}\phi(r)  -  \frac{1}{2}\bigg(\deriv{j(r)}{r}{} \bigg)^2 \phi(r).
+ &-\deriv{u(r)}{r}{}\deriv{}{r}{}\phi(r) \\
+ &-\frac{1}{r}\deriv{u(r)}{r}{}\phi(r)  - \frac{1}{2}\deriv{u(r)}{r}{2}\phi(r)  -  \frac{1}{2}\bigg(\deriv{u(r)}{r}{} \bigg)^2 \phi(r).
  \end{aligned}
 \end{equation}
-Therefore the full similarity transformed Hamiltonian $\tilde{H}[j]$ is 
+Therefore the full similarity transformed Hamiltonian $\tilde{H}[u]$ is 
 \begin{equation}
  \begin{aligned}
  \label{eq:one_e_0}
- & e^{-j(r)}H\,e^{j(r)} = \\
- & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) -\deriv{j(r)}{r}{}\deriv{}{r}{}\\
- &-\frac{1}{r}\bigg(\deriv{j(r)}{r}{} + Z \bigg) \\ 
- & - \frac{1}{2}\deriv{j(r)}{r}{2} -  \frac{1}{2}\bigg(\deriv{j(r)}{r}{} \bigg)^2.
+ & e^{-u(r)}H\,e^{u(r)} = \\
+ & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) -\deriv{u(r)}{r}{}\deriv{}{r}{}\\
+ &-\frac{1}{r}\bigg(\deriv{u(r)}{r}{} + Z \bigg) \\ 
+ & - \frac{1}{2}\deriv{u(r)}{r}{2} -  \frac{1}{2}\bigg(\deriv{u(r)}{r}{} \bigg)^2.
  \end{aligned}
 \end{equation}
-Similarly to what have been proposed in Section \ref{sec:he_j}, we want to find the Jastrow factor $j(r,\mu,Z)$ such that 
+Similarly to what have been proposed in Section \ref{sec:he_j}, we want to find the Jastrow factor $u(r,\mu,Z)$ such that 
 \begin{equation}
  \label{eq:one_e_01}
- -\frac{1}{r}\bigg(\deriv{j(r,\mu,Z)}{r}{} + Z \bigg) = -Z\frac{\text{erf}(\mu r)}{r},
+ -\frac{1}{r}\bigg(\deriv{u(r,\mu,Z)}{r}{} + Z \bigg) = -Z\frac{\text{erf}(\mu r)}{r},
 \end{equation}
 or equivalently
 \begin{equation}
  \label{eq:one_e_1}
- \deriv{}{r}{}j(r,\mu,Z) = Z\bigg( \text{erf}(\mu r) - 1\bigg).
+ \deriv{}{r}{}u(r,\mu,Z) = Z\bigg( \text{erf}(\mu r) - 1\bigg).
 \end{equation}
 The Jastrow factor fulfilling Eq. \eqref{eq:one_e_1} is 
 \begin{equation}
  \label{eq:one_e_2}
- j(r,\mu,Z) = -Z r \bigg( 1 - \text{erf}\big(\mu r\big) \bigg) + \frac{Z}{\sqrt{\pi}\mu} e^{-\big(\mu r \big)^2}. 
+ u(r,\mu,Z) = -Z r \bigg( 1 - \text{erf}\big(\mu r\big) \bigg) + \frac{Z}{\sqrt{\pi}\mu} e^{-\big(\mu r \big)^2}. 
 \end{equation}
-Now, we can plug $j(r,\mu,Z)$ into Eq. \eqref{eq:one_e_0} in order to compute the explicit form of the similarity transformed Hamiltonian. 
+Now, we can plug $u(r,\mu,Z)$ into Eq. \eqref{eq:one_e_0} in order to compute the explicit form of the similarity transformed Hamiltonian. 
 To do so, we use Eq. \eqref{eq:one_e_1}, and also that 
 \begin{equation}
- \deriv{}{r}{2}j(r) = \frac{2 \mu Z }{\sqrt{\pi}} e^{-(\mu r)^2}.
+ \deriv{}{r}{2}u(r) = \frac{2 \mu Z }{\sqrt{\pi}} e^{-(\mu r)^2}.
 \end{equation}
 One obtains then the similarity transformed Hamiltonian 
 \begin{equation}
  \begin{aligned}
- \tilde{H}[j] = & e^{-j(r)} H e^{j(r)} \\
+ \tilde{H}[u] = & e^{-u(r)} H e^{u(r)} \\
               = & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) - \frac{Z}{r}  \\
                 & + Z \bigg( 1 - \text{erf}(\mu r)\bigg) \deriv{}{r}{} \\
                 & - Z \frac{\text{erf}(\mu r) - 1}{r} \\
@@ -1031,7 +1023,7 @@ and one can notice that the $\frac{-Z}{r}$ interaction cancels out to give
 \begin{equation}
  \label{eq:one_e_3}
  \begin{aligned}
- \tilde{H}[j] = & e^{-j(r)} H e^{j(r)} \\
+ \tilde{H}[u] = & e^{-u(r)} H e^{u(r)} \\
               = & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big)  \\
                 & -Z \bigg[ \frac{\mu}{\sqrt{\pi}} e^{-(\mu r)^2} + \frac{\text{erf}(\mu r)}{r} + \frac{1}{2}Z \bigg( \text{erf}(\mu r) -1 \bigg)^2 \bigg] \\
                 & + Z \bigg( 1 - \text{erf}(\mu r)\bigg) \deriv{}{r}{}. 
@@ -1043,13 +1035,13 @@ Therefore, compared to the usual Hamiltonian, the similarity transformed Hamilto
 Now that we know the general form of the one-body Jastrow factor for a one electron system, we can generalize it 
 to an $N$-electron system and an $M$ nucleus system by just taking the following form 
 \begin{equation}
- e^{\hat{\tau}({\bf r}_1,\hdots , {\bf r}_i,{\bf r}_N)} = e^{-\sum_i^N J({\bf r}_i)} 
+ e^{\hat{\tau}({\bf r}_1,\hdots , {\bf r}_i,{\bf r}_N)} = e^{-\sum_i^N u({\bf r}_i)} 
 \end{equation}
-where $J({\bf r}_i)$ has the following form 
+where $u({\bf r}_i)$ has the following form 
 \begin{equation}
- J({\bf r}_i) = \sum_{A} j(r_{iA},\mu,Z_A) 
+ u({\bf r}_i) = \sum_{A} u(r_{iA},\mu,Z_A) 
 \end{equation}
-where $j(r,\mu,Z)$ is given by Eq. \eqref{eq:one_e_2} and $r_{iA} = \big|{\bf r}_i - {\bf R}_A \big|$. 
+where $u(r,\mu,Z)$ is given by Eq. \eqref{eq:one_e_2} and $r_{iA} = \big|{\bf r}_i - {\bf R}_A \big|$. 
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the equation of the similarity transformed Hamiltonian is similar  
 to that of Eq. \eqref{ht_def_g} but with a new form of Jastrow factor. 
 Therefore one needs to compute $\big[ H,\hat{\tau} \big]$ and $\frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]$. 
@@ -1057,42 +1049,42 @@ Let us begin by $\big[ H,\hat{\tau} \big]$, and as before, we apply it to a gene
 \begin{equation}
  \label{eq:one_com1_1}
  \begin{aligned}
- \bigg[ H, \hat{\tau} \bigg]\phi(\br{}_1,\hdots \br{}_N) & = \bigg[ -\frac{1}{2} \sum_i \nabla^2_i, \sum_{j} J(\br{}_j) \bigg]      \phi(\br{}_1,\hdots \br{}_N) \\    
-                                                        & = -\frac{1}{2} \sum_i \bigg( \big(\nabla^2_i J({\bf r}_i)\big) + 2\nabla_i J({\bf r}_i) \cdot \nabla_i \phi(\br{}_1,\hdots \br{}_N) \bigg).  
+ \bigg[ H, \hat{\tau} \bigg]\phi(\br{}_1,\hdots \br{}_N) & = \bigg[ -\frac{1}{2} \sum_i \nabla^2_i, \sum_{u} u(\br{}_j) \bigg]      \phi(\br{}_1,\hdots \br{}_N) \\    
+                                                        & = -\frac{1}{2} \sum_i \bigg( \big(\nabla^2_i u({\bf r}_i)\big) + 2\nabla_i u({\bf r}_i) \cdot \nabla_i \phi(\br{}_1,\hdots \br{}_N) \bigg).  
  \end{aligned}
 \end{equation}
 Therefore, one can write that term as
 \begin{equation}
  \label{eq:one_com1_2}
  \begin{aligned}
-  \big[ H,\hat{\tau} \big] =& -\frac{1}{2} \bigg( \sum_i \nabla^2_i J(\br{}_i) \bigg) \\
-                            & -\sum_i \bigg(\nabla_i J(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg).
+  \big[ H,\hat{\tau} \big] =& -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i) \bigg) \\
+                            & -\sum_i \bigg(\nabla_i u(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg).
  \end{aligned}
 \end{equation}
 After some math, the second-order commutator is simply 
 \begin{equation}
- \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = -\sum_i \nabla_i J({\bf r}_i) \cdot \nabla_i J({\bf r}_i) 
+ \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = -\sum_i \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) 
 \end{equation}
 So eventually, the similarity transformed operator becomes 
 \begin{equation}
  \begin{aligned}
-& H + \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = \\ & H -\frac{1}{2} \bigg( \sum_i \nabla^2_i J(\br{}_i) \bigg)    
-                                                                   -\sum_i \bigg(\nabla_i J(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg)  
-                                                                   -\frac{1}{2}\sum_i \nabla_i J({\bf r}_i) \cdot \nabla_i J({\bf r}_i) 
+& H + \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = \\ & H -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i) \bigg)    
+                                                                   -\sum_i \bigg(\nabla_i u(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg)  
+                                                                   -\frac{1}{2}\sum_i \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) 
  \end{aligned}
 \end{equation}
 Therefore, the addition of the jastrow operator does not add extra two-body terms. 
 \subsection{Computation of the total operator}
-\subsubsection{Computation of $\nabla_i J(\br{}_i)$}
+\subsubsection{Computation of $\nabla_i u(\br{}_i)$}
 \begin{equation}
  \begin{aligned}
-&\nabla_i J(\br{}_i) = \sum_A \nabla_i J(r_{iA},Z_A) \\
-                    &= \sum_A \deriv{}{x_i}{} J(r_{iA},Z_A) {\bf e}_{x_i} + \deriv{}{y_i}{} J(r_{iA},Z_A) {\bf e}_{y_i} + \deriv{}{z_i}{} J(r_{iA},Z_A) {\bf e}_{z_i}, 
+&\nabla_i u(\br{}_i) = \sum_A \nabla_i u(r_{iA},Z_A) \\
+                    &= \sum_A \deriv{}{x_i}{} u(r_{iA},Z_A) {\bf e}_{x_i} + \deriv{}{y_i}{} u(r_{iA},Z_A) {\bf e}_{y_i} + \deriv{}{z_i}{} u(r_{iA},Z_A) {\bf e}_{z_i}, 
  \end{aligned}
 \end{equation}
 and 
 \begin{equation}
- \deriv{}{x_i}{}J(r_{iA}) = \deriv{}{r_{iA}}{}J(r_{iA}) \deriv{r_{iA}}{x_i}{},
+ \deriv{}{x_i}{}u(r_{iA}) = \deriv{}{r_{iA}}{}u(r_{iA}) \deriv{r_{iA}}{x_i}{},
 \end{equation}
 and as $r_{iA} = \sqrt{(x_1 - x_A)^2 + (y_1 - y_A)^2 + (z_1 - z_A)^2} $ 
 one has                                                              
@@ -1101,13 +1093,13 @@ one has
 \end{equation}
 and therefore according to Eq. \eqref{eq:one_e_1}, one has 
 \begin{equation}
- \deriv{}{x_i}{} J(r_{iA},Z_A) = -\sum_A Z_A \big( x_i - x_A \big) \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}.
+ \deriv{}{x_i}{} u(r_{iA},Z_A) = -\sum_A Z_A \big( x_i - x_A \big) \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}.
 \end{equation}
-\subsubsection{Computation of $\nabla_i J({\bf r}_i) \cdot \nabla_i J({\bf r}_i)$}
-The computation of $\nabla_i J({\bf r}_i) \cdot \nabla_i J({\bf r}_i)$ leads to 
+\subsubsection{Computation of $\nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i)$}
+The computation of $\nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i)$ leads to 
 \begin{equation}
  \begin{aligned}
-  \nabla_i J({\bf r}_i) \cdot \nabla_i J({\bf r}_i) =  \sum_{A,B} Z_B &Z_A \big( x_i - x_A \big) \big( x_i - x_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}} \\
+  \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) =  \sum_{A,B} Z_B &Z_A \big( x_i - x_A \big) \big( x_i - x_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}} \\
                                                                       & +  \big( y_i - y_A \big) \big( y_i - y_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}} \\ 
                                                                       & +  \big( z_i - z_A \big) \big( z_i - z_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}}.
  \end{aligned}
@@ -1121,11 +1113,11 @@ The diagonal part of such integrals is simply
 \end{equation}
 
 
-\subsubsection{Computation of $\nabla^2_i J(\br{}_i) $}
+\subsubsection{Computation of $\nabla^2_i u(\br{}_i) $}
 We need to compute 
 \begin{equation}
  \begin{aligned}
- \deriv{}{x_{i}}{2} J(\br{}_i) & = -\sum_A Z_A \deriv{}{x_i}{} \bigg[(x_i - x_A) \frac{1 - \text{erf}(\mu r)}{r_{iA}} \bigg] \\
+ \deriv{}{x_{i}}{2} u(\br{}_i) & = -\sum_A Z_A \deriv{}{x_i}{} \bigg[(x_i - x_A) \frac{1 - \text{erf}(\mu r)}{r_{iA}} \bigg] \\
                                & = -\sum_A Z_A \bigg[ \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} + (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \bigg]
  \end{aligned}
 \end{equation}
@@ -1144,7 +1136,7 @@ Therefore, the Laplacian is
 \begin{equation}
  \begin{aligned}
  \label{eq:lapl_interm_1}
-&  \deriv{}{x_{i}}{2} J(\br{}_i) + \deriv{}{y_{i}}{2} J(\br{}_i) + \deriv{}{z_{i}}{2} J(\br{}_i) =  - \sum_{A} Z_A \bigg[ 3 \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \\
+&  \deriv{}{x_{i}}{2} u(\br{}_i) + \deriv{}{y_{i}}{2} u(\br{}_i) + \deriv{}{z_{i}}{2} u(\br{}_i) =  - \sum_{A} Z_A \bigg[ 3 \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \\
  & + (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
  & + (y_i - y_A) \deriv{}{y_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
  & + (z_i - z_A) \deriv{}{z_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \bigg]
@@ -1171,18 +1163,18 @@ which is simply
 \end{equation}
 Then, coming back to Eq. \eqref{eq:lapl_interm_1} with Eq. \eqref{eq:lapl_interm_2} one has 
 \begin{equation}
- \Delta_i J(\br{}_i) = - \sum_{A}  Z_A \bigg[ 3 \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg) \bigg]
+ \Delta_i u(\br{}_i) = - \sum_{A}  Z_A \bigg[ 3 \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg) \bigg]
 \end{equation}
 which becomes 
 \begin{equation}
- \Delta_i J(\br{}_i) = - \sum_{A}  2 \, Z_A  \bigg[ \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2}  \bigg]
+ \Delta_i u(\br{}_i) = - \sum_{A}  2 \, Z_A  \bigg[ \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2}  \bigg]
 \end{equation}
 \subsubsection{Computation of the total operator}
 \begin{equation}
  \begin{aligned}
-& H + \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],J\bigg] = \\ & H -\frac{1}{2} \bigg( \sum_i \nabla^2_i J(\br{}_i) \bigg)    
-                                                                   -\sum_i \bigg(\nabla_i J(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg)  
-                                                                   -\frac{1}{2}\sum_i \nabla_i J({\bf r}_i) \cdot \nabla_i J({\bf r}_i) 
+& H + \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],J\bigg] = \\ & H -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i) \bigg)    
+                                                                   -\sum_i \bigg(\nabla_i u(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg)  
+                                                                   -\frac{1}{2}\sum_i \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) 
  \end{aligned}
 \end{equation}
 which becomes
@@ -1250,47 +1242,48 @@ Let us assume one has a range separation parameter varying in space $\mur{}$ and
 Therefore, one would like to derive the same equations as for the constant $\mu$. 
 The Jastrow factor is therefore expressed as
 \begin{equation}
- \tilde{j}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\bigg( j(r_{12};\mur{1}) + j(r_{12};\mur{2}) \bigg)
+ \tilde{u}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\bigg( u(r_{12};\mur{1}) + u(r_{12};\mur{2}) \bigg)
 \end{equation}
-where $j(r_{12};\mu)$ is the Jastrow factor defined in Eq. \eqref{eq:def_j}. 
+where $u(r_{12};\mu)$ is the Jastrow factor defined in Eq. \eqref{eq:def_j}. 
 To derive properly the equations for such a new Jastrow factor, one needs to derive the different terms involving gradients and so on. 
-\subsection{Gradients of $\tilde{j}(\bd{r_1},\bd{r_2})$}
-A fundamental quantity is the gradient of $\tilde{j}(\bd{r_1},\bd{r_2})$ which is 
+\subsection{Gradients of $\tilde{u}(\bd{r_1},\bd{r_2})$}
+A fundamental quantity is the gradient of $\tilde{u}(\bd{r_1},\bd{r_2})$ which is 
 \begin{equation}
- \nabla_1 \tilde{j}(\bd{r_1},\bd{r_2}) = \deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{y_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{z_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) {\bf e}_{z1}.
+ \nabla_1 \tilde{u}(\bd{r_1},\bd{r_2}) = \deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{y_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{z_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) {\bf e}_{z1}.
 \end{equation}
-Therefore one needs to compute $\deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2})$
+Therefore one needs to compute $\deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2})$
 \begin{equation}
- \deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\deriv{}{x_1}{} j(r_{12};\mur{1}) 
-                                               +\frac{1}{2}\deriv{}{x_1}{} j(r_{12};\mur{2}) .
+ \deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\deriv{}{x_1}{} u(r_{12};\mur{1}) 
+                                               +\frac{1}{2}\deriv{}{x_1}{} u(r_{12};\mur{2}) .
 \end{equation}
-Applying the chain rule 
+Let us begin with the first term 
 \begin{equation}
- \deriv{}{x_1}{} j(r_{12};\mur{2}) = \deriv{}{r_{12}}{} j(r_{12};\mur{2})\deriv{r_{12}}{x_1}{} + \deriv{}{\mur{2}}{}j(r_{12};\mur{2}) \deriv{\mur{2}}{x_1}{},
+ \begin{aligned}
+ \deriv{}{x_1}{} u(r_{12};\mur{1})=& \deriv{}{r_{12}}{} u(r_{12};\mur{1})\deriv{r_{12}}{x_1}{} \\ 
+                                  +& \deriv{}{\mur{1}}{}u(r_{12};\mur{1}) \deriv{\mur{1}}{x_1}{},
+ \end{aligned}
 \end{equation}
-and as by definition $\deriv{\mur{2}}{x_1}{} = 0$, because 
-of the condition determining $j(r_{12};\mu)$ (see Eq.\eqref{def_j_0}) and according to Eq.\eqref{eq:dx1_u} one obtains that 
+but as 
 \begin{equation}
- \deriv{}{x_1}{} j(r_{12};\mur{2}) = \frac{1 - \text{erf}(\mur{2} r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg).
-\end{equation}
-Then, 
-\begin{equation}
- \deriv{}{x_1}{} j(r_{12};\mur{1}) = \deriv{}{r_{12}}{} j(r_{12};\mur{1})\deriv{r_{12}}{x_1}{} + \deriv{}{\mur{1}}{}j(r_{12};\mur{1}) \deriv{\mur{1}}{x_1}{},
-\end{equation}
-and as 
-\begin{equation}
- \label{eq:d_dmu_j}
- \deriv{}{\mu}{}j(r_{12};\mu) = \frac{e^{-(\mu r_{12})^2}}{2\sqrt{\pi} \mu^2},
+ \deriv{}{\mu}{}u(r_{12};\mu) = \frac{e^{-(\mu r_{12})^2}}{2 \sqrt{\pi} \mu^2}
 \end{equation}
 one obtains 
 \begin{equation}
- \deriv{}{x_1}{} j(r_{12};\mur{1}) = \frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg) + \frac{e^{-(\mur{1} r_{12})^2}}{2\sqrt{\pi} \mur{1}^2} \deriv{\mur{1}}{x_1}{}.
+ \begin{aligned}
+ \deriv{}{x_1}{} u(r_{12};\mur{1}) =& \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \\
+                                   +&\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.  
+ \end{aligned}
+\end{equation}
+Similarly, as by definition $\deriv{\mur{2}}{x_1}{} = 0$, because 
+of the condition determining $u(r_{12};\mu)$ (see Eq.\eqref{def_j_0}) and according to Eq.\eqref{eq:dx1_u} one obtains that 
+\begin{equation}
+ \deriv{}{x_1}{} u(r_{12};\mur{2}) = \frac{1 - \text{erf}(\mur{2} r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg).
 \end{equation}
 Therefore, one obtains finally that 
 \begin{equation}
  \label{eq:d_dx1_jtilde}
  \begin{aligned}
- \deriv{}{x_1}{} \tilde{j}(\bd{r_1},\bd{r_2}) = & \frac{(x_1 - x_2)}{2 r_{12}} 
+ \deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) = & \frac{(x_1 - x_2)}{2 r_{12}} 
  \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{2} + \frac{1 - \text{erf}(\mur{2} r_{12})}{2}  \bigg) \\
                  & + \frac{e^{-(\mur{1} r_{12})^2}}{2\sqrt{\pi} \mur{1}^2} \deriv{\mur{1}}{x_1}{},
  \end{aligned}
@@ -1299,20 +1292,20 @@ and similarly,
 \begin{equation}
  \label{eq:d_dx2_jtilde}
  \begin{aligned}
- \deriv{}{x_2}{} \tilde{j}(\bd{r_1},\bd{r_2}) = & \frac{(x_2 - x_1)}{2 r_{12}} 
+ \deriv{}{x_2}{} \tilde{u}(\bd{r_1},\bd{r_2}) = & \frac{(x_2 - x_1)}{2 r_{12}} 
  \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{2} + \frac{1 - \text{erf}(\mur{2} r_{12})}{2}  \bigg) \\
                  & + \frac{e^{-(\mur{2} r_{12})^2}}{2\sqrt{\pi} \mur{2}^2} \deriv{\mur{2}}{x_2}{},
  \end{aligned}
 \end{equation}
 
-\subsection{Computation of $\bigg(\nabla_1\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2$}
+\subsection{Computation of $\bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2$}
 Then one needs to compute 
 \begin{equation}
  \begin{aligned}
-& \bigg(\nabla_1\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
-& \bigg(\deriv{}{x_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
-& \bigg(\deriv{}{y_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{y_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
-& \bigg(\deriv{}{z_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{z_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2.
+& \bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{y_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{y_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{z_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{z_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2.
  \end{aligned}
 \end{equation}
 According to Eq.\eqref{eq:d_dx1_jtilde}, 
@@ -1323,8 +1316,8 @@ and defining the complementary error function as
 one has that 
 \begin{equation}
  \begin{aligned}
-& \bigg(\deriv{}{x_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
- = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{1} r_{12}\big) \bigg)^2  \\
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
  + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 \\
  + & \frac{\big(x_1 - x_2\big)}{r_{12}} \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
  \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
@@ -1333,7 +1326,7 @@ one has that
 Similarly 
 \begin{equation}
  \begin{aligned}
-& \bigg(\deriv{}{x_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+& \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
  = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
  + & \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2 \\
  + & \frac{\big(x_2 - x_1\big)}{r_{12}} \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} 
@@ -1343,7 +1336,7 @@ Similarly
 Therefore, 
 \begin{equation}
  \begin{aligned}
-& \bigg(\deriv{}{x_1}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{j}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
  = & \frac{1}{2}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
  + & \frac{\big(x_1 - x_2\big)}{2 \sqrt{\pi}r_{12}}  \frac{\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)}{2} \\
 &\bigg(   \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{\big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
@@ -1356,8 +1349,14 @@ Therefore,
 Summing all terms and noticing that $\bigg(x_1 - x_2\bigg)^2 + \bigg(y_1 - y_2\bigg)^2 + \bigg(z_1 - z_2\bigg)^2 = \bigg(r_{12}\bigg)^2$ leads to 
 \begin{equation}
  \begin{aligned}
-& \bigg(\nabla_1\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{j}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
-& \frac{1}{8}\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{1} r_{12}\big) \bigg)^2 
+& \bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 = 
+  \frac{1}{8}\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+&+\frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{4 \sqrt{\pi}r_{12}}  \\
+& \big( \bri{1} - \bri{2}\big)\cdot
+\bigg(\frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \nabla_1 \mur{1}
+  -   \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \nabla_2 \mur{2}  \bigg) \\
+  &+ \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 
+ + \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2.
  \end{aligned}
 \end{equation}
 \bibliography{srDFT_SC}
