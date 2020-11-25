@@ -58,8 +58,49 @@ blabla
 
 \maketitle
 \section{Introduction}
-Two formulation : the "pseudo orbital" (\textit{i.e.} usual common set of orbitals for bra and ket) and "biorthonormal orbitals" (\textit{i.e.} a different set of orbitals for bra and ket having the biorthonormal property). 
-In the limit of the FCI wave function, these two formulations coincide, therefore we keep the "pseudo orbital" theory for the sake of simplicity. 
+One of the most challenging problem in modern computational chemistry is the accurate simulation of the electronic structure of atomic and molecular systems, which implies solving the Schroedinger equation for a general $N$-body system. 
+At the heart of the complexity of such a task relies the rapidly prohibitive computational cost of the wave function methods (WFT), which is induced by the exponential growth with the system size of the Hilbert space involved in the linear eigenvalue problem to be solved. 
+
+In usual WFT, the computational bottleneck is mainly determined by two factors: the level of complexity of the wave function which is imposed by the amount of strong correlation effects in the system, and the convergence of the computed quantities with respect to the size of the one-electron basis used to project the Hamiltonian into a finite eigenvalue problem. 
+Typically, strong correlation effects appear when the two-electron coulomb interaction can no longer be considered as a small perturbation over a mean field Hamiltonian. Treating such effects in a black box way involves the use of very flexible wave functions such as 
+selected CI\cite{HurMalRan-JCP-73,bender,malrieu,buenker1,buenker-book,three_class_CIPSI,harrison,GinSceCaf-CJC-13, GinSceCaf-JCP-15, ShaHolJeaAlaUmr-JCTC-17}, 
+%selected CI\cite{HurMalRan-JCP-73,bender,malrieu,buenker1,buenker-book}, 
+full configuration Quantum Monte Carlo\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} (FCI-QMC) or tensor product states\cite{ChaSha-AR-11,BaiRei-JCP-20}. These methods all have one thing in common: they manage to select, although through different mathematical forms, the dominant part of the exponentially growing Hilbert space that resulting from a $N$-electron problem among a given finite basis set. 
+
+Even if these selection schemes are extremely efficient to obtain a qualitative description of the wave function, a quantitative description is often out of reach as it implies the use of very large one-electron basis sets which are needed to recover the slowly converging correlation effects near the electron-electron coalescence point. 
+These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance: the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. As shown by the seminal works of Hylleraas \cite{Hyl-ZP-29} and further developed byKutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the size of the basis set is mainly due to the impossibility to represent the cusp in a finite basis set. 
+To tackle this problem, the introduction of functions explicitly depending on the inter-electronic coordinate (F12) have emerged\cite{Ten-TCA-12,TenNog-WIREs-12,HatKloKohTew-CR-12, KonBisVal-CR-12, GruHirOhnTen-JCP-17, MaWer-WIREs-18}. 
+In the F12 schemes, the geminal function depending on the inter-electronic coordinate is used to describe short-range correlation effects which are absent from the finite basis set. Thanks to strong orthogonality, 
+all redundant correlation effects of the geminal function are projected out of the wave function, 
+and therefore the geminal function only deals with correlation orthonormal to the basis set. 
+The resulting F12 theories, mainly based on perturbation theory and coupled cluster theory, are therefore 
+extremely close to their parent theory, with additional integrals two- and three-body terms resulting from the use of the geminal function. 
+It is important to notice that because of the orthogonalization between the geminal and the basis set, 
+the complexity of the $N$-body problem within a given basis set is essentially the same between a F12 theory and their usual parent. Therefore, no strong compression of the electronic wave function is obtained by the F12 theory, 
+but a fast convergence toward the complete basis set limit (CBS) is nevertheless obtained.  
+
+An alternative point of view using a geminal function is the so-called transcorrelated (TC) approach where the full effect of the geminal function is incorporated into the calculation through a similarity transformation of the original Hamiltonian. 
+The pioneers of such theory were Boys, Handy and co-workers\cite{BoyHan-PRSLA-69,BoyHanLin-1-PRSLA-69,BoyHanLin-2-PRSLA-69} where they derive the equations of the general form of the TC Hamiltonian which is non hermitian and contains explicitly three-body interaction. Despite the loss of variational principle due to the non hermitian nature of the TC Hamiltonian, the parameters optimized by Boys and Handy were mainly the orbitals of a single Slater determinant together with the mathematical form of the geminal function with which one performs the similarity transformation of the Hamiltonian to obtain the TC Hamiltonian. 
+
+Later on, Ten-No\cite{Ten-No-CPL-00} proposed to significantly change the paradigm of Boys and Handy: instead of using a single Slater determinant and optimizing the orbitals and the geminal function, one uses a more elaborate many body theory (Moller-Plesset at second order in Refs.\onlinecite{Ten-No-CPL-00,HinTanTen-JCP-01} and coupled cluster in later works\cite{HinTanTen-CPL-02}) with a fixed universal geminal function. Such a geminal function, developed as a linear combination of gaussian functions, is optimized in order to remove the divergent character of the coulomb potential within the TC framework. 
+In Ref.\onlinecite{HinTanTen-JCP-01}, Ten-No \textit{et. al.} introduced a biorthogonal approach, 
+which allows to treat the non-hermitian TC Hamiltonian in a many-body framework which is therefore more suited 
+to develop many-body perturbation theory approaches. 
+It is also noteworthy that the eigenfunctions of the TC Hamiltonian are invariant by orbital rotation, 
+and therefore in the limit where one gives full flexibility to the wave function, 
+the biorthogonal and usual orthogonal approaches give the same results. 
+Nevertheless, as approximations are necessary made in the wave function ansatz in realistic systems, 
+the biorthogonal approach might improve the quality of the results. 
+
+In latter works, Umezawa \textit{et. al.}\cite{UmeTsu-JCP-03,UmeTsuOhnShiChi-JCP-05} introduced a scheme to couple TC equations with the usual variational Monte Carlo (VMC) scheme in order to optimise the Jastrow factor through a variance miminization. 
+An attempt to make TC equations variational have been proposed by Luo\cite{Luo-JCP-10,Luo-JCP-11} based on the empirical experience that in the original single determinant TC approach of Boys and Handy, the orbital optimization seemed to be the source of loss of the variational property. Luo therefore proposed to replace the original TC equations to optimize the orbitals by that of a general Jastrow-Slater ansatz. 
+
+Yanai and Chan
+
+More recently, Alavi \textit{et. al}\cite{CohLuoGutDobTewAla-JCP-19} applied the TC equations to elaborate geminal functions explicitly taking into account for electron-electron correlation together with electron-electron-nucleus distance. The geminal function used in such work were obtained from the optimized Jastrow factors for He to Ne of Moskowitz \textit{et. al.}\cite{SchMos-JCP-90}. The main advantage of Alavi work relies on the fact that they allow a full flexibility to the Slater part of the wave function to adapt to the elaborated geminal functions. 
+This is done through the use of a projective technique, the FCI-QMC, which allows to obtain the ground state of an operator, hermitian or not, through a stochastic sampling of the Hilbert space. Their approach share common points with that of Ten-No in the sense that they both use a fixed Jastrow factor and use a flexible form of wave functions, 
+even though the FCIQMC is certainly more flexible than the coupled cluster ansatz of Ten-No used in Ref. \onlinecite{HinTanTen-JCP-01}. 
+
 
 The paper is organized as follows. 
 In the first section, inspired by the short-range behaviour of RS-DFT effective wave functions,  
