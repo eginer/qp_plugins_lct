@@ -38,6 +38,7 @@
 \newcommand{\mur}[1]{\mu({\bf r_{#1}})}
 \newcommand{\muueg}{\mu_{\text{UEG}}}
 \newcommand{\muuegav}{\langle \mu_{\text{UEG}}\rangle}
+\newcommand{\muav}{\langle \mu\rangle}
 \newcommand{\mursc}{ \mu_{r_{s,c}}}
 \newcommand{\murscav}{\langle \mu_{r_{s,c}}\rangle}
 \newcommand{\mursclda}{\langle \mu_{r_{s,c}^{\text{UEG}}}\rangle}
@@ -65,26 +66,26 @@ In usual WFT, the computational bottleneck is mainly determined by two factors: 
 Typically, strong correlation effects appear when the two-electron coulomb interaction can no longer be considered as a small perturbation over a mean field Hamiltonian. Treating such effects in a black box way involves the use of very flexible wave functions such as 
 selected CI\cite{HurMalRan-JCP-73,bender,malrieu,buenker1,buenker-book,three_class_CIPSI,harrison,GinSceCaf-CJC-13, GinSceCaf-JCP-15, ShaHolJeaAlaUmr-JCTC-17}, 
 %selected CI\cite{HurMalRan-JCP-73,bender,malrieu,buenker1,buenker-book}, 
-full configuration Quantum Monte Carlo\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} (FCI-QMC) or tensor product states\cite{ChaSha-AR-11,BaiRei-JCP-20}. These methods all have one thing in common: they manage to select, although through different mathematical forms, the dominant part of the exponentially growing Hilbert space that resulting from a $N$-electron problem among a given finite basis set. 
+full configuration Quantum Monte Carlo\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} (FCI-QMC) or matrix product states\cite{ChaSha-AR-11,BaiRei-JCP-20}. These methods all have one thing in common: they manage to select, although through different mathematical frameworks, the part of the exponentially growing Hilbert space which dominates the wave function. 
 
 Even if these selection schemes are extremely efficient to obtain a qualitative description of the wave function, a quantitative description is often out of reach as it implies the use of very large one-electron basis sets which are needed to recover the slowly converging correlation effects near the electron-electron coalescence point. 
 These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance: the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. As shown by the seminal works of Hylleraas \cite{Hyl-ZP-29} and further developed byKutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the size of the basis set is mainly due to the impossibility to represent the cusp in a finite basis set. 
 To tackle this problem, the introduction of functions explicitly depending on the inter-electronic coordinate (F12) have emerged\cite{Ten-TCA-12,TenNog-WIREs-12,HatKloKohTew-CR-12, KonBisVal-CR-12, GruHirOhnTen-JCP-17, MaWer-WIREs-18}. 
 In the F12 schemes, the geminal function depending on the inter-electronic coordinate is used to describe short-range correlation effects which are absent from the finite basis set. Thanks to strong orthogonality, 
-all redundant correlation effects of the geminal function are projected out of the wave function, 
-and therefore the geminal function only deals with correlation orthonormal to the basis set. 
+all redundant correlation effects between the geminal function and the basis set are projected out of the wave function, 
+and therefore the geminal function only deals with correlation effects orthonormal to the basis set. 
 The resulting F12 theories, mainly based on perturbation theory and coupled cluster theory, are therefore 
-extremely close to their parent theory, with additional integrals two- and three-body terms resulting from the use of the geminal function. 
+extremely close to their parent theory, with additional two- and three-body terms resulting from the use of the geminal function. 
 It is important to notice that because of the orthogonalization between the geminal and the basis set, 
 the complexity of the $N$-body problem within a given basis set is essentially the same between a F12 theory and their usual parent. Therefore, no strong compression of the electronic wave function is obtained by the F12 theory, 
-but a fast convergence toward the complete basis set limit (CBS) is nevertheless obtained.  
+but a fast convergence toward the complete basis set limit (CBS) is nevertheless obtained for correlation energies and other properties sensitive to the basis set.  
 
-An alternative point of view using a geminal function is the so-called transcorrelated (TC) approach where the full effect of the geminal function is incorporated into the calculation through a similarity transformation of the original Hamiltonian. 
-The pioneers of such theory were Boys, Handy and co-workers\cite{BoyHan-PRSLA-69,BoyHanLin-1-PRSLA-69,BoyHanLin-2-PRSLA-69} where they derive the equations of the general form of the TC Hamiltonian which is non hermitian and contains explicitly three-body interaction. Despite the loss of variational principle due to the non hermitian nature of the TC Hamiltonian, the parameters optimized by Boys and Handy were mainly the orbitals of a single Slater determinant together with the mathematical form of the geminal function with which one performs the similarity transformation of the Hamiltonian to obtain the TC Hamiltonian. 
+An alternative point of view using a geminal function is the so-called transcorrelated (TC) approach where the full effect of the geminal function is incorporated into the calculation through a similarity transformation of the original Hamiltonian by the geminal function. 
+The pioneers of such theory were Boys, Handy and co-workers\cite{BoyHan-PRSLA-69,BoyHanLin-1-PRSLA-69,BoyHanLin-2-PRSLA-69} where they derive the equations of the general form of the TC Hamiltonian which is non hermitian and contains explicitly three-body interaction. Because of its non-hermitian nature, the TC Hamiltonian looses the variational principle, but Boys and Handy nevertheless managed to derive equations to optimize orbitals and geminal parameters for a single Slater determinant. 
 
 Later on, Ten-No\cite{Ten-No-CPL-00} proposed to significantly change the paradigm of Boys and Handy: instead of using a single Slater determinant and optimizing the orbitals and the geminal function, one uses a more elaborate many body theory (Moller-Plesset at second order in Refs.\onlinecite{Ten-No-CPL-00,HinTanTen-JCP-01} and coupled cluster in later works\cite{HinTanTen-CPL-02}) with a fixed universal geminal function. Such a geminal function, developed as a linear combination of gaussian functions, is optimized in order to remove the divergent character of the coulomb potential within the TC framework. 
 In Ref.\onlinecite{HinTanTen-JCP-01}, Ten-No \textit{et. al.} introduced a biorthogonal approach, 
-which allows to treat the non-hermitian TC Hamiltonian in a many-body framework which is therefore more suited 
+which allows to treat the non-hermitian TC Hamiltonian in a mathematical form more suited 
 to develop many-body perturbation theory approaches. 
 It is also noteworthy that the eigenfunctions of the TC Hamiltonian are invariant by orbital rotation, 
 and therefore in the limit where one gives full flexibility to the wave function, 
@@ -117,14 +118,11 @@ Eventually, we study the H$_2$ molecule and compare different regimes of correla
 \section{A new form of Jastrow factor for transcorrelated Hamiltonian}
 This section is dedicated to the derivation of a new form of Jastrow factor mimicking at short range the correlation effects of RS-DFT. 
 For the sake of simplicity, we derive the transcorrelated Hamiltonian for the helium atom for a general Jastrow factor depending on the inter electronic distance.  
-Then we focus on the behaviour at small $r_{12}$ of different flavours of Hamiltonians 
-and the corresponding discontinuity in their eigenvectors. 
-We browse three different types of Hamiltonians: the usual physical Hamiltonian, the transcorrelated Hamiltonian together with the effective Hamiltonian used in RS-DFT.
-Based on such consideration, we propose a new Jastrow factor mimicking RS-DFT Hamiltonian at small $r_{12}$. 
+Based on such a simple mathematical structure, we propose a new Jastrow factor mimicking RS-DFT Hamiltonian at small $r_{12}$. 
 Then, we derive the analytical form of the corresponding new transcorrelated Hamiltonians $\tilde{H}[\mu]$ in the case of a general $N$-electron system, and study its physical content as a  function of the parameter $\mu$. 
+MAKE THE LINK WITH WORK OF TENNO AND ALAVI
 
-\subsection{A simple physical picture: the case of the helium atom}
-\subsubsection{The transcorrelated Hamiltonian for helium atom}
+\subsection{A simple physical picture: the transcorrelated Hamiltonian for the helium atom}
 Let us write the Hamiltonian of the helium atom in the $ r_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinate 
 \begin{equation}
  H  = h_c + \frac{1}{r_{12}},
@@ -136,7 +134,7 @@ where
  h_c = &-\frac{1}{2} \sum_{i=1}^2 \bigg(\deriv{}{r_i}{2} + \frac{2}{r_i} \deriv{}{r_i}{} + \frac{2 Z}{r_i}\bigg) \\
      &-\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} \bigg) \\
      &-\bigg( \frac{\bd{r_1}}{r_1} \cdot \frac{\bd{r_{12}} }{r_{12}}  \deriv{}{r_1}{} + 
-                \frac{\bd{r_2}}{r_2} \cdot \frac{\bd{r_{21}} }{r_{21}}  \deriv{}{r_2}{} \bigg),
+                \frac{\bd{r_2}}{r_2} \cdot \frac{\bd{r_{21}} }{r_{21}}  \deriv{}{r_2}{} \bigg).
  \end{aligned}
 \end{equation}
 \label{sec:he_j}
@@ -151,7 +149,7 @@ The only additional terms arising in $\tilde{H}[u]$ with respect to $H$ are thos
 \begin{equation}
  \mathcal{T}[u] =  -e^{-u(r_{12})}\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} \bigg)e^{u(r_{12})}.  
 \end{equation}
-After some derivation, one can notice that by defining the following operators 
+By defining the following operators 
 \begin{equation}
  \label{eq:def_tt}
  \tilde{t}[u] = -2 \deriv{u(r_{12})}{r_{12}}{} \deriv{}{r_{12}}{},
@@ -167,86 +165,13 @@ After some derivation, one can notice that by defining the following operators
 one can write the Similarity transformed Hamiltonian  as
 \begin{equation}
  \label{eq:ht_general}
- \tilde{H}[u] = h_c + \frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] + \tilde{t}[u] ,
+ \tilde{H}[u] = h_c + \frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] + \tilde{t}[u].
 \end{equation}
 Therefore, one can see from Eq. \eqref{eq:ht_general} that the two electrons experience a modified scalar potential given by $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u]$, and an additional differential operator $\tilde{t}[u]$, 
 the latter making $\tilde{H}[u]$ non-hermitian.   
 
-\subsubsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
-\label{sec:cusp}
-Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
-The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
-
-In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
-\begin{equation}
- H \psiex(\br{}_1,\br{}_2) = E_0 \psiex(\br{}_1,\br{}_2)\quad \forall (\br{}_1,\br{}_2).
-\end{equation}
-When looking at $r_{12}\approx 0$, all terms multiplying $\frac{1}{r_{12}}$ in $H \psiex(\br{}_1,\br{}_2)$ must remain finite, which, according to Eq.\eqref{def:h_c}, translates into
-\begin{equation}
- \label{eq:cusp_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
-\end{equation}
-or equivalently by multiplying Eq. \eqref{eq:cusp_0} by $r_{12}$
-\begin{equation}
- \lim_{r_{12}\rightarrow 0}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
-\end{equation}
-which translates into the famous cusp condition for antiparallel spins of Kato\cite{Kat-CPAM-57}, 
-\begin{equation}
- \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
-\end{equation} 
-For an excellent pedagogical and general derivation of the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
-
-Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
-\begin{equation}
- \label{eq:hpi0_ex}
- \tilde{H}[u] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
-\end{equation}
-Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $\tilde{H}[u]\phiex(\br{}_1,\br{}_2)$ must remain finite, 
-which involves also the term $\tilde{W}[u]$ in $\tilde{H}[u]$ (see Eq.\eqref{eq:def_wt}). Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
-\begin{equation}
- \label{eq:cusp_phi_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{u(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
-\end{equation}
-Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{u(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction induced by the presence of the Jastrow factor in $\tilde{H}[u]$. 
-Therefore, as long as one imposes that 
-\begin{equation}
- \label{eq:cusp_phi_1}
-  \deriv{u(r_{12})}{r_{12}}{}\bigg|_{r_{12}=0} = \frac{1}{2},
-\end{equation}
-which is nothing but the cusp condition for the Jastrow factor $u(r_{12})$, the scalar term proportional to $\frac{1}{r_{12}}$ in Eq.\eqref{eq:cusp_phi_0} vanishes at $r_{12}=0$, and then one obtains a non-divergent effective electron-electron interaction. 
-Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\eqref{eq:cusp_phi_0} becomes 
-\begin{equation}
- \label{eq:cusp_phi_2}
- \deriv{\phiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
-\end{equation}
-which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[u]$ is cuspless. 
-For instance, a simple Jastrow factor of the form $u(r_{12}) = \frac{1}{2} r_{12}$ releases $\phiex(\br{}_1,\br{}_2)$ from 
-the constraint of fulfilling the cusp condition. 
-
-Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
-where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
-The parameter which controls such a splitting is the so-called range separation parameter $\mu$:  RS-DFT reduces the usual WFT when $\mu \rightarrow \infty$, and $\mu \rightarrow 0$ it gives back the usual Kohn-Sham theory.  
-In practice, RS-DFT introduces a self-consistent Schroedinger-like equation which must be fulfilled by an effective wave function  $\Psi^\mu$.
-Applied to a two electron system and looking in regions where $r_{12}\approx 0$, the leading terms of the self-consistent Schroedinger-like equation of RS-DFT reads 
-\begin{equation}
- \label{eq:cusp_psi_mu_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
-\end{equation}
-and as the effective interaction $\frac{\text{erf}(\mu r_{12})}{r_{12}}$ is non divergent at $r_{12}=0$ for finite values of $\mu$
-\begin{equation}
- \lim_{r_{12} \rightarrow 0} \frac{\text{erf}(\mu r_{12})}{r_{12}} = \frac{2 \mu}{\sqrt{\pi}} , 
-\end{equation}
-one obtains that 
-\begin{equation}
- \label{eq:cusp_psi_mu_1}
- \deriv{\Psi^\mu(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
-\end{equation}
-which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, because they deal with an effective non-divergent interaction. 
-
-Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
-
 \subsection{A new form of Jastrow factor $u(\mu,r_{12})$ mimicking a long-range interaction}
-In section \ref{sec:cusp} we reviewed the forms of limit conditions at $r_{12}=0$ involved in different eigenvalue equations, which of course depends on the nature of the interaction at $r_{12}=0$. 
+MAKE THE LINK WITH WORK OF TENNO AND ALAVI
 In that section we derive a new Jastrow factor inspired by the limit condition of the similarity transformed Hamiltonian (see Eq.\eqref{eq:cusp_phi_0}) which mimics that of RS-DFT (see Eq.\eqref{eq:cusp_psi_mu_0}), at least at leading order in $1/r_{12}$. 
 \subsubsection{The working equation for $u(\mu,r_{12})$ }
 Eq. \eqref{eq:ht_general} gives the similarity transformed Hamiltonian for an arbitrary Jastrow factor, 
@@ -333,7 +258,8 @@ From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more s
 
 
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
-\subsubsection{Explicit form of $\tilde{H}[\mu]$ }
+\label{sec:ht_general}
+\subsubsection{General form of $\tilde{H}[\mu]$ }
 Having established the analytical expression of $u(r_{12};\mu)$, one can derive the general expression of the associated transcorrelated Hamiltonian.  
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
 \begin{equation}
@@ -368,9 +294,8 @@ where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{u})$ and
 Therefore, to obtain the analytical expression of the $\tilde{H}[\mu]$ for a general $N$-electron system, 
 one needs to compute the actual form of the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ when $u(\bri{1},\bri{2}) = u(r_{12},\mu)$. 
 
-\subsection{Explicit form for the operators $\hat{K}(\bri{1},\bri{2}) )$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
-\subsubsection{Intermediate quantities}
-To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to a $\bri{1}$ which reads 
+\subsection{Analytical form for the operators $\hat{K}(\bri{1},\bri{2}) $ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
+To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
 \begin{equation}
  \label{eq:nabla_u}
  \begin{aligned}
@@ -425,8 +350,7 @@ and therefore
 \begin{equation}
  \begin{aligned}
  \label{eq:nabla_i_nabla1}
- \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} r_{12} \deriv{}{r_{12}}{} \\
- = & \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
+ \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
  \end{aligned}
 \end{equation}
 which is a more compact expression than Eq.\eqref{def_non_hermit}
@@ -439,7 +363,7 @@ The computation of the Laplacian is a little more tedious, but after some deriva
  & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
  \end{aligned}
 \end{equation}
-\subsubsection{Explicit form of $\tilde{H}[\mu]$}
+
 Summing all terms to recombine $\hat{K}(\bri{1},\bri{2})$ reads 
 \begin{equation}
  \label{eq:k_final}
@@ -458,6 +382,7 @@ Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $
  \end{aligned}                    
 \end{equation}
 
+\subsection{Analytical form of $\tilde{H}[\mu]$}
 Having established the explicit form of $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$, one can now 
 look at the explicit analytical form of the transcorrelated Hamiltonian $\tilde{H}[\mu]$ obtained with $u(r_{12};\mu)$,  
 which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, which gives
@@ -498,7 +423,7 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
  2 \deriv{u(r_{12})}{r_{12}}{} + r_{12} \bigg( \deriv{u(r_{12})}{r_{12}}{2} + \bigg[ \deriv{u(r_{12})}{r_{12}}{} \bigg]^2\bigg) = 1 - \text{erf}(\mu r_{12}), 
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
-\subsubsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
+\subsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
 Regarding now the variation of $\tilde{H}[\mu]$, one expects that as 
 \begin{equation}
@@ -568,6 +493,7 @@ At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(
 Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$, which is tested for wide variety of two-electron systems in the next sections. 
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
+\label{sec:total_he}
 The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
 
 Considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected on $\basis$ by
@@ -711,11 +637,12 @@ Therefore, one can
 \end{figure*}
 
 \section{Study of the helium isoelectronic series}
-Having investigated the behaviour of both the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with $\mu$ and basis set used on the helium atom, we now study the ground state energies of the isoelectronic series of the helium atom H$^{-}$ to Ne$^{8+}$. As seen from the previous study on the helium atom, the quality of the eigenvalues of $\tilde{H}[\mu]$ depend on the value of $\mu$ but there is a quite wide regimes of $\mu$ for which  they  converge significantly faster with the basis set with respect to the usual Hamiltonian. Of course, the 'optimal' range of $\mu$ might depend on the system and we investigate here different approaches to systematically find a reasonable value of $\mu$ and test it on the isoelectronic series of the helium atom. All these systems are weakly correlated, but they cover a quite wide range of densities. 
+\label{sec:iso_elec}
+Having investigated in the case of the helium atom the behaviour of both the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with both $\mu$ and the basis set used, we now study the ground state energies of the isoelectronic series of the helium atom H$^{-}$ to Ne$^{8+}$. As seen from the previous study on the helium atom, the quality of the eigenvalues of $\tilde{H}[\mu]$ depends on the value of $\mu$ but there is a quite wide regimes of $\mu$ for which they converge significantly faster with the basis set with respect to the usual Hamiltonian. Of course, the 'optimal' range of $\mu$ might depend on the system and we investigate here different approaches to systematically find a reasonable value of $\mu$ and test it on this isoelectronic series which consist in weakly correlated covering a quite wide range of densities. 
+As in the study of the helium atom of Sec \ref{sec:total_h}, in a given basis set $\basis$ and for a given system, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
 
-\subsection{A systematic way to find an optimal value of $\mu$ }
 In order to find a systematic way to determine a reasonable value of $\mu$, one must keep in mind the physical meaning of such quantity: it has the unit of an inverse distance, and determines, at leading order, the depth of the hole imposed by the Jastrow factor. 
-Therefore, it must have the typical scale of the inverse of correlation effects, which of course strongly depends on the system. In the context of RS-DFT, Toulouse \textit{et. al.}\cite{TouColSav-JCP-05} have investigated different flavour of $\mu$ varying in space through the density of the system in a given point in space. 
+Therefore, it must have the typical scale of the inverse of correlation effects, which of course strongly depends on the system through its density for instance. In the context of RS-DFT, Toulouse \textit{et. al.}\cite{TouColSav-JCP-05} have investigated different flavour of $\mu$ varying in space through the density of the system in a given point in space. 
 More specifically, they introduced (see Eq. (12) of \onlinecite{TouColSav-JCP-05}) a range separation parameter typical for correlation effects in the uniform electron gas (UEG) 
 \begin{equation}
  \mursc({\bf r}) =  \frac{2\sqrt{\alpha / \pi}}{\sqrt{r_s({\bf r})}},
@@ -729,7 +656,8 @@ Therefore, we propose here to use the average value of $\mursc({\bf r})$ over th
 \end{equation}
 where $n_{\text{HF}}({\bf r})$ is the HF density and $N_e$ the number of electrons in the system. 
 We report in Table \ref{table_conv_e_mu_iso} the convergence with respect to the basis set $\basis$ the error with respect to the exact ground state energies of the isoelectronic series of the helium atom using $\murscav$ as value of $\mu$ in $\tilde{H}[\mu]$. 
-As one can observe from  Table \ref{table_conv_e_mu_iso}, the ground state energies of $\tilde{H}[\murscav]$ converge much faster than that of the usual Hamiltonian as the MAD for the ground state energies is of 2.64 mH, 0.48 mH and 0.26 mH in the double-, triple- and quadruple zeta quality basis sets (respectively) whereas it is of 12.16 mH, 4.71 mH and 1.64 mH for the usual Hamiltonian. Also, one can observe that, except for the low density systems such as the H${^-}$ and He species, it converges from below the exact ground state energy. 
+We also report in the column $\muav$ of the Table \ref{table_conv_e_mu_iso} the value of $\murscav$ in the double-zeta quality basis for each system, the value in larger basis sets vary by less than $0.1\%$. 
+As one can observe from  Table \ref{table_conv_e_mu_iso}, the ground state energies of $\tilde{H}[\murscav]$ converge much faster than that of the usual Hamiltonian as the MAD for the ground state energies is of 2.64 mH, 0.48 mH and 0.26 mH in the double-, triple- and quadruple zeta quality basis sets (respectively) whereas it is of 12.16 mH, 4.71 mH and 1.64 mH for the usual Hamiltonian. Also, one can observe that, except for the low density systems such as the H${^-}$ and He species, it converges from below the exact ground state energy. Regarding now the value of $\murscav $, one can notice that it increases with the atomic number, which is expected as the density becomes more picked near the nucleus as the nuclear charge increases, and therefore the typical inter electronic distance lowers with $Z$. 
 
 In the present context, we propose the derivation of another value of $\mu$ based on the mapping of the on-top pair density of the UEG and a model built with the Jastrow factor defined by \eqref{eq:def_j}. 
 Assuming a single Slater determinant ansatz for a Jastrow Slater wave function with a Jastrow factor defined in \eqref{eq:def_j}, the on-top pair density is 
@@ -752,6 +680,7 @@ Therefore one can define an average UEG value of $\mu$
 \end{equation}
 We report in Table \ref{table_conv_e_mu_iso} for different basis sets the error with respect to the exact ground state energy of $E_0^{\basis}[\muuegav]$ for the isoelectronic series studied here. 
 From these data, one can see that MAD is sensibly the same than that with the $\murscav$ but with a MSD of opposite sign with respect to the latter. This implies that the values of $\muuegav$ are in general larger than that of $\murscav$, which was observed in the present calculations. 
+Also, one can see that $ \muuegav$ increases with the system size and that, except for H$^-$, it is always larger than $\murscav$. 
 Because the MAD are essentially the same but that the MSD are of opposite sign, it means that there exists an optimal value of $\mu$ between $\murscav$ and $\muuegav$ which might be optimal. 
 Therefore, we propose to define the average between $\murscav$ and $\muuegav$ 
 \begin{equation}
@@ -762,37 +691,61 @@ and the results obtained are represented in Table \ref{table_conv_e_mu_iso}. Fro
 
 \begin{table*}
 \label{table_conv_e_mu_iso}
-\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. }
+\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. We also report the average value of the $\mu$ considered (referred as $\muav$) in the double-zeta basis. }
 \begin{ruledtabular}
-\begin{tabular}{l|rrr||rrr||rrr|}
-             &\multicolumn{3}{c}{H$^-$}      & \multicolumn{3}{c}{He}       & \multicolumn{3}{c}{Li$^+$}    \\
-             &   DZ    &  TZ      &   QZ     &  DZ     &   TZ     &  QZ     &   DZ    &   TZ     &  QZ      \\                   
-\hline
- FCI         &   3.72  &    1.19  &   0.61   &  14.18  &   3.13   &  1.19   &  10.72  &   3.35   &  1.58    \\      
-$\muueg$     &   1.69  &    0.60  &   0.38   &  5.28   &   0.44   &  0.12   &  0.9    &   0.09   & -0.02    \\      
-$\murscav$   &   2.30  &    0.67  &   0.39   &  4.87   &   0.37   &  0.12   &  -0.82  &  -0.38   & -0.14    \\      
-$\mursclda$  &   2.03  &    0.64  &   0.39   &  5.07   &   0.40   &  0.12   &  0.04   &  -0.12   & -0.08    \\      
-\hline
-             &\multicolumn{3}{c}{Be$^{2+}$}  & \multicolumn{3}{c}{B$^{3+}$} & \multicolumn{3}{c}{C$^{4+}$}    \\
- FCI         &  11.35  &   3.62   &  1.41    &  11.91  &   4.21   &  1.53   &  12.46  &   4.76   &  1.67    \\  
-$\muueg$     &  1.2    &   0.17   & -0.02    &  1.41   &   0.43   &  -0.01  &  1.67   &   0.37   &  0.01    \\  
-$\murscav$   &  -1.5   &  -0.53   & -0.17    &  -2.16  &  -0.34   &  -0.22  &  -2.69  &  -0.4    & -0.25    \\  
-$\mursclda$  &  -0.08  &  -0.15   & -0.09    &  -0.18  &   0.09   &  -0.11  &  -0.19  &   0.01   &  -0.1    \\  
-\hline
-             &\multicolumn{3}{c}{N$^{5+}$}   & \multicolumn{3}{c}{O$^{6+}$} & \multicolumn{3}{c}{F$^{7+}$}    \\
- FCI         &  13.1   &   5.71   &  1.79    &  13.84  &   6.47   &  2.02   &  14.68  &   7.06   &  2.25    \\  
-$\muueg$     &  2.06   &   0.45   &  0.01    &  2.54   &   0.77   & -0.02   &  3.14   &   1.15   & -0.02    \\  
-$\murscav$   &  -2.97  &  -0.64   &  -0.26   & -3.13   &  -0.70   & -0.31   & -3.10   &  -0.54   & -0.36    \\  
-$\mursclda$  &  -0.01  &  -0.15   &  -0.09   &  0.27   &  -0.04   & -0.12   &  0.69   &   0.23   & -0.14    \\  
-\hline
-             &\multicolumn{3}{c}{Ne$^{8+}$}  & \multicolumn{3}{c}{MAD} & \multicolumn{3}{c}{MSD}    \\
- FCI         &  15.66  &   7.61   &  2.36    & 12.16   &    4.71  &    1.64   &  12.16   &   4.71   &    1.64   \\   
-$\muueg$     &  3.89   &   1.57   &  0.03    & 2.38    &    0.60  &    0.07   &   2.38   &   0.60   &    0.07   \\   
-$\murscav$   &  -2.85  &  -0.28   & -0.35    & 2.64    &    0.48  &    0.26   &  -1.21   &  -0.28   &   -0.16   \\   
-$\mursclda$  &  1.26   &   0.57   & -0.1     & 0.98    &    0.24  &    0.13   &   0.89   &   0.15   &   -0.03   \\   
+\begin{tabular}{l|rrr|r||rrr|r||rrr|r|}
+                         &\multicolumn{4}{c}{H$^-$}                & \multicolumn{4}{c}{He}                  & \multicolumn{4}{c}{Li$^+$}               \\
+                         &   DZ    &  TZ      &   QZ    & $\muav$&  DZ     &   TZ     &  QZ  & $\muav$   &   DZ    &   TZ     &  QZ    & $\muav$  \\
+\hline 
+ FCI                     &   3.72  &    1.19  &   0.61  &$+\infty$ &  14.18  &   3.13   &  1.19&$+\infty$    &  10.72  &   3.35   &  1.58  &$+\infty$  \\      
+$E_0^{\basis}[\muuegav]$ &   1.69  &    0.60  &   0.38  & 0.350    &  5.28   &   0.44   &  0.12& 0.815       &  0.9    &   0.09   & -0.02  & 1.274     \\      
+$E_0^{\basis}[\murscav]$ &   2.30  &    0.67  &   0.39  & 0.479    &  4.87   &   0.37   &  0.12& 0.771       &  -0.82  &  -0.38   & -0.14  & 0.980     \\      
+$E_0^{\basis}[\mursclda]$&   2.03  &    0.64  &   0.39  & 0.410    &  5.07   &   0.40   &  0.12& 0.792       &  0.04   &  -0.12   & -0.08  & 1.127     \\      
+\hline              
+                         &\multicolumn{4}{c}{Be$^{2+}$}            & \multicolumn{4}{c}{B$^{3+}$}            & \multicolumn{4}{c}{C$^{4+}$}    \\
+                         &   DZ    &  TZ      &   QZ    & $\muav$&  DZ     &   TZ     &  QZ     & $\muav$&   DZ    &   TZ     &  QZ    & $\muav$  \\
+\hline 
+ FCI                     &  11.35  &   3.62   &  1.41   &$+\infty$ &  11.91  &   4.21   &  1.53   &$+\infty$ &  12.46  &   4.76   &  1.67  &$+\infty$    \\  
+$E_0^{\basis}[\muuegav]$ &  1.2    &   0.17   & -0.02   &1.727     &  1.41   &   0.43   &  -0.01  &2.179     &  1.67   &   0.37   &  0.01  &2.631        \\  
+$E_0^{\basis}[\murscav]$ &  -1.5   &  -0.53   & -0.17   &2.152     &  -2.16  &  -0.34   &  -0.22  &1.300     &  -2.69  &  -0.4    & -0.25  &1.434        \\  
+$E_0^{\basis}[\mursclda]$&  -0.08  &  -0.15   & -0.09   &1.440     &  -0.18  &   0.09   &  -0.11  &1.740     &  -0.19  &   0.01   &  -0.1  &2.032        \\  
+\hline              
+                         &\multicolumn{4}{c}{N$^{5+}$}   & \multicolumn{4}{c}{O$^{6+}$}            & \multicolumn{4}{c}{F$^{7+}$}    \\
+                         &   DZ    &  TZ      &   QZ     & $\muav$ &  DZ     &   TZ    &  QZ     & $\muav$&   DZ    &   TZ     &  QZ    & $\muav$  \\
+\hline              
+ FCI                     &  13.1   &   5.71   &  1.79    &$+\infty$  &  13.84  &   6.47  &  2.02   &$+\infty$ &  14.68  &   7.06   &  2.25   &$+\infty$   \\  
+$E_0^{\basis}[\muuegav]$ &  2.06   &   0.45   &  0.01    &3.082      &  2.54   &   0.77  & -0.02   &3.533     &  3.14   &   1.15   & -0.02   &3.984       \\  
+$E_0^{\basis}[\murscav]$ &  -2.97  &  -0.64   &  -0.26   &1.556      & -3.13   &  -0.70  & -0.31   &1.670     & -3.10   &  -0.54   & -0.36   &1.774       \\  
+$E_0^{\basis}[\mursclda]$&  -0.01  &  -0.15   &  -0.09   &2.318      &  0.27   &  -0.04  & -0.12   &2.600     &  0.69   &   0.23   & -0.14   &2.879       \\  
+\hline              
+                         &\multicolumn{4}{c}{Ne$^{8+}$}  & \multicolumn{4}{c}{MAD} & \multicolumn{4}{c}{MSD}    \\
+                         &   DZ    &  TZ      &   QZ     & $\muav$ &  DZ     &   TZ     &  QZ     &          &   DZ    &   TZ     &  QZ    &            \\
+\hline              
+ FCI                     &  15.66  &   7.61   &  2.36    &$+\infty$  & 12.16   &    4.71  &    1.64 &          &  12.16   &   4.71   &    1.64&             \\   
+$E_0^{\basis}[\muuegav]$ &  3.89   &   1.57   &  0.03    &4.434      & 2.38    &    0.60  &    0.07 &          &   2.38   &   0.60   &    0.07&             \\   
+$E_0^{\basis}[\murscav]$ &  -2.85  &  -0.28   & -0.35    &1.874      & 2.64    &    0.48  &    0.26 &          &  -1.21   &  -0.28   &   -0.16&             \\   
+$E_0^{\basis}[\mursclda]$&  1.26   &   0.57   & -0.1     &3.1543     & 0.98    &    0.24  &    0.13 &          &   0.89   &   0.15   &   -0.03&             \\   
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
+
+\section{Application on H$_2$}
+Having established in Sec \ref{sec:ht_general} the analytical form of $ \tilde{H}[\mu]$ for a general molecular system, we study in the last part of the present study study the ground state potential curve of H$_2$ with $ \tilde{H}[\mu]$. 
+As in the study of the helium atom of Sec \ref{sec:total_h}, in a given basis set $\basis$ and for a given geometry, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
+We report in Figs \ref{}
+
+\begin{figure*}
+ \label{fig:mu_1.0_dz_3}
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_3.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_5.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_7.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_9.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_lda.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_rsc.pdf}\\
+        \caption{
+        H$_2$ molecule: Error with respect to the estimated exact ground state energy for the aug-cc-pVDZ and aug-cc-pVTZ basis sets (AVDZ, AVTZ, respectively) as a function of the inter nuclear distance for different values of $\mu$, and comparison with FCI.  
+}
+\end{figure*}
 
 \section{Computation of integrals}
 \subsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
@@ -919,6 +872,80 @@ or equivalently
   \end{aligned}
 \end{equation}
 which corresponds precisely to Eq. \eqref{eq:h_tilde_r12}. 
+
+\section{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
+\label{sec:cusp}
+Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
+The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
+
+In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
+\begin{equation}
+ H \psiex(\br{}_1,\br{}_2) = E_0 \psiex(\br{}_1,\br{}_2)\quad \forall (\br{}_1,\br{}_2).
+\end{equation}
+When looking at $r_{12}\approx 0$, all terms multiplying $\frac{1}{r_{12}}$ in $H \psiex(\br{}_1,\br{}_2)$ must remain finite, which, according to Eq.\eqref{def:h_c}, translates into
+\begin{equation}
+ \label{eq:cusp_0}
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
+\end{equation}
+or equivalently by multiplying Eq. \eqref{eq:cusp_0} by $r_{12}$
+\begin{equation}
+ \lim_{r_{12}\rightarrow 0}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
+\end{equation}
+which translates into the famous cusp condition for antiparallel spins of Kato\cite{Kat-CPAM-57}, 
+\begin{equation}
+ \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
+\end{equation} 
+For an excellent pedagogical and general derivation of the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
+
+Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
+\begin{equation}
+ \label{eq:hpi0_ex}
+ \tilde{H}[u] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
+\end{equation}
+Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $\tilde{H}[u]\phiex(\br{}_1,\br{}_2)$ must remain finite, 
+which involves also the term $\tilde{W}[u]$ in $\tilde{H}[u]$ (see Eq.\eqref{eq:def_wt}). Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
+\begin{equation}
+ \label{eq:cusp_phi_0}
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{u(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
+\end{equation}
+Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{u(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction induced by the presence of the Jastrow factor in $\tilde{H}[u]$. 
+Therefore, as long as one imposes that 
+\begin{equation}
+ \label{eq:cusp_phi_1}
+  \deriv{u(r_{12})}{r_{12}}{}\bigg|_{r_{12}=0} = \frac{1}{2},
+\end{equation}
+which is nothing but the cusp condition for the Jastrow factor $u(r_{12})$, the scalar term proportional to $\frac{1}{r_{12}}$ in Eq.\eqref{eq:cusp_phi_0} vanishes at $r_{12}=0$, and then one obtains a non-divergent effective electron-electron interaction. 
+Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\eqref{eq:cusp_phi_0} becomes 
+\begin{equation}
+ \label{eq:cusp_phi_2}
+ \deriv{\phiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
+\end{equation}
+which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[u]$ is cuspless. 
+For instance, a simple Jastrow factor of the form $u(r_{12}) = \frac{1}{2} r_{12}$ releases $\phiex(\br{}_1,\br{}_2)$ from 
+the constraint of fulfilling the cusp condition. 
+
+Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
+where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
+The parameter which controls such a splitting is the so-called range separation parameter $\mu$:  RS-DFT reduces the usual WFT when $\mu \rightarrow \infty$, and $\mu \rightarrow 0$ it gives back the usual Kohn-Sham theory.  
+In practice, RS-DFT introduces a self-consistent Schroedinger-like equation which must be fulfilled by an effective wave function  $\Psi^\mu$.
+Applied to a two electron system and looking in regions where $r_{12}\approx 0$, the leading terms of the self-consistent Schroedinger-like equation of RS-DFT reads 
+\begin{equation}
+ \label{eq:cusp_psi_mu_0}
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
+\end{equation}
+and as the effective interaction $\frac{\text{erf}(\mu r_{12})}{r_{12}}$ is non divergent at $r_{12}=0$ for finite values of $\mu$
+\begin{equation}
+ \lim_{r_{12} \rightarrow 0} \frac{\text{erf}(\mu r_{12})}{r_{12}} = \frac{2 \mu}{\sqrt{\pi}} , 
+\end{equation}
+one obtains that 
+\begin{equation}
+ \label{eq:cusp_psi_mu_1}
+ \deriv{\Psi^\mu(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
+\end{equation}
+which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, because they deal with an effective non-divergent interaction. 
+
+Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
+
 
 \section{Numerical computation of integrals}
 \subsection{Fit of functions}
