@@ -7,6 +7,7 @@ BEGIN_PROVIDER [double precision, new_mo_coefs_rot_mat, (ao_num, mo_num)]
  rotation_matrix = 0.d0
  open(1, file = 'rotation_matrix') 
  do i = 1, n_act_orb
+  print*,i
   read(1,*)rotation_mat_act(i,1:n_act_orb)
  enddo
  close(1) 

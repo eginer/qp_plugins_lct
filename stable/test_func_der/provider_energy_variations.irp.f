@@ -42,7 +42,7 @@
                             grad_plus_delta_grad_rho_a_in_r,grad_plus_delta_grad_rho_b_in_r,  &
                             ex_pbe_at_n_plus_delta_n, ec_pbe_at_n_plus_delta_n)
 !  call int_potential_xc_pbe_test (delta_rho_11, delta_rho_11, int_vx_pbe_at_n, int_vc_pbe_at_n)
-   call compute_func_der(delta_gamma_i_j_alpha, delta_gamma_i_j_beta, potential_c_alpha_mo_pbe, potential_x_beta_mo_pbe, int_vx_pbe_at_n)
+   call compute_func_der(delta_gamma_i_j_alpha, delta_gamma_i_j_beta, potential_x_alpha_mo_pbe, potential_x_beta_mo_pbe, int_vx_pbe_at_n)
    call compute_func_der(delta_gamma_i_j_alpha, delta_gamma_i_j_beta, potential_c_alpha_mo_pbe, potential_c_beta_mo_pbe, int_vc_pbe_at_n)
  END_PROVIDER
 

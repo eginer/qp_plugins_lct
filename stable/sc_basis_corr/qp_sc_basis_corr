@@ -243,5 +243,4 @@ qp  set  density_for_dft    density_for_dft         "WFT"
        break
      fi
      EV_macro=$EV_new_macro
-     
   done
