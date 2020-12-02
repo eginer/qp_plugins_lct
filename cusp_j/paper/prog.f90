@@ -1,3 +1,33 @@
+
+double precision function slater_fit_ten_no(x)
+ implicit none
+ double precision, intent(in) :: x
+ integer :: i
+ double precision :: coef_fit_ten_no_slat_gauss(6)
+ double precision :: expo_fit_ten_no_slat_gauss(6)
+ coef_fit_ten_no_slat_gauss(1) = 0.078215d0
+ coef_fit_ten_no_slat_gauss(2) = 0.132037d0
+ coef_fit_ten_no_slat_gauss(3) = 0.068633d0
+ coef_fit_ten_no_slat_gauss(4) = 0.029047d0
+ coef_fit_ten_no_slat_gauss(5) = 0.012063d0
+ coef_fit_ten_no_slat_gauss(6) = 0.004346d0
+
+ expo_fit_ten_no_slat_gauss(1) = 0.621698d0
+ expo_fit_ten_no_slat_gauss(2) = 3.371717d0
+ expo_fit_ten_no_slat_gauss(3) = 14.27116d0
+ expo_fit_ten_no_slat_gauss(4) = 82.76522d0
+ expo_fit_ten_no_slat_gauss(5) = 605.5295d0
+ expo_fit_ten_no_slat_gauss(6) = 6596.808d0
+
+ slater_fit_ten_no = 0.d0
+ do i = 1, 6
+  slater_fit_ten_no = slater_fit_ten_no - coef_fit_ten_no_slat_gauss(i) * dexp(-expo_fit_ten_no_slat_gauss(i) * x * x)
+ enddo                                                                                                                                       
+end
+
+
+
+
 double precision function shank3_f(array,n,nmax)
  implicit none
  integer, intent(in) :: n,nmax
@@ -167,7 +197,7 @@ program pouet
  double precision :: s_exp,g_exp,dl_exp,shank_exp,shank2_f
  double precision :: array(0:100), shank1(0:100),shank2(0:100),array_tmp(0:100)
  double precision :: contrib(0:100),shank3(0:100)
- double precision :: sum,mu
+ double precision :: sum,mu,slater_fit_ten_no
  integer :: n,nmax,k
  pi = dacos(-1.d0)
  xmax = 2.d0
@@ -208,11 +238,12 @@ program pouet
   write(33,'(100(F16.10,X))')x,dexp(f(x,mu0)),dexp(f(x,mu1)),dexp(f(x,mu2))& 
                               ,dexp(f(x,mu3)),dexp(f(x,mu4)),dexp(f(x,mu5)),dexp(f(x,mu6))&
                               ,dexp(f(x,mu7)),dexp(f(x,mu8)),dexp(f(x,mu9)),dexp(f(x,mu10))& 
-                              ,dexp(f(x,mu11)),dexp(f(x,mu12)),dexp(f(x,mu13)),dexp(f(x,mu14))  
+                              ,dexp(f(x,mu11)),dexp(f(x,mu12)),dexp(f(x,mu13)),dexp(slater_fit_ten_no(x))
+                              
   write(34,'(100(F16.10,X))')x,(f(x,mu0)),(f(x,mu1)),(f(x,mu2))& 
                               ,(f(x,mu3)),(f(x,mu4)),(f(x,mu5)),(f(x,mu6))&
                               ,(f(x,mu7)),(f(x,mu8)),(f(x,mu9)),(f(x,mu10))&
-                              ,(f(x,mu11)),(f(x,mu12)),(f(x,mu13)),(f(x,mu14))  
+                              ,(f(x,mu11)),(f(x,mu12)),(f(x,mu13)),slater_fit_ten_no(x)
   x = x + dx
  enddo
 

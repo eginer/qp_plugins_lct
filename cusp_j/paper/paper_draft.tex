@@ -744,10 +744,10 @@ $E_0^{\basis}[\mursclda]$&  1.26   &   0.57   & -0.1     &3.1543     & 0.98    &
 \section{Application on H$_2$}
 Having established in Sec \ref{sec:ht_general} the analytical form of $ \tilde{H}[\mu]$ for a general molecular system, we study in the last part of the present study study the ground state potential curve of H$_2$ with $ \tilde{H}[\mu]$. 
 As in the study of the helium atom of Sec \ref{sec:total_h}, in a given basis set $\basis$ and for a given geometry, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
-We report in Figs \ref{fig:H2} the difference with respect to the estimated exact ground state potential energy curve using several levels of calculations. 
+We report in Figs \ref{}
 
 \begin{figure*}
- \label{fig:H2}
+ \label{fig:mu_1.0_dz_3}
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_3.pdf}
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_5.pdf}\\
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_7.pdf}
@@ -849,6 +849,41 @@ The total matrix element of the full operator is then
  \end{aligned}
 \end{equation}
 which can be computed on the fly through a simple numerical integration. 
+
+According to Eq. \eqref{eq:comtot}, Eq. \eqref{eq:nabla_i_nabla1}, Eq. \eqref{eq:nabla_u2} and Eq. \eqref{eq:lapl_u_final}, the additional terms arising from the commutators in $\tilde{H}[u]$ are (for a two-electron system) 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:comtot2}
+ & \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] =  \\
+ & -\frac{1}{2} 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{4}  \bigg) \\
+   &- \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
+ \end{aligned}
+\end{equation}
+or equivalently
+\begin{equation}
+ \begin{aligned}
+ \label{eq:comtot2}
+ & \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] =  \\
+ & -\frac{1 - \text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+   & + \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}.
+ \end{aligned}
+\end{equation}
+Therefore, the full similarity transformed Hamiltonian can be written as
+\begin{equation}
+  \begin{aligned}
+   \tilde{H}[u] = & \sum_{i = 1,2} \bigg( -\frac{1}{2} \big(\nabla_i\big)^2 + v(\br{}_i)  \bigg) + \frac{1}{r_{12}} \\
+&   -\frac{1 - \text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+& + \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}
+  \end{aligned}
+\end{equation}
+or equivalently 
+\begin{equation}
+  \begin{aligned}
+   \tilde{H}[u] = & h_c + \frac{\text{erf}(\mu r_{12})}{r_{12}} + \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} - \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+& + \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{},
+  \end{aligned}
+\end{equation}
+which corresponds precisely to Eq. \eqref{eq:h_tilde_r12}. 
 
 \section{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
 \label{sec:cusp}
@@ -1112,6 +1147,515 @@ and, by posing $X=\gamma x$ one can fit any Slater function as
 \end{equation}
 To find the $\{c_m,\zeta_m\}$ parameters, I performed a Hartree Fock calculation on the Hydrogen atom using the $s$ functions of the ANO-RCC basis set which contains 8 gaussians.  
 
-\bibliography{srDFT_SC}                                                                                                                                                
+\subsection{Computation of integrals with $\text{exp}(-\alpha r_{12}^2)$}
+As essentially all functions of $r_{12}$ involve directly or indirectly (\textit{i.e.} through a fit) gaussian functions, we will have to evaluate such integrals
+\begin{equation}
+ \begin{aligned}
+  \int \text{d}\br{}_1  \text{d}\br{}_2& \big( x_1 - A_x \big)^{a_x}  \big( x_2 - B_x \big)^{b_x} 
+                                         \big( y_1 - A_y \big)^{a_y}  \big( y_2 - B_y \big)^{b_y} 
+                                         \big( z_1 - A_z \big)^{a_z}  \big( z_2 - B_z \big)^{b_z} \\
+                                       & \text{exp}(-\alpha \big(\br{}_1 - {\bf A} \big)^2)
+                                         \text{exp}(-\beta  \big(\br{}_2 - {\bf B} \big)^2)
+                                         \text{exp}(-\delta \big(\br{}_1 - \br{}_2 \big)^2)
+ \end{aligned}
+\end{equation}
+which can be transformed into product of types 
+\begin{equation}
+ \begin{aligned}
+  \int \text{d}x_1 \text{d}x_2 & \big( x_1 - A_x \big)^{a_x} \big( x_2 - B_x \big)^{b_x} \\ 
+  & \text{exp}(-\alpha \big(x_1 - A_x \big)^2) \text{exp}(-\alpha \big(x_2 - B_x \big)^2) \text{exp}(-\delta \big(x_1 - x_2 \big)^2)
+ \end{aligned}
+\end{equation}
+
+\section{New form of jastrow factor}
+We want the jastrow factor $u(r_{12})$ to fulfil such equation
+\begin{equation}
+ - \bigg[ \frac{2}{r_{12}} \deriv{u}{r_{12}}{}  + \deriv{u}{r_{12}}{2} \bigg] + \frac{1}{r_{12}} = \frac{\text{erf}\big( \mu r_{12} \big)}{r_{12}}.
+\end{equation}
+The solution for such an equation is 
+\begin{equation}
+ u(r_{12}) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - \frac{1}{2\sqrt{\pi} \mu} e^{-\big( \mu r_{12}\big)^2} + \frac{1}{4 r_{12}} \bigg(c_1 - \frac{\text{erf}\big(\mu r_{12} \big)}{\mu^2} \bigg).
+\end{equation}
+The constant $c_1$ can be found to impose that 
+\begin{equation}
+ \lim_{r_{12} \rightarrow 0 } u(r_{12}) < \infty,
+\end{equation}
+which means $c_1 = 0$. Therefore the new jastrow factor is 
+\begin{equation}
+ u(r_{12}) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12}) \bigg) - \frac{1}{2\sqrt{\pi} \mu} e^{-\big( \mu r_{12}\big)^2}  - \frac{\text{erf}\big(\mu r_{12} \big)}{4 \mu^2 r_{12}}.
+\end{equation}
+
+\section{One body term jastrow}
+\subsection{The case of the Hydrogen atom}
+We want to find a Jastrow factor which will take care of the nuclear-electron cusp condition, and we will begin by the Hydrogen atom.  
+
+Let us write the Hamiltonian of the hydrogenoid atom in the radial coordinate for the $l=0$ sector 
+\begin{equation}
+ H = -\frac{1}{2} \big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{}\big) - \frac{Z}{r}.
+\end{equation}
+To do so, we have to compute the kinetic part acting on the Jastrow factor acting on a function depending only on the radial coordinate $\phi( r)$
+\begin{equation}
+ \label{eq:h_atom_j}
+ \begin{aligned}
+ & -\frac{1}{2}e^{-u(r)}\big(\deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) e^{u(r)}\phi(r)  = \\
+ & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) \phi(r) \\
+ &-\deriv{u(r)}{r}{}\deriv{}{r}{}\phi(r) \\
+ &-\frac{1}{r}\deriv{u(r)}{r}{}\phi(r)  - \frac{1}{2}\deriv{u(r)}{r}{2}\phi(r)  -  \frac{1}{2}\bigg(\deriv{u(r)}{r}{} \bigg)^2 \phi(r).
+ \end{aligned}
+\end{equation}
+Therefore the full similarity transformed Hamiltonian $\tilde{H}[u]$ is 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:one_e_0}
+ & e^{-u(r)}H\,e^{u(r)} = \\
+ & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) -\deriv{u(r)}{r}{}\deriv{}{r}{}\\
+ &-\frac{1}{r}\bigg(\deriv{u(r)}{r}{} + Z \bigg) \\ 
+ & - \frac{1}{2}\deriv{u(r)}{r}{2} -  \frac{1}{2}\bigg(\deriv{u(r)}{r}{} \bigg)^2.
+ \end{aligned}
+\end{equation}
+Similarly to what have been proposed in Section \ref{sec:he_j}, we want to find the Jastrow factor $u(r,\mu,Z)$ such that 
+\begin{equation}
+ \label{eq:one_e_01}
+ -\frac{1}{r}\bigg(\deriv{u(r,\mu,Z)}{r}{} + Z \bigg) = -Z\frac{\text{erf}(\mu r)}{r},
+\end{equation}
+or equivalently
+\begin{equation}
+ \label{eq:one_e_1}
+ \deriv{}{r}{}u(r,\mu,Z) = Z\bigg( \text{erf}(\mu r) - 1\bigg).
+\end{equation}
+The Jastrow factor fulfilling Eq. \eqref{eq:one_e_1} is 
+\begin{equation}
+ \label{eq:one_e_2}
+ u(r,\mu,Z) = -Z r \bigg( 1 - \text{erf}\big(\mu r\big) \bigg) + \frac{Z}{\sqrt{\pi}\mu} e^{-\big(\mu r \big)^2}. 
+\end{equation}
+Now, we can plug $u(r,\mu,Z)$ into Eq. \eqref{eq:one_e_0} in order to compute the explicit form of the similarity transformed Hamiltonian. 
+To do so, we use Eq. \eqref{eq:one_e_1}, and also that 
+\begin{equation}
+ \deriv{}{r}{2}u(r) = \frac{2 \mu Z }{\sqrt{\pi}} e^{-(\mu r)^2}.
+\end{equation}
+One obtains then the similarity transformed Hamiltonian 
+\begin{equation}
+ \begin{aligned}
+ \tilde{H}[u] = & e^{-u(r)} H e^{u(r)} \\
+              = & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) - \frac{Z}{r}  \\
+                & + Z \bigg( 1 - \text{erf}(\mu r)\bigg) \deriv{}{r}{} \\
+                & - Z \frac{\text{erf}(\mu r) - 1}{r} \\
+                & -Z \frac{\mu}{\sqrt{\pi}} e^{-(\mu r)^2} \\
+                & - \frac{1}{2}Z^2 \bigg( \text{erf}(\mu r) -1 \bigg)^2,
+ \end{aligned}
+\end{equation}
+and one can notice that the $\frac{-Z}{r}$ interaction cancels out to give
+\begin{equation}
+ \label{eq:one_e_3}
+ \begin{aligned}
+ \tilde{H}[u] = & e^{-u(r)} H e^{u(r)} \\
+              = & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big)  \\
+                & -Z \bigg[ \frac{\mu}{\sqrt{\pi}} e^{-(\mu r)^2} + \frac{\text{erf}(\mu r)}{r} + \frac{1}{2}Z \bigg( \text{erf}(\mu r) -1 \bigg)^2 \bigg] \\
+                & + Z \bigg( 1 - \text{erf}(\mu r)\bigg) \deriv{}{r}{}. 
+ \end{aligned}
+\end{equation}
+Therefore, compared to the usual Hamiltonian, the similarity transformed Hamiltonian contains a different local interaction which is clearly non divergent, but also a new short-range differential operator. 
+
+\subsection{General equation}
+Now that we know the general form of the one-body Jastrow factor for a one electron system, we can generalize it 
+to an $N$-electron system and an $M$ nucleus system by just taking the following form 
+\begin{equation}
+ e^{\hat{\tau}({\bf r}_1,\hdots , {\bf r}_i,{\bf r}_N)} = e^{-\sum_i^N u({\bf r}_i)} 
+\end{equation}
+where $u({\bf r}_i)$ has the following form 
+\begin{equation}
+ u({\bf r}_i) = \sum_{A} u(r_{iA},\mu,Z_A) 
+\end{equation}
+where $u(r,\mu,Z)$ is given by Eq. \eqref{eq:one_e_2} and $r_{iA} = \big|{\bf r}_i - {\bf R}_A \big|$. 
+According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the equation of the similarity transformed Hamiltonian is similar  
+to that of Eq. \eqref{ht_def_g} but with a new form of Jastrow factor. 
+Therefore one needs to compute $\big[ H,\hat{\tau} \big]$ and $\frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]$. 
+Let us begin by $\big[ H,\hat{\tau} \big]$, and as before, we apply it to a general function $\phi(\br{}_1,\hdots \br{}_N)$:
+\begin{equation}
+ \label{eq:one_com1_1}
+ \begin{aligned}
+ \bigg[ H, \hat{\tau} \bigg]\phi(\br{}_1,\hdots \br{}_N) & = \bigg[ -\frac{1}{2} \sum_i \nabla^2_i, \sum_{u} u(\br{}_j) \bigg]      \phi(\br{}_1,\hdots \br{}_N) \\    
+                                                        & = -\frac{1}{2} \sum_i \bigg( \big(\nabla^2_i u({\bf r}_i)\big) + 2\nabla_i u({\bf r}_i) \cdot \nabla_i \phi(\br{}_1,\hdots \br{}_N) \bigg).  
+ \end{aligned}
+\end{equation}
+Therefore, one can write that term as
+\begin{equation}
+ \label{eq:one_com1_2}
+ \begin{aligned}
+  \big[ H,\hat{\tau} \big] =& -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i) \bigg) \\
+                            & -\sum_i \bigg(\nabla_i u(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg).
+ \end{aligned}
+\end{equation}
+After some math, the second-order commutator is simply 
+\begin{equation}
+ \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = -\sum_i \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) 
+\end{equation}
+So eventually, the similarity transformed operator becomes 
+\begin{equation}
+ \begin{aligned}
+& H + \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg] = \\ & H -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i) \bigg)    
+                                                                   -\sum_i \bigg(\nabla_i u(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg)  
+                                                                   -\frac{1}{2}\sum_i \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) 
+ \end{aligned}
+\end{equation}
+Therefore, the addition of the jastrow operator does not add extra two-body terms. 
+\subsection{Computation of the total operator}
+\subsubsection{Computation of $\nabla_i u(\br{}_i)$}
+\begin{equation}
+ \begin{aligned}
+&\nabla_i u(\br{}_i) = \sum_A \nabla_i u(r_{iA},Z_A) \\
+                    &= \sum_A \deriv{}{x_i}{} u(r_{iA},Z_A) {\bf e}_{x_i} + \deriv{}{y_i}{} u(r_{iA},Z_A) {\bf e}_{y_i} + \deriv{}{z_i}{} u(r_{iA},Z_A) {\bf e}_{z_i}, 
+ \end{aligned}
+\end{equation}
+and 
+\begin{equation}
+ \deriv{}{x_i}{}u(r_{iA}) = \deriv{}{r_{iA}}{}u(r_{iA}) \deriv{r_{iA}}{x_i}{},
+\end{equation}
+and as $r_{iA} = \sqrt{(x_1 - x_A)^2 + (y_1 - y_A)^2 + (z_1 - z_A)^2} $ 
+one has                                                              
+\begin{equation}
+ \deriv{r_{iA}}{x_1}{} = \frac{x_1 - x_A}{r_{iA}}
+\end{equation}
+and therefore according to Eq. \eqref{eq:one_e_1}, one has 
+\begin{equation}
+ \deriv{}{x_i}{} u(r_{iA},Z_A) = -\sum_A Z_A \big( x_i - x_A \big) \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}.
+\end{equation}
+\subsubsection{Computation of $\nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i)$}
+The computation of $\nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i)$ leads to 
+\begin{equation}
+ \begin{aligned}
+  \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) =  \sum_{A,B} Z_B &Z_A \big( x_i - x_A \big) \big( x_i - x_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}} \\
+                                                                      & +  \big( y_i - y_A \big) \big( y_i - y_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}} \\ 
+                                                                      & +  \big( z_i - z_A \big) \big( z_i - z_B \big)  \frac{ 1 -\text{erf}(\mu r_{iA})}{r_{iA}} \frac{ 1 - \text{erf}(\mu r_{iB})}{r_{iB}}.
+ \end{aligned}
+\end{equation}
+The diagonal part of such integrals is simply
+\begin{equation}
+ \begin{aligned}
+ &  \sum_{A} (Z_A)^2 \bigg(\big( x_i - x_A \big)^2 +  \big( y_i - y_A \big)^2 + \big( z_i - z_A \big)^2\bigg) \frac{\bigg(\text{erf}(\mu r_{iA}) - 1\bigg)^2}{\big(r_{iA}\big)^2}\\ 
+  = & \sum_{A} (Z_A)^2 \bigg( \text{erf}(\mu r_{iA}) -1 \bigg)^2
+ \end{aligned}
+\end{equation}
+
+
+\subsubsection{Computation of $\nabla^2_i u(\br{}_i) $}
+We need to compute 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_{i}}{2} u(\br{}_i) & = -\sum_A Z_A \deriv{}{x_i}{} \bigg[(x_i - x_A) \frac{1 - \text{erf}(\mu r)}{r_{iA}} \bigg] \\
+                               & = -\sum_A Z_A \bigg[ \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} + (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \bigg]
+ \end{aligned}
+\end{equation}
+But, one has that
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_i}{} \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} = - \frac{(x_i - x_A)}{(r_{iA})^2} \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg).
+ \end{aligned}
+\end{equation}
+Therefore, 
+\begin{equation}
+ \label{eq:lapl_important}
+ (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} = - \frac{(x_i - x_A)^2}{(r_{iA})^2} \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg)
+\end{equation}.
+Therefore, the Laplacian is 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:lapl_interm_1}
+&  \deriv{}{x_{i}}{2} u(\br{}_i) + \deriv{}{y_{i}}{2} u(\br{}_i) + \deriv{}{z_{i}}{2} u(\br{}_i) =  - \sum_{A} Z_A \bigg[ 3 \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \\
+ & + (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
+ & + (y_i - y_A) \deriv{}{y_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
+ & + (z_i - z_A) \deriv{}{z_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  \bigg]
+ \end{aligned}
+\end{equation}
+But according to Eq. \eqref{eq:lapl_important}, one has that 
+\begin{equation}
+ \begin{aligned}
+ & + (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
+ & + (y_i - y_A) \deriv{}{y_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
+ & + (z_i - z_A) \deriv{}{z_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  = \\
+ &- \frac{(x_i - x_A)^2 + (y_i - y_A)^2 + (z_i - z_A)^2}{(r_{iA})^2} \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg)
+ \end{aligned}
+\end{equation}
+which is simply 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:lapl_interm_2}
+ & + (x_i - x_A) \deriv{}{x_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
+ & + (y_i - y_A) \deriv{}{y_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \\ 
+ & + (z_i - z_A) \deriv{}{z_i}{}\frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  = \\
+ &- \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg).
+ \end{aligned}
+\end{equation}
+Then, coming back to Eq. \eqref{eq:lapl_interm_1} with Eq. \eqref{eq:lapl_interm_2} one has 
+\begin{equation}
+ \Delta_i u(\br{}_i) = - \sum_{A}  Z_A \bigg[ 3 \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \bigg( \frac{2 \mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} + \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}\bigg) \bigg]
+\end{equation}
+which becomes 
+\begin{equation}
+ \Delta_i u(\br{}_i) = - \sum_{A}  2 \, Z_A  \bigg[ \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2}  \bigg]
+\end{equation}
+\subsubsection{Computation of the total operator}
+\begin{equation}
+ \begin{aligned}
+& H + \big[ H,\hat{\tau} \big] + \frac{1}{2} \bigg[ \big[H,\hat{\tau}\big],J\bigg] = \\ & H -\frac{1}{2} \bigg( \sum_i \nabla^2_i u(\br{}_i) \bigg)    
+                                                                   -\sum_i \bigg(\nabla_i u(\br{}_i) \bigg) \cdot \bigg( \nabla_i  \bigg)  
+                                                                   -\frac{1}{2}\sum_i \nabla_i u({\bf r}_i) \cdot \nabla_i u({\bf r}_i) 
+ \end{aligned}
+\end{equation}
+which becomes
+\begin{equation}
+ \begin{aligned}
+  \tilde{H} = H +&  \sum_i \sum_{A}\, Z_A  \bigg[ \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}}  - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2}  \bigg] \\
+           &+  \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \bigg[ (x_i - x_A) \deriv{}{x_i}{} + (y_i - y_A) \deriv{}{y_i}{} + (z_i - z_A) \deriv{}{z_i}{}\bigg] \\
+           - \frac{1}{2}\sum_{B} Z_B &\bigg[ \big( x_1 - x_A \big) \big( x_1 - x_B \big)  \frac{\text{erf}(\mu r_{iA}) - 1}{r_{iA}} \frac{\text{erf}(\mu r_{iB}) - 1}{r_{iB}} \\
+           &+  \big( y_1 - y_A \big) \big( y_1 - y_B \big)  \frac{\text{erf}(\mu r_{iA}) - 1}{r_{iA}} \frac{\text{erf}(\mu r_{iB}) - 1}{r_{iB}} \\ 
+           &+  \big( z_1 - z_A \big) \big( z_1 - z_B \big)  \frac{\text{erf}(\mu r_{iA}) - 1}{r_{iA}} \frac{\text{erf}(\mu r_{iB}) - 1}{r_{iB} } \bigg].
+ \end{aligned}
+\end{equation}
+and as $H = \sum_i -\frac{1}{2} \Delta_i - \sum_A \frac{Z_A}{r_{iA}} + \sum_{i>j} \frac{1}{r_{ij}} $ the total interaction becomes 
+\begin{equation}
+ \label{eq:final_one_e_h}
+ \tilde{H} =  \sum_i -\frac{1}{2} \Delta_i + \sum_A Z_A \tilde{v}_A({\bf r}_i)  + \sum_{i>j} \frac{1}{r_{ij}}
+\end{equation}
+where the new effective potential is 
+\begin{equation}
+ \label{eq:final_one_e_v}
+ \begin{aligned}
+  \tilde{v}_A({\bf r}_i) = & -\frac{\text{erf}(\mu r_{iA})}{r_{iA}} - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r_{iA})^2} \\
+           &+  \frac{1 - \text{erf}(\mu r_{iA})}{r_{iA}} \bigg[ (x_i - x_A) \deriv{}{x_i}{} + (y_i - y_A) \deriv{}{y_i}{} + (z_i - z_A) \deriv{}{z_i}{}\bigg] \\
+           - \frac{1}{2}\sum_{B} Z_B\bigg[& \big( x_i - x_A \big) \big( x_i - x_B \big)  \frac{\text{erf}(\mu r_{iA}) - 1}{r_{iA}} \frac{\text{erf}(\mu r_{iB}) - 1}{r_{iB}} \\
+           +&  \big( y_i - y_A \big) \big( y_i - y_B \big)  \frac{\text{erf}(\mu r_{iA}) - 1}{r_{iA}} \frac{\text{erf}(\mu r_{iB}) - 1}{r_{iB}} \\ 
+           +&  \big( z_i - z_A \big) \big( z_i - z_B \big)  \frac{\text{erf}(\mu r_{iA}) - 1}{r_{iA}} \frac{\text{erf}(\mu r_{iB}) - 1}{r_{iB}}\bigg].
+ \end{aligned}
+\end{equation}
+\subsubsection{Verification with the Hydrogen atom}
+Let us apply the general equations (see Eqs. \eqref{eq:final_one_e_h} and \eqref{eq:final_one_e_v}) to the case of the Hydrogen atom, which is supposed to be in the center of the frame of reference (\textit{i.e.} ${\bf r}_A = \vec{0}$)
+\begin{equation}
+ \begin{aligned}
+  \tilde{v}({\bf r}) = & -\frac{\text{erf}(\mu r)}{r} - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r)^2} \\
+           &+  \frac{1 - \text{erf}(\mu r)}{r} \bigg[ x \deriv{}{x}{} + y \deriv{}{y}{} + z \deriv{}{z}{}\bigg] \\
+           &- \frac{1}{2}Z \big(x^2 + y^2 + z^2 \big)  \frac{\big(\text{erf}(\mu r) - 1\big)^2}{r^2},
+ \end{aligned}
+\end{equation}
+but as $r^2 = x^2+y^2+z^2$ one obtains that 
+\begin{equation}
+ - \frac{1}{2}Z \big(x^2 + y^2 + z^2 \big)  \frac{\big(\text{erf}(\mu r) - 1\big)^2}{r^2} = - \frac{1}{2}Z\big(\text{erf}(\mu r) - 1\big)^2
+\end{equation}
+and also as 
+\begin{equation}
+ \begin{aligned}
+ x \deriv{}{x}{} + y \deriv{}{y}{} + z \deriv{}{z}{} & = {\bf r} \cdot \nabla \\
+                                                     & = r \deriv{}{r}{},
+ \end{aligned}
+\end{equation}
+one obtains 
+\begin{equation}
+           +  \frac{1 - \text{erf}(\mu r)}{r} \bigg[ x \deriv{}{x}{} + y \deriv{}{y}{} + z \deriv{}{z}{}\bigg] = \bigg(1 - \text{erf}(\mu r)\bigg)\deriv{}{r}{},
+\end{equation}
+and therefore the total potential is 
+\begin{equation}
+ \begin{aligned}
+  \tilde{v}({\bf r}) = & -\frac{\text{erf}(\mu r)}{r} - \frac{\mu}{\sqrt{\pi}} e^{-(\mu r)^2} \\
+           &+  \bigg(1 - \text{erf}(\mu r)\bigg)\deriv{}{r}{} \\
+           &- \frac{1}{2}Z\big(\text{erf}(\mu r) - 1\big)^2,
+ \end{aligned}
+\end{equation}
+which coincides with Eq. \eqref{eq:one_e_3}. 
+
+\section{Derivation with a varying $\mu({\bf r})$}
+Let us assume one has a range separation parameter varying in space $\mur{}$ and that one knows its gradients and Laplacian. 
+Therefore, one would like to derive the same equations as for the constant $\mu$. 
+The Jastrow factor is therefore expressed as
+\begin{equation}
+ \tilde{u}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\bigg( u(r_{12};\mur{1}) + u(r_{12};\mur{2}) \bigg)
+\end{equation}
+where $u(r_{12};\mu)$ is the Jastrow factor defined in Eq. \eqref{eq:def_j}. 
+To derive properly the equations for such a new Jastrow factor, one needs to derive the different terms involving gradients and so on. 
+\subsection{Gradients of $\tilde{u}(\bd{r_1},\bd{r_2})$}
+A fundamental quantity is the gradient of $\tilde{u}(\bd{r_1},\bd{r_2})$ which is 
+\begin{equation}
+ \nabla_1 \tilde{u}(\bd{r_1},\bd{r_2}) = \deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{y_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) {\bf e}_{y1} + \deriv{}{z_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) {\bf e}_{z1}.
+\end{equation}
+Therefore one needs to compute $\deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2})$
+\begin{equation}
+ \deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) = \frac{1}{2}\deriv{}{x_1}{} u(r_{12};\mur{1}) 
+                                               +\frac{1}{2}\deriv{}{x_1}{} u(r_{12};\mur{2}) .
+\end{equation}
+Let us begin with the first term 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_1}{} u(r_{12};\mur{1})=& \deriv{}{r_{12}}{} u(r_{12};\mur{1})\deriv{r_{12}}{x_1}{} \\ 
+                                  +& \deriv{}{\mur{1}}{}u(r_{12};\mur{1}) \deriv{\mur{1}}{x_1}{},
+ \end{aligned}
+\end{equation}
+but as 
+\begin{equation}
+ \deriv{}{\mu}{}u(r_{12};\mu) = \frac{e^{-(\mu r_{12})^2}}{2 \sqrt{\pi} \mu^2}
+\end{equation}
+one obtains 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_1}{} u(r_{12};\mur{1}) =& \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \\
+                                   +&\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.  
+ \end{aligned}
+\end{equation}
+Similarly, as by definition $\deriv{\mur{2}}{x_1}{} = 0$, because 
+of the condition determining $u(r_{12};\mu)$ (see Eq.\eqref{def_j_0}) and according to Eq.\eqref{eq:dx1_u} one obtains that 
+\begin{equation}
+ \deriv{}{x_1}{} u(r_{12};\mur{2}) = \frac{1 - \text{erf}(\mur{2} r_{12})}{2 r_{12}} \bigg(x_1 - x_2 \bigg).
+\end{equation}
+Therefore, one obtains finally that 
+\begin{equation}
+ \label{eq:d_dx1_jtilde}
+ \begin{aligned}
+ \deriv{}{x_1}{} \tilde{u}(\bd{r_1},\bd{r_2}) = & \frac{(x_1 - x_2)}{2 r_{12}} 
+ \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{2} + \frac{1 - \text{erf}(\mur{2} r_{12})}{2}  \bigg) \\
+                 & + \frac{e^{-(\mur{1} r_{12})^2}}{2\sqrt{\pi} \mur{1}^2} \deriv{\mur{1}}{x_1}{},
+ \end{aligned}
+\end{equation}
+and similarly,
+\begin{equation}
+ \label{eq:d_dx2_jtilde}
+ \begin{aligned}
+ \deriv{}{x_2}{} \tilde{u}(\bd{r_1},\bd{r_2}) = & \frac{(x_2 - x_1)}{2 r_{12}} 
+ \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{2} + \frac{1 - \text{erf}(\mur{2} r_{12})}{2}  \bigg) \\
+                 & + \frac{e^{-(\mur{2} r_{12})^2}}{2\sqrt{\pi} \mur{2}^2} \deriv{\mur{2}}{x_2}{},
+ \end{aligned}
+\end{equation}
+
+\subsection{Computation of $\bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2$}
+Then one needs to compute 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{y_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{y_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{z_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{z_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2.
+ \end{aligned}
+\end{equation}
+According to Eq.\eqref{eq:d_dx1_jtilde}, 
+and defining the complementary error function as 
+\begin{equation}
+ \text{erfc}(x) = 1 - \text{erf}(x)
+\end{equation}
+one has that 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 \\
+ + & \frac{\big(x_1 - x_2\big)}{r_{12}} \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
+ \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
+ \end{aligned}
+\end{equation}
+Similarly 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2 \\
+ + & \frac{\big(x_2 - x_1\big)}{r_{12}} \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} 
+ \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
+ \end{aligned}
+\end{equation}
+Therefore, 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{2}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{\big(x_1 - x_2\big)}{2 \sqrt{\pi}r_{12}}  \frac{\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)}{2} \\
+&\bigg(   \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{\big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
+- \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{\big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} \bigg) \\
+ + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 
+ + \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2.
+ \end{aligned}
+\end{equation}
+
+Summing all terms and noticing that $\bigg(x_1 - x_2\bigg)^2 + \bigg(y_1 - y_2\bigg)^2 + \bigg(z_1 - z_2\bigg)^2 = \bigg(r_{12}\bigg)^2$ leads to 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 = 
+  \frac{1}{8}\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+&+\frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{4 \sqrt{\pi}r_{12}}  \\
+& \big( \bri{1} - \bri{2}\big)\cdot
+\bigg(\frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \nabla_1 \mur{1}
+  -   \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \nabla_2 \mur{2}  \bigg) \\
+  &+ \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 
+ + \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2.
+ \end{aligned}
+\end{equation}
+\bibliography{srDFT_SC}
+
+% f(x) = (3*erf(mu*x) - 1)/(2*x) + 1.5*mu/sqpi * exp(-(mu*x)**2.) - 0.25 * (1 - erf(mu*x))**2.
+
+\section{Form of the adjoint operator}
+One can write $\tilde{H}[\mu]$ in terms of its hermitian and non hermitian parts 
+\begin{equation}
+ \tilde{H}[\mu] = \tilde{H}^h[\mu] + \tilde{H}^{nh}[\mu]
+\end{equation}
+where the hermitian part is 
+\begin{equation}
+ \tilde{H}^h[\mu] = H - \bigg( \Delta_1 u(r_{12},\mu) + \big( \nabla_1 u(r_{12},\mu)\big)^2\bigg) 
+\end{equation}
+with 
+\begin{equation}
+ \Delta_1 u(r_{12},\mu) = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2},
+\end{equation}
+\begin{equation}
+ \big( \nabla_1 u(r_{12},\mu)\big)^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12})\bigg)^2}{4}, 
+\end{equation}
+and 
+\begin{equation}
+ \tilde{H}^{nh}[\mu] = \nabla_{1}u(r_{12},\mu) \cdot \big(\nabla_1 - \nabla_2\big)
+\end{equation}
+The adjoint of the non hermitian operator $\tilde{H}^{nh}[\mu]$ is 
+\begin{equation}
+ \bigg( \tilde{H}^{nh}[\mu] \bigg)^\dagger =  \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_1 \bigg)^\dagger - \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 \bigg)^\dagger,
+\end{equation}
+with 
+\begin{equation}
+ \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_1 \bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \nabla_1 
+                                                                - \nabla_1^2 u(r_{12},\mu)
+\end{equation}
+\begin{equation}
+ \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 \bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 
+                                                                - \nabla_1 \cdot \nabla_2 u(r_{12},\mu)
+\end{equation}
+but as 
+\begin{equation}
+ \nabla_2 u(r_{12},\mu) = - \nabla_{1}u(r_{12},\mu)
+\end{equation}
+one has
+\begin{equation}
+ \nabla_1 \cdot \nabla_2 u(r_{12},\mu) = - \nabla_1^2 u(r_{12},\mu)
+\end{equation}
+and therefore 
+\begin{equation}
+ \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 \bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 
+                                                                + \nabla_1^2 u(r_{12},\mu)
+\end{equation}
+which gives for the adjoint of the non hermitian operator 
+\begin{equation}
+ \bigg( \tilde{H}^{nh}[\mu]\bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \big( \nabla_1 -\nabla_2 \big) - 2 \nabla_1^2 u(r_{12},\mu).
+\end{equation}
+Therefore the adjoint of the TC Hamiltonian is
+\begin{equation}
+ \begin{aligned}
+\bigg(\tilde{H}[\mu]\bigg)^\dagger & = \tilde{H}^h[\mu] + \bigg( \tilde{H}^{nh}[\mu] \bigg)^\dagger \\
+                                   & = \tilde{H}^h[\mu]  - \nabla_{1}u(r_{12},\mu) \cdot \big( \nabla_1 -\nabla_2 \big) - 2 \nabla_1^2 u(r_{12},\mu)  \\
+                                   & = \tilde{H}^h[\mu]  - \tilde{H}^{nh}[\mu] - 2 \nabla_1^2 u(r_{12},\mu) 
+ \end{aligned}
+\end{equation}
+Then 
+\begin{equation}
+ \begin{aligned}
+ \frac{\tilde{H}[\mu] + \bigg(\tilde{H}[\mu]\bigg)^\dagger}{2}& = \tilde{H}^h[\mu] - \nabla_1^2 u(r_{12},\mu) \\
+                                                              & = H - \bigg( \Delta_1 u(r_{12},\mu) + \big( \nabla_1 u(r_{12},\mu)\big)^2\bigg) - \nabla_1^2 u(r_{12},\mu) \\
+                                                              & = H - \bigg( 2 \Delta_1 u(r_{12},\mu) + \big( \nabla_1 u(r_{12},\mu)\big)^2\bigg) \\
+                                                              & = h_c + \frac{1}{r_{12}} - 2 \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} + 2 \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} 
+                                                                 - \frac{\bigg(1 - \text{erf}(\mu r_{12})\bigg)^2}{4} \\
+                                                              & = h_c - \frac{1 - 2 \text{erf}(\mu r_{12})}{r_{12}} + 2 \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  - \frac{\bigg(1 - \text{erf}(\mu r_{12})\bigg)^2}{4}
+ \end{aligned}
+\end{equation}
 
 \end{document}
