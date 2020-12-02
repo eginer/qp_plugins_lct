@@ -2,8 +2,16 @@ program test_pot
  implicit none
  read_wf = .True.
  touch read_wf
-
- call routine_ao
+ print*,'e_c_md_basis_pbe_ueg = ',e_c_md_basis_pbe_ueg
+ double precision :: de_barth
+ call compute_func_der(delta_gamma_i_j_alpha, delta_gamma_i_j_beta, potential_c_alpha_mo_md_sr_pbe, potential_c_beta_mo_md_sr_pbe, de_barth)
+ print*,'ec_pbe_at_n              = ',ec_pbe_at_n
+ print*,'ec_pbe_at_n_plus_delta_n = ',ec_pbe_at_n_plus_delta_n
+ print*,'De                       = ',ec_pbe_at_n_plus_delta_n - ec_pbe_at_n
+ print*,'-----'
+ print*,'int_vc_pbe_at_n          = ',int_vc_pbe_at_n
+ print*,'-----'
+ print*,'de_barth                 = ',de_barth
 end
 
 subroutine routine_mo
