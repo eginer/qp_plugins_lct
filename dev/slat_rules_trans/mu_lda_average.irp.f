@@ -8,12 +8,13 @@ program test_density
 !  touch read_wf
 !  read_rl_eigv = .True.
 !  touch read_rl_eigv
-  call routine_write
-!   print*,'average_mu_lda       = ',average_mu_lda
-!   print*,'average_mu_rs        = ',average_mu_rs 
-!   print*,'average_mu_rs_c      = ',average_mu_rs_c
-!   print*,'average_mu_grad_n    = ',average_mu_grad_n
-!   print*,'average_mu_lda * 1/2 = ',average_mu_lda * 0.5d0
+!  call routine_write
+   print*,'average_mu_lda       = ',average_mu_lda
+   print*,'average_mu_rs        = ',average_mu_rs 
+   print*,'average_mu_rs_c      = ',average_mu_rs_c
+   print*,'average_mu_rs_c_lda  = ',average_mu_rs_c_lda
+   print*,'average_mu_grad_n    = ',average_mu_grad_n
+   print*,'average_mu_lda * 1/2 = ',average_mu_lda * 0.5d0
 end
 
 subroutine routine_write
@@ -139,6 +140,7 @@ end
  BEGIN_PROVIDER [double precision, average_mu_lda      ]
 &BEGIN_PROVIDER [double precision, average_mu_rs       ]
 &BEGIN_PROVIDER [double precision, average_mu_rs_c     ]
+&BEGIN_PROVIDER [double precision, average_mu_rs_c_lda ]
 &BEGIN_PROVIDER [double precision, average_mu_grad_n   ]
  implicit none
  integer :: ipoint,i,m
@@ -186,5 +188,7 @@ end
  average_mu_rs     = average_mu_rs    / dble(elec_alpha_num + elec_beta_num)
  average_mu_rs_c   = average_mu_rs_c  / dble(elec_alpha_num + elec_beta_num)
  average_mu_grad_n = average_mu_grad_n/ dble(elec_alpha_num + elec_beta_num)
+
+ average_mu_rs_c_lda = 0.5d0 * (average_mu_lda + average_mu_rs_c)
 
 END_PROVIDER 
