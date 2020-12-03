@@ -204,46 +204,26 @@ program pouet
  nx = 10000
  dx = xmax/dble(nx)
  print*,'0.5**0.25', 0.5d0**0.25d0
- mu0 = 0.05d0
- mu1 = 0.10d0
- mu2 = 0.20d0
- mu3 = 0.3d0
- mu4 = 0.4d0
- mu5 = 0.5d0
- mu6 = 0.6d0
- mu7 = 0.7071d0
- mu8 = 0.8d0
- mu9 = 0.9d0
- mu10= 1.0d0
- mu11= 1.5d0
- mu12= 3.0d0
- mu13= 5.0d0
-! mu15= 10.0d0
-
-! mu0 = 1.00d0
-! mu1 = 1.50d0
-! mu2 = 2.00d0
-! mu3 = 2.5d0
-! mu4 = 3.0d0
-! mu5 = 3.5d0
-! mu6 = 4.0d0
-! mu7 = 4.5000d0
-! mu8 = 5.0d0
-! mu9 = 5.5d0
-! mu10= 6.0d0
+ mu1 = 0.5d0
+ mu2 = 0.7d0
+ mu3 = 0.8d0
+ mu4 = 0.9d0
+ mu5 = 1.0d0
+ mu6 = 1.5d0
+ mu7 = 3.0d0
+ mu8 = 5.0d0
 
  write(33,'(A5,12X,100(F16.10,X))')"#  ", mu0, mu1, mu2, mu3, mu4, mu5, mu6,mu7, mu8, mu9, mu10
  x = dx
  do i = 1, nx
-  write(33,'(100(F16.10,X))')x,dexp(f(x,mu0)),dexp(f(x,mu1)),dexp(f(x,mu2))& 
-                              ,dexp(f(x,mu3)),dexp(f(x,mu4)),dexp(f(x,mu5)),dexp(f(x,mu6))&
-                              ,dexp(f(x,mu7)),dexp(f(x,mu8)),dexp(f(x,mu9)),dexp(f(x,mu10))& 
-                              ,dexp(f(x,mu11)),dexp(f(x,mu12)),dexp(f(x,mu13)),dexp(slater_fit_ten_no(x))
+  write(33,'(100(F16.10,X))')x,dexp(f(x,mu1)),dexp(f(x,mu2)),dexp(f(x,mu3)),dexp(f(x,mu4))  &
+                              ,dexp(f(x,mu5)),dexp(f(x,mu6)),dexp(f(x,mu7)),dexp(f(x,mu8))  &
+                              ,dexp(slater_fit_ten_no(x))
                               
-  write(34,'(100(F16.10,X))')x,(f(x,mu0)),(f(x,mu1)),(f(x,mu2))& 
-                              ,(f(x,mu3)),(f(x,mu4)),(f(x,mu5)),(f(x,mu6))&
-                              ,(f(x,mu7)),(f(x,mu8)),(f(x,mu9)),(f(x,mu10))&
-                              ,(f(x,mu11)),(f(x,mu12)),(f(x,mu13)),slater_fit_ten_no(x)
+  write(34,'(100(F16.10,X))')x,f(x,mu1),f(x,mu2),f(x,mu3),f(x,mu4)  &
+                              ,f(x,mu5),f(x,mu6),f(x,mu7),f(x,mu8)  &
+                              ,slater_fit_ten_no(x)
+                               
   x = x + dx
  enddo
 
