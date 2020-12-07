@@ -4,7 +4,13 @@ subroutine print_energy
  use bitmasks
  integer :: i
  print*,'***************************************'
- print*,'mu_erf = ',mu_erf
+ 
+ if(.not.ten_no_jastrow)then
+  print*,'Using a mu-based Jastrow'
+  print*,'mu_erf = ',mu_erf
+ else
+  print*,'Using Ten-No Jastrow'
+ endif
  print*,'H      eigenvalue'
  i = 1
  print*,'E0       = ',CI_energy(i)

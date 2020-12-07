@@ -7,8 +7,8 @@ program transcorr_h
  call print_e_comp_transcorr
  call print_eigv
  call print_pert
-! call plot_on_top_left_right
-! call print_psi_exc_psi_trans
+ !call plot_on_top_left_right
+ !call print_psi_exc_psi_trans
  call write_left_right
 end
 
@@ -20,7 +20,7 @@ subroutine provide_all
  double precision :: accu
  accu = 0.d0
  key_i(:,:) = psi_det(:,:,1)
- call diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
+ call htilde_mat(key_i,key_i,hmono,herf,heff,hderiv,htot)
  provide eigval_trans
 end
 

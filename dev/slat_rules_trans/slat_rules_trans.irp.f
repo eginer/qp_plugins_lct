@@ -1,4 +1,4 @@
-subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
+subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,htot)
   use bitmasks
   BEGIN_DOC
 !  diagonal element of htilde 
@@ -39,7 +39,7 @@ subroutine diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
 
 end
 
-subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+subroutine single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for single excitation  
@@ -88,7 +88,7 @@ subroutine single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   htot = hmono + herf + heff + hderiv
 end
 
-subroutine double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for double excitation  
@@ -129,26 +129,6 @@ subroutine double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
  end
 
 
-subroutine htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
-  use bitmasks
-  BEGIN_DOC
-! <key_j | H_tilde | key_i> 
-!!
-!! WARNING !!
-! 
-! Non hermitian !!
-  END_DOC
-  implicit none
-  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
-  integer                        :: degree
-  if(.not.ten_no_jastrow)then
-   call htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
-  else 
-   call htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
-  endif
-end
-
 subroutine htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   use bitmasks
   BEGIN_DOC
@@ -170,11 +150,32 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
    if(degree.gt.2)then
     return
    else if(degree == 2)then
-    call double_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+    call double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
    else if(degree == 1)then
-    call single_htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+    call single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
    else if(degree == 0)then
-    call diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
+    call diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,htot)
    endif
    
 end
+
+subroutine htilde_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  use bitmasks
+  BEGIN_DOC
+! <key_j | H_tilde | key_i> 
+!!
+!! WARNING !!
+! 
+! Non hermitian !!
+  END_DOC
+  implicit none
+  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  integer                        :: degree
+  if(.not.ten_no_jastrow)then
+   call htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  else 
+   call htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+  endif
+end
+

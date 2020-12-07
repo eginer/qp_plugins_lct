@@ -19,7 +19,7 @@ subroutine provide_all
  double precision :: accu
  accu = 0.d0
  key_i(:,:) = psi_det(:,:,1)
- call diag_htilde_mat(key_i,hmono,herf,heff,hderiv,htot)
+ call htilde_mat(key_i,key_i,hmono,herf,heff,hderiv,htot)
  provide eigval_trans
 end
 
