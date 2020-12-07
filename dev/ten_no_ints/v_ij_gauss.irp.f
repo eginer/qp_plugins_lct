@@ -137,7 +137,7 @@ BEGIN_PROVIDER [ double precision, v_ij_gauss_rk_dble_alpha, ( ao_num, ao_num,n_
    do ipoint = 1, n_points_final_grid
     do i = 1, ao_num
      do j = 1, i-1
-      v_ij_gauss_rk_dble_alpha(j,i,ipoint,pp,qq)= v_ij_gauss_rk_dble_alpha(i,j,ipoint,pp,qq)
+      v_ij_gauss_rk_dble_alpha(j,i,ipoint,pp,qq)= v_ij_gauss_rk_dble_alpha(i,j,ipoint,qq,pp)
      enddo
     enddo
    enddo

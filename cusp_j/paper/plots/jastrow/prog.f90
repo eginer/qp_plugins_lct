@@ -223,6 +223,10 @@ program pouet
   write(34,'(100(F16.10,X))')x,f(x,mu1),f(x,mu2),f(x,mu3),f(x,mu4)  &
                               ,f(x,mu5),f(x,mu6),f(x,mu7),f(x,mu8)  &
                               ,slater_fit_ten_no(x)
+  write(35,'(100(F16.10,X))')x,slater_fit_ten_no(x)
+                              
+                              
+                               
                                
   x = x + dx
  enddo

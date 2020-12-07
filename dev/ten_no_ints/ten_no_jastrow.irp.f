@@ -14,17 +14,14 @@
  !
  ! The coefficient are taken from the ano-rcc expansion of the hydrogen 1s orbital
  END_DOC
-! coef_fit_ten_no_slat_gauss(1) = 1.d0
-! coef_fit_ten_no_slat_gauss(2) = 0.5d0
-! expo_fit_ten_no_slat_gauss(1) = 5.d0
-! expo_fit_ten_no_slat_gauss(2) = 0.5d0
+ coef_fit_ten_no_slat_gauss(1) = -0.078215d0
+ coef_fit_ten_no_slat_gauss(2) = -0.132037d0
+ coef_fit_ten_no_slat_gauss(3) = -0.068633d0
+ coef_fit_ten_no_slat_gauss(4) = -0.029047d0
+ coef_fit_ten_no_slat_gauss(5) = -0.012063d0
+ coef_fit_ten_no_slat_gauss(6) = -0.004346d0
 
- coef_fit_ten_no_slat_gauss(1) = 0.078215d0
- coef_fit_ten_no_slat_gauss(2) = 0.132037d0
- coef_fit_ten_no_slat_gauss(3) = 0.068633d0
- coef_fit_ten_no_slat_gauss(4) = 0.029047d0
- coef_fit_ten_no_slat_gauss(5) = 0.012063d0
- coef_fit_ten_no_slat_gauss(6) = 0.004346d0
+ 
 
  expo_fit_ten_no_slat_gauss(1) = 0.621698d0
  expo_fit_ten_no_slat_gauss(2) = 3.371717d0

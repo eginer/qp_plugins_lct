@@ -10,13 +10,14 @@ program ten_no_ints
 ! call test_dgemm 
 ! print*,'n_max_fit_ten_no_slat = ',n_max_fit_ten_no_slat
 ! call full_num_deriv_ao
- call full_num_deriv_mo
+! call full_num_deriv_mo
 ! call test_dgemm_square
 ! call test_dgemm_lapl
 ! call full_num_lapl_ao
 ! call full_num_lapl_mo
 ! call full_num_square_ao
 ! call full_num_square_mo
- call test_mo_final
+! call test_mo_final
  call full_num_square_lapl_mo
 end
+

@@ -33,8 +33,8 @@ subroutine diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,htot)
    do j = 1, Ne(jspin)
     jj = occ(j,jspin) 
     herf   += get_two_e_integral(ii,jj,ii,jj,mo_integrals_map)
-    heff   += mo_ten_no_eff_sq_lpl_pot_physicist(ii,jj,ii,jj) 
-    hderiv += mo_ten_no_dr12_pot_physicist(ii,jj,ii,jj) 
+    heff   += -mo_ten_no_eff_sq_lpl_pot_physicist(ii,jj,ii,jj) ! minus sign 
+    hderiv += -mo_ten_no_dr12_pot_physicist(ii,jj,ii,jj)       ! minus sign 
    enddo
   enddo
   htot = hmono + herf + heff + hderiv
@@ -84,8 +84,8 @@ subroutine single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   do i = 1, Ne(ispin)
    ii = occ(i,ispin) 
    herf   += get_two_e_integral(ii,p1,ii,h1,mo_integrals_map)
-   heff   += mo_ten_no_eff_sq_lpl_pot_physicist(ii,p1,ii,h1) 
-   hderiv += mo_ten_no_dr12_pot_physicist(ii,p1,ii,h1) 
+   heff   += -mo_ten_no_eff_sq_lpl_pot_physicist(ii,p1,ii,h1) ! minus sign 
+   hderiv += -mo_ten_no_dr12_pot_physicist(ii,p1,ii,h1)       ! minus sign
   enddo
   herf    *= phase
   heff    *= phase
@@ -127,8 +127,8 @@ subroutine double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   call get_double_excitation(key_i,key_j,exc,phase,N_int)
   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
   herf    = get_two_e_integral(p1,p2,h1,h2,mo_integrals_map)   
-  heff    = mo_ten_no_eff_sq_lpl_pot_physicist(p1,p2,h1,h2) 
-  hderiv  = mo_ten_no_dr12_pot_physicist(p1,p2,h1,h2) 
+  heff    = -mo_ten_no_eff_sq_lpl_pot_physicist(p1,p2,h1,h2)  ! minus sign 
+  hderiv  = -mo_ten_no_dr12_pot_physicist(p1,p2,h1,h2)        ! minus sign 
   herf   *= phase
   heff   *= phase
   hderiv *= phase
