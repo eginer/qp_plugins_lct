@@ -121,21 +121,21 @@ subroutine full_num_square_mo
   enddo
  enddo
 
-! accu = 0.d0
-! do j = 1, 1
-!  do l = 1, 1
-!   do i = 1, 1
-!    do k = 1, 1
-!     accu_tmp = dabs(mo_ten_no_square_pot_old(k,i,l,j) - array_tmp(k,i,l,j))
-!     accu += accu_tmp
-!     print*,k,i,l,j
-!     print*,'mo_ten_no_square_pot_old, array_tmp, accu_tmp'
-!     print*, mo_ten_no_square_pot_old(k,i,l,j), array_tmp(k,i,l,j), accu_tmp
-!     print*,array_tmp(k,i,l,j) , array_tmp_2(k,i,l,j)
-!    enddo
-!   enddo
-!  enddo
-! enddo
+ accu = 0.d0
+ do j = 1, mo_num
+  do l = 1, mo_num
+   do i = 1, mo_num
+    do k = 1, mo_num
+     accu_tmp = dabs(mo_ten_no_square_pot_chemist(k,i,l,j) - array_tmp(k,i,l,j))
+     accu += accu_tmp
+     print*,k,i,l,j
+     print*,'mo_ten_no_square_pot_chemist, array_tmp, accu_tmp'
+     print*, mo_ten_no_square_pot_chemist(k,i,l,j), array_tmp(k,i,l,j), accu_tmp
+     print*,array_tmp(k,i,l,j) , array_tmp_2(k,i,l,j)
+    enddo
+   enddo
+  enddo
+ enddo
  print*,''
  print*,''
  print*,'accu/mo_num**4',accu/dble(mo_num)**4.d0

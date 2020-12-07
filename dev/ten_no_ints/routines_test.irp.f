@@ -206,3 +206,48 @@ subroutine test_dgemm_square
  print*,''
  print*,'accu/ao_num**4',accu/dble(ao_num)**4.d0
 end
+
+subroutine test_dgemm_lapl
+ implicit none
+ integer :: i,j,k,l
+ double precision :: accu
+ accu = 0.d0
+ do j = 1, ao_num
+  do l = 1, ao_num
+   do i = 1, ao_num
+    do k = 1, ao_num
+     accu += dabs(ao_ten_no_lapl_pot(k,i,l,j) - ao_ten_no_lapl_pot_old(k,i,l,j))
+     print*,k,i,l,j
+     print*,'ao_ten_no_lapl_pot, ao_ten_no_lapl_pot_old, accu'
+     print*, ao_ten_no_lapl_pot(k,i,l,j), ao_ten_no_lapl_pot_old(k,i,l,j), accu 
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,''
+ print*,''
+ print*,'accu/ao_num**4',accu/dble(ao_num)**4.d0
+end
+
+subroutine test_mo_final
+ implicit none
+ integer :: i,j,k,l
+ double precision :: accu
+ accu = 0.d0
+ do j = 1, mo_num
+  do l = 1, mo_num
+   do i = 1, mo_num
+    do k = 1, mo_num
+     accu += dabs(mo_ten_no_eff_sq_lpl_pot_chemist(k,i,l,j) - mo_ten_no_lapl_pot_chemist(k,i,l,j)  & 
+                                                            - mo_ten_no_square_pot_chemist(k,i,l,j))
+     print*,k,i,l,j
+     print*,'mo_ten_no_eff_sq_lpl_pot_chemist, A+B, accu'
+     print*, mo_ten_no_eff_sq_lpl_pot_chemist(k,i,l,j), mo_ten_no_lapl_pot_chemist(k,i,l,j) + mo_ten_no_square_pot_chemist(k,i,l,j), accu
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,''
+ print*,''
+ print*,'accu/mo_num**4',accu/dble(mo_num)**4.d0
+end

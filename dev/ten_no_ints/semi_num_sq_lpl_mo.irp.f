@@ -1,4 +1,4 @@
-BEGIN_PROVIDER [double precision, mo_ten_no_dr12_pot_chemist, (mo_num, mo_num, mo_num, mo_num)]
+BEGIN_PROVIDER [double precision, mo_ten_no_eff_sq_lpl_pot_chemist, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
@@ -11,13 +11,13 @@ BEGIN_PROVIDER [double precision, mo_ten_no_dr12_pot_chemist, (mo_num, mo_num, m
     do q = 1, ao_num
      do k = 1, mo_num
       !       (k n|p m)    = sum_q c_qk * (q n|p m)
-      mo_tmp_1(k,n,p,m) += mo_coef_transp(k,q) * ao_ten_no_dr12_pot(q,n,p,m)
+      mo_tmp_1(k,n,p,m) += mo_coef_transp(k,q) * (ao_ten_no_lapl_pot(q,n,p,m) + ao_ten_no_square_pot(q,n,p,m))
      enddo
     enddo
    enddo
   enddo
  enddo
- free ao_ten_no_dr12_pot 
+ free ao_ten_no_lapl_pot ao_ten_no_square_pot 
  allocate(mo_tmp_2(mo_num,mo_num,ao_num,ao_num))
  mo_tmp_2 = 0.d0
  do m = 1, ao_num
@@ -47,13 +47,13 @@ BEGIN_PROVIDER [double precision, mo_ten_no_dr12_pot_chemist, (mo_num, mo_num, m
   enddo
  enddo
  deallocate(mo_tmp_2)
- mo_ten_no_dr12_pot_chemist = 0.d0
+ mo_ten_no_eff_sq_lpl_pot_chemist = 0.d0
  do m = 1, ao_num
   do j = 1, mo_num
    do l = 1, mo_num
     do i = 1, mo_num
      do k = 1, mo_num
-      mo_ten_no_dr12_pot_chemist(k,i,l,j) += mo_coef_transp(j,m)  * mo_tmp_1(k,i,l,m)
+      mo_ten_no_eff_sq_lpl_pot_chemist(k,i,l,j) += mo_coef_transp(j,m)  * mo_tmp_1(k,i,l,m)
      enddo
     enddo
    enddo
@@ -62,17 +62,17 @@ BEGIN_PROVIDER [double precision, mo_ten_no_dr12_pot_chemist, (mo_num, mo_num, m
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_physicist, (mo_num, mo_num, mo_num, mo_num)]
+BEGIN_PROVIDER [double precision, mo_two_e_eff_eff_sq_lpl_pot_physicist, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  integer :: i,j,k,l
  do j = 1, mo_num
   do i = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
-     mo_two_e_eff_dr12_pot_physicist(k,l,i,j) = mo_ten_no_dr12_pot_chemist(k,i,l,j)
+     mo_two_e_eff_eff_sq_lpl_pot_physicist(k,l,i,j) = mo_ten_no_eff_sq_lpl_pot_chemist(k,i,l,j)
     enddo
    enddo
   enddo
  enddo
- free mo_ten_no_dr12_pot_chemist
+ free mo_ten_no_eff_sq_lpl_pot_chemist
 END_PROVIDER 
