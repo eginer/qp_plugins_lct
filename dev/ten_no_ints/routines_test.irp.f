@@ -100,14 +100,14 @@ subroutine test_deriv_ints
      do pp = 1, n_max_fit_ten_no_slat
       alpha = expo_fit_ten_no_slat_gauss(pp)
       coef = coef_fit_ten_no_slat_gauss(pp)
-!      call gauss_int_x_ao(i,k,alpha,r,m,integral_x)
+      call gauss_int_x_ao(i,k,alpha,r,m,integral_x)
       integral = overlap_gauss_r12_ao(r,alpha,i,k)
       do j = 1, ao_num
        do l = 1, ao_num 
-        ! -2 alpha * x_1 * phi_k * d/dx phi_i * w_jl(r)
-        array_tmp(k,i,l,j) += -2.d0 * weight * coef * alpha * integral * aos_in_r_array_transp(ipoint,l) * r(m) * aos_grad_in_r_array(j,ipoint,m) * integral
-!        ! +2 alpha phi_k * d/dx phi_i * w_jl^x(r)
-!        array_tmp(l,j,k,i) +=  2.d0 * weight * coef * alpha * integral * aos_in_r_array_transp(ipoint,l)        * aos_grad_in_r_array(j,ipoint,m) * integral_x
+        ! -2 alpha * x_1 * phi_l * d/dx phi_j * w_ik(r)
+        array_tmp(k,i,l,j) += -2.d0 * weight * coef * alpha * aos_in_r_array_transp(ipoint,l) * r(m) * aos_grad_in_r_array(j,ipoint,m) * integral 
+!        ! +2 alpha phi_l * d/dx phi_j * w_ik^x(r)
+        array_tmp(l,j,k,i) +=  2.d0 * weight * coef * alpha * aos_in_r_array_transp(ipoint,l)        * aos_grad_in_r_array(j,ipoint,m) * integral_x
        enddo
       enddo
      enddo
@@ -116,43 +116,71 @@ subroutine test_deriv_ints
   enddo
  enddo
 
-! do m = 1, 3
-!  do i = 1, ao_num
-!    do k = 1, ao_num
-!      do ipoint = 1, n_points_final_grid
-!       r(1) = final_grid_points(1,ipoint)
-!       r(2) = final_grid_points(2,ipoint)
-!       r(3) = final_grid_points(3,ipoint)
-!       weight = final_weight_at_r_vector(ipoint)
-!       do pp = 1, n_max_fit_ten_no_slat
-!        alpha = expo_fit_ten_no_slat_gauss(pp)
-!        coef = coef_fit_ten_no_slat_gauss(pp)
-!        call gauss_int_x_ao(i,k,alpha,r,m,integral_x)
-!        integral = overlap_gauss_r12_ao(r,alpha,i,k)
-!        do j = 1, ao_num
-!         do l = 1, ao_num 
-!          ! -2 alpha * x_1 * phi_l * d/dx phi_j * w_ki(r)
-!          array_tmp(l,j,k,i) += -2.d0 * weight * coef * alpha * integral * aos_in_r_array_transp(ipoint,l) * r(m) * aos_grad_in_r_array(j,ipoint,m) * integral
-!          ! +2 alpha phi_l * d/dx phi_j * w_ik^x(r)
-!          array_tmp(l,j,k,i) +=  2.d0 * weight * coef * alpha * integral * aos_in_r_array_transp(ipoint,l)        * aos_grad_in_r_array(j,ipoint,m) * integral_x
-!         enddo
-!        enddo
-!       enddo
-!      enddo 
-!    enddo
-!   enddo
-! enddo
+ do ipoint = 1, n_points_final_grid
+  r(1) = final_grid_points(1,ipoint)
+  r(2) = final_grid_points(2,ipoint)
+  r(3) = final_grid_points(3,ipoint)
+  weight = final_weight_at_r_vector(ipoint)
+  do m = 1, 3
+   do j = 1, ao_num
+    do l = 1, ao_num
+     do pp = 1, n_max_fit_ten_no_slat
+      alpha = expo_fit_ten_no_slat_gauss(pp)
+      coef = coef_fit_ten_no_slat_gauss(pp)
+      call gauss_int_x_ao(j,l,alpha,r,m,integral_x)
+      integral = overlap_gauss_r12_ao(r,alpha,j,l)
+      do i = 1, ao_num
+       do k = 1, ao_num 
+        ! -2 alpha * x_1 * phi_k * d/dx phi_i * w_jl(r)
+        array_tmp(k,i,l,j) += -2.d0 * weight * coef * alpha * aos_in_r_array_transp(ipoint,k) * r(m) * aos_grad_in_r_array(i,ipoint,m) * integral 
+!        ! +2 alpha phi_k * d/dx phi_i * w_jl^x(r)
+        array_tmp(l,j,k,i) +=  2.d0 * weight * coef * alpha * aos_in_r_array_transp(ipoint,k)        * aos_grad_in_r_array(i,ipoint,m) * integral_x
+       enddo
+      enddo
+     enddo
+    enddo 
+   enddo
+  enddo
+ enddo
 
+
+ accu = 0.d0
  do j = 1, ao_num
   do l = 1, ao_num
    do i = 1, ao_num
     do k = 1, ao_num
-     accu = dabs(array_tmp(k,i,l,j) - ao_two_e_eff_dr12_pot_array_new_bis(k,i,l,j))
+     accu += dabs(array_tmp(k,i,l,j) - ao_ten_no_dr12_pot_old(k,i,l,j))
      print*,k,i,l,j
-     print*,'array_tmp, ao_two_e_eff_dr12_pot_array_new_bis, accu'
-     print*, array_tmp(k,i,l,j), ao_two_e_eff_dr12_pot_array_new_bis(k,i,l,j), accu 
+     print*,'array_tmp, ao_ten_no_dr12_pot_old, accu'
+     print*, array_tmp(k,i,l,j), ao_ten_no_dr12_pot_old(k,i,l,j), accu 
+     
     enddo
    enddo
   enddo
  enddo
+ print*,''
+ print*,''
+ print*,'accu/ao_num**4',accu/dble(ao_num)**4.d0
+end
+
+subroutine test_dgemm
+ implicit none
+ integer :: i,j,k,l
+ double precision :: accu
+ accu = 0.d0
+ do j = 1, ao_num
+  do l = 1, ao_num
+   do i = 1, ao_num
+    do k = 1, ao_num
+     accu += dabs(ao_ten_no_dr12_pot(k,i,l,j) - ao_ten_no_dr12_pot_old(k,i,l,j))
+     print*,k,i,l,j
+     print*,'ao_ten_no_dr12_pot, ao_ten_no_dr12_pot_old, accu'
+     print*, ao_ten_no_dr12_pot(k,i,l,j), ao_ten_no_dr12_pot_old(k,i,l,j), accu 
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,''
+ print*,''
+ print*,'accu/ao_num**4',accu/dble(ao_num)**4.d0
 end

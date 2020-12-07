@@ -1,7 +1,9 @@
 
  BEGIN_PROVIDER [integer, n_max_fit_ten_no_slat]
  implicit none
- n_max_fit_ten_no_slat = 6
+ n_max_fit_ten_no_slat = 1
+ print*,'n_max_fit_ten_no_slat = ',n_max_fit_ten_no_slat
+ pause
  END_PROVIDER
 
  BEGIN_PROVIDER [double precision, coef_fit_ten_no_slat_gauss, (n_max_fit_ten_no_slat)]
@@ -14,19 +16,21 @@
  !
  ! The coefficient are taken from the ano-rcc expansion of the hydrogen 1s orbital
  END_DOC
- coef_fit_ten_no_slat_gauss(1) = 0.078215d0
- coef_fit_ten_no_slat_gauss(2) = 0.132037d0
- coef_fit_ten_no_slat_gauss(3) = 0.068633d0
- coef_fit_ten_no_slat_gauss(4) = 0.029047d0
- coef_fit_ten_no_slat_gauss(5) = 0.012063d0
- coef_fit_ten_no_slat_gauss(6) = 0.004346d0
+ coef_fit_ten_no_slat_gauss(1) = 1.d0
+! coef_fit_ten_no_slat_gauss(1) = 0.078215d0
+! coef_fit_ten_no_slat_gauss(2) = 0.132037d0
+! coef_fit_ten_no_slat_gauss(3) = 0.068633d0
+! coef_fit_ten_no_slat_gauss(4) = 0.029047d0
+! coef_fit_ten_no_slat_gauss(5) = 0.012063d0
+! coef_fit_ten_no_slat_gauss(6) = 0.004346d0
 
- expo_fit_ten_no_slat_gauss(1) = 0.621698d0
- expo_fit_ten_no_slat_gauss(2) = 3.371717d0
- expo_fit_ten_no_slat_gauss(3) = 14.27116d0
- expo_fit_ten_no_slat_gauss(4) = 82.76522d0
- expo_fit_ten_no_slat_gauss(5) = 605.5295d0
- expo_fit_ten_no_slat_gauss(6) = 6596.808d0
+ expo_fit_ten_no_slat_gauss(1) = 1.d0
+! expo_fit_ten_no_slat_gauss(1) = 0.621698d0
+! expo_fit_ten_no_slat_gauss(2) = 3.371717d0
+! expo_fit_ten_no_slat_gauss(3) = 14.27116d0
+! expo_fit_ten_no_slat_gauss(4) = 82.76522d0
+! expo_fit_ten_no_slat_gauss(5) = 605.5295d0
+! expo_fit_ten_no_slat_gauss(6) = 6596.808d0
 
 END_PROVIDER 
 
