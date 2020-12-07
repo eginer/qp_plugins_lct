@@ -62,14 +62,14 @@ BEGIN_PROVIDER [double precision, mo_ten_no_eff_sq_lpl_pot_chemist, (mo_num, mo_
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, mo_two_e_eff_eff_sq_lpl_pot_physicist, (mo_num, mo_num, mo_num, mo_num)]
+BEGIN_PROVIDER [double precision, mo_ten_no_eff_sq_lpl_pot_physicist, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  integer :: i,j,k,l
  do j = 1, mo_num
   do i = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
-     mo_two_e_eff_eff_sq_lpl_pot_physicist(k,l,i,j) = mo_ten_no_eff_sq_lpl_pot_chemist(k,i,l,j)
+     mo_ten_no_eff_sq_lpl_pot_physicist(k,l,i,j) = mo_ten_no_eff_sq_lpl_pot_chemist(k,i,l,j)
     enddo
    enddo
   enddo
