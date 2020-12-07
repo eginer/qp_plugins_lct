@@ -2,8 +2,6 @@
  BEGIN_PROVIDER [integer, n_max_fit_ten_no_slat]
  implicit none
  n_max_fit_ten_no_slat = 1
- print*,'n_max_fit_ten_no_slat = ',n_max_fit_ten_no_slat
- pause
  END_PROVIDER
 
  BEGIN_PROVIDER [double precision, coef_fit_ten_no_slat_gauss, (n_max_fit_ten_no_slat)]

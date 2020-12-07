@@ -2,9 +2,11 @@
 BEGIN_PROVIDER [double precision, ao_ten_no_dr12_pot_old, (ao_num, ao_num, ao_num, ao_num)]
  implicit none
 BEGIN_DOC
-!                             1 1 2 2      1 2                                1 2 
+! Integral of the non hermite terms for the TenNo potential 
 !
-! ao_ten_no_dr12_pot_old(k,i,l,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+!                        1 1 2 2      1 2                                             1 2 
+!
+! ao_ten_no_dr12_pot_old(k,i,l,j) = < k l \grad_1 u_Tenno(r12) . (\grad_1 - \grad2) | i j > on the AO basis
 END_DOC
  integer :: i,j,k,l,ipoint,m,pp
  double precision :: weight1,thr,r(3)
@@ -23,7 +25,7 @@ END_DOC
    do i = 1, ao_num
     do k = 1, ao_num
      ! x * phi_k * d/dx phi_i
-     b_mat(k,i,ipoint,m) = aos_in_r_array_transp(ipoint,k) * r(m) * weight1 * aos_grad_in_r_array(i,ipoint,m) 
+     b_mat(k,i,ipoint,m) = aos_in_r_array(k,ipoint) * r(m) * weight1 * aos_grad_in_r_array(i,ipoint,m) 
     enddo
    enddo
   enddo
@@ -58,7 +60,7 @@ END_DOC
    do i = 1, ao_num
     do k = 1, ao_num
      ! phi_k * d/dx phi_i
-     b_mat(k,i,ipoint,m) = aos_in_r_array_transp(ipoint,k) * weight1 * aos_grad_in_r_array(i,ipoint,m) 
+     b_mat(k,i,ipoint,m) = aos_in_r_array(k,ipoint) * weight1 * aos_grad_in_r_array(i,ipoint,m) 
     enddo
    enddo
   enddo
@@ -101,9 +103,11 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, ao_ten_no_dr12_pot, (ao_num, ao_num, ao_num, ao_num)]
  implicit none
 BEGIN_DOC
-!                             1 1 2 2      1 2                                1 2 
+! Integral of the non hermite terms for the TenNo potential 
 !
-! ao_ten_no_dr12_pot(k,i,l,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+!                        1 1 2 2      1 2                                             1 2 
+!
+! ao_ten_no_dr12_pot_old(k,i,l,j) = < k l \grad_1 u_Tenno(r12) . (\grad_1 - \grad2) | i j > on the AO basis
 END_DOC
  integer :: i,j,k,l,ipoint,m,pp
  double precision :: weight1,thr,r(3),alpha,coef,coeftmp

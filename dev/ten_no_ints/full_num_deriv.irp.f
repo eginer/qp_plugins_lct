@@ -5,7 +5,6 @@ subroutine full_num_deriv_ao
  double precision :: alpha, coef,contrib,accu
  double precision, allocatable :: array_tmp(:,:,:,:)
  allocate(array_tmp(ao_num,ao_num,ao_num,ao_num))
- provide n_max_fit_ten_no_slat
  array_tmp = 0.d0
  do ipoint = 1, n_points_final_grid
   r1(1) = final_grid_points(1,ipoint)
@@ -20,10 +19,10 @@ subroutine full_num_deriv_ao
    r12 = (r1(1) - r2(1))**2.d0 + (r1(2) - r2(2))**2.d0 + (r1(3) - r2(3))**2.d0
 !   print*,ipoint,jpoint
    do m = 1, 3
-    do j = 1, 1
-     do l = 1, 1
-      do i = 1, 1
-       do k = 1, 1
+    do j = 1, ao_num
+     do l = 1, ao_num
+      do i = 1, ao_num
+       do k = 1, ao_num
         contrib =  weight1 * weight2 * aos_in_r_array_transp(ipoint,k) * aos_in_r_array_transp(jpoint,l)  & 
                            !   x1 (dx1 phi_i(1)) phi_j(2)
                            * ( r1(m) * aos_grad_in_r_array(i,ipoint,m) * aos_in_r_array_transp(jpoint,j)              &
@@ -33,11 +32,9 @@ subroutine full_num_deriv_ao
                               -r1(m) * aos_in_r_array_transp(ipoint,i) * aos_grad_in_r_array(j,jpoint,m)              & 
                            !   x2 phi_j(2) (dx1 phi_i(1))
                               -r2(m) * aos_in_r_array_transp(jpoint,j) * aos_grad_in_r_array(i,ipoint,m)              ) 
-        print*,'contrib = ',contrib,n_max_fit_ten_no_slat
         do pp = 1, n_max_fit_ten_no_slat
          alpha = expo_fit_ten_no_slat_gauss(pp)
          coef = coef_fit_ten_no_slat_gauss(pp)
-         print*,contrib, alpha, coef
          array_tmp(k,i,l,j) += contrib *  (-2.d0 * alpha)   * dexp(-alpha * r12) * coef 
         enddo
        enddo
@@ -47,7 +44,6 @@ subroutine full_num_deriv_ao
    enddo
   enddo
  enddo
- stop
 
  accu = 0.d0
  do j = 1, ao_num

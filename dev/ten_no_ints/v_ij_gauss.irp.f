@@ -92,8 +92,114 @@ BEGIN_PROVIDER [ double precision, x_v_ij_gauss_rk, (ao_num, ao_num,n_points_fin
  enddo
  call wall_time(wall1)
  print*,'wall time for x_v_ij_gauss_rk',wall1 - wall0
+END_PROVIDER 
 
 
+BEGIN_PROVIDER [ double precision, v_ij_gauss_rk_dble_alpha, ( ao_num, ao_num,n_points_final_grid,n_max_fit_ten_no_slat,n_max_fit_ten_no_slat)]
+ implicit none
+ BEGIN_DOC
+! int dr phi_i(r) phi_j(r) exp(-(alpha_ten_no(i)+alpha_ten_no(j)) * |r - R|)
+ END_DOC
+ integer :: i,j,ipoint,pp,qq
+ double precision :: r(3),delta,delta2
+ double precision :: int_gauss,overlap_gauss_r12_ao
+ double precision :: wall0, wall1
+ provide final_grid_points 
+ call wall_time(wall0)
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,r,int_gauss,pp,qq,delta,delta2) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,v_ij_gauss_rk_dble_alpha,final_grid_points,n_max_fit_ten_no_slat,expo_fit_ten_no_slat_gauss)
+ !$OMP DO SCHEDULE (dynamic)
+ do qq = 1, n_max_fit_ten_no_slat
+  do pp = 1, n_max_fit_ten_no_slat
+   do ipoint = 1, n_points_final_grid
+     do i = 1, ao_num
+      do j = i, ao_num
+       r(1) = final_grid_points(1,ipoint)
+       r(2) = final_grid_points(2,ipoint)
+       r(3) = final_grid_points(3,ipoint)
+       delta = expo_fit_ten_no_slat_gauss(pp)
+       delta2 = expo_fit_ten_no_slat_gauss(qq)
+       delta += delta2
+       int_gauss = overlap_gauss_r12_ao(r,delta,i,j)
+       v_ij_gauss_rk_dble_alpha(j,i,ipoint,pp,qq)= int_gauss
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ do qq = 1, n_max_fit_ten_no_slat
+  do pp = 1, n_max_fit_ten_no_slat
+   do ipoint = 1, n_points_final_grid
+    do i = 1, ao_num
+     do j = 1, i-1
+      v_ij_gauss_rk_dble_alpha(j,i,ipoint,pp,qq)= v_ij_gauss_rk_dble_alpha(i,j,ipoint,pp,qq)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
+
+ call wall_time(wall1)
+ print*,'wall time for v_ij_gauss_rk_dble_alpha ',wall1 - wall0
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, x_v_ij_gauss_rk_dble_alpha, (ao_num, ao_num,n_points_final_grid,3,n_max_fit_ten_no_slat,n_max_fit_ten_no_slat)]
+ implicit none
+ BEGIN_DOC
+! int dr x * phi_i(r) phi_j(r) gauss(mu(R) |r - R|)/|r - R|
+ END_DOC
+ integer :: i,j,ipoint,m,pp,qq
+ double precision :: r(3),ints,delta,delta2
+ double precision :: wall0, wall1
+ call wall_time(wall0)
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,r,m,ints,pp,qq,delta,delta2) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,x_v_ij_gauss_rk_dble_alpha,final_grid_points,n_max_fit_ten_no_slat,expo_fit_ten_no_slat_gauss)
+ !$OMP DO SCHEDULE (dynamic)
+ do qq = 1, n_max_fit_ten_no_slat
+  do pp = 1, n_max_fit_ten_no_slat
+   do m = 1, 3
+    do ipoint = 1, n_points_final_grid
+      do i = 1, ao_num
+       do j = i, ao_num
+        r(1) = final_grid_points(1,ipoint)
+        r(2) = final_grid_points(2,ipoint)
+        r(3) = final_grid_points(3,ipoint)
+        delta = expo_fit_ten_no_slat_gauss(pp)
+        delta2 = expo_fit_ten_no_slat_gauss(qq)
+        delta += delta2
+        call gauss_int_x_ao(i,j,delta,r,m,ints)
+        x_v_ij_gauss_rk_dble_alpha(j,i,ipoint,m,pp,qq) =  ints 
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ do qq = 1, n_max_fit_ten_no_slat
+  do pp = 1, n_max_fit_ten_no_slat
+   do m = 1, 3
+    do ipoint = 1, n_points_final_grid
+     do i = 1, ao_num
+      do j = 1, i-1
+        x_v_ij_gauss_rk_dble_alpha(j,i,ipoint,m,pp,qq)= x_v_ij_gauss_rk_dble_alpha(i,j,ipoint,m,pp,qq)
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
+ call wall_time(wall1)
+ print*,'wall time for x_v_ij_gauss_rk_dble_alpha',wall1 - wall0
 END_PROVIDER 
 
 

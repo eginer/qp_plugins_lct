@@ -163,7 +163,7 @@ subroutine test_deriv_ints
  print*,'accu/ao_num**4',accu/dble(ao_num)**4.d0
 end
 
-subroutine test_dgemm
+subroutine test_dgemm_deriv
  implicit none
  integer :: i,j,k,l
  double precision :: accu
@@ -176,6 +176,28 @@ subroutine test_dgemm
      print*,k,i,l,j
      print*,'ao_ten_no_dr12_pot, ao_ten_no_dr12_pot_old, accu'
      print*, ao_ten_no_dr12_pot(k,i,l,j), ao_ten_no_dr12_pot_old(k,i,l,j), accu 
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,''
+ print*,''
+ print*,'accu/ao_num**4',accu/dble(ao_num)**4.d0
+end
+
+subroutine test_dgemm_square
+ implicit none
+ integer :: i,j,k,l
+ double precision :: accu
+ accu = 0.d0
+ do j = 1, ao_num
+  do l = 1, ao_num
+   do i = 1, ao_num
+    do k = 1, ao_num
+     accu += dabs(ao_ten_no_square_pot(k,i,l,j) - ao_ten_no_square_pot_old(k,i,l,j))
+     print*,k,i,l,j
+     print*,'ao_ten_no_square_pot, ao_ten_no_square_pot_old, accu'
+     print*, ao_ten_no_square_pot(k,i,l,j), ao_ten_no_square_pot_old(k,i,l,j), accu 
     enddo
    enddo
   enddo

@@ -8,7 +8,9 @@ program ten_no_ints
 ! call test_overlap_x_gauss_ten_no
 ! call test_deriv_ints
 ! call test_dgemm 
- print*,'n_max_fit_ten_no_slat = ',n_max_fit_ten_no_slat
+! print*,'n_max_fit_ten_no_slat = ',n_max_fit_ten_no_slat
 ! call full_num_deriv_ao
 ! call full_num_deriv_mo
+ call full_num_square_ao
+ call test_dgemm_square
 end
