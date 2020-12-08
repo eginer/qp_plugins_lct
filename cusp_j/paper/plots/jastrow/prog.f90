@@ -182,7 +182,7 @@ program pouet
  implicit none
  integer :: i,nx
  double precision :: x, dx,xmax,f,mu0,mu1,mu2,mu3,mu4,mu5,mu6,shank3_f
- double precision :: mu7, mu8, mu9,mu10,mu11, mu12, mu13, mu14
+ double precision :: mu7, mu8, mu9,mu10,mu11, mu12, mu13, mu14,mu_ten_no
  double precision :: j,a,b
  double precision :: pi,f0,g,s,alpha,beta
  double precision :: alpha0,beta0
@@ -200,30 +200,28 @@ program pouet
  double precision :: sum,mu,slater_fit_ten_no
  integer :: n,nmax,k
  pi = dacos(-1.d0)
- xmax = 2.d0
+ xmax = 2.5d0
  nx = 10000
  dx = xmax/dble(nx)
  print*,'0.5**0.25', 0.5d0**0.25d0
- mu1 = 0.5d0
- mu2 = 0.7d0
- mu3 = 0.8d0
- mu4 = 0.9d0
- mu5 = 1.0d0
- mu6 = 1.5d0
- mu7 = 3.0d0
- mu8 = 5.0d0
+ mu2 = 0.5d0
+ mu3 = 0.7d0
+ mu4 = 1.5d0
+ mu5 = 3.0d0
+ mu6 = 5.0d0
+ mu7 = 0.86975d0
 
- write(33,'(A5,12X,100(F16.10,X))')"#  ", mu0, mu1, mu2, mu3, mu4, mu5, mu6,mu7, mu8, mu9, mu10
+ write(33,'(A5,12X,100(F16.10,X))')"# x", mu2, mu3, mu4, mu5, mu6,mu7
  x = dx
  do i = 1, nx
-  write(33,'(100(F16.10,X))')x,dexp(f(x,mu1)),dexp(f(x,mu2)),dexp(f(x,mu3)),dexp(f(x,mu4))  &
-                              ,dexp(f(x,mu5)),dexp(f(x,mu6)),dexp(f(x,mu7)),dexp(f(x,mu8))  &
+  write(33,'(100(F16.10,X))')x,dexp(f(x,mu2)),dexp(f(x,mu3)),dexp(f(x,mu4))  &
+                              ,dexp(f(x,mu5)),dexp(f(x,mu6)),dexp(f(x,mu7))  &
                               ,dexp(slater_fit_ten_no(x))
                               
-  write(34,'(100(F16.10,X))')x,f(x,mu1),f(x,mu2),f(x,mu3),f(x,mu4)  &
-                              ,f(x,mu5),f(x,mu6),f(x,mu7),f(x,mu8)  &
+  write(34,'(100(F16.10,X))')x,f(x,mu2),f(x,mu3),f(x,mu4)  &
+                              ,f(x,mu5),f(x,mu6),f(x,mu7)  &
                               ,slater_fit_ten_no(x)
-  write(35,'(100(F16.10,X))')x,slater_fit_ten_no(x)
+  write(35,'(100(F16.10,X))')x,slater_fit_ten_no(x),f(x,mu7)
                               
                               
                                

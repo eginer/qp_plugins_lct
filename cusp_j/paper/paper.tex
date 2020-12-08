@@ -23,6 +23,8 @@
 \newcommand{\br}[0]{{\bf {r}}}
 \newcommand{\bri}[1]{{\bf r}_{#1}}
 \newcommand{\bs}[0]{{\bf {s}}}
+\newcommand{\frogg}[0]{\text{FROGG}}
+\newcommand{\mfrogg}[0]{\mu^\text{FROGG}}
 \newcommand{\dr}[1]{\text{d}{\bf r_{#1}}}
 \newcommand{\psiex}[0]{\Psi^{\text{ex}}_0}
 \newcommand{\phiex}[0]{\Phi^{\text{ex}}_0}
@@ -182,13 +184,11 @@ Therefore, one can see from Eq. \eqref{eq:ht_general} that the two electrons exp
 the latter making $\tilde{H}[u]$ non-hermitian.   
 
 \subsection{A new form of Jastrow factor $u(\mu,r_{12})$ mimicking a long-range interaction}
-In that section we derive a new Jastrow factor inspired by the limit condition of the similarity transformed Hamiltonian (see Eq.\eqref{eq:cusp_phi_0}) which mimics that of RS-DFT (see Eq.\eqref{eq:cusp_psi_mu_0}), at least at leading order in $1/r_{12}$. 
 \subsubsection{The working equation for $u(\mu,r_{12})$ }
 Eq. \eqref{eq:ht_general} gives the similarity transformed Hamiltonian for an arbitrary Jastrow factor, 
-and with respect to the usual Hamiltonian, $\tilde{H}[u]$ contains two new classes of terms: 
-a new electron-electron potential $1/r_{12} + \tilde{w}[u]+ \tilde{W}[u]$ and a new differential operator  $\tilde{t}[u]$. 
-Of course, these new terms depends on the explicit form of the Jastrow factor $u(r_{12})$ chosen. 
-Now, we impose the form of $u(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction of RS-DFT. 
+and with respect to the usual Hamiltonian, $\tilde{H}[u]$ contains two types of additional terms which depend on the actual form of $u(r_{12})$: 
+a new electron-electron potential $1/r_{12} + \tilde{w}[u]+ \tilde{W}[u]$ and a new differential operator  $\tilde{t}[u] $.  
+Now, we impose the form of $u(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction entering in the effective Hamiltonian of the RS-DFT. 
 Mathematically, this conditions implies that 
 \begin{equation}
  \begin{aligned}
@@ -220,8 +220,10 @@ Therefore, the right eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and
 where $E_0$ is the exact ground state energy. 
 As $\tilde{H}[\mu]$ originates from a similarity transformation, it conserves the same spectrum as $H$ as long as it is developed in a complete basis set. 
 
-The main difference with the original proposal of the frozen Gaussian geminal of Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor in terms of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
-we impose the structure of $u(r_{12};\mu)$ such that only the part of the scalar potential which is potentially diverging in $1/r_{12}$ (see Eq.\eqref{def_j_00}) compensates exactly the coulomb potential to provide an analytical smooth function $\frac{\text{erf}(\mu r_{12})}{r_{12}} $. 
+The main difference with the original proposal of the frozen Gaussian geminal (FROGG) of Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor in terms of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
+we impose the analytical structure of $u(r_{12};\mu)$ such that i) the sum of all terms in $1/r_{12}$ (\textit{i.e.} $\tilde{W}[u] + \frac{1}{r_{12}}$) exactly provides the non divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ for all $r_{12}$, 
+ii) the analytical form of $u(r_{12};\mu)$ is obtained from analytical conditions and not by a fit as in the FROGG,  
+iii) the new Jastrow factor is more flexible than the FROGG as it is tuned by a unique parameter $\mu$.  
 
 \subsubsection{A few properties of $u(r_{12};\mu)$}
 The new Jastrow $u(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which controls the value of the leading term of the effective interaction at $r_{12}=0$ (see Eq.\eqref{def_j_00}). 
@@ -259,15 +261,36 @@ which leads for $\mathcal{J}(r_{12},\mu)$
 From Eq. \eqref{eq:bigJ_dl} one can analyze each term: a) as $e^{-\frac{1}{2\sqrt{\pi}\mu}}<1$, the effective wave function  $\phiex(\br{}_1,\br{}_2)$ has necessary a larger value at coalescence (\textit{i.e.} $\br{}_1=\br{}_2)$), which can be intuitively understood as the electrons in $\tilde{H}[\mu]$ experience an effective non divergent interaction; 
 b) the term in $e^{ \frac{1}{2}r_{12}} $ restores exactly the lack of cusp of $\phiex(\br{}_1,\br{}_2)$ (see Eq. \eqref{eq:cusp_phi_2}); and eventually last term reshapes the curvature of the $\phiex(\br{}_1,\br{}_2)$. 
 
-Coming now to the behaviour of $u(r_{12};\mu)$as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, together with that of $\mathcal{J}(r_{12};\mu)$. 
+Coming now to the behaviour of $u(r_{12};\mu)$ as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, and we compare it with the FROGG. 
 \begin{figure*}
  \label{fig_j_mu}
         \includegraphics[width=0.45\linewidth]{plots/jastrow/small_mu_j.pdf}
         \includegraphics[width=0.45\linewidth]{plots/jastrow/small_mu_exp_j.pdf}\\
-        \caption{Shape of $u(r_{12};\mu)$ (up) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(u(r_{12};\mu) \bigg) $ (bottom) for different values of $\mu$.}
+        \caption{Shape of $u(r_{12};\mu)$ (left) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(u(r_{12};\mu) \bigg) $ (right) for different values of $\mu$. 
+We also compare the FROGG (see Eq. \eqref{eq_frogg}) and the value of $\mu = 0.865$ which equals the FROGG at $r_{12}=0$ (see Eq. \eqref{mu_ten_no_1}). }
 \end{figure*}
 From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $u(r_{12};\mu)$, ii) the larger the $\mu$, the closer $u(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
 
+As the function $u(r_{12};\mu)$ contains a unique parameter, one can try to find the value of $\mfrogg$ such that 
+$u(r_{12};\mfrogg)$ qualitatively reproduces the FROGG. 
+To do so, we propose a one-point fit such that 
+\begin{equation}
+ \label{mu_ten_no_1}
+u(r_{12}=0;\mfrogg) = f_{\text{TN}}(r_{12}=0), 
+\end{equation}
+where $ f_{\text{TN}}(x)$ is the FROGG introduced by Ten-No
+\begin{equation}
+ \label{eq_frogg}
+ f_{\text{TN}}(x) = -\sum_{i=1}^6 c_i e^{-\alpha_i x^2 },
+\end{equation}
+with the coefficients $c_i$ and exponents $\alpha_i$ given in Table 1 of Ref. \onlinecite{TenNo-CPL-00-a}. 
+Eq. \eqref{mu_ten_no_1} gives 
+\begin{equation}
+ \label{mu_ten_no_2}
+ \mfrogg = -\frac{1}{2\sqrt{\pi}f_{\text{TN}}(0)},
+\end{equation}
+which gives $\mfrogg\approx0.86975$. 
+We represent on Fig \ref{fig_j_mu} the comparison between $u(r_{12};\mfrogg)$ and the FROGG, and it is clearly apparent  that $u(r_{12};\mfrogg)$ reproduces almost perfectly the FROGG, although it decays slightly faster at large $r_{12}$. Therefore, one can see the FROGG as a special case of $u(r_{12};\mu)$  with $\mu = \mfrogg$. 
 
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
 \label{sec:ht_general}
@@ -420,9 +443,9 @@ and $\tilde{t}[\mu]$ is a non hermitian two-body differential operator
 In order to have a pictorial representation of $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$, we illustrate in Fig\ref{fig_wee_mu} its shape for different values of $\mu$. 
 \begin{figure*}
  \label{fig_wee_mu}
-        \includegraphics[width=0.45\linewidth]{w_ee.pdf}
-        \includegraphics[width=0.45\linewidth]{w_ee_bis.pdf}\\
-        \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ (up) and comparison with $\frac{\text{erf}(\mu r_{12}}{r_{12}}$ (bottom) for different values of $\mu$.}
+        \includegraphics[width=0.45\linewidth]{plots/jastrow/w_ee_small.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/jastrow/w_ee_erf.pdf}\\
+        \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ (left) and comparison with $\frac{\text{erf}(\mu r_{12}}{r_{12}}$ (right) for different values of $\mu$.}
 \end{figure*}
 From  Fig.\ref{fig_wee_mu} we can see that the scalar effective potential $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$ 
 is non divergent, increases when $\mu$ increases and globally resembles the long-range interaction used in RS-DFT at large $r_{12}$. 
@@ -435,6 +458,18 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
  2 \deriv{u(r_{12})}{r_{12}}{} + r_{12} \bigg( \deriv{u(r_{12})}{r_{12}}{2} + \bigg[ \deriv{u(r_{12})}{r_{12}}{} \bigg]^2\bigg) = 1 - \text{erf}(\mu r_{12}), 
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
+
+As  $\mu=\mfrogg$ provides a Jastrow factor $u(r_{12},\mu)$ very close to the FROGG, we can also compare the scalar effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ with that obtained with the FROGG which is given by
+\begin{equation}
+ \label{eq:_wee_frogg}
+ \tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})= \frac{1}{r_{12}}-\nabla_1^2 f_{\text{TN}}(r_{12}) - \big(\nabla_1 f_{\text{TN}}(r_{12}) \big) ^2. 
+\end{equation}
+As apparent from Fig. \ref{fig_wee_frogg} where $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are represented, the former strongly oscillates near $r_{12}=0$ while the latter is perfectly smooth for all $r_{12}$. 
+\begin{figure*}
+ \label{fig_wee_frogg}
+        \includegraphics[width=0.45\linewidth]{plots/jastrow/w_ee_frog.pdf}
+        \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=\mfrogg$ and comparison with the effective potential $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ obtained with the FROGG (see Eq.\eqref{eq:_wee_frogg}).}
+\end{figure*}
 \subsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
 Regarding now the variation of $\tilde{H}[\mu]$, one expects that as 
@@ -546,29 +581,31 @@ For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never 
 Therefore one can conclude that the use of a simple Jastrow factor such as $u(r_{12};\mu)$ within the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
 \begin{figure*}
  \label{fig_conv_e_mu}
-        \includegraphics[width=0.45\linewidth]{E_conv_basis_small_mu.pdf}
-        \includegraphics[width=0.45\linewidth]{E_conv_basis_large_mu.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/He/Energy/He_E_conv_basis_small_mu.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/He/Energy/He_E_conv_basis_large_mu.pdf}\\
         \caption{Convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the AVXZ basis set series (X=D,T,Q,5) for different values of $\mu$.}
 \end{figure*}
 
 \begin{table*}
 \label{table_conv_e_mu}
-\caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy.}
+\caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no}. }
 \begin{ruledtabular}
 \begin{tabular}{llllllllllll}
- Basis/$\mu$&0.05                 & 0.2                   & 0.3                   & 0.35                  & 0.5                  & 0.7                   \\
+ Basis/$\mu$ & 0.2                   & 0.3                   & 0.35                  & 0.5                  & 0.7                 & $\mfrogg=0.86975$    \\
+\hline                                                                                                                                                  
+ AVDZ        &    -2.906309 (-2.58)  &    -2.904172 (-0.45)  &    -2.903317 (0.41)   &    -2.901420 (2.3)   &    -2.899516 (4.21) &  -2.897927 ( 5.80)    \\
+ AVTZ        &    -2.905278 (-1.55)  &    -2.904691 (-0.97)  &    -2.904468 (-0.74)  &    -2.903969 (-0.24) &    -2.903488 (0.24) &  -2.903214 ( 0.51)    \\
+ AVQZ        &    -2.904325 (-0.6)   &    -2.903986 (-0.26)  &    -2.903879 (-0.15)  &    -2.903702 (0.02)  &    -2.903620 (0.1)  &  -2.903589 ( 0.13)     \\
+ AV5Z        &    -2.904229 (-0.51)  &    -2.903928 (-0.2)   &    -2.903834 (-0.11)  &    -2.903702 (0.02)  &    -2.903676 (0.05) &  -2.903678 (-0.1)     \\
 \hline
- AVDZ       &  -2.909031 (-5.31)  &    -2.906309 (-2.58)  &    -2.904172 (-0.45)  &    -2.903317 (0.41)   &    -2.901420 (2.3)   &    -2.899516 (4.21)   \\
- AVTZ       &  -2.905898 (-2.17)  &    -2.905278 (-1.55)  &    -2.904691 (-0.97)  &    -2.904468 (-0.74)  &    -2.903969 (-0.24) &    -2.903488 (0.24)   \\
- AVQZ       &  -2.904621 (-0.9)   &    -2.904325 (-0.6)   &    -2.903986 (-0.26)  &    -2.903879 (-0.15)  &    -2.903702 (0.02)  &    -2.903620 (0.1)     \\
- AV5Z       &  -2.904428 (-0.7)   &    -2.904229 (-0.51)  &    -2.903928 (-0.2)   &    -2.903834 (-0.11)  &    -2.903702 (0.02)  &    -2.903676 (0.05)   \\
-\hline
- Basis/$\mu$ & 1.0                  & 1.6                  & 2.0                  & 3.0                  & $\infty$ (FCI)        & Exact NR              \\
-\hline
- AVDZ        &    -2.896734 (6.99)  &    -2.892773 (10.95) &    -2.891477 (12.25) &    -2.890212 (13.51) &    -2.889548 (14.18)  & -2.903724             \\
- AVTZ        &    -2.903069 (0.66)  &    -2.902421 (1.3)   &    -2.901932 (1.79)  &    -2.901159 (2.56)  &    -2.900598 (3.13)   &                       \\
- AVQZ        &    -2.903558 (0.17)  &    -2.903359 (0.36)  &    -2.903244 (0.48)  &    -2.902951 (0.77)  &    -2.902534 (1.19)   &                       \\
- AV5Z        &    -2.903675 (0.05)  &    -2.903634 (0.09)  &    -2.903592 (0.13)  &    -2.903479 (0.24)  &    -2.903201 (0.52)   &                       \\
+ Basis/$\mu$ & 1.0                   & 1.6                   & 2.0                   & 3.0                  & $\infty$ (FCI)       &     $\frogg$        \\
+\hline                                                                                                                                                   
+ AVDZ        &    -2.896734 (6.99)   &    -2.892773 (10.95)  &    -2.891477 (12.25)  &    -2.890212 (13.51) &    -2.889548 (14.18) &    -2.897972 (5.75 )\\
+ AVTZ        &    -2.903069 (0.66)   &    -2.902421 (1.3)    &    -2.901932 (1.79)   &    -2.901159 (2.56)  &    -2.900598 (3.13)  &    -2.903919 (-0.20)\\
+ AVQZ        &    -2.903558 (0.17)   &    -2.903359 (0.36)   &    -2.903244 (0.48)   &    -2.902951 (0.77)  &    -2.902534 (1.19)  &    -2.903833 (-0.11)\\
+ AV5Z        &    -2.903675 (0.05)   &    -2.903634 (0.09)   &    -2.903592 (0.13)   &    -2.903479 (0.24)  &    -2.903201 (0.52)  &    -2.903825 (-0.10)\\
+\hline                                                                                                                                                   
+\multicolumn{7}{c}{Exact non relativistic: -2.903724}   \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
@@ -601,16 +638,16 @@ We plotted a cutting of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2)
 We report in Figs \ref{fig:mu_0.3_dz_3} and \ref{fig:mu_1.0_dz_3} the plot of the right eigenvector $\phimub(\br{}_1,\br{}_2)$, estimated exact wave function $\psimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ and $\mu=1.0$ (respectively) and compared to the exact wave function $\psiex(\br{}_1,\br{}_2)$ and FCI wave function for $r=0.5\,a.u.$. 
 \begin{figure*}
  \label{fig:mu_0.3_dz_3}
-        \includegraphics[width=0.45\linewidth]{plots/He//He_mu_0_3_cusp_avdz_avtz_3.pdf}
-        \includegraphics[width=0.45\linewidth]{plots/He/He_mu_0_3_cusp_avqz_av5z_3.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/He/cusp/He_mu_0_3_cusp_avdz_avtz_3.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/He/cusp/He_mu_0_3_cusp_avqz_av5z_3.pdf}\\
         \caption{
         Helium atom, radius $r=0.5$ a.u.: approximation of the exact wave function $\psimub(\br{}_1,\br{}_2)$ and right eigenvector $\phimub(\br{}_1,\br{}_2)$ for $\mu=0.3$ in the AVDZ and AVTZ basis sets (left) and AVQZ and AV5Z (right). Comparison with the FCI wave function in the same basis sets and the estimated exact wave function $\psiex(\br{}_1,\br{}_2)$.  }
 \end{figure*}
 
 \begin{figure*}
  \label{fig:mu_1.0_dz_3}
-        \includegraphics[width=0.45\linewidth]{plots/He/He_mu_1_0_cusp_avdz_avtz_3.pdf}
-        \includegraphics[width=0.45\linewidth]{plots/He/He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/He/cusp/He_mu_1_0_cusp_avdz_avtz_3.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/He/cusp/He_mu_1_0_cusp_avqz_av5z_3.pdf}\\
         \caption{
         Helium atom, radius $r=0.5$ a.u.: approximation of the exact wave function $\psimub(\br{}_1,\br{}_2)$ and right eigenvector $\phimub(\br{}_1,\br{}_2)$ for $\mu=1.0$ in the AVDZ and AVTZ basis sets (left) and AVQZ and AV5Z (right). Comparison with the FCI wave function in the same basis sets and the estimated exact wave function $\psiex(\br{}_1,\br{}_2)$.  }
 \end{figure*}
@@ -703,7 +740,9 @@ and the results obtained are represented in Table \ref{table_conv_e_mu_iso}. Fro
 
 \begin{table*}
 \label{table_conv_e_mu_iso}
-\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. We also report the average value of the $\mu$ considered (referred as $\muav$) in the double-zeta basis. }
+\caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. We also report the average value of the $\mu$ considered (referred as $\muav$) in the double-zeta basis. 
+The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten}}
+
 \begin{ruledtabular}
 \begin{tabular}{l|rrr|r||rrr|r||rrr|r|}
                          &\multicolumn{4}{c}{H$^-$}                & \multicolumn{4}{c}{He}                  & \multicolumn{4}{c}{Li$^+$}               \\
@@ -713,6 +752,8 @@ and the results obtained are represented in Table \ref{table_conv_e_mu_iso}. Fro
 $E_0^{\basis}[\muuegav]$ &   1.69  &    0.60  &   0.38  & 0.350    &  5.28   &   0.44   &  0.12& 0.815       &  0.9    &   0.09   & -0.02  & 1.274     \\      
 $E_0^{\basis}[\murscav]$ &   2.30  &    0.67  &   0.39  & 0.479    &  4.87   &   0.37   &  0.12& 0.771       &  -0.82  &  -0.38   & -0.14  & 0.980     \\      
 $E_0^{\basis}[\mursclda]$&   2.03  &    0.64  &   0.39  & 0.410    &  5.07   &   0.40   &  0.12& 0.792       &  0.04   &  -0.12   & -0.08  & 1.127     \\      
+$E_0^{\basis}[\frogg]$   &   3.22  &    0.91  &   0.45  &    -     &  5.75   &  -0.20   & -0.11&   -         & -4.08   &  -1.24   & -0.56  &   -       \\
+$E_0^{\basis}[\mfrogg]$  &   3.12  &    0.91  &   0.46  &    -     &  5.80   &   0.51   &  0.13&   -         & -1.52   &  -0.61   & -0.21  &   -       \\
 \hline              
                          &\multicolumn{4}{c}{Be$^{2+}$}            & \multicolumn{4}{c}{B$^{3+}$}            & \multicolumn{4}{c}{C$^{4+}$}    \\
                          &   DZ    &  TZ      &   QZ    & $\muav$&  DZ     &   TZ     &  QZ     & $\muav$&   DZ    &   TZ     &  QZ    & $\muav$  \\
@@ -721,6 +762,8 @@ $E_0^{\basis}[\mursclda]$&   2.03  &    0.64  &   0.39  & 0.410    &  5.07   &  
 $E_0^{\basis}[\muuegav]$ &  1.2    &   0.17   & -0.02   &1.727     &  1.41   &   0.43   &  -0.01  &2.179     &  1.67   &   0.37   &  0.01  &2.631        \\  
 $E_0^{\basis}[\murscav]$ &  -1.5   &  -0.53   & -0.17   &2.152     &  -2.16  &  -0.34   &  -0.22  &1.300     &  -2.69  &  -0.4    & -0.25  &1.434        \\  
 $E_0^{\basis}[\mursclda]$&  -0.08  &  -0.15   & -0.09   &1.440     &  -0.18  &   0.09   &  -0.11  &1.740     &  -0.19  &   0.01   &  -0.1  &2.032        \\  
+$E_0^{\basis}[\frogg]$   &  -6.38  &  -1.63   & -0.53   &   -      &  -8.24  &  -1.45   &  -0.49  &    -     &  -9.95  &  -1.44   &  -0.48 &     -       \\
+$E_0^{\basis}[\mfrogg]$  &  -3.81  &  -1.02   & -0.32   &   -      &  -6.33  &  -1.05   &  -0.45  &    -     &  -8.48  &  -1.20   &  -0.58 &     -       \\
 \hline              
                          &\multicolumn{4}{c}{N$^{5+}$}   & \multicolumn{4}{c}{O$^{6+}$}            & \multicolumn{4}{c}{F$^{7+}$}    \\
                          &   DZ    &  TZ      &   QZ     & $\muav$ &  DZ     &   TZ    &  QZ     & $\muav$&   DZ    &   TZ     &  QZ    & $\muav$  \\
@@ -729,14 +772,18 @@ $E_0^{\basis}[\mursclda]$&  -0.08  &  -0.15   & -0.09   &1.440     &  -0.18  &  
 $E_0^{\basis}[\muuegav]$ &  2.06   &   0.45   &  0.01    &3.082      &  2.54   &   0.77  & -0.02   &3.533     &  3.14   &   1.15   & -0.02   &3.984       \\  
 $E_0^{\basis}[\murscav]$ &  -2.97  &  -0.64   &  -0.26   &1.556      & -3.13   &  -0.70  & -0.31   &1.670     & -3.10   &  -0.54   & -0.36   &1.774       \\  
 $E_0^{\basis}[\mursclda]$&  -0.01  &  -0.15   &  -0.09   &2.318      &  0.27   &  -0.04  & -0.12   &2.600     &  0.69   &   0.23   & -0.14   &2.879       \\  
+$E_0^{\basis}[\frogg]$   &  -11.35 &  -1.74   &  -0.39   &    -      & -12.60  &  -1.81  & -0.34   &   -      & -13.45  &  -1.55   & -0.32   &    - \\
+$E_0^{\basis}[\mfrogg]$  &   -9.98 &  -1.54   &  -0.68   &    -      & -11.09  &  -1.73  & -0.80   &   -      & -11.69  &  -1.63   & -0.90   &    - \\
 \hline              
                          &\multicolumn{4}{c}{Ne$^{8+}$}  & \multicolumn{4}{c}{MAD} & \multicolumn{4}{c}{MSD}    \\
-                         &   DZ    &  TZ      &   QZ     & $\muav$ &  DZ     &   TZ     &  QZ     &          &   DZ    &   TZ     &  QZ    &            \\
+                         &   DZ    &  TZ      &   QZ     & $\muav$ &  DZ     &   TZ     &  QZ     &          &   DZ    &   TZ     &  QZ    &         \\
 \hline              
- FCI                     &  15.66  &   7.61   &  2.36    &$+\infty$  & 12.16   &    4.71  &    1.64 &          &  12.16   &   4.71   &    1.64&             \\   
-$E_0^{\basis}[\muuegav]$ &  3.89   &   1.57   &  0.03    &4.434      & 2.38    &    0.60  &    0.07 &          &   2.38   &   0.60   &    0.07&             \\   
-$E_0^{\basis}[\murscav]$ &  -2.85  &  -0.28   & -0.35    &1.874      & 2.64    &    0.48  &    0.26 &          &  -1.21   &  -0.28   &   -0.16&             \\   
-$E_0^{\basis}[\mursclda]$&  1.26   &   0.57   & -0.1     &3.1543     & 0.98    &    0.24  &    0.13 &          &   0.89   &   0.15   &   -0.03&             \\   
+ FCI                     &  15.66  &   7.61   &  2.36    &$+\infty$  & 12.16   &    4.71  &    1.64 &          &  12.16   &   4.71   &    1.64&      \\   
+$E_0^{\basis}[\muuegav]$ &  3.89   &   1.57   &  0.03    &4.434      & 2.38    &    0.60  &    0.07 &          &   2.38   &   0.60   &    0.07&      \\   
+$E_0^{\basis}[\murscav]$ &  -2.85  &  -0.28   & -0.35    &1.874      & 2.64    &    0.48  &    0.26 &          &  -1.21   &  -0.28   &   -0.16&      \\   
+$E_0^{\basis}[\mursclda]$&  1.26   &   0.57   & -0.1     &3.1543     & 0.98    &    0.24  &    0.13 &          &   0.89   &   0.15   &   -0.03&      \\   
+$E_0^{\basis}[\frogg]$   &  -13.79 &  -1.17,  & -0.26    &    -      & 8.88    &    1.31  &    0.39 &   -      & -7.09    &  -1.13   &   -0.30&    - \\
+$E_0^{\basis}[\mfrogg]$  &  -11.79 &  -1.41,  & -0.90    &    -      & 7.36    &    1.16  &    0.54 &   -      & -5.58    &  -0.88   &   -0.42&    - \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
