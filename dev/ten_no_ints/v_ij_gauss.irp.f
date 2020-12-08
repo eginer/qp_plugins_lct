@@ -148,6 +148,7 @@ BEGIN_PROVIDER [ double precision, v_ij_gauss_rk_dble_alpha, ( ao_num, ao_num,n_
  print*,'wall time for v_ij_gauss_rk_dble_alpha ',wall1 - wall0
 END_PROVIDER 
 
+
 BEGIN_PROVIDER [ double precision, x_v_ij_gauss_rk_dble_alpha, (ao_num, ao_num,n_points_final_grid,3,n_max_fit_ten_no_slat,n_max_fit_ten_no_slat)]
  implicit none
  BEGIN_DOC
@@ -201,6 +202,92 @@ BEGIN_PROVIDER [ double precision, x_v_ij_gauss_rk_dble_alpha, (ao_num, ao_num,n
  call wall_time(wall1)
  print*,'wall time for x_v_ij_gauss_rk_dble_alpha',wall1 - wall0
 END_PROVIDER 
+
+subroutine give_v_ij_gauss_rk(array_v_ij_gauss_rk,alpha)
+ implicit none
+ double precision, intent(in) :: alpha
+ double precision, intent(out) :: array_v_ij_gauss_rk( ao_num, ao_num,n_points_final_grid)
+ BEGIN_DOC
+! int dr phi_i(r) phi_j(r) exp(-(alpha) * |r - R|^2)
+ END_DOC
+ integer :: i,j,ipoint
+ double precision :: r(3)
+ double precision :: int_gauss,overlap_gauss_r12_ao
+ double precision :: wall0, wall1
+ provide final_grid_points 
+ call wall_time(wall0)
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,r,int_gauss) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,array_v_ij_gauss_rk,final_grid_points,alpha)
+ !$OMP DO SCHEDULE (static)
+ do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     int_gauss = overlap_gauss_r12_ao(r,alpha,i,j)
+     array_v_ij_gauss_rk(j,i,ipoint)= int_gauss
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ do ipoint = 1, n_points_final_grid
+  do i = 1, ao_num
+   do j = 1, i-1
+    array_v_ij_gauss_rk(j,i,ipoint) = array_v_ij_gauss_rk(i,j,ipoint)
+   enddo
+  enddo
+ enddo
+
+ call wall_time(wall1)
+end
+
+subroutine give_x_v_ij_gauss_rk(array_x_v_ij_gauss_rk,alpha)
+ implicit none
+ BEGIN_DOC
+! int dr x * phi_i(r) phi_j(r) gauss(mu(R) |r - R|)/|r - R|
+ END_DOC
+ double precision, intent(in) :: alpha
+ double precision, intent(out):: array_x_v_ij_gauss_rk(ao_num, ao_num,n_points_final_grid,3)
+ integer :: i,j,ipoint,m
+ double precision :: r(3),ints
+ double precision :: wall0, wall1
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,r,m,ints) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,array_x_v_ij_gauss_rk,final_grid_points,alpha)
+ !$OMP DO SCHEDULE (static)
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+    do i = 1, ao_num
+     do j = i, ao_num
+      r(1) = final_grid_points(1,ipoint)
+      r(2) = final_grid_points(2,ipoint)
+      r(3) = final_grid_points(3,ipoint)
+      call gauss_int_x_ao(i,j,alpha,r,m,ints)
+      array_x_v_ij_gauss_rk(j,i,ipoint,m) = ints 
+    enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = 1, i-1
+      array_x_v_ij_gauss_rk(j,i,ipoint,m)= array_x_v_ij_gauss_rk(i,j,ipoint,m)
+    enddo
+   enddo
+  enddo
+ enddo
+end
+
 
 
 subroutine gauss_int_x_ao(i_ao,j_ao,delta,C_center,m,ints)

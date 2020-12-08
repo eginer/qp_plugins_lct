@@ -115,12 +115,12 @@ BEGIN_DOC
 ! ao_ten_no_dr12_pot(k,i,l,j) = < k l | |\grad_1 u_Tenno(r12)|^2 | i j > on the AO basis
 END_DOC
  integer :: i,j,k,l,ipoint,m,pp,qq
- double precision :: weight1,thr,r(3),alpha,coef,coeftmp,beta
+ double precision :: weight1,thr,r(3),alpha,coef,coeftmp,beta,delta
  thr = 1.d-8
- double precision, allocatable :: b_mat(:,:,:,:),ac_mat(:,:,:,:)
- provide v_ij_gauss_rk_dble_alpha x_v_ij_gauss_rk_dble_alpha
+ double precision, allocatable :: b_mat(:,:,:,:),ac_mat(:,:,:,:),v_ij_mat(:,:,:),x_v_ij_mat(:,:,:,:)
+!provide v_ij_gauss_rk_dble_alpha x_v_ij_gauss_rk_dble_alpha
   call wall_time(wall0)
- allocate(b_mat(n_points_final_grid,ao_num,ao_num,3),ac_mat(ao_num, ao_num, ao_num, ao_num))
+ allocate(b_mat(n_points_final_grid,ao_num,ao_num,3),ac_mat(ao_num, ao_num, ao_num, ao_num), v_ij_mat(ao_num, ao_num,n_points_final_grid))
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,k,m,ipoint,r,weight1) & 
@@ -149,11 +149,13 @@ END_DOC
   beta = expo_fit_ten_no_slat_gauss(qq)
   do pp = 1, n_max_fit_ten_no_slat
    alpha = expo_fit_ten_no_slat_gauss(pp)
+   delta = alpha + beta
    coef = coef_fit_ten_no_slat_gauss(pp) * coef_fit_ten_no_slat_gauss(qq)
    coeftmp = coef * 4.d0 * alpha * beta 
+   call give_v_ij_gauss_rk(v_ij_mat,delta)
    do m = 1, 3
     !           A   B^T  dim(A,1)       dim(B,2)       dim(A,2)        alpha * A                LDA 
-    call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,coeftmp,v_ij_gauss_rk_dble_alpha(1,1,1,pp,qq),ao_num*ao_num & 
+    call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,coeftmp,v_ij_mat(1,1,1),ao_num*ao_num & 
                       ,b_mat(1,1,1,m),n_points_final_grid,1.d0,ac_mat,ao_num*ao_num)
    enddo
   enddo
@@ -179,15 +181,18 @@ END_DOC
  enddo
  !$OMP END DO
  !$OMP END PARALLEL
+ allocate(x_v_ij_mat(ao_num, ao_num,n_points_final_grid,3))
  do qq = 1, n_max_fit_ten_no_slat
   beta = expo_fit_ten_no_slat_gauss(qq)
   do pp = 1, n_max_fit_ten_no_slat
    alpha = expo_fit_ten_no_slat_gauss(pp)
+   delta = alpha + beta
    coef = coef_fit_ten_no_slat_gauss(pp) * coef_fit_ten_no_slat_gauss(qq)
    coeftmp = -coef * 4.d0 * alpha * beta 
+   call give_x_v_ij_gauss_rk(x_v_ij_mat,delta)
    do m = 1, 3
     !           A   B^T  dim(A,1)       dim(B,2)       dim(A,2)        alpha * A                LDA 
-    call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,coeftmp,x_v_ij_gauss_rk_dble_alpha(1,1,1,m,pp,qq),ao_num*ao_num & 
+    call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,coeftmp,x_v_ij_mat(1,1,1,m),ao_num*ao_num & 
                       ,b_mat(1,1,1,m),n_points_final_grid,1.d0,ac_mat,ao_num*ao_num)
    enddo
   enddo
