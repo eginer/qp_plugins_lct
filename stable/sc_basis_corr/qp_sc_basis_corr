@@ -174,8 +174,8 @@ threshmicro=1.e-6
 
 qp set_file $ezfio
 
-qp  set  sc_basis_corr      basis_cor_func           ${functional}
-qp set   mu_of_r mu_of_r_potential                  $mu
+qp  set  sc_basis_corr      basis_cor_func          ${functional}
+qp  set  mu_of_r            mu_of_r_potential       $mu
 qp  set  perturbation       pt2_max                 $pt2max
 qp  set  determinants       n_det_max               $ndetmax
 # Use the wave function stored in the EZFIO to build effective RS-DFT potential
@@ -188,18 +188,21 @@ qp  set  density_for_dft    density_for_dft         "WFT"
   
   file_int=basis_corr-${mu}-${functional}-0
   qp set mu_of_r io_mu_of_r Write
-  qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int}
+  # Write the effective Hamiltonian with the WAVE FUNCTION ALREADY IN THE EZFIO FOLDER 
+  qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int} 
   qp set mu_of_r io_mu_of_r Read
   EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_int} | cut -d "=" -f 2`
 
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
 
+# Macro iterations: selection of the determinants with the EFFECTIVE HAMILTONIAN OBTAINED PREVIOUSLY
  for i in `seq $itmax`
   do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
      if [ "$read" = "False" ]; then
       qp set determinants read_wf "False"
       file_fci=fci-${mu}-${functional}-$i
+      # Use the CIPSI algorithm to select the determinants with the EFFECTIVE HAMILTONIAN 
       qp run fci  | tee ${ezfio}/work/${file_fci}
      fi
      EV=0

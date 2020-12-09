@@ -55,7 +55,7 @@
 \email{emmanuel.giner@lct.jussieu.fr}
 
 \begin{abstract}
-blabla
+TODO: investigate the non variationality on the He atom for instance and Ne8+
 
 \end{abstract}
 
@@ -459,17 +459,33 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
 
-As  $\mu=\mfrogg$ provides a Jastrow factor $u(r_{12},\mu)$ very close to the FROGG, we can also compare the scalar effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ with that obtained with the FROGG which is given by
+As the Jastrow factor $u(r_{12},\mu)$ for $\mu=\mfrogg$ provides is very close to the FROGG, we can also compare the scalar effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ with that obtained with the FROGG which is given by
 \begin{equation}
  \label{eq:_wee_frogg}
  \tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})= \frac{1}{r_{12}}-\nabla_1^2 f_{\text{TN}}(r_{12}) - \big(\nabla_1 f_{\text{TN}}(r_{12}) \big) ^2. 
 \end{equation}
-As apparent from Fig. \ref{fig_wee_frogg} where $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are represented, the former strongly oscillates near $r_{12}=0$ while the latter is perfectly smooth for all $r_{12}$. 
+As apparent from Fig. \ref{fig_wee_frogg} where $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are represented, while the latter is perfectly smooth for all $r_{12}$, the former strongly oscillates near $r_{12}=0$ between positive and negative values and is not bounded for $r_{12}=0$. 
+Such behaviour of $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ near $r_{12}=0$ comes from the fact that $f_{\text{TN}}(r_{12})$ is cusp-less as it is made of gaussian functions, \textit{i.e.} 
+\begin{equation}
+ \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}f_{\text{TN}}(r_{12}) = 0, 
+\end{equation}
+as a necessary condition of the to obtain a non divergent scalar potential is 
+\begin{equation}
+ \label{eq:cusp_phi_0}
+ \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u(r_{12}) = \frac{1}{2}, 
+\end{equation}
+as shown in the appendix \ref{sec:cusp} (see Eqs. \eqref{eq:cusp_phi_0}  and \eqref{eq:cusp_phi_1}). 
+Because the condition of Eq. \eqref{eq:cusp_phi_0} is fulfilled by $u(r_{12},\mu)$ for all $\mu < \infty$, 
+the effective potential obtained by the similarity transformation of $H$ by $u(r_{12},\mu)$ is necessary non divergent.  
+
+Nevertheless, as it will be shown by numerical computations, the effective potentials $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ almost identical \textit{in average}, as they perfectly agree for $r_{12}>1$ and that $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ essentially oscillates around $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ for small values of $r_{12}$. 
+
 \begin{figure*}
  \label{fig_wee_frogg}
         \includegraphics[width=0.45\linewidth]{plots/jastrow/w_ee_frog.pdf}
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=\mfrogg$ and comparison with the effective potential $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ obtained with the FROGG (see Eq.\eqref{eq:_wee_frogg}).}
 \end{figure*}
+
 \subsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
 Regarding now the variation of $\tilde{H}[\mu]$, one expects that as 
@@ -480,50 +496,9 @@ Regarding now the variation of $\tilde{H}[\mu]$, one expects that as
 one recovers the usual Hamiltonian in the ${\mu  \rightarrow \infty }$ limit:
 \begin{equation}
  \label{eq:lim_mu_1}
- \lim_{\mu \rightarrow \infty} \tilde{H}[\mu] = H.
+ \lim_{\mu \rightarrow \infty} \tilde{H}[\mu] = H,
 \end{equation}
-Nevertheless, in the large $\mu$ limit, one can notice that 
-\begin{equation}
- \label{eq:lim_mu_3}
- \lim_{\mu \rightarrow \infty} \tilde{\mathcal{W}}_{ee}(r_{12})  = \frac{1}{r_{12}} + \delta(r_{12}) 
-\end{equation}
-where $\delta(r_{12})$ is the Dirac distribution, and as the firs-order differential term vanishes in the large $\mu$ limit (see Eq.\eqref{eq:exp_ht_mu}), one could be tempted to write that 
-\begin{equation}
- \begin{aligned}
- \label{eq:lim_mu_4}
- \lim_{\mu \rightarrow \infty} \tilde{H}[\mu]& = h_c + \frac{1}{r_{12}} + \delta(r_{12}) \\
-                                             & = H + \delta(r_{12})  \\
-                                             & \ne H,
- \end{aligned}
-\end{equation}
-which seems to contradict the intuitive limit of Eq.\eqref{eq:lim_mu_1}. 
-
-Nevertheless, as the right hand side of Eq.\eqref{eq:lim_mu_4} contains a Delta distribution, it must be considered in the sense of distributions an not point wise. 
-Therefore, considering a generic bounded square integrable wave function $\psi(\br{}_1,\hdots,\br{}_N)$ yielding to a integrable pair density $n_2(\br{}_1,\br{}_2)$, the equality between $\tilde{H}[\mu]$ and $H$ is, in the sense of distributions, defined by the following equality 
-\begin{equation}
- \label{eq:lim_mu_5}
- \begin{aligned}
-& \matelem{\psi}{H}{\psi} = \lim_{\mu \rightarrow \infty} \matelem{\psi}{\tilde{H}[\mu]}{\psi} \\
-& \Leftrightarrow H = \tilde{H}[\mu],
- \end{aligned}
-\end{equation}
-and considering the limit for of $\tilde{H}[\mu]$ (see Eq.\eqref{eq:lim_mu_4}), it implies that 
-\begin{equation}
- \label{eq:lim_mu_6}
- \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = 0.
-\end{equation}
-To intuitively show Eq.\eqref{eq:lim_mu_6}, one can perform a series of change of variable $(\br{}_1,\br{}_2)\rightarrow (\br{}_{12},\frac{1}{2}(\br{}_1 + \br{}_2))$ and then use the spherical coordinates for $\br{}_{12}$ 
-\begin{equation}
- \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 
-\end{equation}
-where $\tilde{n_2}(x)$ is the function $n_2(\br{}_1,\br{}_2)$ integrated over $(\br{}_1,\br{}_2)$ with the constraint that 
-$|\br{}_1-\br{}_2| = x$. 
-As the pair density $n_2(\br{}_1,\br{}_2)$ remains finite and is integrable, the function $\tilde{n}_2(x)$ 
-cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one obtains that 
-\begin{equation}
- \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
-\end{equation}
-which implies Eq.\eqref{eq:lim_mu_1}. 
+although it is only in the sense of distributions (see Appendix \ref{sec:large_mu_lim} for a more detailed explanation). 
 
 In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu]$ becomes simply 
 \begin{equation}
@@ -561,34 +536,44 @@ and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenv
 Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $u(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
 \subsection{$\mu$ dependence of the convergence of the ground state eigenvalue with respect to the basis set }
 \subsubsection{Computational details}
-We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual gaussian orbital basis set (see annexes for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. 
+We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual Gaussian orbital basis set (see appendix for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. We also implemented all necessary integrals to use the FROGG derived by Ten-No in Ref. \onlinecite{TenNo-CPL-00-a} in the context of the TC Hamiltonian.  
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
 We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\phiimub$ (\textit{i.e.} $\phiimub$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
 %The study was performed using the augmented Dunning basis aug-cc-pVXZ (X=D,T,Q,5), hereafter referred as AVXZ. 
 
 \subsubsection{Numerical results: ground state energies}
 \label{sec:total_e}
-We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_i^{\basis}[\mu]$ of $\tilde{H}[\mu]^{\basis}$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. 
+We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_i^{\basis}[\mu]$ of $\tilde{H}[\mu]^{\basis}$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. We also report in the tables and figures the results obtained with the FROGG. 
 Several observations can be done from these data. First, because of the loose of the variational principle, $E_0^{\mu}$ can take values below the exact non relativistic energy, and the smaller the $\mu$, the more pronounced is such effect. 
 Nevertheless, one can also observe that, for each $\mu$, the error with respect to the exact energy gets smaller  
-when enlarging the basis set. Also, qualitatively, one can observe that there are two regimes of $\mu$: $\mu \in[0.05,0.7]$ where the $E_0^\mu$ is always below $E_0$ and $\mu\ge 0.7$ where $E_0^\mu$ converges from above, as if the variational principle still applied. 
+when enlarging the basis set. Also, qualitatively, one can observe that there are two regimes of $\mu$: $\mu \in[0.2,0.35]$ where the $E_0^\mu$ is always below $E_0$ and $\mu\ge 0.7$ where $E_0^\mu$ converges from above, as if the variational principle still applied. 
 As $\mu$ increases, the difference between $E_0^\mu$ and $E_0^\text{FCI}$ in a given basis set diminishes, 
 which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\tilde{H}[\mu] \rightarrow H$. 
 
-Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ as long as $\mu \ge 0.2$. 
+Also, it is striking to see that the total energies obtained, in a given basis set, by the TC Hamiltonian obtained by the FROGG and that obtained by $\tilde{H}[\mu]$ with $\mu=\mfrogg$ coincide with less than 1 mH. 
+The latter results confirms that as $u(r_{12},\mfrogg) \approx f_{\text{TN}}(r_{12})$ (see Fig \ref{fig_j_mu} and Eqs. \eqref{mu_ten_no_1} and \eqref{mu_ten_no_2}), the TC Hamiltonians obtained with the two Jastrow factor are very similar, as illustrated for instance by the effective potential in Fig. \ref{fig_wee_frogg}. 
+
+Coming now to the speed of convergence of $E_0^\mu$ with respect to the basis set, it is always faster than that of $E_0^\text{FCI}$ for the whole range of values of $\mu$ selected here. 
 To quantify better such observations, one can identify the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
 For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
-Therefore one can conclude that the use of a simple Jastrow factor such as $u(r_{12};\mu)$ within the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$. 
+The quality of the results obtained with the FROGG are in between that obtained with $\mu=0.7$ and $\mu=1.0$. 
+
+From the study of the ground state of the helium atom, one can conclude that i) the use of a simple Jastrow factor such as $u(r_{12};\mu)$ within the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$, 
+ii) the results obtained with $\mu=\mfrogg$ reproduce essentially that obtained with the FROGG, 
+iii) for $\mu \in[ 0.35,0.7]$ the results obtained are always better than that obtained with the FROGG. 
 \begin{figure*}
  \label{fig_conv_e_mu}
         \includegraphics[width=0.45\linewidth]{plots/He/Energy/He_E_conv_basis_small_mu.pdf}
         \includegraphics[width=0.45\linewidth]{plots/He/Energy/He_E_conv_basis_large_mu.pdf}\\
-        \caption{Convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the AVXZ basis set series (X=D,T,Q,5) for different values of $\mu$.}
+        \caption{Convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the AVXZ basis set series (X=D,T,Q,5) for different values of $\mu$. 
+We also compare with the results of the TC obtained with the $u(r_{12}) = f_{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg}), referred here after as FROGG. }
 \end{figure*}
 
 \begin{table*}
 \label{table_conv_e_mu}
-\caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no}. }
+\caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. 
+We also compare with the results of the TC obtained with the $u(r_{12}) = f_{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. 
+ }
 \begin{ruledtabular}
 \begin{tabular}{llllllllllll}
  Basis/$\mu$ & 0.2                   & 0.3                   & 0.35                  & 0.5                  & 0.7                 & $\mfrogg=0.86975$    \\
@@ -897,7 +882,8 @@ The total matrix element of the full operator is then
 \end{equation}
 which can be computed on the fly through a simple numerical integration. 
 
-\section{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians}
+\section{Appendix}
+\subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians and related cusp conditions}
 \label{sec:cusp}
 Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
 The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
@@ -969,6 +955,51 @@ one obtains that
 which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, because they deal with an effective non-divergent interaction. 
 
 Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
+
+\subsection{Appendix: large $\mu$ limit of $\tilde{H}[\mu]$}
+\label{sec:large_mu_lim}
+Nevertheless, in the large $\mu$ limit, one can notice that 
+\begin{equation}
+ \label{eq:lim_mu_3}
+ \lim_{\mu \rightarrow \infty} \tilde{\mathcal{W}}_{ee}(r_{12})  = \frac{1}{r_{12}} + \delta(r_{12}) 
+\end{equation}
+where $\delta(r_{12})$ is the Dirac distribution, and as the firs-order differential term vanishes in the large $\mu$ limit (see Eq.\eqref{eq:exp_ht_mu}), one could be tempted to write that 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:lim_mu_4}
+ \lim_{\mu \rightarrow \infty} \tilde{H}[\mu]& = h_c + \frac{1}{r_{12}} + \delta(r_{12}) \\
+                                             & = H + \delta(r_{12})  \\
+                                             & \ne H,
+ \end{aligned}
+\end{equation}
+which seems to contradict the intuitive limit of Eq.\eqref{eq:lim_mu_1}. 
+
+Nevertheless, as the right hand side of Eq.\eqref{eq:lim_mu_4} contains a Delta distribution, it must be considered in the sense of distributions an not point wise. 
+Therefore, considering a generic bounded square integrable wave function $\psi(\br{}_1,\hdots,\br{}_N)$ yielding to a integrable pair density $n_2(\br{}_1,\br{}_2)$, the equality between $\tilde{H}[\mu]$ and $H$ is, in the sense of distributions, defined by the following equality 
+\begin{equation}
+ \label{eq:lim_mu_5}
+ \begin{aligned}
+& \matelem{\psi}{H}{\psi} = \lim_{\mu \rightarrow \infty} \matelem{\psi}{\tilde{H}[\mu]}{\psi} \\
+& \Leftrightarrow H = \tilde{H}[\mu],
+ \end{aligned}
+\end{equation}
+and considering the limit for of $\tilde{H}[\mu]$ (see Eq.\eqref{eq:lim_mu_4}), it implies that 
+\begin{equation}
+ \label{eq:lim_mu_6}
+ \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = 0.
+\end{equation}
+To intuitively show Eq.\eqref{eq:lim_mu_6}, one can perform a series of change of variable $(\br{}_1,\br{}_2)\rightarrow (\br{}_{12},\frac{1}{2}(\br{}_1 + \br{}_2))$ and then use the spherical coordinates for $\br{}_{12}$ 
+\begin{equation}
+ \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 
+\end{equation}
+where $\tilde{n_2}(x)$ is the function $n_2(\br{}_1,\br{}_2)$ integrated over $(\br{}_1,\br{}_2)$ with the constraint that 
+$|\br{}_1-\br{}_2| = x$. 
+As the pair density $n_2(\br{}_1,\br{}_2)$ remains finite and is integrable, the function $\tilde{n}_2(x)$ 
+cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one obtains that 
+\begin{equation}
+ \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
+\end{equation}
+which implies Eq.\eqref{eq:lim_mu_1}. 
 
 
 \section{Integrals involved in TenNo work}
@@ -1160,5 +1191,6 @@ and, by posing $X=\gamma x$ one can fit any Slater function as
 To find the $\{c_m,\zeta_m\}$ parameters, I performed a Hartree Fock calculation on the Hydrogen atom using the $s$ functions of the ANO-RCC basis set which contains 8 gaussians.  
 
 \bibliography{srDFT_SC}                                                                                                                                                
+
 
 \end{document}
