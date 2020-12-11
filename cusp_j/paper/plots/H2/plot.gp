@@ -52,7 +52,7 @@ set key right top
 set xrange [1:3]
 unset yrange 
 set arrow from 1.401, graph 0 to 1.401, graph 1 nohead
-set label "R_{eq}" at 1.401,15.0
+set label "R_{eq}" at 1.405,15.0
 
 
 plot  "data_H2_de_fci" u 1:3 w lp pt 1 title "X: FCI AVDZ", "data_H2_de_lda" u 1:3 w lp pt 4 title "X: {/Symbol m}_{UEG} AVDZ",\
@@ -67,7 +67,7 @@ set key right top
 set xrange [1:3]
 unset yrange 
 set arrow from 1.401, graph 0 to 1.401, graph 1 nohead
-set label "R_{eq}" at 1.401,15.0
+set label "R_{eq}" at 1.405,15.0
 
 
 plot  "data_H2_de_fci" u 1:3 w lp pt 1 title "X: FCI AVDZ", "data_H2_de_rsc" u 1:3 w lp pt 4 title "X: {/Symbol m}_{r_{s,c}} AVDZ",\
@@ -82,7 +82,7 @@ set key right top
 set xrange [1:3]
 unset yrange 
 set arrow from 1.401, graph 0 to 1.401, graph 1 nohead
-set label "R_{eq}" at 1.401,15.0
+set label "R_{eq}" at 1.405,15.0
 
 
 plot  "data_H2_de_fci" u 1:3 w lp pt 1 title "X: FCI AVDZ", "data_H2_de_ten_no" u 1:3 w lp pt 4 title "X: FROGG AVDZ",\
