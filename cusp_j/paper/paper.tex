@@ -673,7 +673,7 @@ Therefore, one can
 \section{Study of the helium isoelectronic series}
 \label{sec:iso_elec}
 Having investigated in the case of the helium atom the behaviour of both the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with both $\mu$ and the basis set used, we now study the ground state energies of the isoelectronic series of the helium atom H$^{-}$ to Ne$^{8+}$. As seen from the previous study on the helium atom, the quality of the eigenvalues of $\tilde{H}[\mu]$ depends on the value of $\mu$ but there is a quite wide regimes of $\mu$ for which they converge significantly faster with the basis set with respect to the usual Hamiltonian. Of course, the 'optimal' range of $\mu$ might depend on the system and we investigate here different approaches to systematically find a reasonable value of $\mu$ and test it on this isoelectronic series which consist in weakly correlated covering a quite wide range of densities. 
-As in the study of the helium atom of Sec \ref{sec:total_h}, in a given basis set $\basis$ and for a given system, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
+As in the study of the helium atom of Sec \ref{sec:total_he}, in a given basis set $\basis$ and for a given system, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
 
 In order to find a systematic way to determine a reasonable value of $\mu$, one must keep in mind the physical meaning of such quantity: it has the unit of an inverse distance, and determines, at leading order, the depth of the hole imposed by the Jastrow factor. 
 Therefore, it must have the typical scale of the inverse of correlation effects, which of course strongly depends on the system through its density for instance. In the context of RS-DFT, Toulouse \textit{et. al.}\cite{TouColSav-JCP-05} have investigated different flavour of $\mu$ varying in space through the density of the system in a given point in space. 
@@ -786,6 +786,8 @@ We report in Figs \ref{fig:H2} the difference with respect to the estimated exac
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_9.pdf}\\
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_lda.pdf}
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_rsc.pdf}\\
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_frogg.pdf}
+        \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_ten_no.pdf}\\
         \caption{
         H$_2$ molecule: Error with respect to the estimated exact ground state energy for the aug-cc-pVDZ and aug-cc-pVTZ basis sets (AVDZ, AVTZ, respectively) as a function of the inter nuclear distance for different values of $\mu$, and comparison with FCI.  
 }
