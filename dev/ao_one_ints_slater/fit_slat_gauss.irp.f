@@ -20,26 +20,6 @@
  ! The coefficient are taken from the ano-rcc expansion of the hydrogen 1s orbital
  END_DOC
 
-! coef_fit_slat_gauss(1) =  2.6032524673598918d-002
-! coef_fit_slat_gauss(2) =  4.8538671362083070d-002
-! coef_fit_slat_gauss(3) =  8.1756487143886281d-002
-! coef_fit_slat_gauss(4) = 0.1220544746390489d0    
-! coef_fit_slat_gauss(5) = 0.1443695761749570d0    
-! coef_fit_slat_gauss(6) = 0.1056239657977568d0    
-! coef_fit_slat_gauss(7) =  2.3962067692955683d-002
-! coef_fit_slat_gauss(8) =  1.0571415716647108d-004
-!
-! coef_fit_slat_gauss *= sqpi ! for normalization
-!
-! expo_fit_slat_gauss(1)  = 188.61445d0    
-! expo_fit_slat_gauss(2)  =  28.276596d0  
-! expo_fit_slat_gauss(3)  =   6.4248300d0  
-! expo_fit_slat_gauss(4)  =   1.8150410d0 
-! expo_fit_slat_gauss(5)  =    .59106300d0 
-! expo_fit_slat_gauss(6)  =    .21214900d0 
-! expo_fit_slat_gauss(7)  =    .07989100d0 
-! expo_fit_slat_gauss(8)  =    .02796200d0 
-
 
       expo_fit_slat_gauss(01)=30573.77073000000
       coef_fit_slat_gauss(01)=0.00338925525

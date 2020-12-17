@@ -55,7 +55,12 @@
 \email{emmanuel.giner@lct.jussieu.fr}
 
 \begin{abstract}
-TODO: investigate the non variationality on the He atom for instance and Ne8+
+The present work introduces a new form of explicitly correlated factor in the context of the transcorrelated methods. 
+The new correlation factor is obtained from the $r_{12} \approx 0$ mathematical analysis of the transcorrelated Hamiltonian, and its analytical form is obtained such that the scalar part of the effective two-electron potential reproduces at leading order in $1/r_{12}$ the long-range interaction of the range-separated density functional theory. 
+The resulting correlation factor is then tuned by a unique parameter $\mu$ which controls both the depth of the coulomb hole and its typical range in $r_{12}$. 
+The transcorrelated Hamiltonian obtained with such a new correlation factor as a straightforward analytical expression and its physical contents depends on the same parameter $\mu$: one can continuously change from a non divergent repulsive Hamiltonian potential at large $\mu$ to a purely attractive one at small $\mu$. We investigate the convergence of the eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
+We found that the convergence towards the complete basis set is much faster for a quite wide range values of $\mu$. We also propose a computationally cheap way to find a reasonable value of $\mu$ that automatically adapts to the system through its density.  
+It should be pointed out that all two-electron integrals can be carried analytically within such approach and the three-electrons terms can be performed using a mixed analytical-numerical integration approach.
 
 \end{abstract}
 
@@ -139,6 +144,7 @@ For the sake of simplicity, we derive the main equations in the case of the heli
 Then, we derive the analytical form of the corresponding new transcorrelated Hamiltonians $\tilde{H}[\mu]$ in the case of a general $N$-electron system, and study its physical content as a  function of the parameter $\mu$. 
 
 \subsection{A simple physical picture: the transcorrelated Hamiltonian for the helium atom}
+\label{sec:he_htilde}
 Let us write the Hamiltonian of the helium atom using the $r_i = \big|{\bf r}_i\big|$ and $ r_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinates  
 \begin{equation}
  H  = h_c + \frac{1}{r_{12}},
@@ -317,10 +323,10 @@ This leads to the following similarity transformed Hamiltonian
  \begin{aligned}
  \label{ht_def_gu}
  \tilde{H} & = H - \sum_i \bigg( \frac{1}{2} \nabla_i^2 \hat{\tau} + \big(\nabla_i \hat{\tau} \big) + \frac{1}{2} \big(\nabla_i \hat{\tau} \big)^2  \bigg) \\
-           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{u}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{u},\bri{k}),
+           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{j},\bri{k}),
  \end{aligned}
 \end{equation}
-where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{u})$ and $\hat{L}(\bri{i},\bri{u},\bri{k})$ are defined as
+where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and $\hat{L}(\bri{i},\bri{j},\bri{k})$ are defined as
 \begin{equation}
  \begin{aligned}
  \label{def_k}
@@ -353,7 +359,7 @@ Then, the term $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri
  \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_2 u(\bri{1},\bri{2}) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
  \end{aligned}
 \end{equation}
-Then, the non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ contains 
+The non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ contains 
 \begin{equation}
  \begin{aligned}
  \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
@@ -404,7 +410,7 @@ The computation of the Laplacian is a little more tedious, but after some deriva
 \begin{equation}
  \begin{aligned}
  \label{eq:d2_x1_2}
- &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})\\ 
+ &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})
  & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
  \end{aligned}
 \end{equation}
@@ -829,7 +835,215 @@ The last part of our study is dedicated to the study of the ground state energy 
 The perspective of this work are mainly to study more realistic systems which will includes the expensive three-body terms, and tu explore the possibility of having a value of $\mu$ varying in space. 
 
 
-\section{Computation of integrals}
+\section{Appendix}
+\subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians and related cusp conditions}
+\label{sec:cusp}
+Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom in Sec. \ref{sec:he_htilde}, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
+The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. 
+It should be noticed that, although it was established in the case of the helium atom, the leading order of the $r_{12} \rightarrow 0$ limit that will be carried out in that section are valid for a general $N$ electron system . 
+For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are valid for any bounded eigenvectors. 
+
+In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
+\begin{equation}
+ H \psiex(\br{}_1,\br{}_2) = E_0 \psiex(\br{}_1,\br{}_2)\quad \forall (\br{}_1,\br{}_2).
+\end{equation}
+When looking at $r_{12}\approx 0$, all terms multiplying $\frac{1}{r_{12}}$ in $H \psiex(\br{}_1,\br{}_2)$ must remain finite, which, according to Eq.\eqref{def:h_c}, translates into
+\begin{equation}
+ \label{eq:cusp_0}
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
+\end{equation}
+or equivalently by multiplying Eq. \eqref{eq:cusp_0} by $r_{12}$
+\begin{equation}
+ \lim_{r_{12}\rightarrow 0}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
+\end{equation}
+which translates into the famous cusp condition for antiparallel spins of Kato\cite{Kat-CPAM-57}, 
+\begin{equation}
+ \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
+\end{equation} 
+For an excellent pedagogical and general derivation of the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
+
+Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
+\begin{equation}
+ \label{eq:hpi0_ex}
+ \tilde{H}[u] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
+\end{equation}
+Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $\tilde{H}[u]\phiex(\br{}_1,\br{}_2)$ must remain finite, 
+which involves also the term $\tilde{W}[u]$ in $\tilde{H}[u]$ (see Eq.\eqref{eq:def_wt}). Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
+\begin{equation}
+ \label{eq:cusp_phi_0}
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{u(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
+\end{equation}
+Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{u(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction induced by the presence of the Jastrow factor in $\tilde{H}[u]$. 
+Therefore, as long as one imposes that 
+\begin{equation}
+ \label{eq:cusp_phi_1}
+  \deriv{u(r_{12})}{r_{12}}{}\bigg|_{r_{12}=0} = \frac{1}{2},
+\end{equation}
+which is nothing but the cusp condition for the Jastrow factor $u(r_{12})$, the scalar term proportional to $\frac{1}{r_{12}}$ in Eq.\eqref{eq:cusp_phi_0} vanishes at $r_{12}=0$, and then one obtains a non-divergent effective electron-electron interaction. 
+Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\eqref{eq:cusp_phi_0} becomes 
+\begin{equation}
+ \label{eq:cusp_phi_2}
+ \deriv{\phiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
+\end{equation}
+which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[u]$ is cuspless. 
+For instance, a simple Jastrow factor of the form $u(r_{12}) = \frac{1}{2} r_{12}$ releases $\phiex(\br{}_1,\br{}_2)$ from 
+the constraint of fulfilling the cusp condition. 
+
+Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
+where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
+The parameter which controls such a splitting is the so-called range separation parameter $\mu$:  RS-DFT reduces the usual WFT when $\mu \rightarrow \infty$, and $\mu \rightarrow 0$ it gives back the usual Kohn-Sham theory.  
+In practice, RS-DFT introduces a self-consistent Schroedinger-like equation which must be fulfilled by an effective wave function  $\Psi^\mu$.
+Applied to a two electron system and looking in regions where $r_{12}\approx 0$, the leading terms of the self-consistent Schroedinger-like equation of RS-DFT reads 
+\begin{equation}
+ \label{eq:cusp_psi_mu_0}
+ \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
+\end{equation}
+and 
+\begin{equation}
+ \lim_{r_{12} \rightarrow 0} \frac{\text{erf}(\mu r_{12})}{r_{12}} = \frac{2 \mu}{\sqrt{\pi}} , 
+\end{equation}
+one obtains that 
+\begin{equation}
+ \label{eq:cusp_psi_mu_1}
+ \deriv{\Psi^\mu(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
+\end{equation}
+which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, because they deal with an effective non-divergent interaction. 
+
+Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
+
+\subsection{Large $\mu$ limit of $\tilde{H}[\mu]$}
+\label{sec:large_mu_lim}
+As mentioned in Sec. \ref{sec:h_mu_lim}, one must recover the usual physical Hamiltonian in the large $\mu$ limit. 
+Nevertheless, one can notice that 
+\begin{equation}
+ \label{eq:lim_mu_3}
+ \lim_{\mu \rightarrow \infty} \tilde{\mathcal{W}}_{ee}(r_{12})  = \frac{1}{r_{12}} + \delta(r_{12}) 
+\end{equation}
+with 
+\begin{equation}
+ \delta(x) = \lim_{\mu} \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu x \big)^2}, 
+\end{equation}
+being the Dirac distribution. Threfore, one could be tempted to write that 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:lim_mu_4}
+ \lim_{\mu \rightarrow \infty} \tilde{H}[\mu]& = H + \delta(r_{12})  \\
+                                             & \ne H,
+ \end{aligned}
+\end{equation}
+which seems to contradict the intuitive limit of Eq.\eqref{eq:lim_mu_1}. 
+
+Nevertheless, as Eq.\eqref{eq:lim_mu_4} deals with operators, the equality must be considered in the sense of distributions.  
+Therefore, considering a generic bounded square integrable wave function $\psi(\br{}_1,\hdots,\br{}_N)$ yielding to a integrable pair density $n_2(\br{}_1,\br{}_2)$, the equality between $\tilde{H}[\mu]$ and $H$ is, in the sense of distributions, defined by the following equality 
+\begin{equation}
+ \label{eq:lim_mu_5}
+ \begin{aligned}
+& \matelem{\psi}{H}{\psi} = \lim_{\mu \rightarrow \infty} \matelem{\psi}{\tilde{H}[\mu]}{\psi} \\
+& \Leftrightarrow H = \tilde{H}[\mu],
+ \end{aligned}
+\end{equation}
+and considering the limit for of $\tilde{H}[\mu]$ (see Eq.\eqref{eq:lim_mu_4}), it implies that 
+\begin{equation}
+ \label{eq:lim_mu_6}
+ \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = 0.
+\end{equation}
+To intuitively show Eq.\eqref{eq:lim_mu_6}, one can perform a series of change of variable $(\br{}_1,\br{}_2)\rightarrow (\br{}_{12},\frac{1}{2}(\br{}_1 + \br{}_2))$ and then use the spherical coordinates for $\br{}_{12}$ 
+\begin{equation}
+ \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 
+\end{equation}
+where $\tilde{n_2}(x)$ is the function $n_2(\br{}_1,\br{}_2)$ integrated over $(\br{}_1,\br{}_2)$ with the constraint that 
+$|\br{}_1-\br{}_2| = x$. 
+As the pair density $n_2(\br{}_1,\br{}_2)$ remains finite and is integrable, the function $\tilde{n}_2(x)$ 
+cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one obtains that 
+\begin{equation}
+ \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
+\end{equation}
+which implies Eq.\eqref{eq:lim_mu_1}. 
+
+\subsection{Computation of $\hat{K}(\bri{1},\bri{2})$} 
+The only integrals involved of $\hat{K}(\bri{1},\bri{2})$ over Gaussian functions which are not analytical are of the types 
+\begin{equation}
+ \label{eq:k_ijkl}
+ v_{ij}^{kl} = \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) \big( g(r_{12},\mu) \big)^2  \phi_k(\bri{1}) \phi_l(\bri{2}),  
+\end{equation}
+with 
+\begin{equation}
+ g(x, \mu)= \text{erf}(x \mu) - 1.
+\end{equation}
+To make integrals analytical, we first fit the function $\text{erfc}(x)$ with a simple Slater-Gaussian function 
+\begin{equation}
+ \text{erfc}(x) \approx h(x,\alpha,\beta,c)
+\end{equation}
+with 
+\begin{equation}
+ h(x,\alpha,\beta,c) = e^{-\alpha x - \beta x^2}
+\end{equation}
+and $\alpha=1.09529$ and $\beta = 0.756023$. 
+Then, by posing $y=\mu x$, $x=y/\mu$ one obtains 
+\begin{equation}
+ \label{fit_erf}
+ \begin{aligned}
+  g(x,\mu)  \approx & e^{-\alpha \mu x - \beta (\mu x)^2}\\ 
+        =& h(x,\alpha \mu, \beta \mu^2).
+ \end{aligned}
+\end{equation}
+Therefore, one can fit $g(x)^2$ as 
+\begin{equation}
+ \begin{aligned}
+ g(x,\mu)^2&= \bigg( 1 - \text{erf}(\mu x) \bigg)^2\\
+           &= \bigg( e^{-\alpha \mu x } e^{-\beta \mu^2 x^2}\bigg)^2 \\
+           &= e^{-2\alpha  \mu x } e^{-2 \beta \mu^2 x^2} \\
+           &= h(x,2 \alpha \mu, 2 \beta \mu^2).
+ \end{aligned}
+\end{equation}
+Then we fit the Slater function as a linear combination of Gaussians 
+\begin{equation}
+ e^{-X} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m X^2}. 
+\end{equation}
+In the present work, we use $N_s=20$ and the $\{c_m,\zeta_m\}$ parameters are reported in Table \ref{gauss_fit}.
+\begin{table}
+\label{gauss_fit}
+\caption{Set of coefficients $c_m$ and exponents $\zeta_m$ for the fit of $e^{-X}$}
+\begin{ruledtabular}
+\begin{tabular}{ll}
+ $\zeta_m$ & $c_m$ \\
+\hline                 
+   30573.77073         & 0.00338925525  \\
+   5608.452381         & 0.00536433869  \\
+   1570.956734         & 0.00818702846  \\
+   541.3978511         & 0.01202047655  \\
+   212.4346963         & 0.01711289568  \\
+   91.31444574         & 0.02376001022  \\
+   42.04087246         & 0.03229121736  \\
+   20.43200443         & 0.04303646818  \\
+   10.37775161         & 0.05624657578  \\
+   5.468807545         & 0.07192311571  \\
+   2.973735292         & 0.08949389001  \\
+   1.661441902         & 0.10727599240  \\
+   0.9505256082        & 0.12178961750  \\
+   0.5552868397        & 0.12740141870  \\
+   0.3304336002        & 0.11759168160  \\
+   0.1998230323        & 0.08953504394  \\
+   0.1224684076        & 0.05066721317  \\
+   0.07575825322       & 0.01806363869  \\
+   0.04690146243       & 0.00305632563  \\
+   0.02834749861       & 0.00013317513  \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+By posing $X=\gamma x$ one can fit any Slater function as
+\begin{equation}
+ e^{-\gamma x} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m \gamma^2 x^2}. 
+\end{equation}
+Eventually, the function $g(x,\mu)^2$ is obtained as a linear combination of Gaussian
+\begin{equation}
+ g(x,\mu)^2 \approx \sum_{m=1}^{N_s} c_m e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) x^2},
+\end{equation}
+which makes then the integrals analytical
+\begin{equation}
+ v_{ij}^{kl} \approx \sum_{m=1}^{N_s} c_m \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) (r_{12})^2} \phi_k(\bri{1}) \phi_l(\bri{2}).
+\end{equation}
+
 \subsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
 We need to compute the following integral 
 \begin{equation}
@@ -889,8 +1103,9 @@ with
 \end{equation}
 and 
 \begin{equation}
-  w_{mn}^x({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'})  x'.
+  w_{mn}^x({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'})  x',
 \end{equation}
+which are analytical integrals.  
 Then, one can rewrite the matrix element of Eq. \eqref{eq:l_1x} as
 \begin{equation}
  \begin{aligned}
@@ -899,7 +1114,6 @@ Then, one can rewrite the matrix element of Eq. \eqref{eq:l_1x} as
  = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) W_{mn}^x({\bf r}) W_{jl}^x({\bf r}),
  \end{aligned}
 \end{equation}
-which can be easily evaluated numerically. 
 Therefore, the matrix element of the $\hat{L}_1(\bri{1},\bri{2},\bri{3})$ is simply 
 \begin{equation}
  \begin{aligned}
@@ -919,314 +1133,6 @@ The total matrix element of the full operator is then
  \end{aligned}
 \end{equation}
 which can be computed on the fly through a simple numerical integration. 
-
-\section{Appendix}
-\subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians and related cusp conditions}
-\label{sec:cusp}
-Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
-The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are general for any bounded eigenvectors. 
-
-In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
-\begin{equation}
- H \psiex(\br{}_1,\br{}_2) = E_0 \psiex(\br{}_1,\br{}_2)\quad \forall (\br{}_1,\br{}_2).
-\end{equation}
-When looking at $r_{12}\approx 0$, all terms multiplying $\frac{1}{r_{12}}$ in $H \psiex(\br{}_1,\br{}_2)$ must remain finite, which, according to Eq.\eqref{def:h_c}, translates into
-\begin{equation}
- \label{eq:cusp_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg) \psiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty 
-\end{equation}
-or equivalently by multiplying Eq. \eqref{eq:cusp_0} by $r_{12}$
-\begin{equation}
- \lim_{r_{12}\rightarrow 0}\bigg( 2 \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{} -\psiex(\bd{r_1},\bd{r_2}) \bigg) = 0, 
-\end{equation}
-which translates into the famous cusp condition for antiparallel spins of Kato\cite{Kat-CPAM-57}, 
-\begin{equation}
- \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
-\end{equation} 
-For an excellent pedagogical and general derivation of the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
-
-Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
-\begin{equation}
- \label{eq:hpi0_ex}
- \tilde{H}[u] \phiex(\br{}_1,\br{}_2) = E_0 \phiex(\br{}_1,\br{}_2) \quad \forall (\br{}_1,\br{}_2).
-\end{equation}
-Similarly to Eq. \eqref{eq:cusp_0}, when looking at $r_{12}\approx 0$, the terms multiplying $\frac{1}{r_{12}}$ in $\tilde{H}[u]\phiex(\br{}_1,\br{}_2)$ must remain finite, 
-which involves also the term $\tilde{W}[u]$ in $\tilde{H}[u]$ (see Eq.\eqref{eq:def_wt}). Therefore, imposing the finiteness of the limit $r_{12}\rightarrow 0$ of Eq.\eqref{eq:hpi0_ex} translates into
-\begin{equation}
- \label{eq:cusp_phi_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{1}{r_{12}}\bigg[ 1 - 2 \deriv{u(r_{12})}{r_{12}}{}\bigg]\bigg) \phiex(\bd{r_1},\bd{r_2})  = c,\quad c<\infty.
-\end{equation}
-Then, the term $\frac{1}{r_{12}}\bigg[ 1 - 2\deriv{u(r_{12})}{r_{12}}{}\bigg]$ in Eq.\eqref{eq:cusp_phi_0} looks like an effective electron electron interaction induced by the presence of the Jastrow factor in $\tilde{H}[u]$. 
-Therefore, as long as one imposes that 
-\begin{equation}
- \label{eq:cusp_phi_1}
-  \deriv{u(r_{12})}{r_{12}}{}\bigg|_{r_{12}=0} = \frac{1}{2},
-\end{equation}
-which is nothing but the cusp condition for the Jastrow factor $u(r_{12})$, the scalar term proportional to $\frac{1}{r_{12}}$ in Eq.\eqref{eq:cusp_phi_0} vanishes at $r_{12}=0$, and then one obtains a non-divergent effective electron-electron interaction. 
-Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\eqref{eq:cusp_phi_0} becomes 
-\begin{equation}
- \label{eq:cusp_phi_2}
- \deriv{\phiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
-\end{equation}
-which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[u]$ is cuspless. 
-For instance, a simple Jastrow factor of the form $u(r_{12}) = \frac{1}{2} r_{12}$ releases $\phiex(\br{}_1,\br{}_2)$ from 
-the constraint of fulfilling the cusp condition. 
-
-Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
-where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
-The parameter which controls such a splitting is the so-called range separation parameter $\mu$:  RS-DFT reduces the usual WFT when $\mu \rightarrow \infty$, and $\mu \rightarrow 0$ it gives back the usual Kohn-Sham theory.  
-In practice, RS-DFT introduces a self-consistent Schroedinger-like equation which must be fulfilled by an effective wave function  $\Psi^\mu$.
-Applied to a two electron system and looking in regions where $r_{12}\approx 0$, the leading terms of the self-consistent Schroedinger-like equation of RS-DFT reads 
-\begin{equation}
- \label{eq:cusp_psi_mu_0}
- \lim_{r_{12}\rightarrow 0}\bigg( \frac{2}{r_{12}} \deriv{}{r_{12}}{} -\frac{\text{erf}(\mu r_{12})}{r_{12}}\bigg) \Psi^\mu(\bd{r_1},\bd{r_2})  = c,\quad c<\infty,  
-\end{equation}
-and as the effective interaction $\frac{\text{erf}(\mu r_{12})}{r_{12}}$ is non divergent at $r_{12}=0$ for finite values of $\mu$
-\begin{equation}
- \lim_{r_{12} \rightarrow 0} \frac{\text{erf}(\mu r_{12})}{r_{12}} = \frac{2 \mu}{\sqrt{\pi}} , 
-\end{equation}
-one obtains that 
-\begin{equation}
- \label{eq:cusp_psi_mu_1}
- \deriv{\Psi^\mu(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = 0, 
-\end{equation}
-which means that the wave functions $\Psi^\mu$, just as $\phiex$ are cuspless, because they deal with an effective non-divergent interaction. 
-
-Therefore, one can see that there is a similarity between the eigenvectors of RS-DFT and of the transcorrelated Hamiltonian: they are both cuspless as they originate from non divergent Hamiltonians. 
-
-\subsection{Appendix: large $\mu$ limit of $\tilde{H}[\mu]$}
-\label{sec:large_mu_lim}
-Nevertheless, in the large $\mu$ limit, one can notice that 
-\begin{equation}
- \label{eq:lim_mu_3}
- \lim_{\mu \rightarrow \infty} \tilde{\mathcal{W}}_{ee}(r_{12})  = \frac{1}{r_{12}} + \delta(r_{12}) 
-\end{equation}
-where $\delta(r_{12})$ is the Dirac distribution, and as the firs-order differential term vanishes in the large $\mu$ limit (see Eq.\eqref{eq:exp_ht_mu}), one could be tempted to write that 
-\begin{equation}
- \begin{aligned}
- \label{eq:lim_mu_4}
- \lim_{\mu \rightarrow \infty} \tilde{H}[\mu]& = h_c + \frac{1}{r_{12}} + \delta(r_{12}) \\
-                                             & = H + \delta(r_{12})  \\
-                                             & \ne H,
- \end{aligned}
-\end{equation}
-which seems to contradict the intuitive limit of Eq.\eqref{eq:lim_mu_1}. 
-
-Nevertheless, as the right hand side of Eq.\eqref{eq:lim_mu_4} contains a Delta distribution, it must be considered in the sense of distributions an not point wise. 
-Therefore, considering a generic bounded square integrable wave function $\psi(\br{}_1,\hdots,\br{}_N)$ yielding to a integrable pair density $n_2(\br{}_1,\br{}_2)$, the equality between $\tilde{H}[\mu]$ and $H$ is, in the sense of distributions, defined by the following equality 
-\begin{equation}
- \label{eq:lim_mu_5}
- \begin{aligned}
-& \matelem{\psi}{H}{\psi} = \lim_{\mu \rightarrow \infty} \matelem{\psi}{\tilde{H}[\mu]}{\psi} \\
-& \Leftrightarrow H = \tilde{H}[\mu],
- \end{aligned}
-\end{equation}
-and considering the limit for of $\tilde{H}[\mu]$ (see Eq.\eqref{eq:lim_mu_4}), it implies that 
-\begin{equation}
- \label{eq:lim_mu_6}
- \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = 0.
-\end{equation}
-To intuitively show Eq.\eqref{eq:lim_mu_6}, one can perform a series of change of variable $(\br{}_1,\br{}_2)\rightarrow (\br{}_{12},\frac{1}{2}(\br{}_1 + \br{}_2))$ and then use the spherical coordinates for $\br{}_{12}$ 
-\begin{equation}
- \int \text{d}\br{}_1 \text{d}\br{}_2 n_2(\br{}_1,\br{}_2) \delta(r_{12}) = \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 
-\end{equation}
-where $\tilde{n_2}(x)$ is the function $n_2(\br{}_1,\br{}_2)$ integrated over $(\br{}_1,\br{}_2)$ with the constraint that 
-$|\br{}_1-\br{}_2| = x$. 
-As the pair density $n_2(\br{}_1,\br{}_2)$ remains finite and is integrable, the function $\tilde{n}_2(x)$ 
-cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one obtains that 
-\begin{equation}
- \int \text{d}r{}_{12}  \tilde{n}_2(r_{12}) \delta(r_{12}) r_{12}^2 = 0,
-\end{equation}
-which implies Eq.\eqref{eq:lim_mu_1}. 
-
-
-\section{Integrals involved in TenNo work}
-The Jastrow factor of Ten-No is of the form
-\begin{equation}
- u(r_{12})=\sum_{m=1}^{N_g} c_m e^{-\alpha_m \big(r_{12}\big)^2},
-\end{equation}
-where the $c_m$ and $\alpha_m$ are given in \cite{TenNo-CPL-00-a}. 
-To compute the transcorrelated Hamiltonian one needs to compute therefore 
-\begin{equation}
- \begin{aligned}
- \label{def_k}
-  \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
-                                               + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
-                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1.
- \end{aligned}
-\end{equation}
-\subsection{Computation of the gradient}
-One can write that 
-\begin{equation}
- u(r_{12})=\sum_{m=1}^{N_g} c_m v(r_{12},\alpha_m)
-\end{equation}
-with 
-\begin{equation}
- v(r_{12},\alpha) = e^{-\alpha \big(r_{12}\big)^2}.
-\end{equation}
-The gradient with respect to $\br{1}$ is 
-\begin{equation}
- \deriv{}{x_1}{} v(r_{12},\alpha) = -2 \alpha (x_1 - x_2) e^{-\alpha \big(r_{12}\big)^2},
-\end{equation}
-and one has of course 
-\begin{equation}
- \deriv{}{x_2}{} v(r_{12},\alpha) = - \deriv{}{x_1}{} v(r_{12},\alpha). 
-\end{equation}
-\subsection{Computation of the non Hermitian term}
-One needs to compute 
-\begin{equation}
- \nabla_1 v(r_{12},\alpha) \cdot \nabla_1 + \nabla_2 v(r_{12},\alpha) \cdot \nabla_2,
-\end{equation}
-but as 
-\begin{equation}
- \deriv{}{x_2}{} v(r_{12},\alpha) = - \deriv{}{x_1}{} v(r_{12},\alpha), 
-\end{equation}
-one has 
-\begin{equation}
-  \nabla_1 v(r_{12},\alpha) \cdot \nabla_1 + \nabla_2 v(r_{12},\alpha) \cdot \nabla_2 = \nabla_1 u(r_{12},\alpha) \cdot  \big( \nabla_1 - \nabla_2 \big). 
-\end{equation}
-Let us introduce the following functions  
-\begin{equation}
- w_{ij}(\alpha,\bri{1}) = \int \text{d}\br{} e^{-\alpha \big(\br{} - \bri{1} \big)^2} \phi_i(\br{}) \phi_j(\br{}),
-\end{equation}
-\begin{equation}
- w_{ij}^x(\alpha,\bri{1}) = \int \text{d}\br{}  e^{-\alpha \big(\br{} - \bri{1} \big)^2} x\phi_i(\br{}) \phi_j(\br{}).
-\end{equation}
-Therefore, the integral of the form 
-\begin{equation}
- \begin{aligned}
- \matelem{kl}{\nabla_1 u(\bri{1},\bri{2}) \cdot  \big( \nabla_1 - \nabla_2 \big)}{ij} = \int \text{d}\bri{1}  \text{d}\bri{2}  \phi_k(\bri{1}) \phi_l(\bri{2}) \\
-\nabla_1 u(\bri{1},\bri{2}) \cdot  \big( \nabla_1 - \nabla_2 \big)  \phi_i(\bri{1}) \phi_j(\bri{2}) ,
- \end{aligned}
-\end{equation}
-can be put into 
-\begin{equation}
- \begin{aligned}
- \matelem{kl}{\nabla_1 u(\bri{1},\bri{2}) \cdot  \big( \nabla_1 - \nabla_2 \big)}{ij} = \matelem{kl}{\hat{t}_x(\alpha) + \hat{t}_y(\alpha) + \hat{t}_z(\alpha)}{ij},
- \end{aligned}
-\end{equation}
-with 
-\begin{equation}
- \begin{aligned}
- \matelem{kl}{\hat{t}_x(\alpha)}{ij} =&  -2 \alpha \int \text{d}\bri{1} \phi_k(\bri{1}) x_1\big( \deriv{}{x_1}{} \phi_i(\bri{1})\big) w_{jl}(\alpha,\bri{1})  \\
-                                      &  -2 \alpha \int \text{d}\bri{1} \phi_l(\bri{1}) x_1\big( \deriv{}{x_1}{} \phi_j(\bri{j})\big) w_{ik}(\alpha,\bri{1})  \\
-                                      &  +2 \alpha \int \text{d}\bri{1} \phi_k(\bri{1}) \big( \deriv{}{x_1}{} \phi_i(\bri{j})\big) w_{jl}^x(\alpha,\bri{1})  \\
-                                      &  +2 \alpha \int \text{d}\bri{1} \phi_l(\bri{1}) \big( \deriv{}{x_1}{} \phi_j(\bri{j})\big) w_{ik}^x(\alpha,\bri{1})  \\
- \end{aligned}
-\end{equation}
-\subsection{Computation of the square term}
-One needs to compute 
-\begin{equation}
- \begin{aligned}
- \bigg( \nabla_1 u(r_{12}) \bigg)^2 = \sum_{m,n=1}^{N_g} c_m c_n \nabla_1 v(r_{12},\alpha_m) \cdot \nabla_1 v(r_{12},\alpha_n).
- \end{aligned}
-\end{equation}
-The term $\nabla_1 v(r_{12},\alpha_m) \cdot \nabla_1 v(r_{12},\alpha_n)$ is 
-\begin{equation}
- \nabla_1 v(r_{12},\alpha_m) \cdot \nabla_1 v(r_{12},\alpha_n) = 4 \alpha_m \alpha_n v(r_{12}, \alpha_m + \alpha_n) (\bri{1}- \bri{2})^2.
-\end{equation}
-Therefore, the integral of type 
-\begin{equation}
- \matelem{kl}{\bigg( \nabla_1 u(r_{12}) \bigg)^2}{ij} = \int \text{d}\bri{1}  \text{d}\bri{2} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_k(\bri{1}) \phi_l(\bri{2}) \big(\nabla_1 u(r_{12}) \big)^2
-\end{equation}
-can be written as  
-\begin{equation}
- \matelem{kl}{\bigg( \nabla_1 u(r_{12}) \bigg)^2}{ij} = \sum_{m,n=1}^{N_g} c_m c_n  4 \alpha_m \alpha_n \matelem{kl}{v(r_{12}, \alpha_m + \alpha_n) (\bri{1}- \bri{2})^2}{ij} 
-\end{equation}
-where 
-\begin{equation}
- \begin{aligned}
- &\matelem{kl}{v(r_{12}, \alpha_m + \alpha_n) (\bri{1}- \bri{2})^2}{ij} \\& = \matelem{kl}{I_x(\alpha_m + \alpha_n) + I_y(\alpha_m + \alpha_n) + I_z(\alpha_m + \alpha_n)}{ij}
- \end{aligned}
-\end{equation}
-where 
-\begin{equation}
- \begin{aligned}
- \matelem{kl}{I_x(\alpha)}{ij}=& \int \text{d}\bri{1} \phi_i(\bri{1}) \phi_k(\bri{1}) (x_1)^2 w_{jl}(\alpha,\bri{1}) \\
-                              +& \int \text{d}\bri{1} \phi_j(\bri{1}) \phi_l(\bri{1}) (x_1)^2 w_{ik}(\alpha,\bri{1}) \\
-                              -& \int \text{d}\bri{1} \phi_i(\bri{1}) \phi_k(\bri{1}) x_1 w_{jl}^x(\alpha,\bri{1}) \\
-                              -& \int \text{d}\bri{1} \phi_j(\bri{1}) \phi_l(\bri{1}) x_1 w_{ik}^x(\alpha,\bri{1}) \\
- \end{aligned}
-\end{equation}
-\subsection{Computation of the Laplacian}
-One needs to compute 
-\begin{equation}
- \begin{aligned}
-  \Delta_1 u(r_{12}) = \sum_{m} c_m \Delta_1  v(r_{12},\alpha_m).
- \end{aligned}
-\end{equation}
-The Laplacian of $v(r_{12},\alpha)$ is 
-\begin{equation}
- \begin{aligned}
- \deriv{}{x_1}{2} v(r_{12},\alpha) &= \deriv{}{x_2}{2} v(r_{12},\alpha) \\
-                           &= v(r_{12},\alpha) 2 \alpha \bigg( 2 \alpha \big( (x_1)^2 + (x_2)^2 \big) -4 \alpha x_1 x_2  -1\bigg)
- \end{aligned}
-\end{equation}
-and so 
-\begin{equation}
- \begin{aligned}
- \Delta_1 v(r_{12},\alpha) &= v(r_{12},\alpha) 2 \alpha \bigg( 2 \alpha \big( (r_1)^2 + (r_2)^2 \big) -4 \alpha \bri{1}\cdot \bri{2}  -3\bigg).
- \end{aligned}
-\end{equation}
-One can express the following integral 
-\begin{equation}
- \matelem{kl}{\Delta_1 v(r_{12},\alpha)}{ij} = \int \text{d}\bri{1}  \text{d}\bri{2} \Delta_1 v(r_{12},\alpha) 
-\phi_i(\bri{1}) \phi_j(\bri{2}) \phi_k(\bri{1}) \phi_l(\bri{2}),
-\end{equation}
-as 
-\begin{equation}
- \begin{aligned}
-  \matelem{kl}{\Delta_1 v(r_{12},\alpha)}{ij} =&  4 \alpha^2 \int \text{d}\bri{1} (r_1)^2 \phi_i(\bri{1}) \phi_k(\bri{1}) w_{jl}(\alpha,\bri{1})  \\
-                                               +& 4 \alpha^2 \int \text{d}\bri{1} (r_1)^2 \phi_j(\bri{1}) \phi_l(\bri{1}) w_{ik}(\alpha,\bri{1})  \\
-                                               -& 6 \alpha \int \text{d}\bri{1} \phi_j(\bri{1}) \phi_l(\bri{1}) w_{ik}(\alpha,\bri{1})  \\
-                                               -& 8 \alpha^2 \int \text{d}\bri{1} x_1 \phi_j(\bri{1}) \phi_l(\bri{1}) w_{ik}^x(\alpha,\bri{1})  \\
-                                               -& 8 \alpha^2 \int \text{d}\bri{1} y_1 \phi_j(\bri{1}) \phi_l(\bri{1}) w_{ik}^y(\alpha,\bri{1})  \\
-                                               -& 8 \alpha^2 \int \text{d}\bri{1} z_1 \phi_j(\bri{1}) \phi_l(\bri{1}) w_{ik}^z(\alpha,\bri{1})  \\
- \end{aligned}
-\end{equation}
-
-\section{Numerical computation of integrals}
-\subsection{Fit of functions}
-\subsubsection{Fit of $1-\text{erf}(x)$}
-At some point we would like to fit the following function
-\begin{equation}
- g(x) = 1-\text{erf}(x)
-\end{equation}
-which can be done, for instance by 
-\begin{equation}
- h(x,\alpha,\beta,c) = e^{-\alpha x - \beta x^2}
-\end{equation}
-with $\alpha=1.09529$ and $\beta = 0.756023$. 
-So by posing $y=\mu x$, $x=y/\mu$ then
-\begin{equation}
- \label{fit_erf}
- \begin{aligned}
-  g(x,\mu)  =& 1 - \text{erf}(\mu x) \approx e^{-\alpha \mu x - \beta (\mu x)^2}\\ 
-        =& e^{-\alpha \mu x } e^{-\beta \mu^2 x^2} \\
-        =& h(x,\alpha \mu, \beta \mu^2).
- \end{aligned}
-\end{equation}
-Therefore, one can fit $g(x)^2$ as 
-\begin{equation}
- \begin{aligned}
- g(x,\mu)^2 = \bigg( 1 - \text{erf}(\mu x) \bigg)^2\\
-           &= \bigg( e^{-\alpha \mu x } e^{-\beta \mu^2 x^2}\bigg)^2 \\
-           &= e^{-2\alpha  \mu x } e^{-2 \beta \mu^2 x^2} \\
-           &= h(x,2 \alpha \mu, 2 \beta \mu^2).
- \end{aligned}
-\end{equation}
-
-\subsubsection{Fit of $e^{-x}$}
-The fit of $1 - \text{erf}(\mu x)$ in Eq. \eqref{fit_erf} involves a Slater function, which is always rather complex to integrate. 
-Nevertheless, we can fit a Slater function with Gaussian functions (that is what quantum chemistry is about):
-\begin{equation}
- e^{-X} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m X^2}, 
-\end{equation}
-and, by posing $X=\gamma x$ one can fit any Slater function as
-\begin{equation}
- e^{-\gamma x} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m \gamma^2 x^2}. 
-\end{equation}
-To find the $\{c_m,\zeta_m\}$ parameters, I performed a Hartree Fock calculation on the Hydrogen atom using the $s$ functions of the ANO-RCC basis set which contains 8 gaussians.  
 
 \bibliography{srDFT_SC}                                                                                                                                                
 
