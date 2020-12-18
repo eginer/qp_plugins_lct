@@ -29,6 +29,7 @@
 \newcommand{\psiex}[0]{\Psi^{\text{ex}}_0}
 \newcommand{\phiex}[0]{\Phi^{\text{ex}}_0}
 \newcommand{\phimu}[0]{\Phi^{\text{ex},\mu}_0}
+\newcommand{\phimui}[0]{\Phi^{\text{ex},\mu}_i}
 \newcommand{\phimub}[0]{\Phi^{\mathcal{B},\mu}_0}
 \newcommand{\xhimub}[0]{X^{\mathcal{B},\mu}_0}
 \newcommand{\psimub}[0]{\Psi^{\mathcal{B},\mu}_0}
@@ -143,7 +144,9 @@ This section is dedicated to the derivation of a new form of Jastrow factor mimi
 For the sake of simplicity, we derive the main equations in the case of the helium atom which have an explicit form in terms of the $r_{12}$ coordinate. 
 Then, we derive the analytical form of the corresponding new transcorrelated Hamiltonians $\tilde{H}[\mu]$ in the case of a general $N$-electron system, and study its physical content as a  function of the parameter $\mu$. 
 
-\subsection{A simple physical picture: the transcorrelated Hamiltonian for the helium atom}
+\subsection{A new form of Jastrow factor $u(\mu,r_{12})$ mimicking a long-range interaction}
+\label{sec:new_j}
+\subsubsection{A simple physical picture: the transcorrelated Hamiltonian for the helium atom}
 \label{sec:he_htilde}
 Let us write the Hamiltonian of the helium atom using the $r_i = \big|{\bf r}_i\big|$ and $ r_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinates  
 \begin{equation}
@@ -190,15 +193,10 @@ one can write the Similarity transformed Hamiltonian  as
  \tilde{H}[u] = h_c + \frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] + \tilde{t}[u].
 \end{equation}
 Therefore, one can see from Eq. \eqref{eq:ht_general} that the two electrons experience a modified scalar potential given by $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u]$, and an additional differential operator $\tilde{t}[u]$, 
-the latter making $\tilde{H}[u]$ non-hermitian. It is important to notice that the fact that  $\tilde{H}[u]$ is non-hermitian implies the loose of variational principle. 
+the latter making $\tilde{H}[u]$ non-hermitian. 
 
-\subsection{A new form of Jastrow factor $u(\mu,r_{12})$ mimicking a long-range interaction}
-\label{sec:new_j}
-\subsubsection{The working equation for $u(\mu,r_{12})$ }
-Eq. \eqref{eq:ht_general} gives the similarity transformed Hamiltonian for an arbitrary Jastrow factor, 
-and with respect to the usual Hamiltonian, $\tilde{H}[u]$ contains two types of additional terms which depend on the actual form of $u(r_{12})$: 
-a new electron-electron potential $1/r_{12} + \tilde{w}[u]+ \tilde{W}[u]$ and a new differential operator  $\tilde{t}[u] $.  
-We impose now the form of $u(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction entering in the effective Hamiltonian of the RS-DFT (see Eq. \eqref{eq:cusp_psi_mu_0} in Appendix \ref{sec:cusp}). 
+\subsubsection{The working equation for $u(\mu,r_{12})$ inspired by RSDFT}
+Having established the form of $\tilde{H}[u] $ in Eq. \eqref{eq:ht_general}, one can notice that the leading order terms in $1/r_{12}$ are $\frac{1}{r_{12}}  + \tilde{W}[u]$. We want now to impose the form of $u(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction entering in the effective Hamiltonian of the RS-DFT (see Eq. \eqref{eq:cusp_psi_mu_0} in Appendix \ref{sec:cusp}). 
 Mathematically, this conditions implies that 
 \begin{equation}
  \begin{aligned}
@@ -223,20 +221,19 @@ The associated transcorrelated Hamiltonians obtained with $u(r_{12};\mu)$ is als
  \label{eq:def_ht_mu}
  \tilde{H}[\mu] = e^{-u(r_{12};\mu)} H e^{u(r_{12};\mu)}. 
 \end{equation}
-Therefore, the right- and left-eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and the ground state right-eigenvector is defined by 
+Therefore, the right- and left-eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and the right-eigenvectors satisfy 
 \begin{equation}
- \tilde{H}[\mu] \phimu(\br{}_{1},\br{}_{2}) = E_0 \phimu(\br{}_{1},\br{}_{2}), 
+ \tilde{H}[\mu] \phimui(\br{}_{1},\br{}_{2}) = E_i \phimui(\br{}_{1},\br{}_{2}), 
 \end{equation}
-where $E_0$ is the exact ground state energy. 
-As $\tilde{H}[\mu]$ originates from a similarity transformation, it conserves the same spectrum as $H$ as long as it is developed in a complete basis set. 
+where $E_i$ is the exact $i$-th eigenvalue of the physical Hamiltonian. The fact that $\tilde{H}[\mu]$ and $H$ have the same spectrum originates from the properties of the similarity transformation. Nevertheless, once projected in an incomplete basis set, $\tilde{H}[\mu]$ and $H$ might not have the same eigenvalues. 
 
-The main difference with the FROGG introduced by Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor in terms of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
+The main difference of the present approach with the FROGG introduced by Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor in terms of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
 we impose the analytical structure of $u(r_{12};\mu)$ such that i) the sum of all terms in $1/r_{12}$ (\textit{i.e.} $\tilde{W}[u] + \frac{1}{r_{12}}$) exactly provides the non divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ for all $r_{12}$, 
 ii) the analytical form of $u(r_{12};\mu)$ is obtained from analytical conditions and not by a fit as in the case of the FROGG,  
 iii) the new Jastrow factor $u(r_{12};\mu)$ is more flexible than the FROGG as it is tuned by a unique parameter $\mu$.  
 
 \subsubsection{A few properties of $u(r_{12};\mu)$}
-The new Jastrow $u(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which controls the value of the leading term of the effective interaction at $r_{12}=0$ (see Eq.\eqref{def_j_00}). 
+The new Jastrow $u(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which have the unit of the inverse of a distance. 
 To understand the physical content together with the mathematical properties of $u(r_{12};\mu)$, 
 one must keep in mind that the complete correlating factor $\mathcal{J}(r_{12};\mu)$ is 
 \begin{equation}
@@ -272,9 +269,9 @@ implying that the right-eigenvector $\phimu(\br{}_{1},\br{}_{2})$ is cusp less (
 The Taylor expansion of Eq. \eqref{eq:j_dl} inserted in $\mathcal{J}(r_{12},\mu)$ leads to 
 \begin{equation}
  \label{eq:bigJ_dl}
- \mathcal{J}(r_{12};\mu) = e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2} + o(r_{12}^4) .
+ \mathcal{J}(r_{12};\mu) \approx e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2}. 
 \end{equation}
-From Eq. \eqref{eq:bigJ_dl} one can analyze each term: a) as $e^{-\frac{1}{2\sqrt{\pi}\mu}}<1$, the effective wave function  $\phiex(\br{}_1,\br{}_2)$ has necessary a larger value at coalescence (\textit{i.e.} $\br{}_1=\br{}_2)$), which can be intuitively understood as the electrons in $\tilde{H}[\mu]$ experience an effective non divergent interaction; 
+From Eq. \eqref{eq:bigJ_dl} one can analyze each term: a) as $e^{-\frac{1}{2\sqrt{\pi}\mu}}<1$, the effective wave function  $\phiex(\br{}_1,\br{}_2)$ has necessary a larger value at coalescence (\textit{i.e.} $\br{}_1=\br{}_2)$), 
 b) the term in $e^{ \frac{1}{2}r_{12}} $ restores exactly the lack of cusp of $\phiex(\br{}_1,\br{}_2)$ (see Eq. \eqref{eq:cusp_phi_2}); and eventually last term reshapes the curvature of the $\phiex(\br{}_1,\br{}_2)$. 
 
 Coming now to the behaviour of $u(r_{12};\mu)$ as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, and we compare it with the FROGG. 
@@ -285,7 +282,7 @@ Coming now to the behaviour of $u(r_{12};\mu)$ as a function of the parameter $\
         \caption{Shape of $u(r_{12};\mu)$ (left) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(u(r_{12};\mu) \bigg) $ (right) for different values of $\mu$. 
 We also compare the FROGG (see Eq. \eqref{eq_frogg}) and the value of $\mu = 0.865$ which equals the FROGG at $r_{12}=0$ (see Eq. \eqref{mu_ten_no_1}). }
 \end{figure*}
-From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $u(r_{12};\mu)$, ii) the larger the $\mu$, the closer $u(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
+From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $u(r_{12};\mu)$, ii) the larger the $\mu$, the closer $u(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper and broader is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
 
 As the function $u(r_{12};\mu)$ contains a unique parameter, one can try to find the value of $\mfrogg$ such that 
 $u(r_{12};\mfrogg)$ qualitatively reproduces the FROGG. 
@@ -311,7 +308,7 @@ We represent on Fig \ref{fig_j_mu} the comparison between $u(r_{12};\mfrogg)$ an
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
 \label{sec:ht_general}
 \subsubsection{General form of $\tilde{H}[\mu]$ }
-Having established the analytical expression of $u(r_{12};\mu)$, one can derive the general expression of the associated transcorrelated Hamiltonian.  
+Having established the analytical expression of $u(r_{12};\mu)$, one can derive the expression of the associated transcorrelated Hamiltonian for a general $N$-electron system.  
 According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
 \begin{equation}
  \label{ht_def_g}
@@ -330,7 +327,7 @@ where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
+  \hat{K}(\bri{1},\bri{2})  = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
                                                + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
                                                + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1,
  \end{aligned}
@@ -338,40 +335,40 @@ where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}(\bri{1},\bri{2},\bri{3}) ) = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
+  \hat{L}(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
                                      + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
  \end{aligned}
 \end{equation}
 Therefore, to obtain the analytical expression of the $\tilde{H}[\mu]$ for a general $N$-electron system, 
 one needs to compute the actual form of the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ when $u(\bri{1},\bri{2}) = u(r_{12},\mu)$. 
 
-\subsection{Analytical form for the operators $\hat{K}(\bri{1},\bri{2}) $ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ }
-To compute the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
+\subsection{Analytical form for the operators $\hat{K}_\mu(\bri{1},\bri{2}) $ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$ }
+To compute the operators $\hat{K}_\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
 \begin{equation}
  \label{eq:nabla_u}
  \begin{aligned}
- \nabla_1 u(\br{}_1,\br{}_2) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
+ \nabla_1 u(r_{12},\mu) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
  \end{aligned}
 \end{equation}
-Then, the term $\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2$ is simply 
+Then, the term $\big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2$ is simply 
 \begin{equation}
  \begin{aligned}
- \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_2 u(\bri{1},\bri{2}) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
+ \big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
  \end{aligned}
 \end{equation}
-The non hermitian operators in $\hat{K}(\bri{1},\bri{2})$ contains 
+The non hermitian operators in $\hat{K}_\mu(\bri{1},\bri{2})$ contains 
 \begin{equation}
  \begin{aligned}
- \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
+ \nabla_1 u(r_{12},\mu) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
                                           &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
  \end{aligned}
 \end{equation}
-and as $\nabla_1 u(\br{}_1,\br{}_2) = - \nabla_2 u(\br{}_1,\br{}_2)$,   
-the total non hermitian operator in $\hat{K}(\bri{1},\bri{2})$ can be written as 
+and as $\nabla_1 u(r_{12},\mu) = - \nabla_2 u(r_{12},\mu)$,   
+the total non hermitian operator in $\hat{K}_\mu(\bri{1},\bri{2})$ can be written as 
 \begin{equation}
  \begin{aligned}
  \label{def_non_hermit}
-& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+& \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
 & \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
          (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
 &  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).
@@ -386,7 +383,7 @@ one can write
 \begin{equation}
  \begin{aligned}
  \label{eq:nabla_i_nabla0}
-& \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}}.
+& \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}}.
  \end{aligned}
 \end{equation}
 Then, introducing the spherical coordinate system for $\br{}_1 - \br{}_2$ in terms of ${\bf e}_u= \frac{\br{}_1 - \br{}_2}{r_{12}}$ and the angle $\theta$ and $\phi$, one can write 
@@ -395,35 +392,35 @@ Then, introducing the spherical coordinate system for $\br{}_1 - \br{}_2$ in ter
 \end{equation}
 and as $\br{}_1 - \br{}_2 = r_{12} {\bf e}_u$ one obtains
 \begin{equation}
- \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}} = r_{12} \deriv{}{r_{12}}{},
+ \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}} = r_{12} \deriv{}{r_{12}}{}.
 \end{equation}
-and therefore 
+Therefore 
 \begin{equation}
  \begin{aligned}
  \label{eq:nabla_i_nabla1}
- \nabla_1 u(\br{}_1,\br{}_2) \cdot \nabla_1 + \nabla_2 u(\br{}_1,\br{}_2) \cdot \nabla_2 = \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
+ \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
  \end{aligned}
 \end{equation}
 which is a more compact expression than Eq.\eqref{def_non_hermit}
 
-The computation of the Laplacian is a little more tedious, but after some derivations it comes  
+The computation of the Laplacian reads 
 \begin{equation}
  \begin{aligned}
  \label{eq:d2_x1_2}
- &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2})
+ &\nabla_1^2 u(r_{12},\mu) + \nabla_2^2u(r_{12},\mu)
  & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
  \end{aligned}
 \end{equation}
 
-Summing all terms to recombine $\hat{K}(\bri{1},\bri{2})$ reads 
+Summing all terms to recombine $\hat{K}_\mu(\bri{1},\bri{2})$ reads 
 \begin{equation}
  \label{eq:k_final}
   \begin{aligned}
-   \hat{K}(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+   \hat{K}_\mu(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
 & - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}.
   \end{aligned}
 \end{equation}
-Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $ 
+Similarly, the explicit analytical form of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ reads 
 \begin{equation}
  \label{eq:l_final}
  \begin{aligned}
@@ -434,9 +431,9 @@ Similarly, the computation of $\hat{L}(\bri{1},\bri{2},\bri{3}) $
 \end{equation}
 
 \subsection{Analytical form of $\tilde{H}[\mu]$}
-Having established the explicit form of $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$, one can now 
+Having established the explicit form of $\hat{K}\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$, one can now 
 look at the explicit analytical form of the transcorrelated Hamiltonian $\tilde{H}[\mu]$ obtained with $u(r_{12};\mu)$,  
-which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, which gives
+which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, gives
 \begin{equation}
   \begin{aligned}
  \label{eq:exp_ht_mu}
@@ -481,11 +478,12 @@ As the Jastrow factor $u(r_{12},\mu)$ for $\mu=\mfrogg$ is very close to the FRO
  \tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})= \frac{1}{r_{12}}-\nabla_1^2 f_{\text{TN}}(r_{12}) - \big(\nabla_1 f_{\text{TN}}(r_{12}) \big) ^2. 
 \end{equation}
 As apparent from Fig. \ref{fig_wee_frogg} where $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are represented, while the latter is perfectly smooth for all $r_{12}$, the former strongly oscillates near $r_{12}=0$ between positive and negative values and is not bounded for $r_{12}=0$. 
-Such behaviour of $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ near $r_{12}=0$ comes from the fact that $f_{\text{TN}}(r_{12})$ is cusp-less as it is made of gaussian functions, \textit{i.e.} 
+Such behaviour of $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ near $r_{12}=0$ comes from the fact that,
+as it is made of gaussian functions, $f_{\text{TN}}(r_{12})$ is cusp-less \textit{i.e.} 
 \begin{equation}
  \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}f_{\text{TN}}(r_{12}) = 0, 
 \end{equation}
-and as a necessary condition of the to obtain a non divergent scalar potential is 
+and as a necessary condition to obtain a non divergent scalar potential is 
 \begin{equation}
  \label{eq:cusp_phi_0}
  \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u(r_{12}) = \frac{1}{2}, 
@@ -494,7 +492,7 @@ and as a necessary condition of the to obtain a non divergent scalar potential i
 %Because the condition of Eq. \eqref{eq:cusp_phi_0} is fulfilled by $u(r_{12},\mu)$ for all $\mu < \infty$, 
 %the effective potential obtained by the similarity transformation of $H$ by $u(r_{12},\mu)$ is necessary non divergent.  
 
-Nevertheless, as it will be shown by numerical computations, the effective potentials $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ almost identical \textit{in average}, as they numerically agree for $r_{12}>1$ and that $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ essentially oscillates around $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ for small values of $r_{12}$. 
+Nevertheless, as it will be shown by numerical computations, the effective potentials $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are almost identical \textit{in average}, as they numerically agree for $r_{12}>1$ and that $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ essentially oscillates around $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ for small values of $r_{12}$. This statement will be supported by numerical computations in the next sections. 
 
 \begin{figure*}
  \label{fig_wee_frogg}
@@ -502,7 +500,7 @@ Nevertheless, as it will be shown by numerical computations, the effective poten
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=\mfrogg$ and comparison with the effective potential $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ obtained with the FROGG (see Eq.\eqref{eq:_wee_frogg}).}
 \end{figure*}
 
-\subsection{Variation of $\tilde{H}[\mu]$ with $\mu$}
+\subsection{Limit cases for $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
 Regarding now the variation of $\tilde{H}[\mu]$, as 
 \begin{equation}
@@ -527,12 +525,12 @@ In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu
 which means that all scalar electron-electron repulsive interaction have been replaced by a differential operator and a three electron interaction. 
 It should be stressed that even if the $\mu \rightarrow 0$ limit of $\tilde{H}[\mu]$ is very unphysical, it conserves exactly the same spectrum than the usual Hamiltonian because it originates from a similarity transformation. 
 
-At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent, and can be repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
-Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$, which is tested for wide variety of two-electron systems in the next sections. 
+%At intermediate values of $\mu$, the scalar potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) $ is non divergent, and can be repulsive or attractive at small $r_{12}$. One can therefore notice the diversity of physical content of $\tilde{H}[\mu]$ as a function of a unique parameter, $\mu$. 
+%Nevertheless, due to the property of the similarity transformation, in the limit of a complete basis set, the eigenvalues of $\tilde{H}[\mu]$, whatever the value of $\mu$ chosen, coincide with that of the physical Hamiltonian. An important point then is the convergence with respect to the basis set of the family of $\tilde{H}[\mu]$ for different values of $\mu$, which is tested for wide variety of two-electron systems in the next sections. 
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
 \label{sec:total_he}
-The first part of our study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
+The first part of our numerical study study concerns the convergence of the eigenvalues of $\tilde{H}[\mu]$ with respect to the basis set, and more precisely the dependence on $\mu$ of such convergence. 
 
 Considering a given basis set $\basis$ and the corresponding projector $P_\basis$, one can define the transcorrelated Hamiltonian projected on $\basis$ by
 \begin{equation}
@@ -544,22 +542,16 @@ and its eigenvalues $E_i^{\basis}[\mu]$ and right eigenvectors $\phiimub$ satisf
 \end{equation}
 As long as the basis set $\basis$ is incomplete, because of its non hermitian nature, $\tilde{H}[\mu]^{\basis}$ looses the variational principle and therefore its eigenvalues have no reasons to be bounded from below.  
 
-%As pointed in section \ref{sec:h_mu_lim}, by varying $\mu$ one can go from a relatively usual repulsive Hamiltonian at large $\mu$ (even though it is non hermitian an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
-%As pointed in section \ref{sec:h_mu_lim}, even though $\tilde{H}[\mu]$ is still non hermitian as long as $\mu < \infty$, by varying $\mu$ one can change the nature of the electron-electron interaction in $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ from a repulsive and non divergent interaction at large $\mu$ (an non divergent), passing by an almost attractive Hamiltonian and even to a purely attractive Hamiltonian. 
-%Considering such variation of $\tilde{H}[\mu]$ when varying $\mu$,  
-%its projection into a basis set $\tilde{H}[\mu]^{\basis}$ will behave differently as a function of $\mu$ 
-%and so will the right eigenvectors $\ket{\phiimub}$ and the corresponding eigenvalues $E_i^{\basis}[\mu]$. 
-%Therefore, we would like to study the behaviour of $\ket{\phiimub}$ and $E_i^{\basis}[\mu]$ as a function of both $\basis$ and $\mu$ to see whether the use of the new form of Jastrow factor $u(r_{12},\mu)$ can improve the convergence toward the exact energies  and eigenvectors. 
 \subsection{$\mu$ dependence of the convergence of the ground state eigenvalue with respect to the basis set }
 \subsubsection{Computational details}
-We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual Gaussian orbital basis set (see appendix for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. We also implemented all necessary integrals to use the FROGG derived by Ten-No in Ref. \onlinecite{TenNo-CPL-00-a} in the context of the TC Hamiltonian.  
+We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual Gaussian orbital basis set (see Appendix \ref{sec:integrals} for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. We also implemented all necessary integrals to use the FROGG derived by Ten-No in Ref. \onlinecite{TenNo-CPL-00-a} in the context of the TC Hamiltonian.  
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
 We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\phiimub$ (\textit{i.e.} $\phiimub$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
 
 \subsubsection{Numerical results: ground state energies}
 \label{sec:total_e}
-We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_i^{\basis}[\mu]$ of $\tilde{H}[\mu]^{\basis}$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. We also report in the tables and figures the results obtained with the FROGG. 
-Several observations can be done from these data. First, because of the loose of the variational principle, $E_0^{\mu}$ can take values below the exact non relativistic energy, and the smaller the $\mu$, the more pronounced is such effect. 
+We report in Table \ref{table_conv_e_mu} the ground state eigenvalue $E_0^{\basis}[\mu]$ of $\tilde{H}[\mu]^{\basis}$ in the AVXZ basis sets (X=D,T,Q,5) for different values of $\mu$, and we report in Figure \ref{fig_conv_e_mu} the graphical representation of such data. We also report in the tables and figures the results obtained with the FROGG. 
+Several observations can be done from these data. First, because of the loose of the variational principle, $E_0^{\basis}[\mu]$ can take values below the exact non relativistic energy, and the smaller the $\mu$, the more pronounced is such effect. 
 Nevertheless, one can also observe that, for each $\mu$, the error with respect to the exact energy gets smaller  
 when enlarging the basis set, which illustrates that in the limit of a complete basis set the eigenvalues of any TC Hamiltonian coincide with that of the physical Hamiltonian. 
 
@@ -614,7 +606,7 @@ We also compare with the results of the TC obtained with the $u(r_{12}) = f_{\te
 
 \subsection{Study of the ground state eigenvector in real space}
 \label{sec:he_real_space}
-In Sec.\ref{sec:total_e} we shown the improvement of the speed of convergence of the ground state energies $E_0^{\basis}[\mu]$ of the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=3.0$. 
+In Sec.\ref{sec:total_e} we shown the improvement of the speed of convergence of the ground state energies $E_0^{\basis}[\mu]$ of the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=1.6$. 
 Nevertheless, one can wonder if this good behavior results from a kind of error cancellation or if there is indeed a deeper mathematical reason for such an improvement of speed of convergence. 
 To answer that question, we investigate some properties of the ground state eigenvectors of different types of Hamiltonians in real space. 
 
@@ -661,7 +653,7 @@ From these figure, one can notice that:
 i) the right eigenvector $\phimub(\br{}_1,\br{}_2)$ converges faster than the FCI wave function with respect to the basis set, 
 ii) that for $\mu=0.3$ the wave function $\phimub(\br{}_1,\br{}_2)$ presents a maximum at $r_{12}=0$, whereas for $\mu=1.0$ it has a minimum at coalescence just as the FCI wave function, 
 iii) the wave function $\phimub(\br{}_1,\br{}_2)$ is always larger that the FCI one when $r_{12}\approx 0$. 
-iv) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set, 
+iv) that $\psimub(\br{}_1,\br{}_2)$ provides a remarkably good approximation to $\psiex(\br{}_1,\br{}_2)$ from the AVTZ basis set.
 
 A qualitative understanding of such observations can be provided by some physical considerations regarding $\tilde{H}[\mu]$ and its dependence with $\mu$. 
 
@@ -961,6 +953,7 @@ cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one
 which implies Eq.\eqref{eq:lim_mu_1}. 
 
 \subsection{Computation of $\hat{K}(\bri{1},\bri{2})$} 
+\label{sec:integrals}
 The only integrals involved of $\hat{K}(\bri{1},\bri{2})$ over Gaussian functions which are not analytical are of the types 
 \begin{equation}
  \label{eq:k_ijkl}
