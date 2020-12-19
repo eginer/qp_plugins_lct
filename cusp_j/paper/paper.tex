@@ -77,7 +77,7 @@ selected CI\cite{bender,HurMalRan-JCP-73,buenker1,buenker-book,three_class_CIPSI
 full configuration Quantum Monte Carlo\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} (FCI-QMC) or matrix product states\cite{ChaSha-AR-11,BaiRei-JCP-20}. These methods all have one thing in common: they manage to select, although through different mathematical frameworks, the part of the exponentially growing Hilbert space which dominates the wave function. 
 
 Even if these selection schemes are extremely efficient to obtain a qualitative description of the wave function, a quantitative description is often out of reach as it implies the use of very large one-electron basis sets which are needed to recover the slowly converging correlation effects near the electron-electron coalescence point. 
-These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance ($r_{12}\approx 0$): the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. As shown by the seminal works of Hylleraas \cite{Hyl-ZP-29} and further developed byKutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the quality of the basis set is mainly due to the impossibility to represent the cusp in a finite one-electron basis set. 
+These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance ($r_{12}\approx 0$): the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. For a general and clear derivation of the cusp conditions for Coulombic systems up to second order, see Ref.\onlinecite{Tew-JCP-08}. As shown by the seminal works of Hylleraas\cite{Hyl-ZP-29} and further developed byKutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the quality of the basis set is mainly due to the impossibility to represent the cusp in a finite one-electron basis set. 
 As the cusp conditions originate from the divergence of the Coulomb potential at $r_{12}=0$, an alternative approach would be to develop theories dealing with a smooth potential. Such a path was followed by three distinct branches: 
 the explicitly correlated methods (F12), transcorrelated methods (TC) and the range-separated density functional theory (RS-DFT). 
 
@@ -289,130 +289,60 @@ $u(r_{12};\mfrogg)$ qualitatively reproduces the FROGG.
 To do so, we propose a one-point fit such that 
 \begin{equation}
  \label{mu_ten_no_1}
-u(r_{12}=0;\mfrogg) = f_{\text{TN}}(r_{12}=0), 
+u(r_{12}=0;\mfrogg) = u^{\text{TN}}(r_{12}=0), 
 \end{equation}
-where $ f_{\text{TN}}(x)$ is the FROGG introduced by Ten-No
+where $ u^{\text{TN}}(x)$ is the FROGG introduced by Ten-No
 \begin{equation}
  \label{eq_frogg}
- f_{\text{TN}}(x) = -\sum_{i=1}^6 c_i e^{-\alpha_i x^2 },
+ u^{\text{TN}}(x) = -\sum_{i=1}^6 c_i e^{-\alpha_i x^2 },
 \end{equation}
 with the coefficients $c_i$ and exponents $\alpha_i$ given in Table 1 of Ref. \onlinecite{TenNo-CPL-00-a}. 
 Eq. \eqref{mu_ten_no_1} gives 
 \begin{equation}
  \label{mu_ten_no_2}
- \mfrogg = -\frac{1}{2\sqrt{\pi}f_{\text{TN}}(0)},
+ \mfrogg = -\frac{1}{2\sqrt{\pi}u^{\text{TN}}(0)},
 \end{equation}
 which gives $\mfrogg\approx0.86975$. 
 We represent on Fig \ref{fig_j_mu} the comparison between $u(r_{12};\mfrogg)$ and the FROGG, and it is clearly apparent  that $u(r_{12};\mfrogg)$ reproduces almost perfectly the FROGG, although it decays slightly faster at large $r_{12}$. Therefore, one can see the FROGG as a special case of $u(r_{12};\mu)$  with $\mu = \mfrogg$. 
 
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
 \label{sec:ht_general}
-\subsubsection{General form of $\tilde{H}[\mu]$ }
+\subsubsection{General analytical form of $\tilde{H}[\mu]$ for a $N$-electron system}
 Having established the analytical expression of $u(r_{12};\mu)$, one can derive the expression of the associated transcorrelated Hamiltonian for a general $N$-electron system.  
-According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
+Using the general form of the transcorrelated Hamiltonian of Eq. (2) in Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19} and using $u(r_{12},\mu)$ as Jastrow factor gives 
 \begin{equation}
+ \begin{aligned}
  \label{ht_def_g}
- e^{-\hat{\tau}} \hat{H} e^{\hat{\tau}} = H + \big[ H,\hat{\tau} \big] + \frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]
+ \tilde{H}[\mu] &\equiv e^{-\hat{\tau}_\mu} \hat{H} e^{\hat{\tau}_\mu} \\ 
+                &= H + \big[ H,\hat{\tau}_\mu \big] + \frac{1}{2}\bigg[ \big[H,\hat{\tau}_\mu\big],\hat{\tau}_\mu\bigg],
+ \end{aligned}
 \end{equation}
-where $\hat{\tau} = \sum_{i<j}u(\br{}_i,\br{}_j)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i<j} \frac{1}{r_{ij}}$. 
-This leads to the following similarity transformed Hamiltonian 
+with $\hat{\tau}_\mu = \sum_{i<j}u(r_{ij},\mu)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i<j} \frac{1}{r_{ij}}$. 
+Eq. \eqref{ht_def_g} leads to the following transcorrelated Hamiltonian 
 \begin{equation}
  \begin{aligned}
  \label{ht_def_gu}
- \tilde{H} & = H - \sum_i \bigg( \frac{1}{2} \nabla_i^2 \hat{\tau} + \big(\nabla_i \hat{\tau} \big) + \frac{1}{2} \big(\nabla_i \hat{\tau} \big)^2  \bigg) \\
-           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{j},\bri{k}),
+ \tilde{H}[\mu] & = H - \sum_{i<j} \hat{K}_\mu(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}_\mu(\bri{i},\bri{j},\bri{k}),
  \end{aligned}
 \end{equation}
-where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{j})$ and $\hat{L}(\bri{i},\bri{j},\bri{k})$ are defined as
+where the effective two- and three-body operators $\hat{K}_\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$ are defined as
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{K}(\bri{1},\bri{2})  = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
-                                               + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
-                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1,
+  \hat{K}_\mu(\bri{1},\bri{2})  = \frac{1}{2} \bigg( &\Delta_1 u(r_{12},\mu) + \Delta_2 u(r_{12},\mu) \\
+                                               + &\big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_1 u(r_{12},\mu) \big) ^2 \bigg) \\
+                                               + &\nabla_1 u(r_{12},\mu) \cdot \nabla_2 + \nabla_2 u(r_{12},\mu)\cdot \nabla_1,
  \end{aligned}
 \end{equation}
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
-                                     + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
- \end{aligned}
-\end{equation}
-Therefore, to obtain the analytical expression of the $\tilde{H}[\mu]$ for a general $N$-electron system, 
-one needs to compute the actual form of the operators $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ when $u(\bri{1},\bri{2}) = u(r_{12},\mu)$. 
-
-\subsection{Analytical form for the operators $\hat{K}_\mu(\bri{1},\bri{2}) $ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$ }
-To compute the operators $\hat{K}_\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
-\begin{equation}
- \label{eq:nabla_u}
- \begin{aligned}
- \nabla_1 u(r_{12},\mu) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
- \end{aligned}
-\end{equation}
-Then, the term $\big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2$ is simply 
-\begin{equation}
- \begin{aligned}
- \big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
- \end{aligned}
-\end{equation}
-The non hermitian operators in $\hat{K}_\mu(\bri{1},\bri{2})$ contains 
-\begin{equation}
- \begin{aligned}
- \nabla_1 u(r_{12},\mu) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
-                                          &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
- \end{aligned}
-\end{equation}
-and as $\nabla_1 u(r_{12},\mu) = - \nabla_2 u(r_{12},\mu)$,   
-the total non hermitian operator in $\hat{K}_\mu(\bri{1},\bri{2})$ can be written as 
-\begin{equation}
- \begin{aligned}
- \label{def_non_hermit}
-& \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
-& \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
-         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
-&  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).
- \end{aligned}
-\end{equation}
-One can notice that the form of Eq. \eqref{def_non_hermit} provides an explicit form to compute analytical integrals with Gaussian types functions. 
-Nevertheless, one can notice that as 
-\begin{equation}
- \deriv{}{r_{12}^x}{} = \frac{1}{2} \bigg( \deriv{}{x_1}{} - \deriv{}{x_2}{} \bigg),
-\end{equation}
-one can write 
-\begin{equation}
- \begin{aligned}
- \label{eq:nabla_i_nabla0}
-& \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}}.
- \end{aligned}
-\end{equation}
-Then, introducing the spherical coordinate system for $\br{}_1 - \br{}_2$ in terms of ${\bf e}_u= \frac{\br{}_1 - \br{}_2}{r_{12}}$ and the angle $\theta$ and $\phi$, one can write 
-\begin{equation}
- \nabla_{\br{}_{12}} = \deriv{}{r_{12}}{} {\bf e}_u + \frac{1}{r_{12}} \deriv{}{\theta}{} {\bf e}_{\theta} + \frac{1}{r_{12} \sin(\theta)} \deriv{}{\phi}{} {\bf e}_\phi,
-\end{equation}
-and as $\br{}_1 - \br{}_2 = r_{12} {\bf e}_u$ one obtains
-\begin{equation}
- \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}} = r_{12} \deriv{}{r_{12}}{}.
-\end{equation}
-Therefore 
-\begin{equation}
- \begin{aligned}
- \label{eq:nabla_i_nabla1}
- \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
- \end{aligned}
-\end{equation}
-which is a more compact expression than Eq.\eqref{def_non_hermit}
-
-The computation of the Laplacian reads 
-\begin{equation}
- \begin{aligned}
- \label{eq:d2_x1_2}
- &\nabla_1^2 u(r_{12},\mu) + \nabla_2^2u(r_{12},\mu)
- & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
+  \hat{L}_\mu(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u(r_{12},\mu) \cdot \nabla_1 u(r_{13},\mu) + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 u(r_{12},\mu)  \\
+                                     + & \nabla_3 u(r_{12},\mu) \cdot \nabla_3 u(r_{12},\mu).
  \end{aligned}
 \end{equation}
 
-Summing all terms to recombine $\hat{K}_\mu(\bri{1},\bri{2})$ reads 
+As shown in the Appendix \ref{k_l_appendix}, the operator $\hat{K}_\mu(\bri{1},\bri{2})$ has a straightforward analytical expression which reads 
 \begin{equation}
  \label{eq:k_final}
   \begin{aligned}
@@ -420,7 +350,7 @@ Summing all terms to recombine $\hat{K}_\mu(\bri{1},\bri{2})$ reads
 & - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}.
   \end{aligned}
 \end{equation}
-Similarly, the explicit analytical form of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ reads 
+and similarly that of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ reads 
 \begin{equation}
  \label{eq:l_final}
  \begin{aligned}
@@ -430,10 +360,7 @@ Similarly, the explicit analytical form of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})
  \end{aligned}                    
 \end{equation}
 
-\subsection{Analytical form of $\tilde{H}[\mu]$}
-Having established the explicit form of $\hat{K}\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$, one can now 
-look at the explicit analytical form of the transcorrelated Hamiltonian $\tilde{H}[\mu]$ obtained with $u(r_{12};\mu)$,  
-which, by injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, gives
+By injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq.\eqref{ht_def_gu}, one obtains 
 \begin{equation}
   \begin{aligned}
  \label{eq:exp_ht_mu}
@@ -472,16 +399,41 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
 
-As the Jastrow factor $u(r_{12},\mu)$ for $\mu=\mfrogg$ is very close to the FROGG, we can also compare the scalar effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ with that obtained with the FROGG which is given by
+\subsubsection{A special case of $\tilde{H}[\mu]$ which mimics the FROGG}
+As the Jastrow factor $u(r_{12},\mu)$ for $\mu=\mfrogg$ is very close to the FROGG, we can also compare the scalar effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ with that obtained with the transcorrelated Hamiltonian obtained with the FROGG. 
+The latter is simply defined as 
+\begin{equation}
+ \label{eq:tn_htilde}
+ \tilde{H}_{\text{TN}} = e^{-\hat{\tau}_{\text{TN}}}H e^{\hat{\tau}_{\text{TN}}},
+\end{equation}
+with $\hat{\tau}_{\text{TN}} = \sum_{i<j} u^\text{TN}(r_{ij})$. 
+This leads to the following transcorrelated Hamiltonian 
+\begin{equation}
+ \label{eq:tn_htilde_2}
+  \tilde{H}_{\text{TN}} = H + \sum_{i<j} \bigg( \tilde{\mathcal{W}}^\text{TN}_{ee}(r_{ij}) + \tilde{t}^\text{TN} \bigg) - \sum_{i<j<k} \hat{L}^\text{TN}(\bri{1},\bri{2},\bri{3})
+\end{equation}
+where 
 \begin{equation}
  \label{eq:_wee_frogg}
- \tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})= \frac{1}{r_{12}}-\nabla_1^2 f_{\text{TN}}(r_{12}) - \big(\nabla_1 f_{\text{TN}}(r_{12}) \big) ^2. 
+ \tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})= \frac{1}{r_{12}}-\Delta_1 u^{\text{TN}}(r_{12}) - \big(\nabla_1 u^{\text{TN}}(r_{12}) \big) ^2, 
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+ \tilde{t}^\text{TN} = &\nabla_1 u^\text{TN}(r_{12}) \cdot \nabla_2 + \nabla_2 u^\text{TN}(r_{12})\cdot \nabla_1,
+ \end{aligned}
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+ \label{def_k}
+  \hat{L}_\mu(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u^\text{TN}(r_{12}) \cdot \nabla_1 u^\text{TN}(r_{12}) + \nabla_2 u^\text{TN}(r_{12}) \cdot \nabla_2 u^\text{TN}(r_{12})  \\
+                                     + & \nabla_3 u^\text{TN}(r_{12}) \cdot \nabla_3 u^\text{TN}(r_{12}).
+ \end{aligned}
 \end{equation}
 As apparent from Fig. \ref{fig_wee_frogg} where $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are represented, while the latter is perfectly smooth for all $r_{12}$, the former strongly oscillates near $r_{12}=0$ between positive and negative values and is not bounded for $r_{12}=0$. 
 Such behaviour of $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ near $r_{12}=0$ comes from the fact that,
-as it is made of gaussian functions, $f_{\text{TN}}(r_{12})$ is cusp-less \textit{i.e.} 
+as it is made of gaussian functions, $u^{\text{TN}}(r_{12})$ is cusp-less \textit{i.e.} 
 \begin{equation}
- \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}f_{\text{TN}}(r_{12}) = 0, 
+ \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u^{\text{TN}}(r_{12}) = 0, 
 \end{equation}
 and as a necessary condition to obtain a non divergent scalar potential is 
 \begin{equation}
@@ -500,7 +452,7 @@ Nevertheless, as it will be shown by numerical computations, the effective poten
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=\mfrogg$ and comparison with the effective potential $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ obtained with the FROGG (see Eq.\eqref{eq:_wee_frogg}).}
 \end{figure*}
 
-\subsection{Limit cases for $\tilde{H}[\mu]$ with $\mu$}
+\subsubsection{Limit cases for $\tilde{H}[\mu]$ with $\mu$}
 \label{sec:h_mu_lim}
 Regarding now the variation of $\tilde{H}[\mu]$, as 
 \begin{equation}
@@ -560,7 +512,7 @@ As $\mu$ increases, the difference between $E_0^{\basis}[\mu]$ and $E_0^{\basis}
 which is expected as in the $\mu \rightarrow \infty$ limit, one obtains that  $\tilde{H}[\mu] \rightarrow H$. 
 
 Also, it is striking to see that, in a given basis set, the ground state eigenvalue of the TC Hamiltonian obtained by the FROGG and that obtained by $\tilde{H}[\mu]$ with $\mu=\mfrogg$ coincide with less than 1 mH. 
-The latter results confirms that as $u(r_{12},\mfrogg) \approx f_{\text{TN}}(r_{12})$ (see Fig \ref{fig_j_mu} and Eqs. \eqref{mu_ten_no_1} and \eqref{mu_ten_no_2}), the TC Hamiltonians obtained with the two Jastrow factor are very similar, as illustrated for instance by the effective potential in Fig. \ref{fig_wee_frogg}. 
+The latter results confirms that as $u(r_{12},\mfrogg) \approx u^{\text{TN}}(r_{12})$ (see Fig \ref{fig_j_mu} and Eqs. \eqref{mu_ten_no_1} and \eqref{mu_ten_no_2}), the TC Hamiltonians obtained with the two Jastrow factor are very similar, as illustrated for instance by the effective potential in Fig. \ref{fig_wee_frogg}. 
 
 Coming now to the speed of convergence of $E_0^{\basis}[\mu]$ with respect to the basis set, it is always faster than that of $E_0^{\basis}[\text{FCI}]$ for the whole range of values of $\mu$ selected here. 
 To quantify better such observations, one can identify the basis set from which the error with respect to the exact non relativistic energy is smaller, in absolute value, than 1mH. 
@@ -575,13 +527,13 @@ iii) for $\mu \in[ 0.35,0.7]$ the results obtained are always better than that o
         \includegraphics[width=0.45\linewidth]{plots/He/Energy/He_E_conv_basis_small_mu.pdf}
         \includegraphics[width=0.45\linewidth]{plots/He/Energy/He_E_conv_basis_large_mu.pdf}\\
         \caption{Convergence of the ground state eigenvalue of $\tilde{H}[\mu]$ with respect to the AVXZ basis set series (X=D,T,Q,5) for different values of $\mu$. 
-We also compare with the results of the TC obtained with the $u(r_{12}) = f_{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg}), referred here after as FROGG. }
+We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg}), referred here after as FROGG. }
 \end{figure*}
 
 \begin{table*}
 \label{table_conv_e_mu}
 \caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. 
-We also compare with the results of the TC obtained with the $u(r_{12}) = f_{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. 
+We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. 
  }
 \begin{ruledtabular}
 \begin{tabular}{llllllllllll}
@@ -828,11 +780,83 @@ The perspective of this work are mainly to study more realistic systems which wi
 
 
 \section{Appendix}
+\subsection{Analytical form for the operators $\hat{K}_\mu(\bri{1},\bri{2}) $ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$ }
+\label{k_l_appendix}
+To compute the operators $\hat{K}_\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
+\begin{equation}
+ \label{eq:nabla_u}
+ \begin{aligned}
+ \nabla_1 u(r_{12},\mu) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \big( \br{}_1 - \br{}_2 \big).
+ \end{aligned}
+\end{equation}
+Then, the term $\big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2$ is simply 
+\begin{equation}
+ \begin{aligned}
+ \big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
+ \end{aligned}
+\end{equation}
+The non hermitian operators in $\hat{K}_\mu(\bri{1},\bri{2})$ contains 
+\begin{equation}
+ \begin{aligned}
+ \nabla_1 u(r_{12},\mu) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
+                                          &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
+ \end{aligned}
+\end{equation}
+and as $\nabla_1 u(r_{12},\mu) = - \nabla_2 u(r_{12},\mu)$,   
+the total non hermitian operator in $\hat{K}_\mu(\bri{1},\bri{2})$ can be written as 
+\begin{equation}
+ \begin{aligned}
+ \label{def_non_hermit}
+& \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\
+& \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
+         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
+&  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).
+ \end{aligned}
+\end{equation}
+One can notice that the form of Eq. \eqref{def_non_hermit} provides an explicit form to compute analytical integrals with Gaussian types functions. 
+Nevertheless, one can notice that as 
+\begin{equation}
+ \deriv{}{r_{12}^x}{} = \frac{1}{2} \bigg( \deriv{}{x_1}{} - \deriv{}{x_2}{} \bigg),
+\end{equation}
+one can write 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:nabla_i_nabla0}
+& \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}}.
+ \end{aligned}
+\end{equation}
+Then, introducing the spherical coordinate system for $\br{}_1 - \br{}_2$ in terms of ${\bf e}_u= \frac{\br{}_1 - \br{}_2}{r_{12}}$ and the angle $\theta$ and $\phi$, one can write 
+\begin{equation}
+ \nabla_{\br{}_{12}} = \deriv{}{r_{12}}{} {\bf e}_u + \frac{1}{r_{12}} \deriv{}{\theta}{} {\bf e}_{\theta} + \frac{1}{r_{12} \sin(\theta)} \deriv{}{\phi}{} {\bf e}_\phi,
+\end{equation}
+and as $\br{}_1 - \br{}_2 = r_{12} {\bf e}_u$ one obtains
+\begin{equation}
+ \big( \br{}_1 - \br{}_2 \big) \cdot \nabla_{\br{}_{12}} = r_{12} \deriv{}{r_{12}}{}.
+\end{equation}
+Therefore 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:nabla_i_nabla1}
+ \nabla_1 u(r_{12},\mu) \cdot \nabla_1 + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 = \bigg( 1 - \text{erf}(\mu r_{12})\bigg) \deriv{}{r_{12}}{},
+ \end{aligned}
+\end{equation}
+which is a more compact expression than Eq.\eqref{def_non_hermit}. 
+
+The computation of the Laplacian reads 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:d2_x1_2}
+ &\Delta_1 u(r_{12},\mu) + \Delta_2 u(r_{12},\mu)
+ & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
+ \end{aligned}
+\end{equation}
+
+
 \subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians and related cusp conditions}
 \label{sec:cusp}
 Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom in Sec. \ref{sec:he_htilde}, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
 The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. 
-It should be noticed that, although it was established in the case of the helium atom, the leading order of the $r_{12} \rightarrow 0$ limit that will be carried out in that section are valid for a general $N$ electron system . 
+It should be noticed that, although it was established in the case of the helium atom, the leading order of the $r_{12} \rightarrow 0$ limit that will be carried out in that section are valid for a general $N$ electron system. 
 For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are valid for any bounded eigenvectors. 
 
 In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
@@ -852,7 +876,6 @@ which translates into the famous cusp condition for antiparallel spins of Kato\c
 \begin{equation}
  \deriv{\psiex(\bd{r_1},\bd{r_2})}{r_{12}}{}\Bigr|_{r_{12}=0} = \frac{1}{2} \psiex(r_{12}=0). 
 \end{equation} 
-For an excellent pedagogical and general derivation of the cusp conditions, see Ref.\onlinecite{Tew-JCP-08}. 
 
 Regarding now the similarity transformed Hamiltonians, the exact ground state eigenvector must also satisfy an eigenvalue equation in real-space,
 \begin{equation}
@@ -879,7 +902,7 @@ Within the condition of Eq.\eqref{eq:cusp_phi_1}, the general condition of Eq.\e
 \end{equation}
 which implies that as long as the Jastrow factor contains the cusp conditions, the eigenfunction of $\tilde{H}[u]$ is cuspless. 
 For instance, a simple Jastrow factor of the form $u(r_{12}) = \frac{1}{2} r_{12}$ releases $\phiex(\br{}_1,\br{}_2)$ from 
-the constraint of fulfilling the cusp condition. 
+the constraint of fulfilling the cusp condition, and produces a non diverging effective potential for the TC Hamiltonian. 
 
 Another form of effective Hamiltonians leading to cuspless eigenfunctions are those obtained from RS-DFT 
 where the Coulomb interaction $1/r_{12}$ is split into a non-divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ and a complementary short-range interaction $\text{erfc}(\mu r_{12})/r_{12}$, where $\text{erf}(x)$ and $\text{erfc}(x)$ are the error and complementary error functions, respectively. 
@@ -913,7 +936,7 @@ Nevertheless, one can notice that
 \end{equation}
 with 
 \begin{equation}
- \delta(x) = \lim_{\mu} \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu x \big)^2}, 
+ \delta(x) = \lim_{\mu \rightarrow \infty} \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu x \big)^2}, 
 \end{equation}
 being the Dirac distribution. Threfore, one could be tempted to write that 
 \begin{equation}
@@ -961,7 +984,7 @@ The only integrals involved of $\hat{K}(\bri{1},\bri{2})$ over Gaussian function
 \end{equation}
 with 
 \begin{equation}
- g(x, \mu)= \text{erf}(x \mu) - 1.
+ g(x, \mu)= \text{erf}( \mu x) - 1.
 \end{equation}
 To make integrals analytical, we first fit the function $\text{erfc}(x)$ with a simple Slater-Gaussian function 
 \begin{equation}
@@ -972,7 +995,7 @@ with
  h(x,\alpha,\beta,c) = e^{-\alpha x - \beta x^2}
 \end{equation}
 and $\alpha=1.09529$ and $\beta = 0.756023$. 
-Then, by posing $y=\mu x$, $x=y/\mu$ one obtains 
+Then, by posing $y=\mu x$, one obtains 
 \begin{equation}
  \label{fit_erf}
  \begin{aligned}
@@ -1036,6 +1059,7 @@ which makes then the integrals analytical
 \begin{equation}
  v_{ij}^{kl} \approx \sum_{m=1}^{N_s} c_m \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) (r_{12})^2} \phi_k(\bri{1}) \phi_l(\bri{2}).
 \end{equation}
+All numerical tests performed for $\mu > 0.1$ show that this fit is highly accurate. 
 
 \subsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
 We need to compute the following integral 
@@ -1054,14 +1078,14 @@ where
 \end{equation}
 with 
 \begin{equation}
- w_\mu(\bri{13}) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}.
+ w_\mu(\bri{12}) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}.
 \end{equation}
 Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
 \begin{equation}
  \begin{aligned}
  & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
  & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
- &\bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
+ &\qquad \qquad \qquad   \bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
  \end{aligned}
 \end{equation}
 Such matrix element can be further decomposed into
