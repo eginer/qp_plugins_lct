@@ -337,8 +337,8 @@ where the effective two- and three-body operators $\hat{K}_\mu(\bri{1},\bri{2})$
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}_\mu(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u(r_{12},\mu) \cdot \nabla_1 u(r_{13},\mu) + \nabla_2 u(r_{12},\mu) \cdot \nabla_2 u(r_{12},\mu)  \\
-                                     + & \nabla_3 u(r_{12},\mu) \cdot \nabla_3 u(r_{12},\mu).
+  \hat{L}_\mu(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u(r_{12},\mu) \cdot \nabla_1 u(r_{13},\mu) + \nabla_2 u(r_{21},\mu) \cdot \nabla_2 u(r_{23},\mu)  \\
+                                     + & \nabla_3 u(r_{13},\mu) \cdot \nabla_3 u(r_{32},\mu).
  \end{aligned}
 \end{equation}
 
@@ -347,10 +347,10 @@ As shown in the Appendix \ref{k_l_appendix}, the operator $\hat{K}_\mu(\bri{1},\
  \label{eq:k_final}
   \begin{aligned}
    \hat{K}_\mu(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
-& - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{}.
+& - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{},
   \end{aligned}
 \end{equation}
-and similarly that of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ reads 
+and similarly the analytical expression of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ reads 
 \begin{equation}
  \label{eq:l_final}
  \begin{aligned}
@@ -425,8 +425,9 @@ where
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}_\mu(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u^\text{TN}(r_{12}) \cdot \nabla_1 u^\text{TN}(r_{12}) + \nabla_2 u^\text{TN}(r_{12}) \cdot \nabla_2 u^\text{TN}(r_{12})  \\
-                                     + & \nabla_3 u^\text{TN}(r_{12}) \cdot \nabla_3 u^\text{TN}(r_{12}).
+  \hat{L}^{\text{TN}}(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u^\text{TN}(r_{12}) \cdot \nabla_1 u^\text{TN}(r_{12}) \\ 
+                                     + & \nabla_2 u^\text{TN}(r_{21}) \cdot \nabla_2 u^\text{TN}(r_{23})  \\
+                                     + & \nabla_3 u^\text{TN}(r_{31}) \cdot \nabla_3 u^\text{TN}(r_{32}).
  \end{aligned}
 \end{equation}
 As apparent from Fig. \ref{fig_wee_frogg} where $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are represented, while the latter is perfectly smooth for all $r_{12}$, the former strongly oscillates near $r_{12}=0$ between positive and negative values and is not bounded for $r_{12}=0$. 
@@ -767,9 +768,9 @@ The perspective of this work are mainly to study more realistic systems which wi
 
 
 \section{Appendix}
-\subsection{Analytical form for the operators $\hat{K}_\mu(\bri{1},\bri{2}) $ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$ }
+\subsection{Analytical form for the operator $\hat{K}_\mu(\bri{1},\bri{2}) $}
 \label{k_l_appendix}
-To compute the operators $\hat{K}_\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
+To compute the operators $\hat{K}_\mu(\bri{1},\bri{2})$ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
 \begin{equation}
  \label{eq:nabla_u}
  \begin{aligned}
@@ -837,6 +838,182 @@ The computation of the Laplacian reads
  & = 2 \times \bigg( \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  \bigg).
  \end{aligned}
 \end{equation}
+
+\subsection{Computation of integrals involving $\hat{K}(\bri{1},\bri{2})$} 
+\label{sec:integrals}
+The only integrals involved of $\hat{K}(\bri{1},\bri{2})$ over Gaussian functions which are not analytical are of the types 
+\begin{equation}
+ \label{eq:k_ijkl}
+ v_{ij}^{kl} = \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) \big( g(r_{12},\mu) \big)^2  \phi_k(\bri{1}) \phi_l(\bri{2}),  
+\end{equation}
+with 
+\begin{equation}
+ g(x, \mu)= \text{erf}( \mu x) - 1.
+\end{equation}
+To make integrals analytical, we first fit the function $\text{erfc}(x)$ with a simple Slater-Gaussian function 
+\begin{equation}
+ \text{erfc}(x) \approx h(x,\alpha,\beta,c)
+\end{equation}
+with 
+\begin{equation}
+ h(x,\alpha,\beta,c) = e^{-\alpha x - \beta x^2}
+\end{equation}
+and $\alpha=1.09529$ and $\beta = 0.756023$. 
+Then, by posing $y=\mu x$, one obtains 
+\begin{equation}
+ \label{fit_erf}
+ \begin{aligned}
+  g(x,\mu)  \approx & e^{-\alpha \mu x - \beta (\mu x)^2}\\ 
+        =& h(x,\alpha \mu, \beta \mu^2).
+ \end{aligned}
+\end{equation}
+Therefore, one can fit $g(x)^2$ as 
+\begin{equation}
+ \begin{aligned}
+ g(x,\mu)^2&= \bigg( 1 - \text{erf}(\mu x) \bigg)^2\\
+           &= \bigg( e^{-\alpha \mu x } e^{-\beta \mu^2 x^2}\bigg)^2 \\
+           &= e^{-2\alpha  \mu x } e^{-2 \beta \mu^2 x^2} \\
+           &= h(x,2 \alpha \mu, 2 \beta \mu^2).
+ \end{aligned}
+\end{equation}
+Then we fit the Slater function as a linear combination of Gaussians 
+\begin{equation}
+ e^{-X} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m X^2}. 
+\end{equation}
+In the present work, we use $N_s=20$ and the $\{c_m,\zeta_m\}$ parameters are reported in Table \ref{gauss_fit}.
+\begin{table}
+\label{gauss_fit}
+\caption{Set of coefficients $c_m$ and exponents $\zeta_m$ for the fit of $e^{-X}$}
+\begin{ruledtabular}
+\begin{tabular}{ll}
+ $\zeta_m$ & $c_m$ \\
+\hline                 
+   30573.77073         & 0.00338925525  \\
+   5608.452381         & 0.00536433869  \\
+   1570.956734         & 0.00818702846  \\
+   541.3978511         & 0.01202047655  \\
+   212.4346963         & 0.01711289568  \\
+   91.31444574         & 0.02376001022  \\
+   42.04087246         & 0.03229121736  \\
+   20.43200443         & 0.04303646818  \\
+   10.37775161         & 0.05624657578  \\
+   5.468807545         & 0.07192311571  \\
+   2.973735292         & 0.08949389001  \\
+   1.661441902         & 0.10727599240  \\
+   0.9505256082        & 0.12178961750  \\
+   0.5552868397        & 0.12740141870  \\
+   0.3304336002        & 0.11759168160  \\
+   0.1998230323        & 0.08953504394  \\
+   0.1224684076        & 0.05066721317  \\
+   0.07575825322       & 0.01806363869  \\
+   0.04690146243       & 0.00305632563  \\
+   0.02834749861       & 0.00013317513  \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+By posing $X=\gamma x$ one can fit any Slater function as
+\begin{equation}
+ e^{-\gamma x} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m \gamma^2 x^2}. 
+\end{equation}
+Eventually, the function $g(x,\mu)^2$ is obtained as a linear combination of Gaussian
+\begin{equation}
+ g(x,\mu)^2 \approx \sum_{m=1}^{N_s} c_m e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) x^2},
+\end{equation}
+which makes then the integrals analytical
+\begin{equation}
+ v_{ij}^{kl} \approx \sum_{m=1}^{N_s} c_m \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) (r_{12})^2} \phi_k(\bri{1}) \phi_l(\bri{2}).
+\end{equation}
+All numerical tests performed for $\mu > 0.1$ show that this fit is highly accurate. 
+
+\subsection{Analytical form of $\hat{L}(\bri{1},\bri{2},\bri{3})$ and computation of related integrals }
+We need to compute the following integral 
+\begin{equation}
+ \label{eq:l_ijmkln}
+ \begin{aligned}
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_2(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_3(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} 
+ \end{aligned}
+\end{equation}
+where 
+\begin{equation}
+ \hat{L}_1(\bri{1},\bri{2},\bri{3}) = w_\mu(\bri{12}) w_\mu(\bri{13}) \bri{12} \cdot \bri{13}
+\end{equation}
+with 
+\begin{equation}
+ w_\mu(\bri{12}) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}.
+\end{equation}
+Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
+\begin{equation}
+ \begin{aligned}
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
+ & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
+ &\qquad \qquad \qquad   \bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
+ \end{aligned}
+\end{equation}
+Such matrix element can be further decomposed into
+\begin{equation}
+ \begin{aligned}
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n}  \\
+ =& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
++ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^y(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
++ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^z(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n},  
+ \end{aligned}
+\end{equation}
+where 
+\begin{equation}
+ \begin{aligned}
+ \label{eq:l_1x}
+& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
+ = & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
+ &(x_1 - x_2) (x_1 - x_3) \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
+ \end{aligned}
+\end{equation}
+If we define the following function 
+\begin{equation}
+ W_{mn}^x({\bf r})  = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'}) (x - x'),  
+\end{equation}
+it can be calculated easily by
+\begin{equation}
+ W_{mn}^x({\bf r})  = x \, w_{mn}({\bf r}) - w_{mn}^x({\bf r})
+\end{equation}
+with 
+\begin{equation}
+ w_{mn}({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'}), 
+\end{equation}
+and 
+\begin{equation}
+  w_{mn}^x({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'})  x',
+\end{equation}
+which are analytical integrals.  
+Then, one can rewrite the matrix element of Eq. \eqref{eq:l_1x} as
+\begin{equation}
+ \begin{aligned}
+ \label{eq:l_1x_2}
+& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
+ = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) W_{mn}^x({\bf r}) W_{jl}^x({\bf r}),
+ \end{aligned}
+\end{equation}
+Therefore, the matrix element of the $\hat{L}_1(\bri{1},\bri{2},\bri{3})$ is simply 
+\begin{equation}
+ \begin{aligned}
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
+ = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg),
+ \end{aligned}
+\end{equation}
+which can be numerically evaluated easily. 
+The total matrix element of the full operator is then 
+\begin{equation}
+ \label{eq:l_ijmkln_final}
+ \begin{aligned}
+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
+ = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg) \\
+ + & \int \text{d}{\bf r}\phi_u({\bf r})  \phi_l({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{ik}^x({\bf r}) + W_{mn}^y({\bf r}) W_{ik}^y({\bf r}) + W_{mn}^z({\bf r}) W_{ik}^z({\bf r})\bigg) \\
+ + & \int \text{d}{\bf r} \phi_m({\bf r})  \phi_n({\bf r}) \bigg( W_{jl}^x({\bf r}) W_{ik}^x({\bf r}) + W_{jl}^y({\bf r}) W_{ik}^y({\bf r}) + W_{jl}^z({\bf r}) W_{ik}^z({\bf r})\bigg), 
+ \end{aligned}
+\end{equation}
+which can be computed on the fly through a simple numerical integration. 
 
 
 \subsection{$r_{12} \rightarrow 0$ limits for different forms of Hamiltonians and related cusp conditions}
@@ -962,181 +1139,7 @@ cannot diverge faster than $\frac{1}{x}$ when $x\rightarrow 0$ and therefore one
 \end{equation}
 which implies Eq.\eqref{eq:lim_mu_1}. 
 
-\subsection{Computation of $\hat{K}(\bri{1},\bri{2})$} 
-\label{sec:integrals}
-The only integrals involved of $\hat{K}(\bri{1},\bri{2})$ over Gaussian functions which are not analytical are of the types 
-\begin{equation}
- \label{eq:k_ijkl}
- v_{ij}^{kl} = \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) \big( g(r_{12},\mu) \big)^2  \phi_k(\bri{1}) \phi_l(\bri{2}),  
-\end{equation}
-with 
-\begin{equation}
- g(x, \mu)= \text{erf}( \mu x) - 1.
-\end{equation}
-To make integrals analytical, we first fit the function $\text{erfc}(x)$ with a simple Slater-Gaussian function 
-\begin{equation}
- \text{erfc}(x) \approx h(x,\alpha,\beta,c)
-\end{equation}
-with 
-\begin{equation}
- h(x,\alpha,\beta,c) = e^{-\alpha x - \beta x^2}
-\end{equation}
-and $\alpha=1.09529$ and $\beta = 0.756023$. 
-Then, by posing $y=\mu x$, one obtains 
-\begin{equation}
- \label{fit_erf}
- \begin{aligned}
-  g(x,\mu)  \approx & e^{-\alpha \mu x - \beta (\mu x)^2}\\ 
-        =& h(x,\alpha \mu, \beta \mu^2).
- \end{aligned}
-\end{equation}
-Therefore, one can fit $g(x)^2$ as 
-\begin{equation}
- \begin{aligned}
- g(x,\mu)^2&= \bigg( 1 - \text{erf}(\mu x) \bigg)^2\\
-           &= \bigg( e^{-\alpha \mu x } e^{-\beta \mu^2 x^2}\bigg)^2 \\
-           &= e^{-2\alpha  \mu x } e^{-2 \beta \mu^2 x^2} \\
-           &= h(x,2 \alpha \mu, 2 \beta \mu^2).
- \end{aligned}
-\end{equation}
-Then we fit the Slater function as a linear combination of Gaussians 
-\begin{equation}
- e^{-X} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m X^2}. 
-\end{equation}
-In the present work, we use $N_s=20$ and the $\{c_m,\zeta_m\}$ parameters are reported in Table \ref{gauss_fit}.
-\begin{table}
-\label{gauss_fit}
-\caption{Set of coefficients $c_m$ and exponents $\zeta_m$ for the fit of $e^{-X}$}
-\begin{ruledtabular}
-\begin{tabular}{ll}
- $\zeta_m$ & $c_m$ \\
-\hline                 
-   30573.77073         & 0.00338925525  \\
-   5608.452381         & 0.00536433869  \\
-   1570.956734         & 0.00818702846  \\
-   541.3978511         & 0.01202047655  \\
-   212.4346963         & 0.01711289568  \\
-   91.31444574         & 0.02376001022  \\
-   42.04087246         & 0.03229121736  \\
-   20.43200443         & 0.04303646818  \\
-   10.37775161         & 0.05624657578  \\
-   5.468807545         & 0.07192311571  \\
-   2.973735292         & 0.08949389001  \\
-   1.661441902         & 0.10727599240  \\
-   0.9505256082        & 0.12178961750  \\
-   0.5552868397        & 0.12740141870  \\
-   0.3304336002        & 0.11759168160  \\
-   0.1998230323        & 0.08953504394  \\
-   0.1224684076        & 0.05066721317  \\
-   0.07575825322       & 0.01806363869  \\
-   0.04690146243       & 0.00305632563  \\
-   0.02834749861       & 0.00013317513  \\
-\end{tabular}
-\end{ruledtabular}
-\end{table}
-By posing $X=\gamma x$ one can fit any Slater function as
-\begin{equation}
- e^{-\gamma x} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m \gamma^2 x^2}. 
-\end{equation}
-Eventually, the function $g(x,\mu)^2$ is obtained as a linear combination of Gaussian
-\begin{equation}
- g(x,\mu)^2 \approx \sum_{m=1}^{N_s} c_m e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) x^2},
-\end{equation}
-which makes then the integrals analytical
-\begin{equation}
- v_{ij}^{kl} \approx \sum_{m=1}^{N_s} c_m \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) (r_{12})^2} \phi_k(\bri{1}) \phi_l(\bri{2}).
-\end{equation}
-All numerical tests performed for $\mu > 0.1$ show that this fit is highly accurate. 
 
-\subsection{Computation of integrals of $\hat{L}(\bri{1},\bri{2},\bri{3})$}
-We need to compute the following integral 
-\begin{equation}
- \label{eq:l_ijmkln}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_2(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_3(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} 
- \end{aligned}
-\end{equation}
-where 
-\begin{equation}
- \hat{L}_1(\bri{1},\bri{2},\bri{3}) = w_\mu(\bri{12}) w_\mu(\bri{13}) \bri{12} \cdot \bri{13}
-\end{equation}
-with 
-\begin{equation}
- w_\mu(\bri{12}) = \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}}.
-\end{equation}
-Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
-\begin{equation}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
- & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
- &\qquad \qquad \qquad   \bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
- \end{aligned}
-\end{equation}
-Such matrix element can be further decomposed into
-\begin{equation}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n}  \\
- =& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
-+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^y(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
-+ & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^z(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n},  
- \end{aligned}
-\end{equation}
-where 
-\begin{equation}
- \begin{aligned}
- \label{eq:l_1x}
-& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
- = & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_u(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
- &(x_1 - x_2) (x_1 - x_3) \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
- \end{aligned}
-\end{equation}
-If we define the following function 
-\begin{equation}
- W_{mn}^x({\bf r})  = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'}) (x - x'),  
-\end{equation}
-it can be calculated easily by
-\begin{equation}
- W_{mn}^x({\bf r})  = x \, w_{mn}({\bf r}) - w_{mn}^x({\bf r})
-\end{equation}
-with 
-\begin{equation}
- w_{mn}({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'}), 
-\end{equation}
-and 
-\begin{equation}
-  w_{mn}^x({\bf r}) = \int \text{d}{\bf r'} \phi_m({\bf r}') \phi_n({\bf r}') w_{\mu}({\bf r} - {\bf r'})  x',
-\end{equation}
-which are analytical integrals.  
-Then, one can rewrite the matrix element of Eq. \eqref{eq:l_1x} as
-\begin{equation}
- \begin{aligned}
- \label{eq:l_1x_2}
-& \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
- = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) W_{mn}^x({\bf r}) W_{jl}^x({\bf r}),
- \end{aligned}
-\end{equation}
-Therefore, the matrix element of the $\hat{L}_1(\bri{1},\bri{2},\bri{3})$ is simply 
-\begin{equation}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg),
- \end{aligned}
-\end{equation}
-which can be numerically evaluated easily. 
-The total matrix element of the full operator is then 
-\begin{equation}
- \label{eq:l_ijmkln_final}
- \begin{aligned}
- & \matelem{\phi_i \phi_k \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg) \\
- + & \int \text{d}{\bf r}\phi_u({\bf r})  \phi_l({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{ik}^x({\bf r}) + W_{mn}^y({\bf r}) W_{ik}^y({\bf r}) + W_{mn}^z({\bf r}) W_{ik}^z({\bf r})\bigg) \\
- + & \int \text{d}{\bf r} \phi_m({\bf r})  \phi_n({\bf r}) \bigg( W_{jl}^x({\bf r}) W_{ik}^x({\bf r}) + W_{jl}^y({\bf r}) W_{ik}^y({\bf r}) + W_{jl}^z({\bf r}) W_{ik}^z({\bf r})\bigg), 
- \end{aligned}
-\end{equation}
-which can be computed on the fly through a simple numerical integration. 
 
 \bibliography{srDFT_SC}                                                                                                                                                
 
