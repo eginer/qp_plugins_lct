@@ -57,9 +57,9 @@
 
 \begin{abstract}
 The present work introduces a new form of explicitly correlated factor in the context of the transcorrelated methods. 
-The new correlation factor is obtained from the $r_{12} \approx 0$ mathematical analysis of the transcorrelated Hamiltonian, and its analytical form is obtained such that the scalar part of the effective two-electron potential reproduces at leading order in $1/r_{12}$ the long-range interaction of the range-separated density functional theory. 
+The new correlation factor is obtained from the $r_{12} \approx 0$ mathematical analysis of the transcorrelated Hamiltonian, and its analytical form is obtained such that the scalar part of the effective two-electron potential reproduces the long-range interaction of the range-separated density functional theory at leading order in $1/r_{12}$. 
 The resulting correlation factor is then tuned by a unique parameter $\mu$ which controls both the depth of the coulomb hole and its typical range in $r_{12}$. 
-The transcorrelated Hamiltonian obtained with such a new correlation factor as a straightforward analytical expression and its physical contents depends on the same parameter $\mu$: one can continuously change from a non divergent repulsive Hamiltonian potential at large $\mu$ to a purely attractive one at small $\mu$. We investigate the convergence of the eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
+The transcorrelated Hamiltonian obtained with such a new correlation factor as a straightforward analytical expression  depending on the same parameter $\mu$, and its physical contents continuously change by varying $\mu$ : one can change from a non divergent repulsive Hamiltonian at large $\mu$ to a purely attractive one at small $\mu$. We investigate the convergence of the eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
 We found that the convergence towards the complete basis set is much faster for a quite wide range values of $\mu$. We also propose a computationally cheap way to find a reasonable value of $\mu$ that automatically adapts to the system through its density.  
 It should be pointed out that all two-electron integrals can be carried analytically within such approach and the three-electrons terms can be performed using a mixed analytical-numerical integration approach.
 
@@ -148,7 +148,7 @@ Then, we derive the analytical form of the corresponding new transcorrelated Ham
 \label{sec:new_j}
 \subsubsection{A simple physical picture: the transcorrelated Hamiltonian for the helium atom}
 \label{sec:he_htilde}
-Let us write the Hamiltonian of the helium atom using the $r_i = \big|{\bf r}_i\big|$ and $ r_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinates  
+Let us write the Hamiltonian of the helium atom using the $r_i = \big|{\bf r}_i\big|$ and $ r_{12} = \big|{\bf r}_1 - {\bf r}_2 \big|$ coordinates\cite{Hylleraas-AdvQChem-64}  
 \begin{equation}
  H  = h_c + \frac{1}{r_{12}},
 \end{equation}
@@ -197,7 +197,7 @@ the latter making $\tilde{H}[u]$ non-hermitian.
 
 \subsubsection{The working equation for $u(\mu,r_{12})$ inspired by RSDFT}
 Having established the form of $\tilde{H}[u] $ in Eq. \eqref{eq:ht_general}, one can notice that the leading order terms in $1/r_{12}$ are $\frac{1}{r_{12}}  + \tilde{W}[u]$. We want now to impose the form of $u(r_{12})$ such that it mimics, at leading order in $1/r_{12}$, the long-range effective interaction entering in the effective Hamiltonian of the RS-DFT (see Eq. \eqref{eq:cusp_psi_mu_0} in Appendix \ref{sec:cusp}). 
-Mathematically, this conditions implies that 
+Mathematically, this condition implies that 
 \begin{equation}
  \begin{aligned}
  \label{def_j_00}
@@ -216,16 +216,6 @@ The solution to Eq. \eqref{def_j_0} is
  u(r_{12};\mu) = \frac{1}{2}r_{12}\bigg( 1 - \text{erf}(\mu r_{12})  \bigg) - \frac{1}{2\sqrt{\pi}\mu}e^{-(r_{12}\mu)^2},
 \end{equation}
 which defines the new Jastrow factor $u(r_{12};\mu)$ which depends on a unique parameter $\mu$.  
-The associated transcorrelated Hamiltonians obtained with $u(r_{12};\mu)$ is also controlled by $\mu$
-\begin{equation}
- \label{eq:def_ht_mu}
- \tilde{H}[\mu] = e^{-u(r_{12};\mu)} H e^{u(r_{12};\mu)}. 
-\end{equation}
-Therefore, the right- and left-eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and the right-eigenvectors satisfy 
-\begin{equation}
- \tilde{H}[\mu] \phimui(\br{}_{1},\br{}_{2}) = E_i \phimui(\br{}_{1},\br{}_{2}), 
-\end{equation}
-where $E_i$ is the exact $i$-th eigenvalue of the physical Hamiltonian. The fact that $\tilde{H}[\mu]$ and $H$ have the same spectrum originates from the properties of the similarity transformation. Nevertheless, once projected in an incomplete basis set, $\tilde{H}[\mu]$ and $H$ might not have the same eigenvalues. 
 
 The main difference of the present approach with the FROGG introduced by Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor in terms of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
 we impose the analytical structure of $u(r_{12};\mu)$ such that i) the sum of all terms in $1/r_{12}$ (\textit{i.e.} $\tilde{W}[u] + \frac{1}{r_{12}}$) exactly provides the non divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ for all $r_{12}$, 
@@ -308,6 +298,7 @@ We represent on Fig \ref{fig_j_mu} the comparison between $u(r_{12};\mfrogg)$ an
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
 \label{sec:ht_general}
 \subsubsection{General analytical form of $\tilde{H}[\mu]$ for a $N$-electron system}
+
 Having established the analytical expression of $u(r_{12};\mu)$, one can derive the expression of the associated transcorrelated Hamiltonian for a general $N$-electron system.  
 Using the general form of the transcorrelated Hamiltonian of Eq. (2) in Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19} and using $u(r_{12},\mu)$ as Jastrow factor gives 
 \begin{equation}
@@ -318,6 +309,12 @@ Using the general form of the transcorrelated Hamiltonian of Eq. (2) in Ref. \on
  \end{aligned}
 \end{equation}
 with $\hat{\tau}_\mu = \sum_{i<j}u(r_{ij},\mu)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i<j} \frac{1}{r_{ij}}$. 
+Therefore, the right- and left-eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and the right-eigenvectors satisfy 
+\begin{equation}
+ \tilde{H}[\mu] \phimui(\br{}_{1},\br{}_{2}) = E_i \phimui(\br{}_{1},\br{}_{2}), 
+\end{equation}
+where $E_i$ is the exact $i$-th eigenvalue of the physical Hamiltonian. The fact that $\tilde{H}[\mu]$ and $H$ have the same spectrum originates from the properties of the similarity transformation. Nevertheless, once projected in an incomplete basis set, $\tilde{H}[\mu]$ and $H$ might not have the same eigenvalues. 
+
 Eq. \eqref{ht_def_g} leads to the following transcorrelated Hamiltonian 
 \begin{equation}
  \begin{aligned}
@@ -399,6 +396,32 @@ If one desires to impose that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) = \frac{\tex
 \end{equation}
 whose solution is unknown to the best of the author knowledge. 
 
+\subsubsection{Limit cases for $\tilde{H}[\mu]$ with $\mu$}
+\label{sec:h_mu_lim}
+Regarding now the variation of $\tilde{H}[\mu]$, as 
+\begin{equation}
+ \label{eq:lim_mu_0}
+ \lim_{\mu  \rightarrow \infty }u(\mu,r_{12}) = 0, 
+\end{equation}
+one recovers the usual Hamiltonian in the ${\mu  \rightarrow \infty }$ limit:
+\begin{equation}
+ \label{eq:lim_mu_1}
+ \lim_{\mu \rightarrow \infty} \tilde{H}[\mu] = H,
+\end{equation}
+although it is only in the sense of distributions (see Appendix \ref{sec:large_mu_lim} for a more detailed explanation). 
+
+In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu]$ becomes simply 
+\begin{equation}
+ \label{eq:htilde_mu_low}
+ \begin{aligned}
+&\lim_{\mu \rightarrow 0} \tilde{H}[\mu] = h_c - \frac{1}{4} - \sum_{i<j}\deriv{}{r_{ij}}{} \\
+ & - \frac{1}{4}\sum_{i<j<k}  \bigg(\frac{\bri{ij} }{ r_{ij}} \cdot \frac{\bri{ik} }{ r_{ik}} + \frac{\bri{ji} }{ r_{ji}} \cdot \frac{\bri{jk}  }{ r_{jk}} + \frac{\bri{ki} }{ r_{ki}} \cdot  \frac{\bri{kj} }{ r_{kj}} \bigg),
+ \end{aligned}
+\end{equation}
+which means that all scalar electron-electron repulsive interaction have been replaced by a differential operator and a three electron interaction. 
+It should be stressed that even if the $\mu \rightarrow 0$ limit of $\tilde{H}[\mu]$ is very unphysical, it conserves exactly the same spectrum than the usual Hamiltonian because it originates from a similarity transformation. 
+
+
 \subsubsection{A special case of $\tilde{H}[\mu]$ which mimics the FROGG}
 As the Jastrow factor $u(r_{12},\mu)$ for $\mu=\mfrogg$ is very close to the FROGG, we can also compare the scalar effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ with that obtained with the transcorrelated Hamiltonian obtained with the FROGG. 
 The latter is simply defined as 
@@ -442,8 +465,6 @@ and as a necessary condition to obtain a non divergent scalar potential is
  \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u(r_{12}) = \frac{1}{2}, 
 \end{equation}
 (see Eqs. \eqref{eq:cusp_phi_0}  and \eqref{eq:cusp_phi_1} in Appendix \ref{sec:cusp}), $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ is necessary not bounded at $r_{12}=0$.  
-%Because the condition of Eq. \eqref{eq:cusp_phi_0} is fulfilled by $u(r_{12},\mu)$ for all $\mu < \infty$, 
-%the effective potential obtained by the similarity transformation of $H$ by $u(r_{12},\mu)$ is necessary non divergent.  
 
 Nevertheless, as it will be shown by numerical computations, the effective potentials $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are almost identical \textit{in average}, as they numerically agree for $r_{12}>1$ and that $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ essentially oscillates around $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ for small values of $r_{12}$. This statement will be supported by numerical computations in the next sections. 
 
@@ -452,31 +473,6 @@ Nevertheless, as it will be shown by numerical computations, the effective poten
         \includegraphics[width=0.45\linewidth]{plots/jastrow/w_ee_frog.pdf}
         \caption{Shape of $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ for $\mu=\mfrogg$ and comparison with the effective potential $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ obtained with the FROGG (see Eq.\eqref{eq:_wee_frogg}).}
 \end{figure*}
-
-\subsubsection{Limit cases for $\tilde{H}[\mu]$ with $\mu$}
-\label{sec:h_mu_lim}
-Regarding now the variation of $\tilde{H}[\mu]$, as 
-\begin{equation}
- \label{eq:lim_mu_0}
- \lim_{\mu  \rightarrow \infty }u(\mu,r_{12}) = 0, 
-\end{equation}
-one recovers the usual Hamiltonian in the ${\mu  \rightarrow \infty }$ limit:
-\begin{equation}
- \label{eq:lim_mu_1}
- \lim_{\mu \rightarrow \infty} \tilde{H}[\mu] = H,
-\end{equation}
-although it is only in the sense of distributions (see Appendix \ref{sec:large_mu_lim} for a more detailed explanation). 
-
-In the $\mu \rightarrow 0$ limit, the transcorrelated Hamiltonian $\tilde{H}[\mu]$ becomes simply 
-\begin{equation}
- \label{eq:htilde_mu_low}
- \begin{aligned}
-&\lim_{\mu \rightarrow 0} \tilde{H}[\mu] = h_c - \frac{1}{4} - \sum_{i<j}\deriv{}{r_{ij}}{} \\
- & - \frac{1}{4}\sum_{i<j<k}  \bigg(\frac{\bri{ij} }{ r_{ij}} \cdot \frac{\bri{ik} }{ r_{ik}} + \frac{\bri{ji} }{ r_{ji}} \cdot \frac{\bri{jk}  }{ r_{jk}} + \frac{\bri{ki} }{ r_{ki}} \cdot  \frac{\bri{kj} }{ r_{kj}} \bigg),
- \end{aligned}
-\end{equation}
-which means that all scalar electron-electron repulsive interaction have been replaced by a differential operator and a three electron interaction. 
-It should be stressed that even if the $\mu \rightarrow 0$ limit of $\tilde{H}[\mu]$ is very unphysical, it conserves exactly the same spectrum than the usual Hamiltonian because it originates from a similarity transformation. 
 
 \section{Detailed numerical study of $\tilde{H}[\mu]$ in the case of he He atom}
 \label{sec:total_he}
@@ -531,7 +527,7 @@ We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\te
 \begin{table*}
 \label{table_conv_e_mu}
 \caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. 
-We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. 
+We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy was obtained from Ref. \cite{Dav-ions-PRA-91}. 
  }
 \begin{ruledtabular}
 \begin{tabular}{llllllllllll}
@@ -680,7 +676,7 @@ These results illustrates that the Jastrow factor must adapt to the typical leng
 \begin{table*}
 \label{table_conv_e_mu_iso}
 \caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. We also report the average value of the $\mu$ considered (referred as $\muav$) in the double-zeta basis. 
-The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_1}}
+The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy of all systems studied here was obtained from Ref. \cite{Dav-ions-PRA-91}.}
 
 \begin{ruledtabular}
 \begin{tabular}{l|rrr|r||rrr|r||rrr|r|}
@@ -743,7 +739,7 @@ From the Figs \ref{fig:H2}, one can observe that i) all methods provide a near c
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_5.pdf}
         \includegraphics[width=0.45\linewidth]{plots/H2/H2_de_fci_mu_0_3.pdf}
         \caption{
-        H$_2$ molecule: Error with respect to the estimated exact ground state energy for the aug-cc-pVDZ and aug-cc-pVTZ basis sets (AVDZ, AVTZ, respectively) as a function of the inter nuclear distance for different values of $\mu$, and comparison with FCI. R$_{eq}$ refers to the equilibrium distance of 1.401 a.u.. 
+        H$_2$ molecule: Error with respect to the estimated exact ground state energy for the aug-cc-pVDZ and aug-cc-pVTZ basis sets (AVDZ, AVTZ, respectively) as a function of the inter nuclear distance for different values of $\mu$, and comparison with FCI. R$_{eq}$ refers to the equilibrium distance of 1.401 a.u., and the estimated exact non relativistic potential energy curve was taken from Ref. \onlinecite{LieCle-JCP-74a}.  
 }
 \end{figure*}
 
