@@ -58,16 +58,16 @@
 \begin{abstract}
 The present work introduces a new form of explicitly correlated factor in the context of the transcorrelated methods. 
 The new correlation factor is obtained from the $r_{12} \approx 0$ mathematical analysis of the transcorrelated Hamiltonian, and its analytical form is obtained such that the scalar part of the effective two-electron potential reproduces the long-range interaction of the range-separated density functional theory at leading order in $1/r_{12}$. 
-The resulting correlation factor is then tuned by a unique parameter $\mu$ which controls both the depth of the coulomb hole and its typical range in $r_{12}$. 
-The transcorrelated Hamiltonian obtained with such a new correlation factor as a straightforward analytical expression  depending on the same parameter $\mu$, and its physical contents continuously change by varying $\mu$ : one can change from a non divergent repulsive Hamiltonian at large $\mu$ to a purely attractive one at small $\mu$. We investigate the convergence of the eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
-We found that the convergence towards the complete basis set is much faster for a quite wide range values of $\mu$. We also propose a computationally cheap way to find a reasonable value of $\mu$ that automatically adapts to the system through its density.  
+The resulting correlation factor exactly imposes the cusp and is tuned by a unique parameter $\mu$ which controls both the depth of the coulomb hole and its typical range in $r_{12}$. 
+The transcorrelated Hamiltonian obtained with such a new correlation factor has a straightforward analytical expression  depending on the same parameter $\mu$, and its physical contents continuously change by varying $\mu$ : one can change from a non divergent repulsive Hamiltonian at large $\mu$ to a purely attractive one at small $\mu$. We investigate the convergence of the eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
+We found that the convergence towards the complete basis set is much faster for a quite wide range values of $\mu$. We also propose a way to find a reasonable value of $\mu$ that automatically adapts to the system through its density.  
 It should be pointed out that all two-electron integrals can be carried analytically within such approach and the three-electrons terms can be performed using a mixed analytical-numerical integration approach.
 
 \end{abstract}
 
 \maketitle
 \section{Introduction}
-One of the most challenging problem in modern computational chemistry is the accurate simulation of the electronic structure of atomic and molecular systems, which implies solving the Schroedinger equation for a general $N$-body system. 
+One of the most challenging problem in computational chemistry is the accurate simulation of the electronic structure of atomic and molecular systems, which implies solving the Schroedinger equation for a general $N$-body system. 
 At the heart of the complexity of such a task relies the rapidly prohibitive computational cost of the wave function methods (WFT), which is induced by the exponential growth with the system size of the Hilbert space involved in the linear eigenvalue problem to be solved. 
 
 In usual WFT, the computational bottleneck is mainly determined by two factors: the level of complexity of the wave function which is imposed by the amount of strong correlation effects in the system, and the convergence of the computed quantities with respect to the size of the one-electron basis used to project the Hamiltonian into a finite eigenvalue problem. 
@@ -76,7 +76,7 @@ selected CI\cite{bender,HurMalRan-JCP-73,buenker1,buenker-book,three_class_CIPSI
 %selected CI\cite{HurMalRan-JCP-73,bender,malrieu,buenker1,buenker-book}, 
 full configuration Quantum Monte Carlo\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} (FCI-QMC) or matrix product states\cite{ChaSha-AR-11,BaiRei-JCP-20}. These methods all have one thing in common: they manage to select, although through different mathematical frameworks, the part of the exponentially growing Hilbert space which dominates the wave function. 
 
-Even if these selection schemes are extremely efficient to obtain a qualitative description of the wave function, a quantitative description is often out of reach as it implies the use of very large one-electron basis sets which are needed to recover the slowly converging correlation effects near the electron-electron coalescence point. 
+Even if these schemes are extremely efficient to obtain a qualitative description of the wave function through a meaningful selection in an exponentially growing Hilbert space, a quantitative description is often out of reach as it implies the use of very large one-electron basis sets which are needed to recover the slowly converging correlation effects near the electron-electron coalescence point. 
 These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance ($r_{12}\approx 0$): the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. For a general and clear derivation of the cusp conditions for Coulombic systems up to second order, see Ref.\onlinecite{Tew-JCP-08}. As shown by the seminal works of Hylleraas\cite{Hyl-ZP-29} and further developed byKutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the quality of the basis set is mainly due to the impossibility to represent the cusp in a finite one-electron basis set. 
 As the cusp conditions originate from the divergence of the Coulomb potential at $r_{12}=0$, an alternative approach would be to develop theories dealing with a smooth potential. Such a path was followed by three distinct branches: 
 the explicitly correlated methods (F12), transcorrelated methods (TC) and the range-separated density functional theory (RS-DFT). 
@@ -93,19 +93,19 @@ and therefore the Jastrow factor only deals with correlation effects orthonormal
 The resulting F12 theories, mainly based on perturbation theory and coupled cluster theory, are therefore 
 extremely close to their parent WFT theory, with additional contributions involving two- and three-body terms resulting from the use of the Jastrow factor. 
 It is important to notice that because of the orthogonalization between the Jastrow and the basis set, 
-the complexity of the $N$-body problem within a given basis set is essentially the same between a F12 theory and the usual theory in WFT. Therefore, no strong compression of the electronic wave function is obtained within a given basis set by the F12 theory, 
+the complexity of the $N$-body problem within a given basis set is essentially the same between a F12 theory and the parent theory in WFT. Therefore, no strong compression of the electronic wave function is obtained within a given basis set by the F12 theory, 
 but a fast convergence toward the complete basis set limit (CBS) is nevertheless obtained for correlation energies and other properties sensitive to the basis set.  
 
 An alternative point of view using a Jastrow factor is the so-called transcorrelated (TC) approach where the full effect of the Jastrow factor is incorporated into the calculation through a similarity transformation of the original Hamiltonian by the Jastrow factor. 
 Seminal equations were derived by Hirschfelder\cite{Hirschfelder-JCP-63} who obtained an effective non hermitian operator based on a specific form of Jastrow factor, and latter on Boys, Handy and co-workers\cite{BoyHan-PRSLA-69,BoyHanLin-1-PRSLA-69,BoyHanLin-2-PRSLA-69} derived the equations of the general form of the TC Hamiltonian for an exponential form of the Jastrow factor. 
-The obtained TC Hamiltonian contains certain new features with respect to the usual Hamiltonian: the TC Hamiltonian contains an additional effective two- and three-electron scalar potential together with is a non hermitian two-electron differential operator. Because of its non-hermitian nature, the TC Hamiltonian looses the variational principle, and Boys and Handy managed to derive equations to optimize orbitals and Jastrow parameters for a single Slater determinant. 
+The obtained TC Hamiltonian contains certain new features with respect to the usual Hamiltonian: the TC Hamiltonian contains an additional effective two- and three-electron scalar potential together with is a non hermitian two-electron differential operator. Because of its non-hermitian nature, the TC Hamiltonian looses the variational principle, and Boys and Handy managed to derive equations to optimize both orbitals and Jastrow parameters for a single Slater determinant. 
 Nevertheless, such a constrained form of the wave function for the Slater together with the loose of variational principle makes it difficult to find a monotonic convergence of computed energies\cite{Handy-MolPhys-71}. 
 
 Later on, Ten-No\cite{TenNo-CPL-00-a} proposed to significantly change the paradigm of Boys and Handy: instead of using a single Slater determinant and optimizing the orbitals and the Jastrow factor, one uses a more elaborate many body theory with a frozen universal Jastrow factor.  This strategy was developed using as M{\o}ller-Plesset at second order (MP2) in Refs.\onlinecite{TenNo-CPL-00-a,HinTanTen-JCP-01} and a linearised coupled cluster ansatz in later work\cite{HinTanTen-CPL-02}.  
-The Jastrow factor introduced by Ten-No, developed as a linear combination of gaussian functions and referred to as the frozen gaussian geminal (FROGG), only depends on the inter-electronic coordinate and is optimized such that the scalar effective two-electron  potential cancels on average the coulomb potential near $r_{12}=0$. The use of gaussian functions to represent the Jastrow factor enabled Ten-No to develop a numerical scheme to evaluate exactly the three-electron integrals present in TC Hamiltonian\cite{TenNo-CPL-00-b}, which is an alternative to the density-fitting method proposed by Ten-No in the general context of F12 methods\cite{TenMan-JCP-03}. 
+The Jastrow factor introduced by Ten-No, developed as a linear combination of gaussian functions and referred to as the frozen gaussian geminal (FROGG), only depends on the inter-electronic coordinate and is optimized such that the scalar effective two-electron  potential cancels on average the coulomb potential near $r_{12}=0$. The use of gaussian functions to represent the Jastrow factor enabled Ten-No to develop a numerical scheme to evaluate exactly the three-electron integrals present in TC Hamiltonian\cite{TenNo-CPL-00-b}, which is an alternative to the density-fitting method proposed by the same author in the general context of F12 methods\cite{TenMan-JCP-03}. 
 In Ref.\onlinecite{HinTanTen-JCP-01}, Ten-No \textit{et. al.} introduced a biorthogonal approach, 
 which allows to treat the non-hermitian TC Hamiltonian in a mathematical form more suited 
-to develop many-body perturbation theory approaches. 
+to develop approaches based on many-body perturbation theory. 
 It is also noteworthy that the eigenfunctions of the TC Hamiltonian are invariant by orbital rotation, 
 and therefore in the limit where one gives full flexibility to the wave function, 
 the biorthogonal and usual orthogonal approaches give the same results. 
@@ -119,7 +119,7 @@ An alternative to the non hermitian nature of TC theory have been proposed by Ya
 Further developments of the TC method towards the treatment of solid state systems have been carried by Ochi \textit{et. al.}\cite{OchSodSakTsu-JCP-12,OchTsu-JCTC-14,OchTsu-CPL-15,OchYamAriTsu-JCP-16}, which includes both ground states calculations within a single determinant wave function \cite{OchSodSakTsu-JCP-12,OchYamAriTsu-JCP-16} or at the MP2 level\cite{OchTsu-CPL-15}, together with excited states within configuration interaction\cite{OchTsu-JCTC-14}. 
 The TC framework has also been used in the context of DFT to develop new approximations of density functionals\cite{ImaScu-JCP-03,UmeChi-PRA-06,Umezawa-JCP-17}. 
 
-More recently, Alavi \textit{et. al}\cite{CohLuoGutDobTewAla-JCP-19} applied the TC equations with the use of elaborate Jastrow factors obtained from quantum Monte Carlo calculations, and explicitly taking into account for electron-electron together with electron-electron-nucleus correlation. The Jastrow factor used in such work were obtained from the optimized Jastrow factors for He to Ne of Moskowitz \textit{et. al.}\cite{SchMos-JCP-90}. 
+More recently, Alavi \textit{et. al}\cite{CohLuoGutDobTewAla-JCP-19} applied the TC equations with the use of elaborate Jastrow factors which explicitly taking into account for electron-electron together with electron-electron-nucleus correlation. The Jastrow factor used in such work were obtained from the optimized Jastrow factors for He to Ne of Moskowitz \textit{et. al.}\cite{SchMos-JCP-90} in the context of quantum Monte Carlo. 
 In contrast to previous works where a constrained form was given to the wave function (such as coupled cluster for instance\cite{HinTanTen-CPL-02}),  Alavi \textit{et. al.} allow a full flexibility to the Slater part of the wave function to adapt to the elaborated Jastrow factors: they fully solve the $N$-electron problem corresponding to the TC Hamiltonian within a given basis set. 
 This is done through the use of the FCI-QMC\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} which is a projective technique allowing one to obtain the ground state of an operator, hermitian or not, through a stochastic sampling of the corresponding Hilbert space. Their approach share common points with that of Ten-No in the sense that they both use a fixed Jastrow factor and use a flexible form of wave functions, 
 even though the FCIQMC is certainly more flexible than the coupled cluster ansatz of Ten-No used in Ref. \onlinecite{HinTanTen-JCP-01}. 
@@ -170,7 +170,7 @@ Now let us consider the transcorrelated Hamiltonian $\tilde{H}[u]$ obtained by a
  \tilde{H}[u]&= e^{-u(r_{12})} H e^{u(r_{12})}.
  \end{aligned}
 \end{equation}
-The only additional terms arising in $\tilde{H}[u]$ with respect to $H$ are those coming from the action of the differential operator in $r_{12}$,
+With respect to $H$, the only additional terms arising in $\tilde{H}[u]$ are those coming from the action of the differential operator in $r_{12}$,
 \begin{equation}
  \mathcal{T}[u] =  -e^{-u(r_{12})}\bigg( \deriv{}{r_{12}}{2} + \frac{2}{r_{12}} \deriv{}{r_{12}}{} \bigg)e^{u(r_{12})}.  
 \end{equation}
@@ -217,29 +217,20 @@ The solution to Eq. \eqref{def_j_0} is
 \end{equation}
 which defines the new Jastrow factor $u(r_{12};\mu)$ which depends on a unique parameter $\mu$.  
 
-The main difference of the present approach with the FROGG introduced by Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor in terms of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
+The main difference of the present approach with the FROGG introduced by Ten-No\cite{TenNo-CPL-00-a} is that instead of optimizing the Jastrow factor as a linear combination of Gaussian functions such that $\frac{1}{r_{12}}  + \tilde{W}[u] + \tilde{w}[u] \approx 0$ when $r_{12}=0$, 
 we impose the analytical structure of $u(r_{12};\mu)$ such that i) the sum of all terms in $1/r_{12}$ (\textit{i.e.} $\tilde{W}[u] + \frac{1}{r_{12}}$) exactly provides the non divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ for all $r_{12}$, 
 ii) the analytical form of $u(r_{12};\mu)$ is obtained from analytical conditions and not by a fit as in the case of the FROGG,  
 iii) the new Jastrow factor $u(r_{12};\mu)$ is more flexible than the FROGG as it is tuned by a unique parameter $\mu$.  
 
 \subsubsection{A few properties of $u(r_{12};\mu)$}
 The new Jastrow $u(r_{12};\mu)$ factor is tuned by a unique parameter, $\mu$, which have the unit of the inverse of a distance. 
-To understand the physical content together with the mathematical properties of $u(r_{12};\mu)$, 
-one must keep in mind that the complete correlating factor $\mathcal{J}(r_{12};\mu)$ is 
-\begin{equation}
- \mathcal{J}(r_{12};\mu) = \text{exp}\big(u(r_{12};\mu)\big),
-\end{equation}
-and that the exact wave function $\psiex(\br{}_1,\br{}_2)$ is formally expressed as 
-\begin{equation}
- \psiex(\br{}_1,\br{}_2) = \mathcal{J}(r_{12};\mu) \phimu(\br{}_{1},\br{}_{2}).  
-\end{equation}
 From Eq.\eqref{eq:def_j} we can notice that 
 \begin{equation}
  \lim_{r_{12} \rightarrow \infty}u(r_{12};\mu) = 0,
 \end{equation}
 which means that 
 \begin{equation}
- \lim_{r_{12} \rightarrow \infty}\mathcal{J}(r_{12};\mu) = 1,
+ \lim_{r_{12} \rightarrow \infty}e^{u(r_{12};\mu)} = 1,
 \end{equation}
 and therefore $u(r_{12};\mu)$ impacts only the small $r_{12}$ behaviour,  
 which is expected since the equation determining $u(r_{12},\mu)$ is obtained from the small $r_{12}$ limit of the Schroedinger equation (see Eq.\eqref{def_j_00}). 
@@ -255,24 +246,24 @@ A first remark is that $u(r_{12};\mu)$ exactly restores the cusp as
  \label{eq:cusp_phi_0}
  \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u(r_{12};\mu) = \frac{1}{2},
 \end{equation}
-implying that the right-eigenvector $\phimu(\br{}_{1},\br{}_{2})$ is cusp less (see Appendix \ref{sec:cusp}). 
-The Taylor expansion of Eq. \eqref{eq:j_dl} inserted in $\mathcal{J}(r_{12},\mu)$ leads to 
+implying that the right-eigenvectors of the TC Hamiltonian obtained with $u(r_{12};\mu)$ are cusp less (see Appendix \ref{sec:cusp}). 
+The Taylor expansion of Eq. \eqref{eq:j_dl} inserted in the exponential correlating Jastrow factor reads 
 \begin{equation}
  \label{eq:bigJ_dl}
- \mathcal{J}(r_{12};\mu) \approx e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2}. 
+ e^{u(r_{12},\mu)}\approx e^{-\frac{1}{2\sqrt{\pi}\mu}} e^{ \frac{1}{2}r_{12}} e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2}. 
 \end{equation}
-From Eq. \eqref{eq:bigJ_dl} one can analyze each term: a) as $e^{-\frac{1}{2\sqrt{\pi}\mu}}<1$, the effective wave function  $\phiex(\br{}_1,\br{}_2)$ has necessary a larger value at coalescence (\textit{i.e.} $\br{}_1=\br{}_2)$), 
-b) the term in $e^{ \frac{1}{2}r_{12}} $ restores exactly the lack of cusp of $\phiex(\br{}_1,\br{}_2)$ (see Eq. \eqref{eq:cusp_phi_2}); and eventually last term reshapes the curvature of the $\phiex(\br{}_1,\br{}_2)$. 
+From Eq. \eqref{eq:bigJ_dl} one can analyze each term: a) as $e^{-\frac{1}{2\sqrt{\pi}\mu}}<1$, Jastrow factor digs the Coulomb hole, 
+b) the term in $e^{ \frac{1}{2}r_{12}} $ exactly imposes the cusp; c) and the last term $e^{- \frac{\mu}{2\sqrt{\pi}} r_{12}^2}$ reshapes the curvature of the Coulomb hole. 
 
 Coming now to the behaviour of $u(r_{12};\mu)$ as a function of the parameter $\mu$, we report in Figure \ref{fig_j_mu} its dependence on $r_{12}$ for a set of values of $\mu$, and we compare it with the FROGG. 
 \begin{figure*}
  \label{fig_j_mu}
         \includegraphics[width=0.45\linewidth]{plots/jastrow/small_mu_j.pdf}
         \includegraphics[width=0.45\linewidth]{plots/jastrow/small_mu_exp_j.pdf}\\
-        \caption{Shape of $u(r_{12};\mu)$ (left) and of $\mathcal{J}(r_{12};\mu) = \text{exp}\bigg(u(r_{12};\mu) \bigg) $ (right) for different values of $\mu$. 
+        \caption{Shape of $u(r_{12};\mu)$ (left) and of $\text{exp}\big(u(r_{12};\mu) \big) $ (right) for different values of $\mu$. 
 We also compare the FROGG (see Eq. \eqref{eq_frogg}) and the value of $\mu = 0.865$ which equals the FROGG at $r_{12}=0$ (see Eq. \eqref{mu_ten_no_1}). }
 \end{figure*}
-From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $u(r_{12};\mu)$, ii) the larger the $\mu$, the closer $u(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper and broader is the hole imposed by $\mathcal{J}(r_{12};\mu)$. 
+From Figure\ref{fig_j_mu}, one can see that: i) the larger the $\mu$, the more short-range is $u(r_{12};\mu)$, ii) the larger the $\mu$, the closer $u(r_{12};\mu)$ is from 0 and therefore the less impact the correlating factor has on the wave function, iii) the smaller the $\mu$, the deeper and broader is the hole imposed by $e^{u(r_{12},\mu)}$. 
 
 As the function $u(r_{12};\mu)$ contains a unique parameter, one can try to find the value of $\mfrogg$ such that 
 $u(r_{12};\mfrogg)$ qualitatively reproduces the FROGG. 
@@ -286,13 +277,13 @@ where $ u^{\text{TN}}(x)$ is the FROGG introduced by Ten-No
  \label{eq_frogg}
  u^{\text{TN}}(x) = -\sum_{i=1}^6 c_i e^{-\alpha_i x^2 },
 \end{equation}
-with the coefficients $c_i$ and exponents $\alpha_i$ given in Table 1 of Ref. \onlinecite{TenNo-CPL-00-a}. 
+with the coefficients $c_i$ and exponents $\alpha_i$ are given in Table 1 of Ref. \onlinecite{TenNo-CPL-00-a}. 
 Eq. \eqref{mu_ten_no_1} gives 
 \begin{equation}
  \label{mu_ten_no_2}
  \mfrogg = -\frac{1}{2\sqrt{\pi}u^{\text{TN}}(0)},
 \end{equation}
-which gives $\mfrogg\approx0.86975$. 
+which gives $\mfrogg\approx0.87$. 
 We represent on Fig \ref{fig_j_mu} the comparison between $u(r_{12};\mfrogg)$ and the FROGG, and it is clearly apparent  that $u(r_{12};\mfrogg)$ reproduces almost perfectly the FROGG, although it decays slightly faster at large $r_{12}$. Therefore, one can see the FROGG as a special case of $u(r_{12};\mu)$  with $\mu = \mfrogg$. 
 
 \subsection{The general analytical form of  $\tilde{H}[\mu]$ and some of its properties}
@@ -309,9 +300,9 @@ Using the general form of the transcorrelated Hamiltonian of Eq. (2) in Ref. \on
  \end{aligned}
 \end{equation}
 with $\hat{\tau}_\mu = \sum_{i<j}u(r_{ij},\mu)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i<j} \frac{1}{r_{ij}}$. 
-Therefore, the right- and left-eigenvectors of $\tilde{H}[\mu]$ depends only on $\mu$, and the right-eigenvectors satisfy 
+Therefore, the right-eigenvectors $\ket{\phimui}$ depends on $\mu$ and satisfy the effective Schroedinger equation
 \begin{equation}
- \tilde{H}[\mu] \phimui(\br{}_{1},\br{}_{2}) = E_i \phimui(\br{}_{1},\br{}_{2}), 
+ \tilde{H}[\mu] \ket{ \phimui}  = E_i \ket{\phimui}, 
 \end{equation}
 where $E_i$ is the exact $i$-th eigenvalue of the physical Hamiltonian. The fact that $\tilde{H}[\mu]$ and $H$ have the same spectrum originates from the properties of the similarity transformation. Nevertheless, once projected in an incomplete basis set, $\tilde{H}[\mu]$ and $H$ might not have the same eigenvalues. 
 
@@ -448,7 +439,7 @@ where
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}^{\text{TN}}(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u^\text{TN}(r_{12}) \cdot \nabla_1 u^\text{TN}(r_{12}) \\ 
+  \hat{L}^{\text{TN}}(\bri{1},\bri{2},\bri{3})  = & \nabla_1 u^\text{TN}(r_{12}) \cdot \nabla_1 u^\text{TN}(r_{13}) \\ 
                                      + & \nabla_2 u^\text{TN}(r_{21}) \cdot \nabla_2 u^\text{TN}(r_{23})  \\
                                      + & \nabla_3 u^\text{TN}(r_{31}) \cdot \nabla_3 u^\text{TN}(r_{32}).
  \end{aligned}
@@ -459,12 +450,12 @@ as it is made of gaussian functions, $u^{\text{TN}}(r_{12})$ is cusp-less \texti
 \begin{equation}
  \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u^{\text{TN}}(r_{12}) = 0, 
 \end{equation}
-and as a necessary condition to obtain a non divergent scalar potential is 
+and as a necessary condition to obtain a non divergent scalar potential is (see Eqs. \eqref{eq:cusp_phi_0}  and \eqref{eq:cusp_phi_1} in Appendix \ref{sec:cusp}) 
 \begin{equation}
  \label{eq:cusp_phi_0}
  \lim_{r_{12}\rightarrow 0} \deriv{}{r_{12}}{}u(r_{12}) = \frac{1}{2}, 
 \end{equation}
-(see Eqs. \eqref{eq:cusp_phi_0}  and \eqref{eq:cusp_phi_1} in Appendix \ref{sec:cusp}), $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ is necessary not bounded at $r_{12}=0$.  
+$\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ is necessary not bounded at $r_{12}=0$.  
 
 Nevertheless, as it will be shown by numerical computations, the effective potentials $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ and $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ are almost identical \textit{in average}, as they numerically agree for $r_{12}>1$ and that $\tilde{\mathcal{W}}_{ee}^\text{TN}(r_{12})$ essentially oscillates around $\tilde{\mathcal{W}}_{ee}(r_{12},\mfrogg)$ for small values of $r_{12}$. This statement will be supported by numerical computations in the next sections. 
 
@@ -492,7 +483,7 @@ As long as the basis set $\basis$ is incomplete, because of its non hermitian na
 \subsubsection{Computational details}
 We implemented all integrals needed for the computation of the matrix elements of $\tilde{H}[\mu]$ on a usual Gaussian orbital basis set (see Appendix \ref{sec:integrals} for more details) together with the modification of the Slater rules due to the presence of the non hermitian term in $\tilde{H}[\mu]$. We also implemented all necessary integrals to use the FROGG derived by Ten-No in Ref. \onlinecite{TenNo-CPL-00-a} in the context of the TC Hamiltonian.  
 All implementation was done as a plugin of the program quantum package\cite{QP2}. 
-We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\phiimub$ (\textit{i.e.} $\phiimub$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors. 
+We use the RHF molecular orbitals to build all matrix elements of $\tilde{H}[\mu]$, and then we solve the two-body problem giving full flexibility to $\phiimub$ (\textit{i.e.} $\phiimub$ is expressed as a linear combination of all possible Slater determinants within a given basis set $\basis$) with a non hermitian eigensolver to obtain both right and left eigenvectors together with the eigenvalues. 
 
 \subsubsection{Numerical results: ground state energies}
 \label{sec:total_e}
@@ -513,7 +504,7 @@ To quantify better such observations, one can identify the basis set from which 
 For $0.3\ge\mu\ge0.4$ one can see that the error with respect to $E_0$ is never larger, in absolute value, than 1mH whatever the basis set used, which represents a strong improvement with respect to the FCI. For $0.5\ge \mu \ge 1.0$ the 1mH error threshold is reached at the aug-cc-pVTZ level and the accuracy are comparable to the FCI in the aug-cc-pV5Z basis set. For $1.6\ge \mu \ge 3.0$, such accuracy is reached at the aug-cc-pVQZ level, whenever such accuracy is reached at the aug-cc-pV5Z level using the regular FCI Hamiltonian. 
 %The quality of the results obtained with the FROGG are in between that obtained with $\mu=0.7$ and $\mu=1.0$. 
 
-From the study of the ground state of the helium atom, one can conclude that i) the use of a simple Jastrow factor such as $u(r_{12};\mu)$ within the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$ ranging from $\mu=0.2$ to $\mu=1.6$, 
+From the study of the ground state of the helium atom, one can conclude that i) the use of a simple Jastrow factor such as $u(r_{12};\mu)$ within the transcorrelated framework can strongly improve the speed of convergence of the total energy of the helium atom with a quite wide range of values of $\mu$, 
 ii) the results obtained with $\mu=\mfrogg$ reproduce essentially that obtained with the FROGG, 
 iii) for $\mu \in[ 0.35,0.7]$ the results obtained are always better than that obtained with the FROGG. 
 \begin{figure*}
@@ -527,11 +518,11 @@ We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\te
 \begin{table*}
 \label{table_conv_e_mu}
 \caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. 
-We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy was obtained from Ref. \cite{Dav-ions-PRA-91}. 
+We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref.\onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.87$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy was obtained from Ref. \cite{Dav-ions-PRA-91}. 
  }
 \begin{ruledtabular}
 \begin{tabular}{llllllllllll}
- Basis/$\mu$ & 0.2                   & 0.3                   & 0.35                  & 0.5                  & 0.7                 & $\mfrogg=0.86975$    \\
+ Basis/$\mu$ & 0.2                   & 0.3                   & 0.35                  & 0.5                  & 0.7                 & $\mfrogg=0.87$    \\
 \hline                                                                                                                                                  
  AVDZ        &    -2.906309 (-2.58)  &    -2.904172 (-0.45)  &    -2.903317 (0.41)   &    -2.901420 (2.3)   &    -2.899516 (4.21) &  -2.897927 ( 5.80)    \\
  AVTZ        &    -2.905278 (-1.55)  &    -2.904691 (-0.97)  &    -2.904468 (-0.74)  &    -2.903969 (-0.24) &    -2.903488 (0.24) &  -2.903214 ( 0.51)    \\
@@ -554,9 +545,10 @@ We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\te
 \label{sec:he_real_space}
 In Sec.\ref{sec:total_e} we shown the improvement of the speed of convergence of the ground state energies $E_0^{\basis}[\mu]$ of the helium atom, which was effective for a quite large range of $\mu$ starting from $\mu=0.2$ to $\mu=1.6$. 
 Nevertheless, one can wonder if this good behavior results from a kind of error cancellation or if there is indeed a deeper mathematical reason for such an improvement of speed of convergence. 
-To answer that question, we investigate some properties of the ground state eigenvectors of different types of Hamiltonians in real space. 
+To answer that question, we investigate some properties in real space of the ground state eigenvectors of different types of Hamiltonians. 
+For the sake of simplicity we perform the study on the ground state of the helium atom.
 
-Theoretically if, for a given value of $\mu$, $\tilde{H}[\mu]^{\basis}$ is perfectly well represented in a given basis set $\mathcal{B}$ (\textit{i.e.} $\tilde{H}[\mu]^{\basis} = \tilde{H}[\mu]$), then all its eigenvalues coincide with that of the exact Hamiltonian (\textit{i.e.} developed in a complete basis set). If one focusses now on the exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$, it is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $u(r_{12},\mu)$ through 
+The exact ground state eigenvector $\phimu$ of $\tilde{H}[\mu]$ is directly related to the exact ground state wave function $\psiex$ by the Jastrow factor $u(r_{12},\mu)$ through 
 \begin{equation}
  \psiex(\br{}_1,\br{}_2) =  \frac{1}{\sqrt{\mathcal{N}^{\mu}}} e^{u(r_{12},\mu)} \phimu(\br{}_1,\br{}_2), 
 \end{equation}
@@ -572,7 +564,7 @@ where the normalization factor $\mathcal{N}_{\basis}^{\mu}$ is simply
 \begin{equation}
   \mathcal{N}_{\basis}^{\mu} = \matelem{\phimub}{e^{2 u(r_{12},\mu)}}{\phimub}.
 \end{equation}
-Then, the quality of a given basis set $\basis$ for a given $\mu$ can be also quantified from the vicinity between $\psimub(\br{}_1,\br{}_2)$ and the exact wave function $\psiex(\br{}_1,\br{}_2)$. 
+Then, the quality of a given basis set $\basis$ to represent $\tilde{H}[\mu]$  can be also quantified from the vicinity between $\psimub(\br{}_1,\br{}_2)$ and the exact wave function $\psiex(\br{}_1,\br{}_2)$. 
 To illustrate that, 
 we plotted a cutting of $\psiex(\br{}_1,\br{}_2)$ and  $\psimub(\br{}_1,\br{}_2) $ with different basis sets and values of $\mu$. The cutting used is the following: we set two electrons on a circle of radius $r=0.5$ a.u. from the nucleus and look at the wave functions as a function of the angle $\theta_{12}$ between the $\bri{1}$ and $\bri{2}$. 
 For this study, we approximate the exact ground state wave function $\psiex(\br{}_1,\br{}_2)$ of the helium atom by the wave function developed by Umrigar \textit{et. al.}\cite{UmrGon-PRA-94} which contains explicitly the $r_{12}$ coordinate and which provides a total energy accurate up to twelve digits.  
@@ -606,7 +598,7 @@ A qualitative understanding of such observations can be provided by some physica
 i) The shape of the Jastrow factor $u(r_{12};\mu)$ leading to the transcorrelated Hamiltonian is such that as long as $\mu < \infty$, the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ in $\tilde{H}[\mu]$ is non divergent, and therefore its eigenfunctions do not have to fulfill the cusp condition which leads to a faster convergence with $\basis$. 
 Nevertheless, one can also remark that for $\mu > 0.5$, the speed of convergence deteriorates as $\mu$ increases, even though it remains finite. This can be explained by the fact that even if $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$ remains bounded from above, when $\mu$ is large such operator is poorly represented in a finite basis set. 
 
-ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ presents a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ or the FCI wave function can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is much more attractive when $r_{12}\approx 0$ for $\mu=0.3$ than for $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
+ii) The fact that the wave function $\phimub(\br{}_1,\br{}_2)$ presents a maximum at $r_{12}=0$ for $\mu=0.3$ whereas it provides a minimum for $\mu=1.0$ can be explained by the shape of the effective potential $\tilde{\mathcal{W}}_{ee}(r_{12},\mu)$: the latter is much more attractive when $r_{12}\approx 0$ for $\mu=0.3$ than for $\mu = 1.0$ (see Fig \ref{fig_wee_compare} for a graphical representation). 
 
 iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}(r_{12},\mu) <\frac{1}{r_{12}}$, the value of the eigenvector of $\phimub(\br{}_1,\br{}_2)$ is necessary larger than the FCI wave function at $r_{12}=0$ as in the latter the interaction is more repulsive. This implies that the on-top pair density (\textit{i.e.} the probability of finding two electrons at the same position) is necessary larger for the eigenvectors of $\tilde{H}[\mu]$ than that for the eigenvectors of $H$.
 
@@ -619,10 +611,10 @@ iii) Similarly, as for any $\mu < \infty$ one has that $\tilde{\mathcal{W}}_{ee}
 
 \section{Study of the helium isoelectronic series}
 \label{sec:iso_elec}
-Having investigated in the case of the helium atom the behaviour of both the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with both $\mu$ and the basis set used, we now study the ground state energies of the isoelectronic series of the helium atom H$^{-}$ to Ne$^{8+}$. As seen from the previous study on the helium atom, the quality of the eigenvalues of $\tilde{H}[\mu]$ depends on the value of $\mu$ but there is a quite wide regimes of $\mu$ for which they converge significantly faster with the basis set with respect to the usual Hamiltonian. Of course, the 'optimal' range of $\mu$ might depend on the system and we investigate here different approaches to systematically find a reasonable value of $\mu$ and test it on this isoelectronic series which consist in weakly correlated systems covering a quite wide range of densities. 
+Having investigated in the case of the helium atom the behaviour of both the eigenvalues and eigenvectors of $\tilde{H}[\mu]$ with both $\mu$ and the basis set used, we now study the ground state energies of the isoelectronic series of the helium atom for H$^{-}$ to Ne$^{8+}$. As seen from the previous study on the helium atom, the quality of the eigenvalues of $\tilde{H}[\mu]$ depends on the value of $\mu$ but there is a quite wide regimes of $\mu$ for which they converge significantly faster with the basis set with respect to the usual Hamiltonian. Of course, the 'optimal' range of $\mu$ might depend on the system and we investigate here different approaches to systematically find a reasonable value of $\mu$ and test it on this isoelectronic series which consist in weakly correlated systems covering a quite wide range of densities. 
 As in the study of the helium atom of Sec \ref{sec:total_he}, in a given basis set $\basis$ and for a given system, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
 
-In order to find a systematic way to determine a reasonable value of $\mu$, one must keep in mind the physical meaning of such quantity: it has the unit of an inverse distance, and determines, at leading order, the depth of the hole imposed by the Jastrow factor. 
+In order to find a systematic way to determine a reasonable value of $\mu$, one must keep in mind the physical meaning of such quantity: it has the unit of the inverse of a distance, and determines, at leading order, the depth of the hole imposed by the Jastrow factor. 
 Therefore, it must have the typical scale of the inverse of correlation effects, which of course strongly depends on the system through its density for instance. In the context of RS-DFT, Toulouse \textit{et. al.}\cite{TouColSav-JCP-05} have investigated different flavour of $\mu$ varying in space through the density of the system in a given point in space. 
 More specifically, they introduced (see Eq. (12) of \onlinecite{TouColSav-JCP-05}) a range separation parameter typical for correlation effects in the uniform electron gas (UEG) 
 \begin{equation}
@@ -660,7 +652,7 @@ Therefore one can define an average UEG value of $\mu$
  \muuegav = \frac{1}{N_e}\int \text{d}{\bf r} \muueg({\bf r}) n_{\text{HF}}({\bf r}).
 \end{equation}
 We report in Table \ref{table_conv_e_mu_iso} for different basis sets the error with respect to the exact ground state energy of $E_0^{\basis}[\muuegav]$ for the isoelectronic series studied here. 
-From these data, one can see that MAD is sensibly the same than that with the $\murscav$ but with a MSD of opposite sign with respect to the latter. This correlates with the fact that the values of $\muuegav$ are in general larger than that of $\murscav$, except for H$^-$. 
+From these data, one can see that the MAD is sensibly the same than that with the $\murscav$ but with a MSD of opposite sign with respect to the latter. This correlates with the fact that the values of $\muuegav$ are in general larger than that of $\murscav$, except for H$^-$. 
 Because the MAD are essentially the same but that the MSD are of opposite sign, it means that there exists an optimal value of $\mu$ between $\murscav$ and $\muuegav$ which might be optimal. 
 Therefore, we propose to define the average between $\murscav$ and $\muuegav$ 
 \begin{equation}
@@ -676,7 +668,7 @@ These results illustrates that the Jastrow factor must adapt to the typical leng
 \begin{table*}
 \label{table_conv_e_mu_iso}
 \caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. We also report the average value of the $\mu$ considered (referred as $\muav$) in the double-zeta basis. 
-The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.86975$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy of all systems studied here was obtained from Ref. \cite{Dav-ions-PRA-91}.}
+The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.87$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy of all systems studied here was obtained from Ref. \cite{Dav-ions-PRA-91}.}
 
 \begin{ruledtabular}
 \begin{tabular}{l|rrr|r||rrr|r||rrr|r|}
@@ -724,7 +716,7 @@ $E_0^{\basis}[\mfrogg]$  &  -11.79 &  -1.41,  & -0.90    &    -      & 7.36    &
 \end{table*}
 
 \section{The ground state potential energy curve H$_2$}
-Having established in Sec \ref{sec:ht_general} the analytical form of $ \tilde{H}[\mu]$ for a general molecular system, we focus on the ground state potential curve of H$_2$ with $ \tilde{H}[\mu]$ in the last part of the present study as a test case for valence only molecular system. 
+Having established in Sec \ref{sec:ht_general} the analytical form of $ \tilde{H}[\mu]$ for a general molecular system, we apply here the new TC Hamiltonian $ \tilde{H}[\mu]$ on the study of the ground state potential curve of H$_2$. 
 As in the study of the helium atom of Sec \ref{sec:total_he}, in a given basis set $\basis$ and for a given geometry, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
 We report in Figs \ref{fig:H2} the difference with respect to the estimated exact ground state potential energy curve using several levels of calculations for the aug-cc-pVDZ and aug-cc-pVTZ basis sets. 
 
@@ -744,14 +736,14 @@ From the Figs \ref{fig:H2}, one can observe that i) all methods provide a near c
 \end{figure*}
 
 \section{Conclusion}
-In the present paper, we derived a new form of Jastrow factor $u(r_{12},\mu)$ for the TC framework and performed the first numerical tests on a set of two electrons atomic and molecular systems. 
+In the present paper, we derived a new form of Jastrow factor $u(r_{12},\mu)$ for the TC framework and performed the first numerical tests on a set of two electron atomic and molecular systems. 
 In contrast to the FROGG introduced by Ten-No\cite{TenNo-CPL-00-a} which was obtained as a linear combination of Gaussians from a numerical fit, the analytical form of the new Jastrow factor proposed here has been derived from the analysis of the leading order terms in $\frac{1}{r_{12}}$ of the general TC Hamiltonian, such that it mimics the long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ used in the RS-DFT framework (see Sec. \ref{sec:new_j}). 
 The Jastrow factor $u(r_{12},\mu)$ resulting from such mathematical conditions naturally imposes the cusp and digs the Coulomb hole over a typical length scale tuned by a unique parameter $\mu$: the smaller the $\mu$, the broader and deeper is the Coulomb hole dug by $u(r_{12},\mu)$, and in the $\mu \rightarrow \infty$ limit, $u(r_{12},\mu)=0$. 
 The TC Hamiltonian $\tilde{H}[\mu]$ obtained from the similarity transformation of the usual Hamiltonian with $u(r_{12},\mu)$ is analytical and depends on a unique parameter $\mu$. 
 While varying $\mu$, the physical content of $\tilde{H}[\mu]$ significantly changes: one can continuously change from a repulsive non divergent Hamiltonian at large $\mu$, to a partially attractive Hamiltonian at intermediate values of $\mu$, and eventually to a purely attractive Hamiltonian at small values of $\mu$ (see Sec. \ref{sec:ht_general}). 
 Also, in the $\mu \rightarrow \infty$ limit one recovers the usual physical Hamiltonian, just as in RS-DFT. 
  
-The numerical investigation of the ground state of the helium atom indicates that for values of $\mu$ ranging from 0.2 to 1.0 one can strongly improve the convergence of the computed energies with respect to the basis set (see Sec. \ref{sec:total_he}). An investigation of the right eigenvectors in real space for different values of $\mu$ have shown interesting behaviour: while for $\mu=1$ the right-eigenvectors provide a depletion of the probability of finding electrons near $r_{12}=0$, for $\mu=0.3$ one obtains an increase of such a probability. 
+The numerical investigation of the ground state of the helium atom indicates that for values of $\mu$ ranging from 0.2 to 1.6 one can strongly improve the convergence of the computed energies with respect to the basis set (see Sec. \ref{sec:total_he}). An investigation of the right eigenvectors in real space for different values of $\mu$ have shown interesting behaviour: while for $\mu=1$ the right-eigenvectors provide a depletion of the probability of finding electrons near $r_{12}=0$, for $\mu=0.3$ one obtains an increase of such a probability. These different behaviour can be understood as the effective potential entering TC Hamiltonian becomes more and more attractive as $\mu$ lowers. 
 Nevertheless, when the right eigenvectors are multiplied by the corresponding Jastrow factor, one obtains a very good approximation of the numerically exact ground state wave function (see Sec. \ref{sec:he_real_space}).  
 Also, we found a value of $\mu \approx 0.87$ which provides a Jastrow factor very close to the FROGG, and which produces essentially the same eigenvalues than the FROGG, indicating that one can see the FROGG as a special case of the more flexible Jastrow factor $u(r_{12},\mu)$. 
 
@@ -760,7 +752,7 @@ As the density considerably vary among the isoelectronic series, we propose a ve
 
 The last part of our study is dedicated to the study of the ground state energy curve of H$_2$ with different schemes, and we show that the present scheme provides an improvement of the convergence of the energy over the whole potential energy curve. 
 
-The perspective of this work are mainly to study more realistic systems which will includes the expensive three-body terms, and tu explore the possibility of having a value of $\mu$ varying in space. 
+The perspective of this work are mainly to study more realistic systems which will includes the expensive three-body terms, and to explore the possibility of having a value of $\mu$ varying in space. 
 
 
 \section{Appendix}
@@ -1016,7 +1008,7 @@ which can be computed on the fly through a simple numerical integration.
 \label{sec:cusp}
 Having established the analytical form of the transcorrelated Hamiltonian $\tilde{H}[u]$ for a general Jastrow factor $u(r_{12})$ in the case of the helium atom in Sec. \ref{sec:he_htilde}, one can then study the behaviour of $\tilde{H}[u]$ when $r_{12}\rightarrow 0$ and compare it to two other types of Hamiltonian: the usual physical Hamiltonian and that entering the RS-DFT framework. 
 The analysis of the $r_{12}\rightarrow 0$ behaviour leads to the different condition that the eigenvectors of such operators must fulfill. 
-It should be noticed that, although it was established in the case of the helium atom, the leading order of the $r_{12} \rightarrow 0$ limit that will be carried out in that section are valid for a general $N$ electron system. 
+It should be noticed that, although it was established in the case of the helium atom, the leading order analysis of the $r_{12} \rightarrow 0$ limit that will be carried out in that section are valid for a general $N$ electron system. 
 For the sake of simplicity of the notations we focus on the ground state of these operators but the arguments are valid for any bounded eigenvectors. 
 
 In the case of the usual Hamiltonian, the exact ground state wave function $\psiex$ must satisfy the Schroedinger equation in real space 
