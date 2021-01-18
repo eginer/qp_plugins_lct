@@ -16,7 +16,7 @@ set output "He_E_conv_basis_large_mu.pdf"
 set ylabel "Total energy"
 set xlabel "1/X"
 set key left top
-plot   "data_mu_0.7" u (1./$1):2 w lp lt 4 lw 2  title "{/Symbol m} = 0.7",  "data_ten_no" u (1./$1):3 w lp lt 5 lw 2 title "FROGG", "data_mu_2.0" u (1./$1):2 w lp lw 2  title "{/Symbol m} = 2.0", "data_mu_3.0" u (1./$1):2 w lp lw 2  title "{/Symbol m} = 3.0", "data_fci" u (1./$1):2 w lp lw 2 lt 6 title "FCI",  -2.903724 title "Exact" dt 3 lw 4 lt 7
+plot   "data_mu_0.7" u (1./$1):2 w lp lt 4 lw 2  title "{/Symbol m} = 0.7",  "data_ten_no" u (1./$1):3 w lp lt 5 lw 2 title "FROGG", "data_mu_2.0" u (1./$1):2 w lp lw 2  title "{/Symbol m} = 2.0", "data_mu_3.0" u (1./$1):2 w lp lw 2 lt 8 title "{/Symbol m} = 3.0", "data_fci" u (1./$1):2 w lp lw 2 lt 6 title "FCI",  -2.903724 title "Exact" dt 3 lw 4 lt 7
 
 #set output "He_conv_basis_mu_lda.pdf"
 #set ylabel "Total energy"
