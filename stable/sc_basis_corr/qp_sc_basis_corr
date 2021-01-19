@@ -239,7 +239,6 @@ qp  set  density_for_dft    density_for_dft         "WFT"
      CONV=`echo "print(${DEabs} < ${thresh})" | python`
      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${file_final}
      if [[ $i -eq $itmax ]]; then
-      echo "coucou"
       CONV="True"
      fi
      if [ "$CONV" = "True" ]; then
