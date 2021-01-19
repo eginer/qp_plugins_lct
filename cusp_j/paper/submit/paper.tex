@@ -65,8 +65,8 @@ The transcorrelated Hamiltonian obtained with such a new correlation factor has 
 We investigate the convergence of the ground state eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
 We found that the convergence towards the complete basis set is much faster for a quite wide range values of $\mu$. 
 We also propose a specific value of $\mu$ which essentially reproduce the results obtained with the frozen Gaussian geminal introduced by Ten-No [CPL-330,169 (2000)]. 
-We introduce a way to find a reasonable value of $\mu$ that automatically adapts to the system through its density, and show the benefit of such approach on the isoelectronic series of the helium atom.  
-It should be pointed out that all two-electron integrals can be carried analytically within such approach and the three-electrons terms can be performed using a mixed analytical-numerical integration approach.
+%We introduce a way to find a reasonable value of $\mu$ that automatically adapts to the system through its density, and show the benefit of such approach on the isoelectronic series of the helium atom.  
+%It should be pointed out that all two-electron integrals can be carried analytically within such approach and the three-electrons terms can be performed using a mixed analytical-numerical integration approach.
 
 \end{abstract}
 
@@ -527,7 +527,7 @@ We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\te
 
 \begin{table*}
 \caption{Ground state eigenvalue (in Hartree) of $\tilde{H}[\mu]$ for the He atom with the AVXZ (X=D,T,Q,5) basis sets for different values of $\mu$, and error (in mH) with respect to the exact non relativistic energy. 
-We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref. \onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.87$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy was obtained from Ref. \cite{Dav-ions-PRA-91}. 
+We also compare with the results of the TC obtained with the $u(r_{12}) = u^{\text{TN}}(r_{12})$ (see Eq. \eqref{eq_frogg} and Ref. \onlinecite{TenNo-CPL-00-a}), referred here as FROGG, and the value of $\mfrogg=0.87$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy was obtained from Ref. \onlinecite{Dav-ions-PRA-91}. 
  }
 \begin{ruledtabular}
 \begin{tabular}{llllllllllll}
@@ -680,7 +680,7 @@ These results illustrates that the Jastrow factor must adapt to the typical leng
 
 \begin{table*}
 \caption{Error (in mH) with respect to the exact non relativistic energies of the ground state eigenvalue of the usual Hamiltonian and $\tilde{H}[\mu]$ for the helium isoelectronic series with Dunning basis sets basis sets for different flavour of $\mu$. For H$^{-}$ and He, the basis sets used are the aug-cc-pVXZ series (X=D,T,Q) and for the Li$^+$-Ne$^{8+}$ series, the cc-pCVXZ (X=D,T,Q) basis sets with core-valence functions were used. The mean absolute deviation (MAD) and mean signed deviation (MSD) are also reported for each basis set and method. We also report the average value of the $\mu$ considered (referred as $\muav$) in the double-zeta basis. 
-The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.87$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy of all systems studied here was obtained from Ref. \cite{Dav-ions-PRA-91}.}
+The method referred as $\frogg$ is the frozen gaussian geminal introduced by Ten-No\cite{TenNo-CPL-00-a}, and the value of $\mfrogg=0.87$ is defined in Eq. \eqref{mu_ten_no_1}. The exact non relativistic energy of all systems studied here was obtained from Ref. \onlinecite{Dav-ions-PRA-91}.}
 
 \begin{ruledtabular}
 \begin{tabular}{l|rrr|r||rrr|r||rrr|r|}
@@ -743,7 +743,7 @@ From the Figs \ref{fig:H2}, one can observe that i) all methods provide a near c
         \includegraphics[width=0.45\linewidth]{Fig8e.pdf}
         \includegraphics[width=0.45\linewidth]{Fig8f.pdf}
         \caption{
-        H$_2$ molecule: Error with respect to the estimated exact ground state energy for the aug-cc-pVDZ and aug-cc-pVTZ basis sets (AVDZ, AVTZ, respectively) as a function of the inter nuclear distance for different values of $\mu$, and comparison with FCI. R$_{eq}$ refers to the equilibrium distance of 1.401 a.u., and the estimated exact non relativistic potential energy curve was taken from Ref. \onlinecite{LieCle-JCP-74a}.  
+        H$_2$ molecule: Error (in m a.u.) with respect to the estimated exact ground state energy for the aug-cc-pVDZ and aug-cc-pVTZ basis sets (AVDZ, AVTZ, respectively) as a function of the inter nuclear distance for different values of $\mu$, and comparison with FCI. R$_{eq}$ refers to the equilibrium distance of 1.401 a.u., and the estimated exact non relativistic potential energy curve was taken from Ref. \onlinecite{LieCle-JCP-74a}.  
 }
  \label{fig:H2}
 \end{figure*}
@@ -769,6 +769,9 @@ The perspective of this work are mainly to study more realistic systems which wi
 
 \section{Acknowledgment}
 The author would like to thank Julien Toulouse and Andreas Savin for stimulating discussions. 
+
+\section{Data availability}
+The data that supports the findings of this study are available within the article and from the corresponding author upon reasonable request. 
 
 \section{Appendix}
 \subsection{Analytical form for the operator $\hat{K}_\mu(\bri{1},\bri{2}) $}
