@@ -82,11 +82,11 @@ selected CI\cite{bender,HurMalRan-JCP-73,buenker1,buenker-book,three_class_CIPSI
 full configuration Quantum Monte Carlo\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} (FCI-QMC) or matrix product states\cite{ChaSha-AR-11,BaiRei-JCP-20}. These methods all have one thing in common: they manage to select, although through different mathematical frameworks, the part of the exponentially growing Hilbert space which dominates the wave function. 
 
 Even if these schemes are extremely efficient to obtain a qualitative description of the wave function through a meaningful selection in an exponentially growing Hilbert space, a quantitative description is often out of reach as it implies the use of very large one-electron basis sets which are needed to recover the slowly converging correlation effects near the electron-electron coalescence point. 
-These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance ($r_{12}\approx 0$): the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. For a clear and general derivation of the cusp conditions up to second order for Coulombic systems, see Ref. \onlinecite{Tew-JCP-08}. As shown by the seminal works of Hylleraas\cite{Hyl-ZP-29} and further developed byKutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the quality of the basis set is mainly due to the impossibility to represent the cusp in a finite one-electron basis set. 
+These short-range correlation effects are mainly due to the diverging character of the coulomb potential, which induces a non analytical behaviour of the wave function at small inter-electronic distance ($r_{12}\approx 0$): the famous electronic cusp originally derived by Kato\cite{Kat-CPAM-57}. For a clear and general derivation of the cusp conditions up to second order for Coulombic systems, see Ref. \onlinecite{Tew-JCP-08}. As shown by the seminal works of Hylleraas\cite{Hyl-ZP-29} and further developed by Kutzelnigg and coworkers, \cite{Kut-TCA-85,KutKlo-JCP-91, NogKut-JCP-94} the slow convergence of the correlation energy with respect to the quality of the basis set is mainly due to the impossibility to represent the cusp in a finite one-electron basis set. 
 As the cusp conditions originate from the divergence of the Coulomb potential at $r_{12}=0$, an alternative approach would be to develop theories dealing with a smooth potential. Such a path was followed by three distinct branches: 
 the explicitly correlated methods (F12), transcorrelated methods (TC) and the range-separated density functional theory (RS-DFT). 
 
-In RS-DFT\cite{Sav-INC-96a,TouColSav-PRA-04}, the electron-electron interaction is split into a smooth long-range part and a complementary short-range diverging part, the former being treated explicitly by a wave function and the latter by a density functional. 
+In RS-DFT\cite{Sav-INC-95,TouColSav-PRA-04}, the electron-electron interaction is split into a smooth long-range part and a complementary short-range diverging part, the former being treated explicitly by a wave function and the latter by a density functional. 
 Such a splitting is done through the function $\text{erf}(\mu r_{12})$ where $\mu$ is the range separation parameter which allows one to continually move from Kohn-Sham DFT ($\mu=0$) to pure WFT ($\mu=\infty$). 
 As the effective Hamiltonian obtained in RS-DFT is smooth at $r_{12}=0$ for a finite value of $\mu$, the corresponding eigenfunction has no electron-electron cusp\cite{GorSav-PRA-06} and therefore the convergence of the results with respect to the basis set are exponential\cite{FraMusLupTou-JCP-15}. 
 A number of approximate RS-DFT schemes have been developed involving single-reference\cite{AngGerSavTou-PRA-05, GolWerSto-PCCP-05, TouGerJanSavAng-PRL-09,JanHenScu-JCP-09,TouZhuSavJanAng-JCP-11, MusReiAngTou-JCP-15,KalTou-JCP-18,KalMusTou-JCP-19} and multi-reference\cite{LeiStoWerSav-CPL-97, FroTouJen-JCP-07, FroCimJen-PRA-10, HedKneKieJenRei-JCP-15, HedTouJen-JCP-18, FerGinTou-JCP-18} WFT methods. 
@@ -104,7 +104,7 @@ but a fast convergence toward the complete basis set limit (CBS) is nevertheless
 An alternative point of view using a Jastrow factor is the so-called transcorrelated (TC) approach where the full effect of the Jastrow factor is incorporated into the calculation through a similarity transformation of the original Hamiltonian by the Jastrow factor. 
 Seminal equations were derived by Hirschfelder\cite{Hirschfelder-JCP-63} who obtained an effective non hermitian operator based on a specific form of Jastrow factor, and later on Boys, Handy and co-workers\cite{BoyHan-PRSLA-69,BoyHanLin-1-PRSLA-69,BoyHanLin-2-PRSLA-69} derived the equations of the TC Hamiltonian for a general exponential form of the Jastrow factor which insures size extensivity. 
 The obtained TC Hamiltonian contains certain new features with respect to the usual Hamiltonian: the TC Hamiltonian contains an additional effective two- and three-electron scalar potential together with is a non hermitian two-electron differential operator. Because of its non-hermitian nature, the TC Hamiltonian looses the variational principle, and Boys and Handy managed to derive equations to optimize both orbitals and Jastrow parameters for a single Slater determinant. 
-Nevertheless, such a constrained form of the wave function for the Slater together with the loose of variational principle makes it difficult to find a monotonic convergence of computed energies\cite{Handy-MolPhys-71}. 
+Nevertheless, such a constrained form for the Slater part of the wave function together with the loose of variational principle makes it difficult to find a monotonic convergence of computed energies\cite{Handy-MolPhys-71}. 
 
 Later on, Ten-No\cite{TenNo-CPL-00-a} proposed to significantly change the paradigm of Boys and Handy: instead of using a single Slater determinant and optimizing both the orbitals and the Jastrow factor, one uses a more elaborate many body theory with a frozen universal Jastrow factor.  This strategy was developed using as M{\o}ller-Plesset at second order (MP2) in Refs. \onlinecite{TenNo-CPL-00-a,HinTanTen-JCP-01} and a linearised coupled cluster ansatz in later work\cite{HinTanTen-CPL-02}.  
 The Jastrow factor introduced by Ten-No, developed as a linear combination of gaussian functions and referred to as the frozen gaussian geminal (FROGG), only depends on the inter-electronic coordinate and is optimized such that the scalar effective two-electron  potential cancels on average the coulomb potential near $r_{12}=0$. The use of gaussian functions to represent the Jastrow factor enabled Ten-No to develop a numerical scheme to evaluate exactly the three-electron integrals present in TC Hamiltonian\cite{TenNo-CPL-00-b}, which is an alternative to the density-fitting method proposed by the same author in the general context of F12 methods\cite{TenMan-JCP-03}. 
@@ -134,7 +134,7 @@ In the present work, we derive a new form of Jastrow factor such that the leadin
 As in RS-DFT, the new TC Hamiltonian and Jastrow factor are tuned by a unique range separation parameter $\mu$. 
 The aim of this paper is to establish the analytical form of the TC Hamiltonian and perform a numerical study on the ground state eigenvalues and eigenvectors on a set of two-electron atomic and molecular systems: the helium isoelectronic series from H$^-$ to Ne$^{8+}$ and H$_2$ molecule. 
 In the context of the TC theory the interesting features of the present work are that 
-i) the analytical form of the TC Hamiltonian is explicitly known and it turns out that all two-electron integrals can be performed analytically and the three-electron integrals can be efficiently computed in mixed numerical-analytical way, ii) the new Jastrow factor and corresponding TC Hamiltonian are tuned by a unique parameter $\mu$ which allows some flexibility, iii) there always exists a regime of $\mu$ which significantly improve the basis set convergence of WFT, iv) we propose schemes to find a value of $\mu$ which automatically adapts to the system and improves basis set convergence. 
+i) the analytical form of the TC Hamiltonian is explicitly known and it turns out that all two-electron integrals can be performed analytically and the three-electron integrals can be efficiently computed in mixed numerical-analytical way, ii) the new Jastrow factor and corresponding TC Hamiltonian are tuned by a unique parameter $\mu$ which allows some flexibility, iii) there always exists a regime of $\mu$ which significantly improves the basis set convergence of WFT, iv) we propose schemes to find a value of $\mu$ which automatically adapts to the system and improves basis set convergence. 
 
 The paper is organized as follows. 
 In the first section, inspired by the RS-DFT effective Hamiltonian,  
@@ -248,7 +248,7 @@ To better understand the physical content of at $r_{12}\approx 0$,
 let us Taylor expand the function $u(r_{12};\mu)$ 
 \begin{equation}
  \label{eq:j_dl}
- u(r_{12};\mu) = -\frac{1}{2\sqrt{\pi}\mu} + \frac{1}{2}r_{12} - \frac{\mu}{2\sqrt{\pi}} r_{12}^2 + o(r_{12}^4).
+ u(r_{12};\mu) = -\frac{1}{2\sqrt{\pi}\mu} + \frac{1}{2}r_{12} - \frac{\mu}{2\sqrt{\pi}} r_{12}^2 + O(r_{12}^4).
 \end{equation}
 A first remark is that $u(r_{12};\mu)$ exactly restores the cusp as
 \begin{equation}
@@ -319,14 +319,14 @@ Eq. \eqref{ht_def_g} leads to the following transcorrelated Hamiltonian
 \begin{equation}
  \begin{aligned}
  \label{ht_def_gu}
- \tilde{H}[\mu] & = H - \sum_{i<j} \hat{K}_\mu(\bri{i},\bri{j}) - \sum_{i<j<k} \hat{L}_\mu(\bri{i},\bri{j},\bri{k}),
+ \tilde{H}[\mu] & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{j},\mu) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{j},\bri{k},\mu),
  \end{aligned}
 \end{equation}
-where the effective two- and three-body operators $\hat{K}_\mu(\bri{1},\bri{2})$ and $\hat{L}_\mu(\bri{1},\bri{2},\bri{3})$ are defined as
+where the effective two- and three-body operators $\hat{K}(\bri{1},\bri{2},\mu)$ and $\hat{L}(\bri{1},\bri{2},\bri{3},\mu)$ are defined as
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{K}_\mu(\bri{1},\bri{2})  = \frac{1}{2} \bigg( &\Delta_1 u(r_{12},\mu) + \Delta_2 u(r_{12},\mu) \\
+  \hat{K}(\bri{1},\bri{2},\mu)  = \frac{1}{2} \bigg( &\Delta_1 u(r_{12},\mu) + \Delta_2 u(r_{12},\mu) \\
                                                + &\big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_1 u(r_{12},\mu) \big) ^2 \bigg) \\
                                                + &\nabla_1 u(r_{12},\mu) \cdot \nabla_2 + \nabla_2 u(r_{12},\mu)\cdot \nabla_1,
  \end{aligned}
@@ -334,25 +334,25 @@ where the effective two- and three-body operators $\hat{K}_\mu(\bri{1},\bri{2})$
 \begin{equation}
  \begin{aligned}
  \label{def_k}
-  \hat{L}_\mu(\bri{1},\bri{2},\bri{3})  = &   \nabla_1 u(r_{12},\mu) \cdot \nabla_1 u(r_{13},\mu) \\
+  \hat{L}(\bri{1},\bri{2},\bri{3},\mu)  = &   \nabla_1 u(r_{12},\mu) \cdot \nabla_1 u(r_{13},\mu) \\
                                           + & \nabla_2 u(r_{21},\mu) \cdot \nabla_2 u(r_{23},\mu)  \\
                                           + & \nabla_3 u(r_{13},\mu) \cdot \nabla_3 u(r_{32},\mu).
  \end{aligned}
 \end{equation}
 
-As shown in the Appendix \ref{k_l_appendix}, the operator $\hat{K}_\mu(\bri{1},\bri{2})$ has a straightforward analytical expression which reads 
+As shown in the Appendix \ref{k_l_appendix}, the operator $\hat{K}(\bri{1},\bri{2},\mu)$ has a straightforward analytical expression which reads 
 \begin{equation}
  \label{eq:k_final}
   \begin{aligned}
-   \hat{K}_\mu(\bri{1},\bri{2}) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
+   \hat{K}(\bri{1},\bri{2},\mu) = & \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} + \frac{\bigg(1 -     \text{erf}(\mu r_{12}) \bigg)^2}{4} \\
 & - \bigg( \text{erf}(\mu r_{12}) - 1\bigg) \deriv{}{r_{12}}{},
   \end{aligned}
 \end{equation}
-and similarly the analytical expression of $\hat{L}_\mu(\bri{1},\bri{2},\bri{3}) $ reads 
+and similarly the analytical expression of $\hat{L}(\bri{1},\bri{2},\bri{3},\mu) $ reads 
 \begin{equation}
  \label{eq:l_final}
  \begin{aligned}
- \hat{L}_\mu(\bri{1},\bri{2},\bri{3}) = & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{12} \cdot \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{13} \\
+ \hat{L}(\bri{1},\bri{2},\bri{3},\mu) = & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{12} \cdot \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{13} \\
                                       + & \frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \bri{21} \cdot \frac{1 - \text{erf}(\mu r_{23})}{2 r_{23}} \bri{23} \\
                                       + & \frac{1 - \text{erf}(\mu r_{13})}{2 r_{13}} \bri{31} \cdot \frac{1 - \text{erf}(\mu r_{32})}{2 r_{32}} \bri{32}.
  \end{aligned}                    
@@ -362,7 +362,7 @@ By injecting the form of Eqs. \eqref{eq:k_final} and \eqref{eq:l_final} in Eq. \
 \begin{equation}
   \begin{aligned}
  \label{eq:exp_ht_mu}
-   \tilde{H}[\mu] = & h_c + \sum_{i<j} \bigg( \tilde{\mathcal{W}}_{ee}(r_{ij},\mu) + \tilde{t}[\mu] \bigg) - \sum_{i<j<k} \hat{L}_\mu(\bri{1},\bri{2},\bri{3})
+   \tilde{H}[\mu] = & h_c + \sum_{i<j} \bigg( \tilde{\mathcal{W}}_{ee}(r_{ij},\mu) + \tilde{t}[\mu] \bigg) - \sum_{i<j<k} \hat{L}(\bri{1},\bri{2},\bri{3},\mu)
   \end{aligned}
 \end{equation}
 where $ \tilde{\mathcal{W}}_{ee}(r_{ij},\mu)$ is the scalar effective two-body potential of  $\tilde{H}[\mu]$
@@ -639,7 +639,7 @@ Therefore, we propose here to use the average value of $\mursc({\bf r})$ over th
 where $n_{\text{HF}}({\bf r})$ is the HF density and $N_e$ the number of electrons in the system. 
 We report in Table \ref{table_conv_e_mu_iso} the convergence with the basis set $\basis$ of the error with respect to the exact ground state energies of the isoelectronic series of the helium atom using $\murscav$ in $\tilde{H}[\mu]$. 
 We also report in Table \ref{table_conv_e_mu_iso} the value of $\murscav$ in the double-zeta quality basis for each system, the value in larger basis sets varying by less than $0.1\%$. 
-As one can observe from  Table \ref{table_conv_e_mu_iso}, the ground state energies of $\tilde{H}[\murscav]$ converge much faster than that of the usual Hamiltonian as the MAD for the ground state energies is of 2.64 mH, 0.48 mH and 0.26 mH in the double-, triple- and quadruple zeta quality basis sets (respectively) whereas it is of 12.16 mH, 4.71 mH and 1.64 mH for the usual Hamiltonian. Also, one can observe that, except for the low density systems such as the H${^-}$ and He species, it converges from below the exact ground state energy. Regarding now the value of $\murscav $, one can notice that it increases with the atomic number. This is expected as the density becomes more picked near the nucleus while the nuclear charge increases, which induces necessary that the typical inter electronic distance lowers with $Z$. 
+As one can observe from  Table \ref{table_conv_e_mu_iso}, the ground state energies of $\tilde{H}[\murscav]$ converge much faster than that of the usual Hamiltonian as the MAD for the ground state energies is of 2.64 mH, 0.48 mH and 0.26 mH in the double-, triple- and quadruple zeta quality basis sets (respectively) whereas it is of 12.16 mH, 4.71 mH and 1.64 mH for the usual Hamiltonian. Also, one can observe that, except for the low density systems such as the H${^-}$ and He species, it converges from below the exact ground state energy. Regarding now the value of $\murscav $, one can notice that it increases with the atomic number. This is expected as the density becomes more picked near the nucleus while the nuclear charge increases, which induces necessary that the typical inter electronic distance lowers with $Z$. In a similar fashion, we tried another definition of $\mu$ based on the work of Toulouse \textit{et. al.}\cite{TouColSav-JCP-05} which was proportional to $\frac{1}{r_s({\bf r})}$ and found that it leads to values of $\mu$ that are too large and therefore do not lead to significant improvement of the basis set convergence. 
 
 Still with the aim of finding good values of $\mu$, we propose here the derivation of another approach based on the mapping of the on-top pair density of the UEG and a model built with the Jastrow factor defined by \eqref{eq:def_j}. 
 Assuming a single Slater determinant ansatz for a Jastrow Slater wave function with a Jastrow factor defined in \eqref{eq:def_j} and neglecting the corresponding normalization factor, the on-top pair density is 
@@ -733,7 +733,7 @@ Having established in Sec \ref{sec:ht_general} the analytical form of $ \tilde{H
 As in the study of the helium atom of Sec \ref{sec:total_he}, in a given basis set $\basis$ and for a given geometry, we use RHF molecular orbitals and the full flexibility is given to the eigenvectors $\ket{\phimub}$. 
 We report in Figs \ref{fig:H2} the difference with respect to the estimated exact ground state potential energy curve using several levels of calculations for the aug-cc-pVDZ and aug-cc-pVTZ basis sets. We do not report the values in the aug-cc-pVQZ because the FCI values are already near the CBS. 
 
-From the Figs \ref{fig:H2}, one can observe that i) all methods provide a near chemical accuracy from the AVTZ basis set, ii) the TC Hamiltonian obtained with the FROGG and that with $\mfrogg$ provide very similar results, iii) the values obtained with $\muuegav$ and $\murscav$ provide very similar results and improve accuracy over the FROGG for the AVDZ basis set, iv) a value of $\mu = 0.5$ provides a good description in the AVDZ basis set while remaining above the exact energy in the AVTZ basis set, which is not the case for $\mu=0.3$. 
+From the Figs \ref{fig:H2}, one can observe that i) all methods provide a near chemical accuracy from the AVTZ basis set, ii) the TC Hamiltonian obtained with the FROGG and that with $\mfrogg$ provide very similar results, iii) the values obtained with $\muuegav$ and $\murscav$ provide very similar results and improve accuracy over the FROGG for the AVDZ basis set, iv) a value of $\mu = 0.5$ provides a good description in the AVDZ basis set while remaining above the exact energy in the AVTZ basis set, which is not the case for $\mu=0.3$. It should also be noticed that when the system becomes strongly correlated (\textit{i.e.} when the bond is stretched), the TC eigenvalues, whatever the Jastrow chosen, do not show any pathological behaviour. 
 
 \begin{figure*}
         \includegraphics[width=0.45\linewidth]{Fig8a.pdf}
@@ -774,9 +774,9 @@ The author would like to thank Julien Toulouse and Andreas Savin for stimulating
 The data that supports the findings of this study are available within the article and from the corresponding author upon reasonable request. 
 
 \section{Appendix}
-\subsection{Analytical form for the operator $\hat{K}_\mu(\bri{1},\bri{2}) $}
+\subsection{Analytical form for the operator $\hat{K}(\bri{1},\bri{2},\mu) $}
 \label{k_l_appendix}
-To compute the operators $\hat{K}_\mu(\bri{1},\bri{2})$ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
+To compute the operators $\hat{K}(\bri{1},\bri{2},\mu)$ one needs to compute first the gradient of $u(r_{12},\mu)$ with respect to $\bri{1}$ which reads 
 \begin{equation}
  \label{eq:nabla_u}
  \begin{aligned}
@@ -789,7 +789,7 @@ Then, the term $\big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\m
  \big(\nabla_1 u(r_{12},\mu) \big) ^2 + \big(\nabla_2 u(r_{12},\mu) \big) ^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12}) \bigg)^2}{2}.
  \end{aligned}
 \end{equation}
-The non hermitian operators in $\hat{K}_\mu(\bri{1},\bri{2})$ contains 
+The non hermitian operators in $\hat{K}(\bri{1},\bri{2},\mu)$ contains 
 \begin{equation}
  \begin{aligned}
  \nabla_1 u(r_{12},\mu) \cdot \nabla_1  = &\frac{1 - \text{erf}(\mu r_{12})}{2 r_{12}} \\ 
@@ -797,7 +797,7 @@ The non hermitian operators in $\hat{K}_\mu(\bri{1},\bri{2})$ contains
  \end{aligned}
 \end{equation}
 and as $\nabla_1 u(r_{12},\mu) = - \nabla_2 u(r_{12},\mu)$,   
-the total non hermitian operator in $\hat{K}_\mu(\bri{1},\bri{2})$ can be written as 
+the total non hermitian operator in $\hat{K}(\bri{1},\bri{2},\mu)$ can be written as 
 \begin{equation}
  \begin{aligned}
  \label{def_non_hermit}
@@ -931,20 +931,20 @@ which makes then the integrals analytical
 \end{equation}
 All numerical tests performed for $\mu > 0.1$ show that this fit is highly accurate. 
 
-\subsection{Analytical form of $\hat{L}(\bri{1},\bri{2},\bri{3})$ and computation of related integrals }
+\subsection{Analytical form of $\hat{L}(\bri{1},\bri{2},\bri{3},\mu)$ and computation of related integrals }
 We need to compute the following integral 
 \begin{equation}
  \label{eq:l_ijmkln}
  \begin{aligned}
- &  \matelem{\phi_i \phi_j \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
- +& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- +& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_2(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
- +& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_3(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} 
+ &  \matelem{\phi_i \phi_j \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} = \\
+ +& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\
+ +& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_2(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\
+ +& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_3(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} 
  \end{aligned}
 \end{equation}
 where 
 \begin{equation}
- \hat{L}_1(\bri{1},\bri{2},\bri{3}) = w_\mu(\bri{12}) w_\mu(\bri{13}) \bri{12} \cdot \bri{13}
+ \hat{L}_1(\bri{1},\bri{2},\bri{3},\mu) = w_\mu(\bri{12}) w_\mu(\bri{13}) \bri{12} \cdot \bri{13}
 \end{equation}
 with 
 \begin{equation}
@@ -953,7 +953,7 @@ with
 Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
 \begin{equation}
  \begin{aligned}
- & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} = \\
+ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} = \\
  & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
  &\qquad \qquad \qquad   \bri{12} \cdot \bri{13}  \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
  \end{aligned}
@@ -961,17 +961,17 @@ Let us compute the first term of Eq. \eqref{eq:l_ijmkln}:
 Such matrix element can be further decomposed into
 \begin{equation}
  \begin{aligned}
- &  \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n}  \\
- =& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
-+ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^y(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
-+ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^z(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n},  
+ &  \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n}  \\
+ =& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\  
++ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^y(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\  
++ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^z(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n},  
  \end{aligned}
 \end{equation}
 where 
 \begin{equation}
  \begin{aligned}
  \label{eq:l_1x}
-& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
+& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\  
  = & \int \dr{1} \dr{2} \dr{3} \phi_i(\bri{1}) \phi_j(\bri{2}) \phi_m(\bri{3}) w_{\mu}(r_{12}) w_{\mu}(r_{13}) \\ 
  &(x_1 - x_2) (x_1 - x_3) \phi_k(\bri{1}) \phi_l(\bri{2}) \phi_n(\bri{3}).
  \end{aligned}
@@ -997,14 +997,14 @@ Then, one can rewrite the matrix element of Eq. \eqref{eq:l_1x} as
 \begin{equation}
  \begin{aligned}
  \label{eq:l_1x_2}
-& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\  
+& \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1^x(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\  
  = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) W_{mn}^x({\bf r}) W_{jl}^x({\bf r}),
  \end{aligned}
 \end{equation}
-Therefore, the matrix element of the $\hat{L}_1(\bri{1},\bri{2},\bri{3})$ is simply 
+Therefore, the matrix element of the $\hat{L}_1(\bri{1},\bri{2},\bri{3},\mu)$ is simply 
 \begin{equation}
  \begin{aligned}
- & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
+ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}_1(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\
  = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg),
  \end{aligned}
 \end{equation}
@@ -1013,7 +1013,7 @@ The total matrix element of the full operator is then
 \begin{equation}
  \label{eq:l_ijmkln_final}
  \begin{aligned}
- & \matelem{\phi_i \phi_j \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3})}{\phi_k \phi_l \phi_n} \\
+ & \matelem{\phi_i \phi_j \phi_m}{\hat{L}(\bri{1},\bri{2},\bri{3},\mu)}{\phi_k \phi_l \phi_n} \\
  = & \int \text{d}{\bf r} \phi_i({\bf r})  \phi_k({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{jl}^x({\bf r}) + W_{mn}^y({\bf r}) W_{jl}^y({\bf r}) + W_{mn}^z({\bf r}) W_{jl}^z({\bf r})\bigg) \\
  + & \int \text{d}{\bf r}\phi_u({\bf r})  \phi_l({\bf r}) \bigg( W_{mn}^x({\bf r}) W_{ik}^x({\bf r}) + W_{mn}^y({\bf r}) W_{ik}^y({\bf r}) + W_{mn}^z({\bf r}) W_{ik}^z({\bf r})\bigg) \\
  + & \int \text{d}{\bf r} \phi_m({\bf r})  \phi_n({\bf r}) \bigg( W_{jl}^x({\bf r}) W_{ik}^x({\bf r}) + W_{jl}^y({\bf r}) W_{ik}^y({\bf r}) + W_{jl}^z({\bf r}) W_{ik}^z({\bf r})\bigg), 
