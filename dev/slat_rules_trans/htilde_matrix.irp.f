@@ -76,9 +76,8 @@ END_PROVIDER
   character*1 :: JOBVL,JOBVR
   JOBVL = "V" ! computes the left  eigenvectors 
   JOBVR = "V" ! computes the right eigenvectors 
-  integer     :: n,lda,ldvl,ldvr,LWORK,INFO
+  integer     :: n
   double precision, allocatable :: A(:,:),WR(:),WI(:),Vl(:,:),VR(:,:)
-  double precision, allocatable :: WORK(:)
   integer :: i,j,k
   integer :: n_good
   integer, allocatable :: list_good(:), iorder(:)
@@ -86,28 +85,8 @@ END_PROVIDER
   ! Eigvalue(n) = WR(n) + i * WI(n)
   n = n_det
   allocate(A(n,n),WR(n),WI(n),VL(n,n),VR(n,n))
-  lda  = n
-  ldvl = n
-  ldvr = n
   A = htilde_matrix_elmt
-  allocate(WORK(1))
-  LWORK = -1 ! to ask for the optimal size of WORK
-  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
-  if(INFO.gt.0)then
-   print*,'dgeev failed !!',INFO
-   stop
-  endif
-  LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
-  deallocate(WORK)
-  allocate(WORK(LWORK))
-  ! Actual diagonalization 
-  A = htilde_matrix_elmt
-  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
-  if(INFO.ne.0)then
-   print*,'dgeev failed !!',INFO
-   stop
-  endif
- 
+  call lapack_diag_non_sym(n,A,WR,WI,VL,VR)
   ! You track the real eigenvalues 
   n_good = 0
   do i = 1, n
