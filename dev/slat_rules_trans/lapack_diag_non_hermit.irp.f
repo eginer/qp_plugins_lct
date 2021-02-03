@@ -1,16 +1,27 @@
 subroutine lapack_diag_non_sym(n,A,WR,WI,VL,VR)
  implicit none
+  BEGIN_DOC
+! You enter with a general non hermitian matrix A(n,n) 
+!
+! You get out with the real WR and imaginary part WI of the eigenvalues 
+!
+! Eigvalue(n) = WR(n) + i * WI(n)
+!
+! And the left VL and right VR eigenvectors 
+!
+! VL(i,j) = <i|Psi_left(j)>  :: projection on the basis element |i> on the jth left  eigenvector 
+!
+! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
+  END_DOC
  integer, intent(in) :: n
  double precision, intent(in) :: A(n,n)
  double precision, intent(out):: WR(n),WI(n),VL(n,n),VR(n,n)
-  print*,'Computing the left/right eigenvectors ...'
   character*1 :: JOBVL,JOBVR
   JOBVL = "V" ! computes the left  eigenvectors 
   JOBVR = "V" ! computes the right eigenvectors 
   integer     :: lda,ldvl,ldvr,LWORK,INFO
   double precision, allocatable :: WORK(:)
   integer :: n_good
-  ! Eigvalue(n) = WR(n) + i * WI(n)
   lda  = n
   ldvl = n
   ldvr = n
