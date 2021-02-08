@@ -16,6 +16,8 @@
 
 \usepackage[normalem]{ulem}
 
+\newcommand{\LCT}{Laboratoire de Chimie Th\'eorique (UMR 7616), Sorbonne Universit\'e, CNRS, 4 place Jussieu, Paris, 75005, France}
+
 
 \newcommand{\sphi}[1]{\hat{{\bf S}}_{#1}}
 \newcommand{\overlap}[2]{\langle #1 | #2 \rangle}
@@ -48,16 +50,15 @@
 \newcommand{\murscav}{\langle \mu_{r_{s,c}}\rangle}
 \newcommand{\mursclda}{\langle \mu_{r_{s,c}^{\text{UEG}}}\rangle}
 
-\newcommand{\corr}[1]{{\color{red} #1}}
-
-
 
 \begin{document}	
 
 \title{A new form of transcorrelated Hamiltonian inspired by range-separated DFT}
 
 \author{Emmanuel Giner}
-\email{eginer@lct.jussieu.fr}
+\email{emmanuel.giner@lct.jussieu.fr}
+\affiliation{\LCT}
+
 
 \begin{abstract}
 The present work introduces a new form of explicitly correlated factor in the context of the transcorrelated methods. 
@@ -67,8 +68,6 @@ The transcorrelated Hamiltonian obtained with such a new correlation factor has 
 We investigate the convergence of the ground state eigenvalues and right-eigenvectors of such new transcorrelated Hamiltonian as a function of the basis set and as a function of $\mu$ on a series of two-electron systems. 
 We found that the convergence towards the complete basis set is much faster for a quite wide range values of $\mu$. 
 We also propose a specific value of $\mu$ which essentially reproduce the results obtained with the frozen Gaussian geminal introduced by Ten-No [CPL-330,169 (2000)]. 
-%We introduce a way to find a reasonable value of $\mu$ that automatically adapts to the system through its density, and show the benefit of such approach on the isoelectronic series of the helium atom.  
-%It should be pointed out that all two-electron integrals can be carried analytically within such approach and the three-electrons terms can be performed using a mixed analytical-numerical integration approach.
 
 \end{abstract}
 
@@ -94,17 +93,17 @@ As the effective Hamiltonian obtained in RS-DFT is smooth at $r_{12}=0$ for a fi
 A number of approximate RS-DFT schemes have been developed involving single-reference\cite{AngGerSavTou-PRA-05, GolWerSto-PCCP-05, TouGerJanSavAng-PRL-09,JanHenScu-JCP-09,TouZhuSavJanAng-JCP-11, MusReiAngTou-JCP-15,KalTou-JCP-18,KalMusTou-JCP-19} and multi-reference\cite{LeiStoWerSav-CPL-97, FroTouJen-JCP-07, FroCimJen-PRA-10, HedKneKieJenRei-JCP-15, HedTouJen-JCP-18, FerGinTou-JCP-18} WFT methods. 
 Nevertheless, there are still some open issues in RSDFT, such as remaining fractional-charge and fractional-spin errors in the short-range density functionals \cite{MusTou-MP-17} or the dependence of the quality of the results on the value of the range-separation parameter $\mu$. 
 
-Another approach to tackle the problems of WFT related to the electron cusp have been proposed by the F12 methods which introduce a function explicitly depending on the inter-electronic coordinate\cite{Ten-TCA-12,TenNog-WIREs-12,HatKloKohTew-CR-12, KonBisVal-CR-12, GruHirOhnTen-JCP-17, MaWer-WIREs-18} (called a \corr{correlation} factor) to describe short-range correlation effects which are absent from the finite basis set. Thanks to strong orthogonality, 
-all redundant correlation effects between the \corr{correlation} factor and the basis set are projected out of the wave function, 
-and therefore the \corr{correlation} factor only deals with correlation effects orthonormal to the basis set. 
+Another approach to tackle the problems of WFT related to the electron cusp have been proposed by the F12 methods which introduce a function explicitly depending on the inter-electronic coordinate\cite{Ten-TCA-12,TenNog-WIREs-12,HatKloKohTew-CR-12, KonBisVal-CR-12, GruHirOhnTen-JCP-17, MaWer-WIREs-18} (called a {correlation} factor) to describe short-range correlation effects which are absent from the finite basis set. Thanks to strong orthogonality, 
+all redundant correlation effects between the {correlation} factor and the basis set are projected out of the wave function, 
+and therefore the {correlation} factor only deals with correlation effects orthonormal to the basis set. 
 The resulting F12 theories, mainly based on perturbation theory and coupled cluster theory, are therefore 
-extremely close to their parent WFT theory, with additional contributions involving two- and three-body terms resulting from the use of the \corr{correlation} factor. 
-It is important to notice that because of the orthogonalization between the \corr{correlation} and the basis set, 
+extremely close to their parent WFT theory, with additional contributions involving two- and three-body terms resulting from the use of the {correlation} factor. 
+It is important to notice that because of the orthogonalization between the {correlation} and the basis set, 
 the complexity of the $N$-body problem within a given basis set is essentially the same between a F12 theory and the parent theory in WFT. Therefore, no strong compression of the electronic wave function is obtained within a given basis set by the F12 theory, 
 but a fast convergence toward the complete basis set limit (CBS) is nevertheless obtained for correlation energies and other properties sensitive to the basis set.  
 
-An alternative point of view using a \corr{correlation} factor is the so-called transcorrelated (TC) approach where the full effect of the \corr{correlation} factor is incorporated into the calculation through a similarity transformation of the original Hamiltonian by the \corr{correlation} factor. 
-\corr{As the TC theory does not use an orthogonal projector with the basis set as in F12 theory, the correlation factor in the TC theory is often referred to as a Jastrow factor.} 
+An alternative point of view using a {correlation} factor is the so-called transcorrelated (TC) approach where the full effect of the {correlation} factor is incorporated into the calculation through a similarity transformation of the original Hamiltonian by the {correlation} factor. 
+{As the TC theory does not use an orthogonal projector with the basis set as in F12 theory, the correlation factor in the TC theory is often referred to as a Jastrow factor.} 
 Seminal equations were derived by Hirschfelder\cite{Hirschfelder-JCP-63} who obtained an effective non hermitian operator based on a specific form of Jastrow factor, and later on Boys, Handy and co-workers\cite{BoyHan-PRSLA-69,BoyHanLin-1-PRSLA-69,BoyHanLin-2-PRSLA-69} derived the equations of the TC Hamiltonian for a general exponential form of the Jastrow factor which insures size extensivity. 
 The obtained TC Hamiltonian contains certain new features with respect to the usual Hamiltonian: the TC Hamiltonian contains an additional effective two- and three-electron scalar potential together with is a non hermitian two-electron differential operator. Because of its non-hermitian nature, the TC Hamiltonian looses the variational principle, and Boys and Handy managed to derive equations to optimize both orbitals and Jastrow parameters for a single Slater determinant. 
 Nevertheless, such a constrained form for the Slater part of the wave function together with the loose of variational principle makes it difficult to find a monotonic convergence of computed energies\cite{Handy-MolPhys-71}. 
@@ -129,7 +128,7 @@ The TC framework has also been used in the context of DFT to develop new approxi
 
 More recently, Alavi \textit{et. al}\cite{CohLuoGutDobTewAla-JCP-19} applied the TC equations with the use of elaborate Jastrow factors which explicitly takes into account the electron-electron together with electron-electron-nucleus coordinates. The Jastrow factor used in such work were obtained from the optimized Jastrow factors for He to Ne of Moskowitz \textit{et. al.}\cite{SchMos-JCP-90} in the context of quantum Monte Carlo. 
 In contrast to previous works where a constrained form was given to the wave function (such as coupled cluster for instance\cite{HinTanTen-CPL-02}),  Alavi \textit{et. al.} allow a full flexibility to the Slater part of the wave function to adapt to the elaborated Jastrow factors: they fully solve the $N$-electron problem corresponding to the TC Hamiltonian within a given basis set. 
-This is done through the use of the FCI-QMC\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} which is a projective technique allowing one to obtain the ground state of an operator, hermitian or not, through a stochastic sampling of the corresponding Hilbert space. The use of a TC Hamiltonian in the context of FCI-QMC has an important advantage: because the TC Hamiltonian already contains the effect of an elaborate Jastrow factor, the right-eigenvectors of the TC Hamiltonian are more compact and therefore the FCI-QMC procedure converges faster. \corr{ This have been illustrated in the context of the Hubbard model\cite{DobLuoAla-PRB-19} for which Alavi \textit{et. al.} found that the weight of the Hartree-Fock Slater determinant in the right eigenvector of the TC Hamiltonian obtained with the Gutzwiller Ansatz\cite{Gutzwiller-PRL-63,BriRic-PRB-70}  significantly increases with respect to that in the eigenfunction of the usual Hubbard Hamiltonian. } 
+This is done through the use of the FCI-QMC\cite{BooThoAla-JCP-09,BooAla-JCP-10,BooCleThoAla-JCP-11,GhaLozAla-JCP-19,VitAlaKat-JCTC-20} which is a projective technique allowing one to obtain the ground state of an operator, hermitian or not, through a stochastic sampling of the corresponding Hilbert space. The use of a TC Hamiltonian in the context of FCI-QMC has an important advantage: because the TC Hamiltonian already contains the effect of an elaborate Jastrow factor, the right-eigenvectors of the TC Hamiltonian are more compact and therefore the FCI-QMC procedure converges faster. { This have been illustrated in the context of the Hubbard model\cite{DobLuoAla-PRB-19} for which Alavi \textit{et. al.} found that the weight of the Hartree-Fock Slater determinant in the right eigenvector of the TC Hamiltonian obtained with the Gutzwiller Ansatz\cite{Gutzwiller-PRL-63,BriRic-PRB-70}  significantly increases with respect to that in the eigenfunction of the usual Hubbard Hamiltonian. } 
 The approach of Alavi \textit{et. al.} of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19} which uses a real-space Jastrow factor shares common points with that of Ten-No in the sense that they both use a fixed Jastrow factor and use a flexible form of wave functions, 
 even though the FCIQMC is certainly more flexible than the linearised coupled cluster ansatz of Ten-No used in Ref. \onlinecite{HinTanTen-JCP-01}. 
 
@@ -234,7 +233,7 @@ The main differences of the present approach with the FROGG introduced by Ten-No
 we impose the analytical structure of $u(r_{12};\mu)$ such that i) the sum of all terms in $1/r_{12}$ (\textit{i.e.} $\tilde{W}[u] + \frac{1}{r_{12}}$) exactly provides the non divergent long-range interaction $\text{erf}(\mu r_{12})/r_{12}$ for all $r_{12}$, 
 ii) the new Jastrow factor $u(r_{12};\mu)$ is more flexible than the FROGG as it is tuned by a unique parameter $\mu$ which determines both the depth of the hole and its typical range in $r_{12}$.  
 
-\corr{
+{
 It should be noticed that the method proposed here to generate a Jastrow factor based on an effective interaction is very general,
 as one can write                                                                          
 \begin{equation}
@@ -246,7 +245,7 @@ where $h(r_{12})$ is a general function satisfying
  \lim_{r_{12} \rightarrow 0} h(r_{12}) = 1.
 \end{equation}
 
-For instance, the Jastrow factor $u(r_{12},\mu)$ derived in Eq. (10) corresponds to the solution of Eq. \eqref{def_general} with $h(r_{12})  =   \text{erfc}(\mu r_{12})$. 
+For instance, the Jastrow factor $u(r_{12},\mu)$ derived in Eq. \eqref{def_j_0} corresponds to the solution of Eq. \eqref{def_general} with $h(r_{12})  =   \text{erfc}(\mu r_{12})$. 
 There are of course as many solutions to Eq. \eqref{def_general} as there are functions $h(r_{12})$.
 An other interesting example is when $h(r_{12},\alpha) = \text{exp}(-\alpha      r_{12})$, which corresponds to an effective Yukawa          potential and yields to the following Jastrow factor
 \begin{equation}
@@ -708,7 +707,7 @@ and the results obtained are represented in Table \ref{table_conv_e_mu_iso}. Fro
 We can also compare the results obtained with $\muuegav$, $\murscav$ and $\mursclda$ to that obtained with the FROGG and $\mfrogg$, which are also reported in Table \ref{table_conv_e_mu_iso}. 
 From these data one can clearly observe several things: i) while for the quite diffuse systems as H$^-$ and He, the energy obtained with the FROGG are of comparable quality that that with $\muuegav$, $\murscav$ and $\mursclda$, the situation deteriorates in a monotonic way from Li$^+$ to Ne$^{8+}$, ii) from Li$^+$ to Ne$^{8+}$, the FROGG converges from below the exact energies, and the larger the $Z$, the more pronounced is the error with respect to the exact ground state energy, specially in the double-zeta quality basis, iii) the results obtained with $\mfrogg$ show a similar behaviour with respect to that of using the FROGG, iv) the MAD obtained with the FROGG is significantly higher, specially for the double-zeta quality, than that obtained with $\muuegav$, $\murscav$ and $\mursclda$. 
 These results illustrates that the Jastrow factor must adapt to the typical length-scale of the system, and therefore shows the benefit of using an easily tunable Jastrow factor such as $u(r_{12},\mu)$. 
-\corr{It should be noticed that the typical range of the FROGG can be tuned by varying the exponent of the Gaussian weight function involved in   the least-square fit of Eq. (9) of Ref. \cite{TenNo-CPL-00-a}. Increasing the exponent of the Gaussian weight function would probably lead   to a more short-range FROGG which would be more efficient to treat very dense systems such as the positive ions of the He isoelectronic series. } 
+{It should be noticed that the typical range of the FROGG can be tuned by varying the exponent of the Gaussian weight function involved in   the least-square fit of Eq. (9) of Ref. \cite{TenNo-CPL-00-a}. Increasing the exponent of the Gaussian weight function would probably lead   to a more short-range FROGG which would be more efficient to treat very dense systems such as the positive ions of the He isoelectronic series. } 
 
 
 \begin{table*}
@@ -799,7 +798,7 @@ As the density considerably vary among the isoelectronic series, we propose a ve
 The last part of our study is dedicated to the study of the ground state energy curve of H$_2$ with different schemes, and we show that the present scheme provides an improvement of the convergence of the energy over the whole potential energy curve. 
 
 The perspective of this work are mainly to study more realistic systems which will includes the expensive three-body terms, and to explore the possibility of having a value of $\mu$ varying in space. 
-\corr{The latter can be considered as way to include some of the flexibility of the electron-electron-nucleus terms present in the Jastrow factor developed by Moskowitz \textit{et. al.}\cite{SchMos-JCP-90} and used by Alavi \textit{et. al.}\cite{CohLuoGutDobTewAla-JCP-19} in the context of the TC Hamiltonian. }
+{The latter can be considered as way to include some of the flexibility of the electron-electron-nucleus terms present in the Jastrow factor developed by Moskowitz \textit{et. al.}\cite{SchMos-JCP-90} and used by Alavi \textit{et. al.}\cite{CohLuoGutDobTewAla-JCP-19} in the context of the TC Hamiltonian. }
 
 \section{Acknowledgment}
 The author would like to thank Julien Toulouse and Andreas Savin for stimulating discussions. 
@@ -888,7 +887,7 @@ The only integrals involved of $\hat{K}(\bri{1},\bri{2})$ over Gaussian function
 \end{equation}
 with 
 \begin{equation}
- g(x, \mu)= \text{erf}( \mu x) - 1.
+ g(x, \mu)= 1 - \text{erf}( \mu x).
 \end{equation}
 To make integrals analytical, we first fit the function $\text{erfc}(x)$ with a simple Slater-Gaussian function 
 \begin{equation}

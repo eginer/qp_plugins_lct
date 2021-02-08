@@ -55,6 +55,24 @@ BEGIN_PROVIDER [double precision, psi_fci_array, (ntheta_psi_ex,nr1_psi_ex)]
  enddo
 END_PROVIDER 
 
+BEGIN_PROVIDER [double precision, psi_hf_array, (ntheta_psi_ex,nr1_psi_ex)]
+ implicit none
+ integer :: i , j
+!call diagonalize_CI
+ double precision :: mos_array_r1(mo_num), mos_array_r2(mo_num)
+ double precision :: r1(3), r2(3)
+ do j = 1, nr1_psi_ex
+  do i = 1, ntheta_psi_ex
+   call give_all_mos_at_r(r1,mos_array_r1)
+   call give_all_mos_at_r(r2,mos_array_r2)
+   r1(:) = r1_psi_ex(:,j)
+   r2(:) = r2_psi_ex(:,i,j)
+   psi_hf_array(i,j) = dabs(mos_array_r1(1)*mos_array_r2(1))
+  enddo
+ enddo
+END_PROVIDER 
+
+
  BEGIN_PROVIDER [double precision, psi_right_array, (ntheta_psi_ex,nr1_psi_ex)]
 &BEGIN_PROVIDER [double precision, psi_right_jastrow_array, (ntheta_psi_ex,nr1_psi_ex)]
 &BEGIN_PROVIDER [double precision, psi_right_jastrow_norm_array, (ntheta_psi_ex,nr1_psi_ex)]
@@ -95,6 +113,31 @@ BEGIN_TEMPLATE
                                         psi_fci_array(i,$X), &
                                         psi_right_array(i,$X), &
                                         psi_right_jastrow_array(i,$X),psi_right_jastrow_norm_array(i,$X)
+ enddo
+SUBST [ X]
+ 1;; 
+ 2;;
+ 3;;
+ 4;;
+ 5;;
+END_TEMPLATE
+
+
+end
+
+subroutine print_psi_hf_psi_trans
+ implicit none
+ integer :: i
+ integer                        :: i_unit_output,getUnitAndOpen
+ character*(128)                :: output
+ PROVIDE ezfio_filename
+
+BEGIN_TEMPLATE
+ output=trim(ezfio_filename)//'.cusp_wf_$X'
+ print*,'output = ',trim(output)
+ i_unit_output = getUnitAndOpen(output,'w')
+ do i = 1, ntheta_psi_ex
+  write(i_unit_output,'(100(F16.10,X))')theta_array_psi_ex(i,$X),psi_hf_array(i,$X)
  enddo
 SUBST [ X]
  1;; 
