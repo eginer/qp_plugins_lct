@@ -1,0 +1,100 @@
+#/bin/qpsh
+# specify the QP folder
+QP=$QP_ROOT
+#sourcing the quantum_package.rc file
+. ${QP}/quantum_package.rc
+
+TEMP=$(getopt -o eps:t:h -l field_strenght:thresh_elec:help -n $0 -- "$@") || exit 1 # get the input / options 
+eval set -- "$TEMP" # set "--" in the string 
+
+echo $TEMP
+function help()
+{
+    cat <<EOF
+SCF procedure with an electric field 
+
+Usage:
+  $(basename $0) [-eps <real> -t <real>] EZFIO
+
+
+Options:
+  -eps, --field_strenght=<positive real>  The field strenght in H = T + V_ne + W_ee - eps<mu_z>
+  -t,   --thresh_elec=<positive real>     Threshold on the convergence of the variational energy (default=1.e-14)
+  -h,   --help                            Prints the HELP message
+
+Example:
+ scf_electric_field -eps 0.000001 -t 1.e-14 ezfio_folder
+
+EOF
+    exit
+}
+
+
+while true ; do
+    case "$1" in
+        -eps|--field_strenght) 
+            case "$2" in
+                "") help ; break;;
+                *) field_strenght="$2"
+            esac 
+            shift 2
+	    ;;
+        -t|--thresh) 
+            case "$2" in
+                "") help ; break;;
+                *) thresh_elec="$2"
+            esac 
+            shift 2
+	    ;;
+        -h|-help|--help) 
+            help
+            exit 0;;
+        --) shift  ; break ;;
+	"") help ; break ;;
+    esac
+done
+
+ezfio=${1%/} # take off the / at the end
+
+if [[ -z $ezfio ]]; then
+   echo "You did not specify any input EZFIO folder ! "
+   echo "stopping ..."
+   echo "run $0 --help to have information on how to run the script !"
+   echo "......"
+   echo "......"
+   exit
+fi
+
+echo "  **********"
+echo "Here are the following INPUT parameters for the SCF procedure with electric field .."
+echo "  **********"
+echo "EZFIO folder         :  "$ezfio 
+if [[ ! -d $ezfio ]]; then
+   echo "Input EZFIO folder does not exists !"
+   echo "Folder $ezfio does not exist."
+   echo "stopping ..."
+   echo "......"
+   echo "......"
+   echo "......"
+   exit
+fi
+
+# value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
+if [[ -z $thresh_elec ]]; then
+ echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
+ thresh_elec=1.e-14
+fi
+echo "thresh of convergence:  "$thresh_elec
+
+echo "I'm here #1"
+qp set_file $ezfio
+
+echo "I'm here #2"
+# write the effective Hamiltonian
+  file_int=scf-${eps}-${t}
+  qp run write_eff_basis_ints_electric_field | tee ${ezfio}/work/${file_int}
+
+  file_scf=scf_${eps}_{t}_process
+  qp run scf_electric_field | tee ${ezfio}/work/${file_scf}
+
+  echo "Done"
