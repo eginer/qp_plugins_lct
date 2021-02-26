@@ -1,9 +1,46 @@
+BEGIN_PROVIDER [ integer*8, dim_two_rdm  ]
+  implicit none
+  BEGIN_DOC
+! number of elements in two-rdm
+  END_DOC
+
+  logical                        :: has
+  PROVIDE ezfio_filename
+  if (mpi_master) then
+    
+    call ezfio_has_yuan_plugins_dim_two_rdm(has)
+    if (has) then
+      write(6,'(A)') '.. >>>>> [ IO READ: dim_two_rdm ] <<<<< ..'
+      call ezfio_get_yuan_plugins_dim_two_rdm(dim_two_rdm)
+    else
+      print *, 'yuan_plugins/dim_two_rdm not found in EZFIO file'
+      stop 1
+    endif
+  endif
+  IRP_IF MPI_DEBUG
+    print *,  irp_here, mpi_rank
+    call MPI_BARRIER(MPI_COMM_WORLD, ierr)
+  IRP_ENDIF
+  IRP_IF MPI
+    include 'mpif.h'
+    integer :: ierr
+    call MPI_BCAST( dim_two_rdm, 1, MPI_INTEGER8, 0, MPI_COMM_WORLD, ierr)
+    if (ierr /= MPI_SUCCESS) then
+      stop 'Unable to read dim_two_rdm with MPI'
+    endif
+  IRP_ENDIF
+
+  call write_time(6)
+
+END_PROVIDER
 
 subroutine read_two_rdm_and_write_to_ezfio(n,n_mo_tmp)
  implicit none
- integer, intent(in) :: n,n_mo_tmp
+ integer, intent(in) :: n_mo_tmp
+ integer*8, intent(in) :: n
 
- integer :: i,j,k,l,m
+ integer :: i,j,k,l
+ integer*8 :: m
  double precision :: value_rdm
  double precision, allocatable :: two_rdm(:,:,:,:,:)
  character*(128) :: name_file 
@@ -14,7 +51,7 @@ subroutine read_two_rdm_and_write_to_ezfio(n,n_mo_tmp)
  character*(1) :: coma
  open(1, file = 'two_rdm') 
  two_rdm = 0.d0
- do m = 1, n
+ do m = 1_8, n
    ! a^{l}a^{k} a_i a_j
 !  read(1,'(4(I3,A1),F16.13)')l,coma, k, coma, j, coma, i,coma,value_rdm
   read(1,*)l, k,  j,  i,value_rdm
