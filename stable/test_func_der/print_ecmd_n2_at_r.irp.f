@@ -95,7 +95,7 @@ subroutine energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_
    ecmd_pben2_at_r = ec
    decdrho_at_r    = decdrho
    decdrho2_at_r    = decdrho2
-   dn2_extrap_dn2       = 1.d0/(1.d0 + 2.d0/(dacos(-1.d0)**(-0.5d0)))
+   dn2_extrap_dn2       = 1.d0/(1.d0 + 2.d0/(dacos(-1.d0)**(-0.5d0))) ! we miss the mu
    decdrho2_at_r_fact   = decdrho2 * dn2_extrap_dn2
 
 end
