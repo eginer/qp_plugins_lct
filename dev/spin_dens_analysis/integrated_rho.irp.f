@@ -1,4 +1,4 @@
-program spin_dens_analysis
+program integrated_rho
   implicit none
   BEGIN_DOC
 ! TODO : Put the documentation of the program here
@@ -10,8 +10,5 @@ end
 
 subroutine routine
  implicit none
- provide integrated_delta_rho_all_points
  provide integrated_rho_tot_all_points
- call print_mulliken_sd
- call print_standard_deviation
 end

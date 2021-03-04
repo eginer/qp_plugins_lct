@@ -18,7 +18,8 @@
   double precision              :: n2xc_UEG, dn2xc_UEGdrho, dn2xc_UEGdrho_a, dn2xc_UEGdrho_b
   double precision              :: g0, dg0drho
 
-  if(dabs(rho_a-rho_b) > 1.d-10)then
+  if(dabs(rho_a-rho_b)/dabs(rho_a+rho_b) > 1.d-1)then
+  print*,dabs(rho_a-rho_b),dabs(rho_a+rho_b),dabs(rho_a-rho_b)/dabs(rho_a+rho_b)
   stop "routine implemented only for closed-shell systems"
   endif 
 
