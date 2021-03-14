@@ -32,7 +32,7 @@ end program
 subroutine routine_print_intermediaire
  implicit none
  double precision :: r(3),ecmd_pbeueg_at_r, decdrho_at_r,rho
- double precision :: xmax, dx
+ double precision :: xmax, dx,xmin
  integer :: nx, ipoint
   character*(128) :: output
   integer :: i_unit_output,getUnitAndOpen
@@ -48,10 +48,11 @@ subroutine routine_print_intermediaire
  print*,'Nucl coord 2 '
  print*,nucl_coord(2,:)
  
- nx = 500
- xmax = 7.d0
- dx = xmax/dble(nx)
- r(3) += -xmax*0.5d0
+ xmin = -4.d0
+ xmax =  5.d0
+ nx = 1000
+ dx = (xmax - xmin)/dble(nx)
+ r(3) = xmin 
 
    write(i_unit_output,*)'#r(3)  ecmd_ueg   decdrho  rho'
  do ipoint=0, nx

@@ -78,7 +78,7 @@ subroutine print_pert
  double precision :: accu,hmono,herf,heff,hderiv,htot
  double precision :: accu_mono,accu_double,accu2
  double precision :: pert_mono,pert_double
- double precision :: h00,hii,htotbis,phase,h0i,hi0
+ double precision :: h00,hii,htotbis,phase,h0i,hi0,hthree
  integer          :: degree,exc(0:2,2,2)
  integer          :: h1, p1, h2, p2, s1, s2
  double precision :: norm_t1,norm_t2
@@ -91,7 +91,7 @@ subroutine print_pert
  pert_double = 0.d0
  norm_t1 = 0.d0
  norm_t2 = 0.d0
- call htilde_mat(psi_det(1,1,1),psi_det(1,1,1),hmono,herf,heff,hderiv,h00)
+ call htilde_mat(psi_det(1,1,1),psi_det(1,1,1),hmono,herf,heff,hderiv,hthree,h00)
  print*,''
  print*,'*************************************'
  print*,'*************************************'
@@ -105,13 +105,13 @@ subroutine print_pert
    ! <0|H|i>
    print*,'******************'
    print*,'i = ',i
-   call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,h0i)
+   call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,h0i)
  
    ! <i|H|i>
-   call htilde_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,herf,heff,hderiv,hii)
+   call htilde_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,hii)
  
    ! <i|H|0>
-   call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hi0)
+   call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hthree,hi0)
  
    call get_excitation_degree(psi_det(1,1,i),psi_det(1,1,1),degree,N_int)
    if(degree==1)then

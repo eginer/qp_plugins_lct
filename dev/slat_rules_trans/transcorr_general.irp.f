@@ -16,11 +16,11 @@ subroutine provide_all
  use bitmasks
  integer(bit_kind) :: key_i(N_int,2), key_j(N_int,2)
  integer :: i,j,degree
- double precision :: hij,s2,hmono,herf,heff,hderiv,htot
+ double precision :: hij,s2,hmono,herf,heff,hderiv,htot,hthree
  double precision :: accu
  accu = 0.d0
  key_i(:,:) = psi_det(:,:,1)
- call htilde_mat(key_i,key_i,hmono,herf,heff,hderiv,htot)
+ call htilde_mat(key_i,key_i,hmono,herf,heff,hderiv,hthree,htot)
  provide eigval_trans
 end
 
