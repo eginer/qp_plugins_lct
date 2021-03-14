@@ -276,13 +276,13 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   ! opposite spin two-body 
   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
-!  hderiv  = mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h1,h2) 
+  hderiv  = mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h1,h2) 
   ! same spin two-body 
   if(s1.eq.s2)then
    herf   -= get_mo_two_e_integral_erf(p1,p2,h2,h1,mo_integrals_erf_map)   
    heff   -= mo_two_e_integral_eff_pot(p1,p2,h2,h1) 
-!   hderiv -= 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h2,h1) & 
-!            +0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p2,p1,h1,h2)
+   hderiv -= 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h2,h1) & 
+            +0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p2,p1,h1,h2)
   endif
   ! alpha/alpha/beta threee-body 
   if(Ne(1)+Ne(2).ge.3)then
