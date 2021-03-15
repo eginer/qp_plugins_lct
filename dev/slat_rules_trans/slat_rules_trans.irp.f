@@ -15,6 +15,12 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
   call bitstring_to_list_ab(key_i,occ,Ne,N_int)
 
   hmono = 0.d0
+  herf  = 0.d0
+  heff  = 0.d0
+  hderiv= 0.d0
+  hthree = 0.d0
+  htot = 0.d0
+
   do ispin = 1, 2 
    do i = 1, Ne(ispin) ! 
     ii = occ(i,ispin) 
@@ -22,10 +28,6 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
    enddo
   enddo
 
-  herf  = 0.d0
-  heff  = 0.d0
-  hderiv= 0.d0
-  hthree = 0.d0
 
   ! alpha/beta two-body
   ispin = 1
@@ -151,11 +153,14 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   other_spin(2) = 1
 
   call get_excitation_degree(key_i,key_j,degree,N_int)
+
   hmono = 0.d0
-  herf = 0.d0
-  heff = 0.d0
-  hderiv = 0.d0
+  herf  = 0.d0
+  heff  = 0.d0
+  hderiv= 0.d0
   hthree = 0.d0
+  htot = 0.d0
+
   if(degree.ne.1)then
    return
   endif
@@ -266,11 +271,14 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
 
   call bitstring_to_list_ab(key_i,occ,Ne,N_int)
   call get_excitation_degree(key_i,key_j,degree,N_int)
+
   hmono = 0.d0
-  herf = 0.d0
-  heff = 0.d0
-  hderiv = 0.d0
+  herf  = 0.d0
+  heff  = 0.d0
+  hderiv= 0.d0
   hthree = 0.d0
+  htot = 0.d0
+
   if(degree.ne.2)then
    return
   endif
@@ -350,6 +358,7 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    heff = 0.d0
    hderiv = 0.d0
    hthree = 0.d0
+   htot = 0.d0
    if(degree.gt.3)then
     return
    else if(degree == 3.and.three_body_h_tc)then
@@ -419,6 +428,7 @@ subroutine triple_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   heff = 0.d0
   hderiv = 0.d0
   hthree = 0.d0
+  htot = 0.d0
   if(degree.ne.3)then
    return
   endif

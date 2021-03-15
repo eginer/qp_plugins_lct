@@ -94,6 +94,9 @@ END_PROVIDER
   do i = 1, n
    if(dabs(WI(i)).lt.1.d-12)then
     n_good += 1
+   else
+    print*,'Found an imaginary component to eigenvalue'
+    print*,'Re(i) + Im(i)',WR(i),WI(i)
    endif
   enddo
   allocate(list_good(n_good),iorder(n_good),ei(n_good))
@@ -112,9 +115,11 @@ END_PROVIDER
   ! You sort the real eigenvalues 
   call dsort(ei,iorder,n_good)
   double precision :: accu1, accu2
+  print*,'n_good_trans_eigval = ',n_good_trans_eigval
+  print*,'n_det               = ',n_det
   do i = 1, n_good_trans_eigval
    eigval_trans(i) = ei(i)
-   print*,'e(i) = ',ei(i) + nuclear_repulsion
+   print*,i,'e(i) = ',ei(i) + nuclear_repulsion
    accu1 = 0.d0
    accu2 = 0.d0
    do j = 1, n_det
