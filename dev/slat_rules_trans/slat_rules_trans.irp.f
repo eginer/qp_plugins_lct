@@ -67,15 +67,15 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
  if(three_body_h_tc)then
    if(Ne(1)+Ne(2).ge.3)then
 !!   ! alpha/alpha/beta three-body
-!!   print*,'In diag H mu for three body'
+!   print*,'In diag H mu for three body'
     do i = 1, Ne(1)
      ii = occ(i,1) 
      do j = i+1, Ne(1)
       jj = occ(j,1) 
       do k = 1, Ne(2)
        kk = occ(k,2) 
-!!      print*,kk,jj,ii,kk,jj,ii
-!!      print*,three_body_ints(kk,jj,ii,kk,jj,ii),three_body_ints(kk,jj,ii,kk,ii,jj)
+!      print*,kk,jj,ii,kk,jj,ii
+!      print*,three_body_ints(kk,jj,ii,kk,jj,ii),three_body_ints(kk,jj,ii,kk,ii,jj)
        hthree += three_body_ints(kk,jj,ii,kk,jj,ii) - three_body_ints(kk,jj,ii,kk,ii,jj) 
       enddo
      enddo
