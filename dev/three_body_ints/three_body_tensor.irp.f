@@ -7,21 +7,34 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
  END_DOC
  integer :: i,j,k,l,m,n
  double precision :: integral 
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = 1, mo_num
-     do j = 1, mo_num
-      do i = 1, mo_num
-        integral = 0.d0
-       call give_integrals_3_body(i,j,m,k,l,n,integral)
-       three_body_ints(i,j,m,k,l,n) = -1.d0 * integral 
+ character*(128) :: name_file 
+ name_file = 'six_index_tensor'
+ three_body_ints = 0.d0
+ if(read_six_index_tensor)then
+  print*,'Reading three_body_ints from disk ...'
+  call read_array_6_index_tensor(mo_num,three_body_ints,name_file)
+ else
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = 1, mo_num
+      do j = 1, mo_num
+       do i = 1, mo_num
+         integral = 0.d0
+        call give_integrals_3_body(i,j,m,k,l,n,integral)
+        three_body_ints(i,j,m,k,l,n) = -1.d0 * integral 
+       enddo
       enddo
      enddo
     enddo
    enddo
   enddo
- enddo
+ endif
+ if(write_six_index_tensor)then
+  print*,'Writing three_body_ints on disk ...'
+  call write_array_6_index_tensor(mo_num,three_body_ints,name_file)
+  call ezfio_set_three_body_ints_io_six_index_tensor("Read")
+ endif
 
 END_PROVIDER 
 

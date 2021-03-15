@@ -64,65 +64,66 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
    enddo
   enddo
-
-  if(Ne(1)+Ne(2).ge.3)then
-!   ! alpha/alpha/beta three-body
-!   print*,'In diag H mu for three body'
-   do i = 1, Ne(1)
-    ii = occ(i,1) 
-    do j = i+1, Ne(1)
-     jj = occ(j,1) 
-     do k = 1, Ne(2)
-      kk = occ(k,2) 
-!      print*,kk,jj,ii,kk,jj,ii
-!      print*,three_body_ints(kk,jj,ii,kk,jj,ii),three_body_ints(kk,jj,ii,kk,ii,jj)
-      hthree += three_body_ints(kk,jj,ii,kk,jj,ii) - three_body_ints(kk,jj,ii,kk,ii,jj) 
+ if(three_body_h_tc)then
+   if(Ne(1)+Ne(2).ge.3)then
+!!   ! alpha/alpha/beta three-body
+!!   print*,'In diag H mu for three body'
+    do i = 1, Ne(1)
+     ii = occ(i,1) 
+     do j = i+1, Ne(1)
+      jj = occ(j,1) 
+      do k = 1, Ne(2)
+       kk = occ(k,2) 
+!!      print*,kk,jj,ii,kk,jj,ii
+!!      print*,three_body_ints(kk,jj,ii,kk,jj,ii),three_body_ints(kk,jj,ii,kk,ii,jj)
+       hthree += three_body_ints(kk,jj,ii,kk,jj,ii) - three_body_ints(kk,jj,ii,kk,ii,jj) 
+      enddo
      enddo
     enddo
-   enddo
-
-   ! beta/beta/alpha three-body
-   do i = 1, Ne(2)
-    ii = occ(i,2) 
-    do j = i+1, Ne(2)
-     jj = occ(j,2) 
-     do k = 1, Ne(1)
-      kk = occ(k,1) 
-      hthree += three_body_ints(kk,jj,ii,kk,jj,ii) - three_body_ints(kk,ii,jj,kk,jj,ii) 
+ 
+    ! beta/beta/alpha three-body
+    do i = 1, Ne(2)
+     ii = occ(i,2) 
+     do j = i+1, Ne(2)
+      jj = occ(j,2) 
+      do k = 1, Ne(1)
+       kk = occ(k,1) 
+       hthree += three_body_ints(kk,jj,ii,kk,jj,ii) - three_body_ints(kk,ii,jj,kk,jj,ii) 
+      enddo
      enddo
     enddo
-   enddo
-
-!   ! alpha/alpha/alpha three-body
-!   do i = 1, Ne(1)
-!    ii = occ(i,1) 
-!    do j = i+1, Ne(1)
-!     jj = occ(j,1) 
-!     do k = j+1, Ne(1)
-!      kk = occ(k,1) 
-!      ! < i j k | i j k > - < i j k | j i k > - < i j k | i k j > - < i j k | k j i >
-!      hthree += three_body_ints(ii,jj,kk,ii,jj,kk) - three_body_ints(ii,jj,kk,jj,ii,kk) & 
-!                                                   - three_body_ints(ii,jj,kk,ii,kk,jj) & 
-!                                                   - three_body_ints(ii,jj,kk,kk,jj,ii)
-!     enddo
-!    enddo
-!   enddo
-
-!   ! beta/beta/beta three-body
-!   do i = 2, Ne(2)
-!    ii = occ(i,2) 
-!    do j = i+2, Ne(2)
-!     jj = occ(j,2) 
-!     do k = j+2, Ne(2)
-!      kk = occ(k,2) 
-!      ! < i j k | i j k > - < i j k | j i k > - < i j k | i k j > - < i j k | k j i >
-!      hthree += three_body_ints(ii,jj,kk,ii,jj,kk) - three_body_ints(ii,jj,kk,jj,ii,kk) & 
-!                                                   - three_body_ints(ii,jj,kk,ii,kk,jj) & 
-!                                                   - three_body_ints(ii,jj,kk,kk,jj,ii)
-!     enddo
-!    enddo
-!   enddo
-
+ 
+!!   ! alpha/alpha/alpha three-body
+!!   do i = 1, Ne(1)
+!!    ii = occ(i,1) 
+!!    do j = i+1, Ne(1)
+!!     jj = occ(j,1) 
+!!     do k = j+1, Ne(1)
+!!      kk = occ(k,1) 
+!!      ! < i j k | i j k > - < i j k | j i k > - < i j k | i k j > - < i j k | k j i >
+!!      hthree += three_body_ints(ii,jj,kk,ii,jj,kk) - three_body_ints(ii,jj,kk,jj,ii,kk) & 
+!!                                                   - three_body_ints(ii,jj,kk,ii,kk,jj) & 
+!!                                                   - three_body_ints(ii,jj,kk,kk,jj,ii)
+!!     enddo
+!!    enddo
+!!   enddo
+ 
+!!   ! beta/beta/beta three-body
+!!   do i = 2, Ne(2)
+!!    ii = occ(i,2) 
+!!    do j = i+2, Ne(2)
+!!     jj = occ(j,2) 
+!!     do k = j+2, Ne(2)
+!!      kk = occ(k,2) 
+!!      ! < i j k | i j k > - < i j k | j i k > - < i j k | i k j > - < i j k | k j i >
+!!      hthree += three_body_ints(ii,jj,kk,ii,jj,kk) - three_body_ints(ii,jj,kk,jj,ii,kk) & 
+!!                                                   - three_body_ints(ii,jj,kk,ii,kk,jj) & 
+!!                                                   - three_body_ints(ii,jj,kk,kk,jj,ii)
+!!     enddo
+!!    enddo
+!!   enddo
+ 
+   endif
   endif
   htot = hmono + herf + heff + hderiv + hthree
 
@@ -183,6 +184,7 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
           -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,ii,ii,h1)
   enddo
 
+ if(three_body_h_tc)then
   ! alpha/alpha/beta three-body
   if(Ne(1)+Ne(2).ge.3)then
    if(s1 == 2)then ! single beta 
@@ -232,6 +234,7 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
 
    endif
   endif
+ endif
 
   herf    *= phase
   heff    *= phase
@@ -284,38 +287,40 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    hderiv -= 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h2,h1) & 
             +0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p2,p1,h1,h2)
   endif
-  ! alpha/alpha/beta threee-body 
-  if(Ne(1)+Ne(2).ge.3)then
-   if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
-    do k = 1, Ne(2)
-     kk = occ(k,2)
-     hthree += three_body_ints(h1,h2,kk,p1,p2,kk) 
-    enddo
-   else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
-    do k = 1, Ne(1)
-     kk = occ(k,1)
-     hthree +=   three_body_ints(h1,h2,kk,p1,p2,kk) 
-    enddo
-   else ! double alpha/beta 
-    if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
-     do k = 1, Ne(1)
-      kk = occ(k,1) ! direct - exchange in alpha 
-      hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
-     enddo
+  if(three_body_h_tc)then
+   ! alpha/alpha/beta threee-body 
+   if(Ne(1)+Ne(2).ge.3)then
+    if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
      do k = 1, Ne(2)
-      kk = occ(k,2)! direct - exchange in beta 
-      hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+      kk = occ(k,2)
+      hthree += three_body_ints(h1,h2,kk,p1,p2,kk) 
      enddo
-    else if(s1.eq.2.and.s2.eq.1)then  ! s1 == beta, s2 == alpha 
-     do k = 1, Ne(2)
-      kk = occ(k,2) ! direct - exchange in beta 
-      hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
-     enddo
+    else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
      do k = 1, Ne(1)
-      kk = occ(k,1)! direct - exchange in alpha 
-      hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+      kk = occ(k,1)
+      hthree +=   three_body_ints(h1,h2,kk,p1,p2,kk) 
      enddo
-    endif 
+    else ! double alpha/beta 
+     if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
+      do k = 1, Ne(1)
+       kk = occ(k,1) ! direct - exchange in alpha 
+       hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
+      enddo
+      do k = 1, Ne(2)
+       kk = occ(k,2)! direct - exchange in beta 
+       hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+      enddo
+     else if(s1.eq.2.and.s2.eq.1)then  ! s1 == beta, s2 == alpha 
+      do k = 1, Ne(2)
+       kk = occ(k,2) ! direct - exchange in beta 
+       hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
+      enddo
+      do k = 1, Ne(1)
+       kk = occ(k,1)! direct - exchange in alpha 
+       hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+      enddo
+     endif 
+    endif
    endif
   endif
   herf   *= phase
@@ -344,10 +349,13 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    herf = 0.d0
    heff = 0.d0
    hderiv = 0.d0
+   hthree = 0.d0
    if(degree.gt.3)then
     return
-   else if(degree == 3)then
-    call triple_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
+   else if(degree == 3.and.three_body_h_tc)then
+    if(pure_three_body_h_tc)then
+     call triple_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
+    endif
    else if(degree == 2)then
     call double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    else if(degree == 1)then

@@ -32,5 +32,6 @@ end
   enddo
  enddo
  tot_htrans_expect(1) = erf_expect(1) + eff_expect(1) + deriv_expect(1) + hcore_expect(1) + hthree_body_expect(1)
+ tot_htrans_expect(1) *= 1.d0/dsqrt(reigvec_trans_norm(1))
 
 END_PROVIDER 

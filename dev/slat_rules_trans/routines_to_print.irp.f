@@ -33,7 +33,7 @@ subroutine print_eigv
  print*,'******************'
  print*,'Right eigenvector             Left eigenvector               psi_coef'
  do i = 1, N_det
-  print*,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
+  write(*,'(I5,X,100(F16.10,X))')i,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
  enddo
  double precision :: accu1,accu2,e
  accu1 = 0.d0
