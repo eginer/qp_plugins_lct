@@ -7,7 +7,7 @@ program fcidump_tc_h_3_body
  integer :: i_unit_output_physicist
  integer :: getUnitAndOpen
  call two_body_fcidum_tc
- output_physicist =trim(ezfio_filename)//'.FCIDUMP_3_body_tc'
+ output_physicist =trim(ezfio_filename)//'/FCIDUMP_3_body_tc'
  i_unit_output_physicist = getUnitAndOpen(output_physicist,'w')
  if(read_six_index_tensor)then
   provide three_body_ints
@@ -77,7 +77,7 @@ subroutine two_body_fcidum_tc
   END_DOC
   character*(128) :: output
   integer :: i_unit_output,getUnitAndOpen
-  output=trim(ezfio_filename)//'.FCIDUMP_2_body_tc'
+  output=trim(ezfio_filename)//'/FCIDUMP_2_body_tc'
   i_unit_output = getUnitAndOpen(output,'w')
 
   integer :: i,j,k,l
@@ -110,14 +110,12 @@ subroutine two_body_fcidum_tc
      j1 = list_act(j)
      do i=1,n_act_orb
       i1 = list_act(i)
-!       if (i1>=j1) then
           integral = get_mo_two_e_integral_erf(i1,j1,k1,l1,mo_integrals_erf_map)
           integral += mo_two_e_integral_eff_pot(i1,j1,k1,l1)
           integral += mo_two_e_eff_dr12_pot_array_physicist(i1,j1,k1,l1)
           if (dabs(integral) > mo_integrals_threshold) then
             write(i_unit_output,*) integral, i,k,j,l
           endif
-!       end if
      enddo
     enddo
    enddo

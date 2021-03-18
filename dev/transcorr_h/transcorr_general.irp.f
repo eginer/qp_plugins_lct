@@ -6,10 +6,8 @@ program transcorr_h
  call print_energy
  call print_e_comp_transcorr
  call print_eigv
- call print_overlap_left_right
+! call print_overlap_left_right
  call print_pert
- !call plot_on_top_left_right
- !call print_psi_exc_psi_trans
  call write_left_right
 end
 

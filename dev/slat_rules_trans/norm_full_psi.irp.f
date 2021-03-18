@@ -29,7 +29,6 @@
      enddo
     enddo
    enddo
-!   print*,norm_n2_jastrow_cst_mu_on_grid(ipoint,istate)
    norm_n2_jastrow_cst_mu(istate) += norm_n2_jastrow_cst_mu_on_grid(ipoint,istate) * weight
   enddo
  enddo

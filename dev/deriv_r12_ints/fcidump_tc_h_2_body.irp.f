@@ -20,7 +20,7 @@ program fcidump
   END_DOC
   character*(128) :: output
   integer :: i_unit_output,getUnitAndOpen
-  output=trim(ezfio_filename)//'.FCIDUMP'
+  output=trim(ezfio_filename)//'/FCIDUMP_2_body_tc'
   i_unit_output = getUnitAndOpen(output,'w')
 
   integer :: i,j,k,l

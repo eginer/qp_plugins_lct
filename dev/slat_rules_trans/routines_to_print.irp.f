@@ -72,6 +72,35 @@ subroutine print_eigv
  print*,'reigvec_trans_norm ',leigvec_trans_norm(1)
 end
 
+subroutine print_overlap_left_right
+ implicit none
+ integer :: i
+ print*,'***************'
+ print*,'***************'
+ print*,'OVERLAP PRINTING'
+ print*,'***************'
+ print*,'Printing the overlap between the left and right eigenvectors'
+ do i = 1, n_tc_ovlp_print
+  write(*,'(I4,X,100(F9.5,X))')i,left_right_overlap(i,1:min(100,n_tc_ovlp_print))
+ enddo
+
+ print*,'               '
+ print*,'***************'
+ print*,'Printing the overlap between the right and right eigenvectors'
+ do i = 1, n_tc_ovlp_print
+  write(*,'(I4,X,100(F9.5,X))')i,right_right_overlap(i,1:min(100,n_tc_ovlp_print))
+ enddo
+
+ print*,'               '
+ print*,'***************'
+ print*,'Printing the overlap between the left and left eigenvectors'
+ do i = 1, n_tc_ovlp_print
+  write(*,'(I4,X,100(F9.5,X))')i,left_left_overlap(i,1:min(100,n_tc_ovlp_print))
+ enddo
+
+
+end
+
 subroutine print_pert
  implicit none
  integer :: i,j
@@ -114,6 +143,7 @@ subroutine print_pert
    call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hthree,hi0)
  
    call get_excitation_degree(psi_det(1,1,i),psi_det(1,1,1),degree,N_int)
+   print*,'degree = ',degree
    if(degree==1)then
     call get_single_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
     call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
