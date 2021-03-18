@@ -29,7 +29,7 @@ end program
 
 subroutine routine_print_intermediaire
  implicit none
- double precision :: r(3),ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r,decdrho2_at_r_fact, rho2, rho2_extrap,rho,mu
+ double precision :: r(3),ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r,decdrho2_at_r_fact, rho2, rho2_extrap,rho,mu,ecPBE
 
   character*(128) :: output
   integer :: i_unit_output,getUnitAndOpen
@@ -55,14 +55,14 @@ subroutine routine_print_intermediaire
  
  write(i_unit_output,*)'#r(3)  ecmd_n2   decdrho  decdrho2  decdrho2*dn2_extrap/dn2   rho2 rho2_extrap  rho  mu'
  do ipoint=0, nx
-  call energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r,decdrho2_at_r_fact, rho2, rho2_extrap,rho,mu)
- write(i_unit_output,'(100(F16.10,X))') r(3),ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r,decdrho2_at_r_fact,rho2,rho2_extrap,rho,mu
+  call energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r,decdrho2_at_r_fact, rho2, rho2_extrap,rho,mu,ecPBE)
+ write(i_unit_output,'(100(F16.10,X))') r(3),ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r,decdrho2_at_r_fact,rho2,rho2_extrap,rho,mu,ecPBE
   r(3) += dx
  enddo
 end program
 
 
-subroutine energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r, decdrho2_at_r_fact, rho2, rho2_extrap,rho,mu)
+subroutine energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r, decdrho2_at_r_fact, rho2, rho2_extrap,rho,mu,ecPBE)
 
 
  implicit none
@@ -71,13 +71,13 @@ subroutine energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_
  END_DOC
  double precision, intent(in) :: r(3)
  double precision, intent(out):: ecmd_pben2_at_r, decdrho_at_r, decdrho2_at_r, decdrho2_at_r_fact 
- double precision, intent(out):: rho2_extrap,rho2,rho(N_states),mu
+ double precision, intent(out):: rho2_extrap,rho2,rho(N_states),mu,ecPBE
  double precision :: rho_a(N_states),rho_b(N_states),grad_rho_a(3, N_states),grad_rho_b(3, N_states)
  double precision :: grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, aos_array(ao_num), grad_aos_array(3,ao_num)
  double precision :: decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b,ec, decdgrad_rho_2,decdrho2, decdrho
  integer :: i, m, istate
  double precision :: f_psi, dn2_extrap_dn2 
- double precision :: on_top_extrap, mu_correction_of_on_top 
+ double precision :: on_top_extrap, mu_correction_of_on_top
 
    istate = 1
    call give_mu_of_r_cas(r,istate,mu,f_psi,rho2)
@@ -102,6 +102,12 @@ subroutine energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_
     grad_rho_b_2 += grad_rho_b(m,istate) * grad_rho_b(m,istate)
     grad_rho_a_b += grad_rho_a(m,istate) * grad_rho_b(m,istate)
    enddo
+   call rho_ab_to_rho_oc(rho_a,rho_b,rho_o,rho_c)
+   call grad_rho_ab_to_grad_rho_oc(grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,grad_rho_o_2,grad_rho_2,grad_rho_o_c)
+   double precision :: rho_o,rho_c,grad_rho_o_2,grad_rho_2,grad_rho_o_c
+   double precision :: decPBEdrho_c,decPBEdrho_o,decPBEdgrad_rho_2,decPBEdgrad_rho_o_2, decPBEdgrad_rho_o
+   call ec_pbe_sr(1.d-12,rho_c,rho_o,grad_rho_2,grad_rho_o_2,grad_rho_o_c,ecPBE,decPBEdrho_c,decPBEdrho_o,decPBEdgrad_rho_2,decPBEdgrad_rho_o_2, decPBEdgrad_rho_o)
+
 
 !!!!!Dans le main
 !  We take the extrapolated on-top pair density (Eq. 29)
