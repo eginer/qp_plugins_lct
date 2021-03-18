@@ -1,12 +1,20 @@
 program fcidump_tc_h_3_body
  implicit none
-! call test_mo_erf
+ my_grid_becke = .True. 
+ my_n_pt_r_grid = 30
+ my_n_pt_a_grid = 50
+ touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
+ call fcidump_3_tc
+ call fcidump_2_tc
+end
+
+subroutine fcidump_3_tc
+ implicit none
  integer :: i,j,k,l,m,n
  double precision :: integral 
  character*(128) :: output_physicist
  integer :: i_unit_output_physicist
  integer :: getUnitAndOpen
- call two_body_fcidum_tc
  output_physicist =trim(ezfio_filename)//'/FCIDUMP_3_body_tc'
  i_unit_output_physicist = getUnitAndOpen(output_physicist,'w')
  if(read_six_index_tensor)then
@@ -55,7 +63,7 @@ program fcidump_tc_h_3_body
 
 end
 
-subroutine two_body_fcidum_tc
+subroutine fcidump_2_tc
   implicit none
   BEGIN_DOC
 ! Produce a regular `FCIDUMP` file from the |MOs| stored in the |EZFIO|

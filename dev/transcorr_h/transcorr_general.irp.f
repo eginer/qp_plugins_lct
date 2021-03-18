@@ -2,11 +2,15 @@ program transcorr_h
  implicit none
  read_wf = .True.
  touch read_wf
+ my_grid_becke = .True. 
+ my_n_pt_r_grid = 30
+ my_n_pt_a_grid = 50
+ touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
+
  call provide_all
  call print_energy
  call print_e_comp_transcorr
  call print_eigv
-! call print_overlap_left_right
  call print_pert
  call write_left_right
 end

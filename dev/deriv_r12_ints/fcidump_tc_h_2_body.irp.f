@@ -1,4 +1,12 @@
-program fcidump
+program fcidump_2b
+  implicit none
+  my_grid_becke = .True. 
+  my_n_pt_r_grid = 30
+  my_n_pt_a_grid = 50
+  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
+  call fcidump_tc_2_b
+end
+subroutine fcidump_tc_2_b
   implicit none
   BEGIN_DOC
 ! Produce a regular `FCIDUMP` file from the |MOs| stored in the |EZFIO|
