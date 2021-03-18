@@ -1,11 +1,11 @@
-subroutine diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,htot)
+subroutine diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 !  diagonal element of htilde 
   END_DOC
   implicit none
   integer(bit_kind), intent(in)  :: key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,hthree,htot
   integer                        :: occ(N_int*bit_kind_size,2)
   integer                        :: ne(2),i,j,ii,jj,ispin,jspin
   double precision :: get_two_e_integral 
@@ -25,6 +25,7 @@ subroutine diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,htot)
   herf  = 0.d0
   heff  = 0.d0
   hderiv= 0.d0
+  hthree = 0.d0
 
   ispin = 1
   jspin = 2 
@@ -41,7 +42,7 @@ subroutine diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,htot)
 
 end
 
-subroutine single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+subroutine single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for single excitation  
@@ -52,7 +53,7 @@ subroutine single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   END_DOC
   implicit none
   integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,hthree,htot
   integer                        :: occ(N_int*bit_kind_size,2)
   integer                        :: ne(2),i,j,ii,jj,ispin,jspin
   integer                        :: degree,exc(0:2,2,2)
@@ -70,6 +71,7 @@ subroutine single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   herf = 0.d0
   heff = 0.d0
   hderiv = 0.d0
+  hthree = 0.d0
   if(degree.ne.1)then
    return
   endif
@@ -93,7 +95,7 @@ subroutine single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   htot = hmono + herf + heff + hderiv
 end
 
-subroutine double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+subroutine double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for double excitation  
@@ -104,7 +106,7 @@ subroutine double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   END_DOC
   implicit none
   integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,hthree,htot
   integer                        :: occ(N_int*bit_kind_size,2)
   integer                        :: ne(2),i,j,ii,jj,ispin,jspin
   integer                        :: degree,exc(0:2,2,2)
@@ -121,6 +123,7 @@ subroutine double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   herf = 0.d0
   heff = 0.d0
   hderiv = 0.d0
+  hthree = 0.d0
   if(degree.ne.2)then
    return
   endif
@@ -136,7 +139,7 @@ subroutine double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
  end
 
 
-subroutine htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+subroutine htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> 
@@ -147,21 +150,22 @@ subroutine htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
   END_DOC
   implicit none
   integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,hthree,htot
   integer                        :: degree
    call get_excitation_degree(key_j,key_i,degree,N_int)
    hmono = 0.d0
    herf = 0.d0
    heff = 0.d0
    hderiv = 0.d0
+   hthree = 0.d0
    if(degree.gt.2)then
     return
    else if(degree == 2)then
-    call double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+    call double_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    else if(degree == 1)then
-    call single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,htot)
+    call single_htilde_ten_no_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    else if(degree == 0)then
-    call diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,htot)
+    call diag_htilde_ten_no_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
    endif
    
 end

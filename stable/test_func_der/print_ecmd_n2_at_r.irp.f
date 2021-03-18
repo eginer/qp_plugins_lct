@@ -36,7 +36,7 @@ subroutine routine_print_intermediaire
   output=trim(ezfio_filename)//'.su-ot_print'
   i_unit_output = getUnitAndOpen(output,'w')
 
- double precision :: xmax, dx
+ double precision :: xmax, dx, xmin
  integer :: nx, ipoint
 
  r(1) = nucl_coord(1, 1) ! # of the nucleus in the .xyz file
@@ -47,10 +47,11 @@ subroutine routine_print_intermediaire
  print*,'Nucl coord 2 '
  print*,nucl_coord(2,:)
  
- nx = 2000
- xmax = 15.d0
- dx = xmax/dble(nx)
- r(3) += -xmax*0.5d0
+ nx = 1000
+ xmin = -4.d0
+ xmax =  5.d0
+ dx = (xmax-xmin)/dble(nx)
+ r(3) = xmin
  
  write(i_unit_output,*)'#r(3)  ecmd_n2   decdrho  decdrho2  decdrho2*dn2_extrap/dn2   rho2 rho2_extrap  rho  mu'
  do ipoint=0, nx
@@ -80,6 +81,17 @@ subroutine energy_xc_pben2_test_at_r (r,ecmd_pben2_at_r, decdrho_at_r, decdrho2_
 
    istate = 1
    call give_mu_of_r_cas(r,istate,mu,f_psi,rho2)
+
+   double precision :: f_HF,on_top,w_hf,sqpi
+   sqpi = dsqrt(dacos(-1.d0))
+   call f_HF_valence_ab(r,r,f_hf,on_top)
+   if(on_top.le.1.d-12.or.f_hf.le.0.d0.or.f_hf * on_top.lt.0.d0)then
+     w_hf   = 1.d+10
+   else 
+     w_hf  = f_hf /  on_top
+   endif
+   mu =  w_hf * sqpi * 0.5d0
+
    call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,rho_a,rho_b, grad_rho_a, grad_rho_b, aos_array, grad_aos_array) 
    rho = rho_a + rho_b 
    grad_rho_a_2 = 0.d0

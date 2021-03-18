@@ -3,6 +3,7 @@
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_eff, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_deriv, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_hcore, (N_det,N_det)]
+&BEGIN_PROVIDER [double precision, htilde_matrix_elmt_hthree, (N_det,N_det)]
  implicit none
  BEGIN_DOC
 ! htilde_matrix_elmt(j,i) = <J| H^tilde |I> 
@@ -10,16 +11,17 @@
 ! WARNING !!!!!!!!! IT IS NOT HERMITIAN !!!!!!!!!
  END_DOC
  integer :: i,j
- double precision :: hmono,herf,heff,hderiv,htot
+ double precision :: hmono,herf,heff,hderiv,hthree,htot
  do i = 1, N_det
   do j = 1, N_det
   ! < J | Htilde | I >
-   call htilde_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,herf,heff,hderiv,htot)
+   call htilde_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,htot)
    htilde_matrix_elmt(j,i) = htot
    htilde_matrix_elmt_erf(j,i) = herf
    htilde_matrix_elmt_eff(j,i) = heff
    htilde_matrix_elmt_deriv(j,i) = hderiv
    htilde_matrix_elmt_hcore(j,i) = hmono
+   htilde_matrix_elmt_hthree(j,i) = hthree
   enddo
  enddo
 ! htilde_matrix_elmt = H_matrix_all_dets
@@ -92,6 +94,9 @@ END_PROVIDER
   do i = 1, n
    if(dabs(WI(i)).lt.1.d-12)then
     n_good += 1
+   else
+    print*,'Found an imaginary component to eigenvalue'
+    print*,'Re(i) + Im(i)',WR(i),WI(i)
    endif
   enddo
   allocate(list_good(n_good),iorder(n_good),ei(n_good))
@@ -110,9 +115,11 @@ END_PROVIDER
   ! You sort the real eigenvalues 
   call dsort(ei,iorder,n_good)
   double precision :: accu1, accu2
+  print*,'n_good_trans_eigval = ',n_good_trans_eigval
+  print*,'n_det               = ',n_det
   do i = 1, n_good_trans_eigval
    eigval_trans(i) = ei(i)
-   print*,'e(i) = ',ei(i) + nuclear_repulsion
+   print*,i,'e(i) = ',ei(i) + nuclear_repulsion
    accu1 = 0.d0
    accu2 = 0.d0
    do j = 1, n_det
