@@ -1,5 +1,4 @@
 program read_fcidump
-  mo_two_e_integrals_in_map = .True.
   call routine
 end
 subroutine routine 
@@ -48,11 +47,8 @@ subroutine routine
   n_integrals = 0
 
   integer*8                      :: get_mo_map_size, mo_map_size
-  double precision :: get_two_e_integral
   mo_map_size = get_mo_map_size()
   print*,'mo_map_size = ',mo_map_size
-  integral = get_two_e_integral(1,1,1,1,mo_integrals_map)
-  print*,'<11|11> = ',integral
   call ezfio_set_work_empty(.False.)
   call map_save_to_disk(trim(ezfio_filename)//'/work/mo_ints',mo_integrals_map)
   call ezfio_set_mo_two_e_ints_io_mo_two_e_integrals('Read')
