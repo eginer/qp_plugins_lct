@@ -3,6 +3,7 @@ program plot_density_w
  read_wf = .True.
  touch read_wf
  call routine_print_density
+ call print_z_dipole_moment_only
 end
 
 subroutine routine_print_density

@@ -4,6 +4,7 @@ program plot_density_tc
  touch read_wf
  call routine_check_tm
  call routine_print_density
+ call print_z_dipole_tc_moment_only
 end
 
 subroutine routine_check_tm
