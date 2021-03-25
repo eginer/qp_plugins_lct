@@ -48,8 +48,8 @@ subroutine print_eigv
  print*,'******************'
  print*,'Energy computed with the RIGHT eigenvector'
  print*,'-----'
- print*,'expectation value= ',e
- print*,'projection on HF = ',accu2
+ print*,'expectation value= ',e+nuclear_repulsion
+ print*,'projection on HF = ',accu2+nuclear_repulsion
  print*,''
  print*,'reigvec_trans_norm ',reigvec_trans_norm(1)
  print*,''
@@ -66,8 +66,8 @@ subroutine print_eigv
  print*,'******************'
  print*,'Energy computed with the LEFT  eigenvector'
  print*,'-----'
- print*,'expectation value= ',e
- print*,'projection on HF = ',accu2
+ print*,'expectation value= ',e+nuclear_repulsion
+ print*,'projection on HF = ',accu2+nuclear_repulsion
  print*,''
  print*,'reigvec_trans_norm ',leigvec_trans_norm(1)
 end
@@ -175,11 +175,11 @@ subroutine print_pert
   enddo
   print*,''
   print*,''
-  print*,'projection on HF= ',accu
-  print*,'eigval_trans    = ',eigval_trans(1)
+  print*,'projection on HF= ',accu+nuclear_repulsion
+  print*,'eigval_trans    = ',eigval_trans(1)+nuclear_repulsion
   print*,''
-  print*,'<d0|tile{H}|d0> = ',h00 
-  print*,'<d0|   H   |d0> = ',ref_bitmask_energy
+  print*,'<d0|tile{H}|d0> = ',h00 + nuclear_repulsion
+  print*,'<d0|   H   |d0> = ',ref_bitmask_energy + nuclear_repulsion
   print*,''
   print*,'E corr          = ',eigval_trans(1) - h00
   print*,''

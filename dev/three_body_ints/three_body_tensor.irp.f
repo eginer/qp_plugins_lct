@@ -27,33 +27,37 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
      do m = n, mo_num
       do j = l, mo_num
        do i = k, mo_num
-         integral = 0.d0
-        call give_integrals_3_body(i,j,m,k,l,n,integral)
-        three_body_ints(i,j,m,k,l,n) = -1.d0 * integral 
+         if(i>=j)then
+          integral = 0.d0
+          call give_integrals_3_body(i,j,m,k,l,n,integral)
 
-        ! permutation with k,i
-        three_body_ints(k,j,m,i,l,n) = -1.d0 * integral ! i,k
-        ! two permutations with k,i
-        three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
-        three_body_ints(k,j,n,i,l,m) = -1.d0 * integral 
-        ! three permutations with k,i
-        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
+          three_body_ints(i,j,m,k,l,n) = -1.d0 * integral 
+  
+          ! permutation with k,i
+          three_body_ints(k,j,m,i,l,n) = -1.d0 * integral ! i,k
+          ! two permutations with k,i
+          three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
+          three_body_ints(k,j,n,i,l,m) = -1.d0 * integral 
+          ! three permutations with k,i
+          three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
+  
+          ! permutation with l,j
+          three_body_ints(i,l,m,k,j,n) = -1.d0 * integral ! j,l
+          ! two permutations with l,j
+          three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
+          three_body_ints(i,l,n,k,j,m) = -1.d0 * integral 
+          ! two permutations with l,j
+!!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
+  
+          ! permutation with m,n
+          three_body_ints(i,j,n,k,l,m) = -1.d0 * integral ! m,n
+          ! two permutations with m,n
+          three_body_ints(k,j,n,i,l,m) = -1.d0 * integral ! m,n
+          three_body_ints(i,l,n,k,j,m) = -1.d0 * integral ! m,n
+          ! three permutations with k,i
+!!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral ! m,n
 
-        ! permutation with l,j
-        three_body_ints(i,l,m,k,j,n) = -1.d0 * integral ! j,l
-        ! two permutations with l,j
-        three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
-        three_body_ints(i,l,n,k,j,m) = -1.d0 * integral 
-        ! two permutations with l,j
-!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
-
-        ! permutation with m,n
-        three_body_ints(i,j,n,k,l,m) = -1.d0 * integral ! m,n
-        ! two permutations with m,n
-        three_body_ints(k,j,n,i,l,m) = -1.d0 * integral ! m,n
-        three_body_ints(i,l,n,k,j,m) = -1.d0 * integral ! m,n
-        ! three permutations with k,i
-!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral ! m,n
+         endif
        enddo
       enddo
      enddo
