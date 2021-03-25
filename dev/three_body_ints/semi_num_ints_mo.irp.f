@@ -25,9 +25,16 @@ BEGIN_PROVIDER [ double precision, mo_v_ij_erf_rk, ( mo_num, mo_num,n_points_fin
 ! int dr phi_i(r) phi_j(r) (erf(mu(R) |r - R|) - 1)/(2|r - R|) on the MO basis
  END_DOC
  integer :: ipoint
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (ipoint) & 
+ !$OMP SHARED (n_points_final_grid,v_ij_erf_rk,mo_v_ij_erf_rk)
+ !$OMP DO SCHEDULE (dynamic)
  do ipoint = 1, n_points_final_grid
    call ao_to_mo(v_ij_erf_rk(1,1,ipoint),size(v_ij_erf_rk,1),mo_v_ij_erf_rk(1,1,ipoint),size(mo_v_ij_erf_rk,1))
  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
  mo_v_ij_erf_rk = mo_v_ij_erf_rk * 0.5d0
 END_PROVIDER 
 
@@ -76,11 +83,18 @@ BEGIN_PROVIDER [ double precision, mo_x_v_ij_erf_rk, ( mo_num, mo_num,3,n_points
 ! int dr x * phi_i(r) phi_j(r) (erf(mu(R) |r - R|) - 1)/|r - R| on the MO basis
  END_DOC
  integer :: ipoint,m
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (ipoint,m) & 
+ !$OMP SHARED (n_points_final_grid,x_v_ij_erf_rk_transp,mo_x_v_ij_erf_rk)
+ !$OMP DO SCHEDULE (dynamic)
  do ipoint = 1, n_points_final_grid
   do m = 1, 3
    call ao_to_mo(x_v_ij_erf_rk_transp(1,1,m,ipoint),size(x_v_ij_erf_rk_transp,1),mo_x_v_ij_erf_rk(1,1,m,ipoint),size(mo_x_v_ij_erf_rk,1))
   enddo
  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
  mo_x_v_ij_erf_rk = 0.5d0 * mo_x_v_ij_erf_rk
 
 END_PROVIDER 
@@ -93,6 +107,11 @@ BEGIN_PROVIDER [ double precision, x_W_ij_erf_rk, ( n_points_final_grid,3,mo_num
  END_DOC
  integer :: ipoint,m,i,j
  double precision :: xyz
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (ipoint,m,i,j,xyz) & 
+ !$OMP SHARED (x_W_ij_erf_rk,n_points_final_grid,mo_x_v_ij_erf_rk,mo_v_ij_erf_rk_transp,mo_num,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
  do i = 1, mo_num
   do j = 1, mo_num
    do m = 1, 3
@@ -103,6 +122,8 @@ BEGIN_PROVIDER [ double precision, x_W_ij_erf_rk, ( n_points_final_grid,3,mo_num
    enddo
   enddo
  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
  FREE mo_v_ij_erf_rk_transp 
  FREE mo_x_v_ij_erf_rk
 

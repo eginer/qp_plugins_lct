@@ -6,6 +6,6 @@ program ao_one_ints_slater
   print *, 'Hello world'
 
 !  call test_int_bis
-!  call test_int_full_j
- call test_overlap_gauss_r12_ao
+  call test_int_full_j
+! call test_overlap_gauss_r12_ao
 end

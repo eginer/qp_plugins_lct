@@ -24,13 +24,13 @@ subroutine exp_dl_rout(x,n, array)
  enddo
 end
 
-subroutine exp_dl_ovlp_stg_phi_ij(zeta,D_center,gam,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints,integral_taylor)
+subroutine exp_dl_ovlp_stg_phi_ij(zeta,D_center,gam,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints,integral_taylor,exponent_exp)
   BEGIN_DOC
   ! Computes the following integrals : 
   !
   ! .. math::
   ! 
-  !   array(i) = \int dr exp(-gam*i (r - D)) exp(-delta*i * (r -D)^2) (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
+  !   array(i) = \int dr EXP{exponent_exp * [exp(-gam*i (r - D)) exp(-delta*i * (r -D)^2)] (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
   !
   !
   ! and gives back the Taylor expansion of the exponential in integral_taylor
@@ -42,6 +42,7 @@ subroutine exp_dl_ovlp_stg_phi_ij(zeta,D_center,gam,delta,A_center,B_center,powe
  double precision, intent(in)    :: D_center(3), gam ! pure Slater "D" in r-r_D
  double precision, intent(in)    :: delta            ! gaussian        in r-r_D
  double precision, intent(in)    :: A_center(3),B_center(3),alpha,beta ! gaussian/polynoms "A" and "B"
+ double precision, intent(in)    :: exponent_exp
  integer, intent(in)             :: power_A(3),power_B(3)
  double precision, intent(out)   :: array_ints(0:n_taylor),integral_taylor
 
@@ -56,7 +57,7 @@ subroutine exp_dl_ovlp_stg_phi_ij(zeta,D_center,gam,delta,A_center,B_center,powe
   delta_exp = dble(i) * delta
   gam_exp   = dble(i) * gam
   array_ints(i) = ovlp_stg_gauss_int_phi_ij(D_center,gam_exp,delta_exp,A_center,B_center,power_A,power_B,alpha,beta)
-  integral_taylor += (-zeta)**dble(i) * fact_inv(i) * array_ints(i)
+  integral_taylor += (-zeta*exponent_exp)**dble(i) * fact_inv(i) * array_ints(i)
  enddo
 
 end

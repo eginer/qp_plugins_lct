@@ -61,8 +61,8 @@ END_PROVIDER
   double precision, allocatable :: reigvec_trans_tmp(:,:),leigvec_trans_tmp(:,:)
   allocate(reigvec_trans_tmp(N_det,N_states),leigvec_trans_tmp(N_det,N_states))
   print*,'Reading the right/left eigenvectors in the EZFIO....'
-   call ezfio_get_slat_rules_trans_reigvec_trans(reigvec_trans_tmp)
-   call ezfio_get_slat_rules_trans_leigvec_trans(leigvec_trans_tmp)
+   call ezfio_get_transcorr_h_reigvec_trans(reigvec_trans_tmp)
+   call ezfio_get_transcorr_h_leigvec_trans(leigvec_trans_tmp)
    reigvec_trans_norm = 0.d0
    leigvec_trans_norm = 0.d0
    do i = 1, N_states
@@ -132,8 +132,8 @@ subroutine write_left_right
    reigvec_trans_tmp(j,i) = reigvec_trans(j,i)
   enddo
  enddo
- call ezfio_set_slat_rules_trans_reigvec_trans(reigvec_trans_tmp)
- call ezfio_set_slat_rules_trans_leigvec_trans(leigvec_trans_tmp)
+ call ezfio_set_transcorr_h_reigvec_trans(reigvec_trans_tmp)
+ call ezfio_set_transcorr_h_leigvec_trans(leigvec_trans_tmp)
 end
 
 subroutine test_left_right_eigenvalues(ith)

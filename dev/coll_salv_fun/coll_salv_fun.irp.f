@@ -9,7 +9,8 @@ program coll_salv_fun
 !  call test_int_f_tilde
 ! call test_shank
   call test_int_f_special
-! call routine_test_n2_j
+!  call routine_test_n2_j
+!  call routine_test_n2_inv_j
 ! call routine_test_n2_j_full
 ! call print_energy
 end

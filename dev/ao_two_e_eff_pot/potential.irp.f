@@ -39,12 +39,16 @@ END_PROVIDER
  do i = 1, n_max_fit_slat
   expo_gauss_eff_pot(i) = expo_gauss_1_erf_x_2(i) 
   coef_gauss_eff_pot(i) = -0.25d0 * coef_gauss_1_erf_x_2(i) ! -1/4 * (1 - erf(mu*x))^2
-!  coef_gauss_eff_pot(i) = 0.d0
  enddo
-
- ! then you have the \mu/sqrt(pi) * exp(-mu^2*x^2)
+ ! Analytical Gaussian part of the potential 
  expo_gauss_eff_pot(n_max_fit_slat+1) = mu_erf * mu_erf
- coef_gauss_eff_pot(n_max_fit_slat+1) = mu_erf * inv_sq_pi
+ if(adjoint_tc_h)then
+  ! then you have the " - \mu/sqrt(pi) * exp(-mu^2*x^2) " for the adjoint 
+  coef_gauss_eff_pot(n_max_fit_slat+1) = -1.d0 * mu_erf * inv_sq_pi
+ else
+!  ! then you have the " + \mu/sqrt(pi) * exp(-mu^2*x^2) " for the adjoint 
+  coef_gauss_eff_pot(n_max_fit_slat+1) =  1.d0 * mu_erf * inv_sq_pi
+ endif
 
 END_PROVIDER 
 

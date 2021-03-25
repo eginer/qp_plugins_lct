@@ -8,7 +8,7 @@
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 # fichier principal
-TEX=paper
+TEX=paper_draft
 
 # compilateur latex
 CC=pdflatex

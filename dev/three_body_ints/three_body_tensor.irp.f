@@ -14,6 +14,11 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
   print*,'Reading three_body_ints from disk ...'
   call read_array_6_index_tensor(mo_num,three_body_ints,name_file)
  else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_ints)
+ !$OMP DO SCHEDULE (dynamic)
   do n = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
@@ -29,6 +34,8 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
     enddo
    enddo
   enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
  endif
  if(write_six_index_tensor)then
   print*,'Writing three_body_ints on disk ...'

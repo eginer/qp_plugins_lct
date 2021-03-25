@@ -8,7 +8,7 @@ program transcorr_h
  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
 
  call provide_all
- call print_energy
+ call print_energy_tc
  call print_e_comp_transcorr
  call print_eigv
  call print_pert

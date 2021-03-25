@@ -1,5 +1,5 @@
 
-subroutine print_energy
+subroutine print_energy_tc
  implicit none
  use bitmasks
  integer :: i
