@@ -41,8 +41,11 @@ mo_guess
 mo_one_e_ints
 mo_two_e_erf_ints
 mo_two_e_ints
+6131ec07
 mpi
+d07188bb502ab
 mrpt_utils
+4fad847541cf291bfd2
 nuclei
 perturbation
 pseudo
@@ -57,4 +60,3 @@ slave
 tools
 utils
 zmq
-191a669d10f51fde7c77f13fbd15a8db67eb0553
