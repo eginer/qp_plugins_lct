@@ -151,6 +151,8 @@
 
   deallocate(tmp_b)
   !$OMP END PARALLEL
+  one_e_tm_mo_beta  *= 1.d0/left_right_overlap_read
+  one_e_tm_mo_alpha *= 1.d0/left_right_overlap_read
 
 END_PROVIDER
 

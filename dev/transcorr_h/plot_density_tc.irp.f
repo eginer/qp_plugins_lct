@@ -13,9 +13,9 @@ subroutine routine_check_tm
  print*,''
  print*,''
  print*,'one_e_tm_mo_norm   = ',one_e_tm_mo_norm
- print*,'left_right_overlap = ',left_right_overlap(1,1)
- print*,'tmp                = ',left_right_overlap_read
- print*,'norm/overlap       = ',one_e_tm_mo_norm / left_right_overlap(1,1)
+!print*,'left_right_overlap = ',left_right_overlap(1,1)
+!print*,'tmp                = ',left_right_overlap_read
+ print*,'one_e_tm_mo_norm   = ',one_e_tm_mo_norm 
  print*,'elec_num           = ',elec_num_tab(1) + elec_num_tab(2)
  print*,''
  print*,''
@@ -61,7 +61,7 @@ subroutine routine_print_density
   dm_r = density_from_matrix(dm_mo(1,1,1),r) 
   dm_l = density_from_matrix(dm_mo(1,1,2),r) 
   tm_lr= density_from_matrix(one_e_tm_mo(1,1,1),r)
-  write(i_unit_output,'(100(F16.10,X))')r(1),dm_r,dm_l,tm_lr/left_right_overlap_read
+  write(i_unit_output,'(100(F16.10,X))')r(1),dm_r,dm_l,tm_lr
   r(1) += dx
  enddo
 

@@ -423,38 +423,40 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
              +0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p2,p1,h1,h2)
    endif
    if(three_body_h_tc)then
-    ! alpha/alpha/beta threee-body 
-    if(Ne(1)+Ne(2).ge.3)then
-     if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
-      do k = 1, Ne(2)
-       kk = occ(k,2)
-       hthree += three_body_ints(h1,h2,kk,p1,p2,kk) 
-      enddo
-     else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
-      do k = 1, Ne(1)
-       kk = occ(k,1)
-       hthree +=   three_body_ints(h1,h2,kk,p1,p2,kk) 
-      enddo
-     else ! double alpha/beta 
-      if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
-       do k = 1, Ne(1)
-        kk = occ(k,1) ! direct - exchange in alpha 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
-       enddo
+    if(double_3_body_tc)then
+     ! alpha/alpha/beta threee-body 
+     if(Ne(1)+Ne(2).ge.3)then
+      if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
        do k = 1, Ne(2)
-        kk = occ(k,2)! direct - exchange in beta 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        kk = occ(k,2)
+        hthree += three_body_ints(h1,h2,kk,p1,p2,kk) 
        enddo
-      else if(s1.eq.2.and.s2.eq.1)then  ! s1 == beta, s2 == alpha 
-       do k = 1, Ne(2)
-        kk = occ(k,2) ! direct - exchange in beta 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
-       enddo
+      else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
        do k = 1, Ne(1)
-        kk = occ(k,1)! direct - exchange in alpha 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        kk = occ(k,1)
+        hthree +=   three_body_ints(h1,h2,kk,p1,p2,kk) 
        enddo
-      endif 
+      else ! double alpha/beta 
+       if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
+        do k = 1, Ne(1)
+         kk = occ(k,1) ! direct - exchange in alpha 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
+        enddo
+        do k = 1, Ne(2)
+         kk = occ(k,2)! direct - exchange in beta 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        enddo
+       else if(s1.eq.2.and.s2.eq.1)then  ! s1 == beta, s2 == alpha 
+        do k = 1, Ne(2)
+         kk = occ(k,2) ! direct - exchange in beta 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
+        enddo
+        do k = 1, Ne(1)
+         kk = occ(k,1)! direct - exchange in alpha 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        enddo
+       endif 
+      endif
      endif
     endif
    endif
@@ -477,37 +479,39 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    endif
    if(three_body_h_tc)then
     ! alpha/alpha/beta threee-body 
-    if(Ne(1)+Ne(2).ge.3)then
-     if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
-      do k = 1, Ne(2)
-       kk = occ(k,2)
-       hthree += three_body_ints(h1,h2,kk,p1,p2,kk) 
-      enddo
-     else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
-      do k = 1, Ne(1)
-       kk = occ(k,1)
-       hthree +=   three_body_ints(h1,h2,kk,p1,p2,kk) 
-      enddo
-     else ! double alpha/beta 
-      if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
-       do k = 1, Ne(1)
-        kk = occ(k,1) ! direct - exchange in alpha 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
-       enddo
+    if(double_3_body_tc)then
+     if(Ne(1)+Ne(2).ge.3)then
+      if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
        do k = 1, Ne(2)
-        kk = occ(k,2)! direct - exchange in beta 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        kk = occ(k,2)
+        hthree += three_body_ints(h1,h2,kk,p1,p2,kk) 
        enddo
-      else if(s1.eq.2.and.s2.eq.1)then  ! s1 == beta, s2 == alpha 
-       do k = 1, Ne(2)
-        kk = occ(k,2) ! direct - exchange in beta 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
-       enddo
+      else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
        do k = 1, Ne(1)
-        kk = occ(k,1)! direct - exchange in alpha 
-        hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        kk = occ(k,1)
+        hthree +=   three_body_ints(h1,h2,kk,p1,p2,kk) 
        enddo
-      endif 
+      else ! double alpha/beta 
+       if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
+        do k = 1, Ne(1)
+         kk = occ(k,1) ! direct - exchange in alpha 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
+        enddo
+        do k = 1, Ne(2)
+         kk = occ(k,2)! direct - exchange in beta 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        enddo
+       else if(s1.eq.2.and.s2.eq.1)then  ! s1 == beta, s2 == alpha 
+        do k = 1, Ne(2)
+         kk = occ(k,2) ! direct - exchange in beta 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,kk,p2,p1) 
+        enddo
+        do k = 1, Ne(1)
+         kk = occ(k,1)! direct - exchange in alpha 
+         hthree +=  three_body_ints(h1,h2,kk,p1,p2,kk) - three_body_ints(h1,h2,kk,p1,kk,p2)
+        enddo
+       endif 
+      endif
      endif
     endif
    endif
