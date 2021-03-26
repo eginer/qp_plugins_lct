@@ -27,7 +27,7 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
      do m = n, mo_num
       do j = l, mo_num
        do i = k, mo_num
-         if(i>=j)then
+!         if(i>=j)then
           integral = 0.d0
           call give_integrals_3_body(i,j,m,k,l,n,integral)
 
@@ -57,7 +57,7 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
           ! three permutations with k,i
 !!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral ! m,n
 
-         endif
+!         endif
        enddo
       enddo
      enddo
