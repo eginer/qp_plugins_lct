@@ -34,19 +34,10 @@ end
   weight = final_weight_at_r_vector(ipoint)
   rho_a_hf = 0.d0
   grad_n   = 0.d0
-  do i = 1, elec_alpha_num 
-   rho_a_hf += mos_in_r_array(i,ipoint)*mos_in_r_array(i,ipoint)
-   do m = 1, 3 
-    grad_n += mos_grad_in_r_array_tranp(m,i,ipoint)**2.d0
-   enddo
-  enddo
-  rho_b_hf = 0.d0
-  do i = 1, elec_beta_num 
-   rho_b_hf += mos_in_r_array(i,ipoint)*mos_in_r_array(i,ipoint)
-   do m = 1, 3 
-    grad_n += mos_grad_in_r_array_tranp(m,i,ipoint)**2.d0
-   enddo
-  enddo
+  rho_a_hf = one_e_dm_and_grad_alpha_in_r(4,ipoint,1)
+  rho_b_hf = one_e_dm_and_grad_beta_in_r(4,ipoint,1)
+  grad_n = one_e_grad_2_dm_alpha_at_r(ipoint,1) + one_e_grad_2_dm_beta_at_r(ipoint,1)
+  grad_n += 2.d0 * scal_prod_grad_one_e_dm_ab(ipoint,1)
   rho_hf = rho_a_hf + rho_b_hf
   grad_n = dsqrt(grad_n)
   grad_n = grad_n/(4.d0 * rho_hf)
