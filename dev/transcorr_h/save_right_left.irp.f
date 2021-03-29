@@ -4,7 +4,7 @@ program save_right_eigv
  touch read_wf 
  read_rl_eigv = .True.
  touch read_rl_eigv
-
+ print*,'Saving right/left eigenvectors in EZFIO as the two first states'
  call routine_save
 end
 
