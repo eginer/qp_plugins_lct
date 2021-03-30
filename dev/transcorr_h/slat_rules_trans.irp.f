@@ -21,8 +21,7 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
    enddo
    call bitstring_to_list_ab(key_i_core,occ,Ne,N_int)
-   call debug_det(key_i_core,N_int)
-   hmono = core_energy
+   hmono = core_energy - nuclear_repulsion
   else
    call bitstring_to_list_ab(key_i,occ,Ne,N_int)
    hmono = 0.d0
