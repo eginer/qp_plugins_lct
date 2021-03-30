@@ -30,6 +30,9 @@ end
  average_mu_rs      = 0.d0
  average_mu_rs_c    = 0.d0
  average_mu_grad_n  = 0.d0 
+ double precision :: elec_a,elec_b
+ elec_a = 0.d0
+ elec_b = 0.d0
  do ipoint = 1, n_points_final_grid
   weight = final_weight_at_r_vector(ipoint)
   rho_a_hf = 0.d0
@@ -48,11 +51,14 @@ end
   average_mu_rs_c   += alpha_rs/dsqrt(rs) * rho_hf * weight
   average_mu_lda    +=  - 1.d0 / (dlog(2.d0 * g0) * sqpi) * weight * rho_hf
   average_mu_grad_n += grad_n * rho_hf * weight
+  elec_a += rho_a_hf * weight
+  elec_b += rho_b_hf * weight
  enddo 
- average_mu_lda    = average_mu_lda   / dble(elec_alpha_num + elec_beta_num)
- average_mu_rs     = average_mu_rs    / dble(elec_alpha_num + elec_beta_num)
- average_mu_rs_c   = average_mu_rs_c  / dble(elec_alpha_num + elec_beta_num)
- average_mu_grad_n = average_mu_grad_n/ dble(elec_alpha_num + elec_beta_num)
+ print*,'elec_a,elec_b',elec_a,elec_b
+ average_mu_lda    = average_mu_lda   / dble(elec_a+ elec_b)
+ average_mu_rs     = average_mu_rs    / dble(elec_a+ elec_b)
+ average_mu_rs_c   = average_mu_rs_c  / dble(elec_a+ elec_b)
+ average_mu_grad_n = average_mu_grad_n/ dble(elec_a+ elec_b)
 
  average_mu_rs_c_lda = 0.5d0 * (average_mu_lda + average_mu_rs_c)
 
