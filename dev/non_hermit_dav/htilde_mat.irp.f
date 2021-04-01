@@ -1,6 +1,6 @@
 BEGIN_PROVIDER [ integer, n_mat]
  implicit none
- n_mat = 10
+ n_mat = 2
 END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, h_non_hermit, (n_mat, n_mat)]

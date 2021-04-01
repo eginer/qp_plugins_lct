@@ -47,7 +47,7 @@ subroutine non_hermit_dav(sze,nstates,leigv,reigv,eigval, hcalc_l, hcalc_r)
   h_mat_full(istate,istate) = eigval(istate)
   do itmp = 2, n_states_diag
    allocate(h_mat(itmp,itmp),ei(itmp),leigv_tmp(itmp,itmp),reigv_tmp(itmp,itmp))
-
+   print*,'itmp = ',itmp
    !!!!!!!!!!!!!! RIGHT COMPONENT 
    call hcalc_r(hr,reigv_tmp_big(1,itmp-1,istate),1,sze) ! hr = H R
    do i = 1, sze
@@ -150,6 +150,10 @@ subroutine non_hermit_dav(sze,nstates,leigv,reigv,eigval, hcalc_l, hcalc_r)
      reigv_full(j,i) = reigv_tmp(j,i)
     enddo
    enddo
+!   do i = 1, sze
+!    reigv_tmp_big(i,itmp,istate) += reigv_full(j,istate) * reigv_tmp_big(i,j,istate)
+!    leigv_tmp_big(i,itmp,istate) += leigv_full(j,istate) * leigv_tmp_big(i,j,istate)
+!   enddo
    print*,'ei(1) = ',ei(1)
    eigval(istate) = ei(1)
    deallocate(h_mat,ei,reigv_tmp,leigv_tmp)
@@ -157,6 +161,7 @@ subroutine non_hermit_dav(sze,nstates,leigv,reigv,eigval, hcalc_l, hcalc_r)
     print*,'converged !!'
     exit
    endif
+!   pause
   enddo
   do itmp = 1, n_states_diag
    do i = 1, sze

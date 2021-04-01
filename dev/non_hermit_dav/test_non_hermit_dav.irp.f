@@ -1,6 +1,7 @@
 program pouet
  implicit none
- call test_general_lapack
+! call test_general_lapack
+ call test_dav
 end
 
 subroutine test_dav
@@ -9,7 +10,7 @@ subroutine test_dav
  double precision, allocatable :: reigv(:,:),leigv(:,:),eigval(:)
  external hcalc_r_tmp
  external hcalc_l_tmp
- sze = n_mat
+ sze = 2
  nstates = 1
  allocate(reigv(sze,nstates),leigv(sze,nstates),eigval(nstates))
  reigv = 0.d0
@@ -33,6 +34,7 @@ subroutine test_general_lapack
  double precision, allocatable :: reigvec(:,:),leigvec(:,:),eigval(:)
  double precision, allocatable :: non_ortho_basis(:,:)
  integer :: n_real_eigv,sze,i,j,k,l
+ double precision, allocatable :: S(:,:)
  sze = 10
  allocate(B(sze,sze),A(sze,sze),non_ortho_basis(sze,sze))
  allocate(reigvec(sze,sze),leigvec(sze,sze),eigval(sze))
@@ -49,6 +51,19 @@ subroutine test_general_lapack
  print*,''
  do i = 1, n_real_eigv
   print*,'i ',i,eigval(i)
+ enddo
+ allocate(S(n_real_eigv,n_real_eigv))
+ do i = 1, n_real_eigv
+  do j = 1, n_real_eigv
+   S(j,i) = 0.d0
+   do k = 1, sze
+    S(j,i) += reigvec(k,i) * leigvec(k,j)
+   enddo
+  enddo
+ enddo
+ print*,'Left-Right Overlap matrix of the eigenstates '
+ do i = 1, n_real_eigv
+  write(*,'(100(F16.10,X))')S(i,:)
  enddo
 
  print*,'With the usual eigenvalue problem matrix '
@@ -99,5 +114,19 @@ subroutine test_general_lapack
  print*,''
  do i = 1, n_real_eigv
   print*,'i ',i,eigval(i)
+ enddo
+ do i = 1, n_real_eigv
+  do j = 1, n_real_eigv
+   S(j,i) = 0.d0
+   do k = 1, sze
+    do l = 1, sze
+     S(j,i) += leigvec(l,j) * B(l,k) * reigvec(k,i) 
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'Left-Right Overlap matrix of the eigenstates '
+ do i = 1, n_real_eigv
+  write(*,'(100(F16.10,X))')S(i,:)
  enddo
 end
