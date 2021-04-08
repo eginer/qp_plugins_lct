@@ -5,19 +5,19 @@ program foboscf
 ! touch disk_access_ao_integrals
 !endif
 !print*, 'disk_access_ao_integrals',disk_access_ao_integrals
-! no_oa_or_av_opt = .True.
-! touch no_oa_or_av_opt
-! call run_prepare
+ no_oa_or_av_opt = .True.
+ touch no_oa_or_av_opt
+ call run_prepare
  call routine_fobo_scf
-! call save_mos
+ call save_mos
 
 end
 
-!subroutine run_prepare
-! implicit none
-!  call damping_SCF
-!  call diag_inactive_virt_and_update_mos
-!end
+subroutine run_prepare
+ implicit none
+  call Roothaan_Hall_SCF                                                                                                                     
+  call diag_inactive_virt_and_update_mos
+end
 
 subroutine routine_fobo_scf
  implicit none
@@ -51,11 +51,11 @@ subroutine routine_fobo_scf
    endif
   endif
   call FOBOCI_lmct_mlct_old_thr(i)
-!  call save_osoci_natural_mos
-!  call damping_SCF
-!  call diag_inactive_virt_and_update_mos
-!  call clear_mo_map
-!  call provide_properties
+  call save_osoci_natural_mos
+  call Roothaan_Hall_SCF                                                                                                                     
+  call diag_inactive_virt_and_update_mos
+  call clear_mo_map
+  call provide_properties
  enddo
 
 

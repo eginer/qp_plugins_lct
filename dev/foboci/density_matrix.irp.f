@@ -90,10 +90,12 @@
      !$OMP BARRIER
      !$OMP END PARALLEL
 
-     do i = 1, mo_num
-      print*,'DM restat',i,one_e_dm_mo_beta_generators_restart(i,i) + one_e_dm_mo_alpha_generators_restart(i,i)
-     enddo
-
+     if(verbose_foboci)then
+      print*,'DM restart'
+      do i = 1, mo_num
+       print*,i,one_e_dm_mo_beta_generators_restart(i,i) + one_e_dm_mo_alpha_generators_restart(i,i)
+      enddo
+     endif
 END_PROVIDER
 
 

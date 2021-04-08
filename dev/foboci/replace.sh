@@ -23,6 +23,10 @@ neword='threshold_davidson'
 word='mono'
 neword='single'
 
+
+word='CI_eigenvectors_s2'
+neword='CI_s2'
+
 list=`grep -i $word *.f | cut -d ":" -f 1 | uniq`
 for i in $list
  do 

@@ -63,15 +63,17 @@ subroutine set_intermediate_normalization_lmct_old(norm,i_hole)
 ! call debug_det(psi_det(1,1,k),N_int)
 ! print*,'k,coef = ',k,psi_coef(k,1)/psi_coef(index_ref_generators_restart,1)
 !enddo
- print*,''
- print*,'n_good_hole = ',n_good_hole
- do k = 1,N_states
-  print*,'state ',k
-  do i = 1, n_good_hole
-   print*,'psi_coef(index_good_hole) = ',psi_coef(index_good_hole(i),k)/psi_coef(index_ref_generators_restart,k)
-  enddo
+ if(verbose_foboci)then
   print*,''
- enddo
+  print*,'n_good_hole = ',n_good_hole
+  do k = 1,N_states
+   print*,'state ',k
+   do i = 1, n_good_hole
+    print*,'psi_coef(index_good_hole) = ',psi_coef(index_good_hole(i),k)/psi_coef(index_ref_generators_restart,k)
+   enddo
+   print*,''
+  enddo
+ endif
  norm = 0.d0
 
  ! Set the wave function to the intermediate normalization
@@ -81,16 +83,21 @@ subroutine set_intermediate_normalization_lmct_old(norm,i_hole)
   enddo
  enddo
  do k = 1,N_states
-  print*,'state ',k
+  if(verbose_foboci)then
+   print*,'state ',k
+  endif
   do i = 1, N_det
-!!  print*,'psi_coef(i_ref) = ',psi_coef(i,1)
    if (is_a_ref_det(i))then
-    print*,'i,psi_coef_ref = ',psi_coef(i,k)
+    if(verbose_foboci)then
+     print*,'i,psi_coef_ref = ',psi_coef(i,k)
+    endif
     cycle
    endif
    norm(k) += psi_coef(i,k) * psi_coef(i,k)
   enddo
-  print*,'norm = ',norm(k)
+  if(verbose_foboci)then
+   print*,'norm = ',norm(k)
+  endif
  enddo
  deallocate(index_one_hole,index_one_hole_one_p,index_two_hole_one_p,index_two_hole,index_one_p,is_a_ref_det)
  soft_touch psi_coef
@@ -168,16 +175,17 @@ subroutine set_intermediate_normalization_mlct_old(norm,i_particl)
  enddo
 
  norm = 0.d0
- print*,''
- print*,'n_good_particl = ',n_good_particl
- do k = 1, N_states
-   print*,'state ',k
-   do i = 1, n_good_particl
-    print*,'psi_coef(index_good_particl,1) = ',psi_coef(index_good_particl(i),k)/psi_coef(index_ref_generators_restart,k)
-   enddo
-   print*,''
- enddo
-
+ if(verbose_foboci)then
+  print*,''
+  print*,'n_good_particl = ',n_good_particl
+  do k = 1, N_states
+    print*,'state ',k
+    do i = 1, n_good_particl
+     print*,'psi_coef(index_good_particl,1) = ',psi_coef(index_good_particl(i),k)/psi_coef(index_ref_generators_restart,k)
+    enddo
+    print*,''
+  enddo
+ endif
 
  ! Set the wave function to the intermediate normalization
  do k = 1, N_states
@@ -186,16 +194,21 @@ subroutine set_intermediate_normalization_mlct_old(norm,i_particl)
   enddo
  enddo
  do k = 1, N_states
-  print*,'state ',k
+  if(verbose_foboci)then
+   print*,'state ',k
+  endif
   do i = 1, N_det
-!! print*,'i = ',i, psi_coef(i,1)
    if (is_a_ref_det(i))then
-    print*,'i,psi_coef_ref = ',psi_coef(i,k)
+    if(verbose_foboci)then
+     print*,'i,psi_coef_ref = ',psi_coef(i,k)
+    endif
     cycle
    endif
    norm(k) += psi_coef(i,k) * psi_coef(i,k)
   enddo
-  print*,'norm = ',norm
+  if(verbose_foboci)then
+   print*,'norm = ',norm
+  endif
  enddo
  soft_touch psi_coef
  deallocate(index_one_hole,index_one_hole_one_p,index_two_hole_one_p,index_two_hole,index_one_p,is_a_ref_det)
@@ -273,7 +286,9 @@ subroutine rescale_density_matrix_osoci(norm)
  do i = 1, N_states
   norm_tmp += norm(i)
  enddo
- print*,'norm = ',norm_tmp
+  if(verbose_foboci)then
+   print*,'norm = ',norm_tmp
+  endif
  
  do i = 1, mo_num
   do j = 1,mo_num
@@ -323,9 +338,11 @@ subroutine save_osoci_natural_mos
    tmp_bis(iorb,i_core) = 0.d0
   enddo
  enddo
- do i = 1, n_core_orb
-  print*,'dm core = ',list_core(i),tmp_bis(list_core(i),list_core(i))
- enddo
+ if(verbose_foboci)then
+  do i = 1, n_core_orb
+   print*,'dm core = ',list_core(i),tmp_bis(list_core(i),list_core(i))
+  enddo
+ endif
  ! Set to Zero the inact-inact part to avoid arbitrary rotations
  do i = 1, n_inact_orb
   i_inact = list_inact(i)
@@ -458,9 +475,11 @@ subroutine set_osoci_natural_mos
    tmp_bis(iorb,i_core) = 0.d0
   enddo
  enddo
- do i = 1, n_core_orb
-  print*,'dm core = ',list_core(i),tmp_bis(list_core(i),list_core(i))
- enddo
+ if(verbose_foboci)then
+  do i = 1, n_core_orb
+   print*,'dm core = ',list_core(i),tmp_bis(list_core(i),list_core(i))
+  enddo
+ endif
  ! Set to Zero the inact-inact part to avoid arbitrary rotations
  do i = 1, n_inact_orb
   i_inact = list_inact(i)
@@ -586,7 +605,9 @@ end
    implicit none
    integer :: i
    double precision :: accu_tot,accu_sd
-   print*,'touched the one_e_dm_mo_beta'
+   if(verbose_foboci)then
+    print*,'touched the one_e_dm_mo_beta'
+   endif
    one_e_dm_mo_alpha_average = one_e_dm_mo_alpha_osoci
    one_e_dm_mo_beta_average = one_e_dm_mo_beta_osoci
    touch one_e_dm_mo_alpha  one_e_dm_mo_beta 
@@ -596,12 +617,14 @@ end
     accu_tot += one_e_dm_mo_alpha_average(i,i) + one_e_dm_mo_beta_average(i,i)
     accu_sd  += one_e_dm_mo_alpha_average(i,i) - one_e_dm_mo_beta_average(i,i)
    enddo
-   print*,'accu_tot = ',accu_tot
-   print*,'accu_sdt = ',accu_sd 
+   if(verbose_foboci)then
+    print*,'accu_tot = ',accu_tot
+    print*,'accu_sdt = ',accu_sd 
+   endif
  end
  
-! subroutine provide_properties
-!   implicit none
-!   call print_mulliken_sd
+ subroutine provide_properties
+   implicit none
+   call print_mulliken_sd
 !   call print_hcc
-! end
+ end
