@@ -32,7 +32,7 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
  call bitstring_to_list(inact_bitmask(1,1), occ(1,1), n_occ_beta, N_int)
  print*,''
  print*,''
- print*,'mulliken spin population analysis'
+ print*,'Mulliken spin population analysis'
  accu =0.d0
  do i = 1, nucl_num
   accu += mulliken_spin_densities(i)
@@ -91,12 +91,14 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
      threshold_davidson = 1.d-6
      soft_touch threshold_davidson 
      call diagonalize_ci
-     call provide_matrix_dressing(dressing_matrix,n_det_generators,psi_det_generators)
-
+     print*,''
+     print*,''
      print*,'Naked matrix'
      do k = 1, N_det_generators
       write(*,'(100(F12.5,X))')dressing_matrix(k,:)
      enddo
+     call provide_matrix_dressing(dressing_matrix,n_det_generators,psi_det_generators)
+
     
      hkl = dressing_matrix(1,1)
      do k = 1, N_det_generators
@@ -177,16 +179,16 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
       soft_touch threshold_davidson threshold_davidson
 
       call diagonalize_ci
-      call provide_matrix_dressing(dressing_matrix,n_det_generators,psi_det_generators)
-      print*,'Naked matrix'
-      do k = 1, N_det_generators
-       write(*,'(100(F12.5,X))')dressing_matrix(k,:)
-      enddo
      
       hkl = dressing_matrix(1,1)
       do k = 1, N_det_generators
         dressing_matrix(k,k) = dressing_matrix(k,k) - hkl
       enddo
+      print*,'Naked matrix'
+      do k = 1, N_det_generators
+       write(*,'(100(F12.5,X))')dressing_matrix(k,:)
+      enddo
+      call provide_matrix_dressing(dressing_matrix,n_det_generators,psi_det_generators)
       print*,''
       print*,'Variational dressing of the matrix'
       do k = 1, N_det_generators

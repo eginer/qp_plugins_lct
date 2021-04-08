@@ -76,10 +76,12 @@ subroutine provide_matrix_dressing(dressing_matrix,ndet_generators_input,psi_det
   enddo
  enddo
  href = dressing_matrix(1,1)
- print*,'Diagonal part of the dressing'
- do i = 1, ndet_generators_input
-  print*,'delta e = ',dressing_matrix(i,i) - href
- enddo
+ if(verbose_foboci)then
+  print*,'Diagonal part of the dressing'
+  do i = 1, ndet_generators_input
+   print*,'delta e = ',dressing_matrix(i,i) - href
+  enddo
+ endif
 !print*,'i_pert_count = ',i_pert_count
 end
 

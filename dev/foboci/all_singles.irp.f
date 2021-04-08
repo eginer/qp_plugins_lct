@@ -81,9 +81,12 @@ subroutine all_single(e_pt2)
    print*,'E        = ',CI_energy(i)
    print*,'S^2      = ',CI_s2(i)
   enddo
+  print*,'***************'
+  print*,'Variational coefficients on the reference space'
   do i = 1, max(2,N_det_generators)
    print*,'psi_coef = ',psi_coef(i,1)
   enddo
+  print*,'***************'
   deallocate(pt2,norm_pert,E_before)
 end
 
