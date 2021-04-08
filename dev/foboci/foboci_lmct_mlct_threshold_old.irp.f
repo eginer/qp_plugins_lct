@@ -27,6 +27,7 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
   unpaired_bitmask(i,2) = unpaired_alpha_electrons(i)
  enddo
  norm_total = 0.d0
+ provide mo_two_e_integrals_in_map
  call initialize_density_matrix_osoci
  call bitstring_to_list(inact_bitmask(1,1), occ(1,1), n_occ_beta, N_int)
  print*,''

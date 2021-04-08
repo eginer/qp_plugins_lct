@@ -255,7 +255,7 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
   do k = 1, N_states
    print*,'state ',k
    do i = 1, Ndet_generators
-    print*,'coef, <I|H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart),is_a_ref_det(i)
+    print*,'coef, <I|H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart)
    enddo
   enddo
 ! endif
@@ -268,6 +268,7 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
 
  call H_apply_dressed_pert(dressed_H_matrix,Ndet_generators,psi_det_generators_input,E_ref_average)  !  Calculate the dressing of the H matrix
 ! if(verbose)then
+  print*,''
   print*,'Zeroth order space Dressed by outer space:'
   do i = 1, Ndet_generators
    write(*,'(10(F16.8),X)')dressed_H_matrix(i,:)
@@ -309,7 +310,7 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
   do k = 1, N_states
    print*,'state ',k
    do i = 1, Ndet_generators
-    print*,'coef, <I|H+Delta H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart),is_a_ref_det(i)
+    print*,'coef, <I|H+Delta H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart)
    enddo
   enddo
 ! endif

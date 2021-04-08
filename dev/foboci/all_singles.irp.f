@@ -29,19 +29,19 @@ subroutine all_single(e_pt2)
   print*,'pt2_max = ',pt2_max
   print*,'N_det_generators = ',N_det_generators
   pt2=-1.d0
-  print*, 'ref_bitmask_energy   =',ref_bitmask_energy
-  print*, 'CI_expectation_value =',psi_energy(1)
+!  print*, 'ref_bitmask_energy   =',ref_bitmask_energy
+!  print*, 'CI_expectation_value =',psi_energy(1)
   E_before = ref_bitmask_energy
  
-  print*,'Initial Step '
-  print*,'Inital determinants '
-  print*,'N_det = ',N_det
-  do i = 1, N_states_diag
-   print*,''
-   print*,'i = ',i
-   print*,'E        = ',CI_energy(i)
-   print*,'S^2      = ',CI_s2(i)
-  enddo
+!  print*,'Initial Step '
+!  print*,'Inital determinants '
+!  print*,'N_det = ',N_det
+!  do i = 1, N_states_diag
+!   print*,''
+!   print*,'i = ',i
+!   print*,'E        = ',CI_energy(i)
+!   print*,'S^2      = ',CI_s2(i)
+!  enddo
   n_det_max = 100000
   do while (N_det < n_det_max.and.maxval(abs(pt2(1:N_st))) > dabs(pt2_max))
     i += 1
