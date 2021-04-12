@@ -72,13 +72,14 @@ subroutine standard_dress(delta_ij_generators_,size_buffer,Ndet_generators,i_gen
 end
 
 
-subroutine is_a_good_candidate(threshold,is_ok,e_pt2,verbose,exit_loop,is_ok_perturbative)
+subroutine is_a_good_candidate(threshold,is_ok,e_pt2,exit_loop,is_ok_perturbative)
  use bitmasks
  implicit none
  double precision, intent(in) :: threshold
  double precision, intent(out):: e_pt2
  logical, intent(out) :: is_ok,exit_loop,is_ok_perturbative
- logical, intent(in) :: verbose
+ logical :: verbose
+ verbose = verbose_foboci
  
  integer :: l,k,m
  double precision,allocatable :: dressed_H_matrix(:,:)
@@ -94,7 +95,7 @@ subroutine is_a_good_candidate(threshold,is_ok,e_pt2,verbose,exit_loop,is_ok_per
     psi_det_generators_input(l,2,k) = psi_det_generators(l,2,k)
   enddo
  enddo
- call dress_H_matrix_from_psi_det_input(psi_det_generators_input,N_det_generators,is_ok,psi_coef_diagonalized_tmp, dressed_H_matrix,threshold,verbose,exit_loop,is_ok_perturbative)
+ call dress_H_matrix_from_psi_det_input(psi_det_generators_input,N_det_generators,is_ok,psi_coef_diagonalized_tmp, dressed_H_matrix,threshold,exit_loop,is_ok_perturbative)
   if(is_ok.or.is_ok_perturbative)then
    N_det = N_det_generators
    do m = 1, N_states
@@ -104,7 +105,7 @@ subroutine is_a_good_candidate(threshold,is_ok,e_pt2,verbose,exit_loop,is_ok_per
        psi_det(l,2,k) = psi_det_generators_input(l,2,k) 
      enddo
      psi_coef(k,m) = psi_coef_diagonalized_tmp(k,m)
-     print*, 'psi_coef(k,m)',psi_coef(k,m)
+!     print*, 'psi_coef(k,m)',psi_coef(k,m)
     enddo
    enddo
    soft_touch psi_det psi_coef  N_det
@@ -124,13 +125,14 @@ subroutine is_a_good_candidate(threshold,is_ok,e_pt2,verbose,exit_loop,is_ok_per
 
 end
 
-subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_generators,is_ok,psi_coef_diagonalized_tmp, dressed_H_matrix,threshold,verbose,exit_loop,is_ok_perturbative)
+subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_generators,is_ok,psi_coef_diagonalized_tmp, dressed_H_matrix,threshold,exit_loop,is_ok_perturbative)
  use bitmasks
  implicit none
  integer(bit_kind), intent(in) :: psi_det_generators_input(N_int,2,Ndet_generators)
  integer, intent(in) :: Ndet_generators
  double precision, intent(in) :: threshold
- logical, intent(in) :: verbose
+ logical:: verbose
+ verbose = verbose_foboci
  logical, intent(out) :: is_ok,exit_loop,is_ok_perturbative
  double precision, intent(out) :: psi_coef_diagonalized_tmp(Ndet_generators,N_states)
  double precision, intent(inout) :: dressed_H_matrix(Ndet_generators, Ndet_generators)
@@ -172,8 +174,10 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
   diag_h_mat_average+=dressed_H_matrix(i,i)
  enddo
  diag_h_mat_average = diag_h_mat_average/dble(i_det_no_ref)
- print*,'diag_h_mat_average = ',diag_h_mat_average
- print*,'ref  h_mat         = ',dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart)
+ if(verbose_foboci)then
+  print*,'diag_h_mat_average = ',diag_h_mat_average
+  print*,'ref  h_mat         = ',dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart)
+ endif
  integer :: number_of_particles, number_of_holes 
  ! Filter the the MLCT that are higher than 27.2 eV in energy with respect to the reference determinant
  do i = 1, Ndet_generators 
@@ -205,8 +209,10 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
  if(s2_eig)then
   call u_0_S2_u_0(s2,eigvectors,Ndet_generators,psi_det_generators_input,N_int,N_det_generators,size(eigvectors,1))
   do i = 1, Ndet_generators
-    print*,'s2 = ',s2(i)
-    print*,dabs(s2(i)-expected_s2)
+    if(verbose_foboci)then
+     print*,'s2 = ',s2(i)
+     print*,dabs(s2(i)-expected_s2)
+    endif
     if(dabs(s2(i)-expected_s2).le.0.3d0)then
      n_state_good +=1
      i_state(n_state_good) = i
@@ -222,18 +228,24 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
    E_ref(i) = eigvalues(i)
   enddo
  endif
- do i = 1,N_states
-  print*,'i_state = ',i_state(i)
- enddo
+ if(verbose_foboci)then
+  do i = 1,N_states
+   print*,'i_state = ',i_state(i)
+  enddo
+ endif
  do k = 1, N_states
-  print*,'state ',k
+  if(verbose_foboci)then
+   print*,'state ',k
+  endif
   do i = 1, Ndet_generators
    psi_coef_diagonalized_tmp(i,k) = eigvectors(i,i_state(k)) / eigvectors(index_ref_generators_restart,i_state(k))
    psi_coef_ref(i,k) = eigvectors(i,i_state(k))
-   print*,'psi_coef_ref(i) = ',psi_coef_ref(i,k)
+   if(verbose_foboci)then
+    print*,'psi_coef_ref(i) = ',psi_coef_ref(i,k)
+   endif
   enddo
  enddo
- if(verbose)then
+! if(verbose)then
   print*,'Zeroth order space :'
   do i = 1, Ndet_generators
    write(*,'(10(F16.8),X)')dressed_H_matrix(i,:)
@@ -243,10 +255,10 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
   do k = 1, N_states
    print*,'state ',k
    do i = 1, Ndet_generators
-    print*,'coef, <I|H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart),is_a_ref_det(i)
+    print*,'coef, <I|H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart)
    enddo
   enddo
- endif
+! endif
  double precision :: E_ref_average
  E_ref_average = 0.d0
  do i = 1, N_states
@@ -255,12 +267,13 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
  E_ref_average = E_ref_average / dble(N_states)
 
  call H_apply_dressed_pert(dressed_H_matrix,Ndet_generators,psi_det_generators_input,E_ref_average)  !  Calculate the dressing of the H matrix
- if(verbose)then
+! if(verbose)then
+  print*,''
   print*,'Zeroth order space Dressed by outer space:'
   do i = 1, Ndet_generators
    write(*,'(10(F16.8),X)')dressed_H_matrix(i,:)
   enddo
- endif
+! endif
  call lapack_diagd(eigvalues,eigvectors,dressed_H_matrix,Ndet_generators,Ndet_generators)  ! Diagonalize the Dressed_H_matrix
  integer :: i_good_state(0:N_states)
  i_good_state(0) = 0
@@ -269,10 +282,10 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
     do k = 1, N_states 
      accu = 0.d0
      do j =1, Ndet_generators
-      print*,'',eigvectors(j,i) , psi_coef_ref(j,k)
+!      print*,'',eigvectors(j,i) , psi_coef_ref(j,k)
       accu += eigvectors(j,i) * psi_coef_ref(j,k)
      enddo
-     print*,'accu = ',accu
+!     print*,'accu = ',accu
      if(dabs(accu).ge.0.72d0)then
       i_good_state(0) +=1
       i_good_state(i_good_state(0)) = i
@@ -293,14 +306,14 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
    psi_coef_diagonalized_tmp(i,k) = eigvectors(i,i_state(k)) / eigvectors(index_ref_generators_restart,i_state(k))
   enddo
  enddo
- if(verbose)then
+! if(verbose)then
   do k = 1, N_states
    print*,'state ',k
    do i = 1, Ndet_generators
-    print*,'coef, <I|H+Delta H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart),is_a_ref_det(i)
+    print*,'coef, <I|H+Delta H|I> = ',psi_coef_diagonalized_tmp(i,k),dressed_H_matrix(i,i)-dressed_H_matrix(index_ref_generators_restart,index_ref_generators_restart)
    enddo
   enddo
- endif
+! endif
  is_ok = .False.
  do i = 1, Ndet_generators
   if(is_a_ref_det(i))cycle
@@ -319,7 +332,7 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
   do i = 1, Ndet_generators
    if(is_a_ref_det(i))cycle
    do k = 1, N_states
-    print*, psi_coef_diagonalized_tmp(i,k),threshold_perturbative
+!    print*, psi_coef_diagonalized_tmp(i,k),threshold_perturbative
     if(dabs(psi_coef_diagonalized_tmp(i,k)) .gt.threshold_perturbative)then
      is_ok_perturbative = .False.
      exit
@@ -330,10 +343,10 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
    endif
   enddo
  endif
- if(verbose)then
+! if(verbose)then
   print*,'is_ok              = ',is_ok
   print*,'is_ok_perturbative = ',is_ok_perturbative
- endif
+! endif
  
 
 end

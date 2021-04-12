@@ -27,11 +27,12 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
   unpaired_bitmask(i,2) = unpaired_alpha_electrons(i)
  enddo
  norm_total = 0.d0
+ provide mo_two_e_integrals_in_map
  call initialize_density_matrix_osoci
  call bitstring_to_list(inact_bitmask(1,1), occ(1,1), n_occ_beta, N_int)
  print*,''
  print*,''
- print*,'mulliken spin population analysis'
+ print*,'Mulliken spin population analysis'
  accu =0.d0
  do i = 1, nucl_num
   accu += mulliken_spin_densities(i)
@@ -45,21 +46,26 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
   do i = 1, n_inact_orb
    lmct = .True.
    i_hole_osoci = list_inact(i)
-   print*,'--------------------------'
    ! First set the current generators to the one of restart
    call check_symetry(i_hole_osoci,thr,test_sym)
    if(.not.test_sym)cycle
    call set_generators_to_generators_restart
    call set_psi_det_to_generators
-   print*,'i_hole_osoci = ',i_hole_osoci
    call create_restart_and_1h(i_hole_osoci)
    call set_generators_to_psi_det
-   print*,'Passed set generators'
    call set_bitmask_particl_as_input(reunion_of_bitmask)
    call set_bitmask_hole_as_input(reunion_of_bitmask)
-   call is_a_good_candidate(threshold_lmct,is_ok,e_pt2,verbose,exit_loop,is_ok_perturbative)
-   print*,'is_ok = ',is_ok
+   print*,''
+   print*,'--------------------------'
+   print*,''
+   print*,'Perturbative test for the i_hole_osoci  ',i_hole_osoci
+   print*,''
+   call is_a_good_candidate(threshold_lmct,is_ok,e_pt2,exit_loop,is_ok_perturbative)
    if(is_ok)then
+    print*,''
+    print*,''
+    print*,''
+    print*,'Peturbative test is passed !'
     allocate(dressing_matrix(N_det_generators,N_det_generators))
     dressing_matrix = 0.d0
      do k = 1, N_det_generators
@@ -72,37 +78,45 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
      do k = 1, N_det_generators
        dressing_matrix(k,k) = dressing_matrix(k,k) - hkl
      enddo
-     print*,'Naked matrix'
-     do k = 1, N_det_generators
-      write(*,'(100(F12.5,X))')dressing_matrix(k,:)
-     enddo
-    
      ! Do all the single excitations on top of the CAS and 1h determinants
      call set_bitmask_particl_as_input(reunion_of_bitmask)
      call set_bitmask_hole_as_input(reunion_of_bitmask)
+     print*,''
+     print*,''
+     print*,'Doing all the single excitations ...'
+     print*,''
+     print*,''
      call all_single(e_pt2)
      call make_s2_eigenfunction_first_order
      threshold_davidson = 1.d-6
      soft_touch threshold_davidson 
      call diagonalize_ci
+     print*,''
+     print*,''
+     print*,'Naked matrix'
+     do k = 1, N_det_generators
+      write(*,'(100(F12.5,X))')dressing_matrix(k,:)
+     enddo
      call provide_matrix_dressing(dressing_matrix,n_det_generators,psi_det_generators)
-    hkl = dressing_matrix(1,1)
-    do k = 1, N_det_generators
-      dressing_matrix(k,k) = dressing_matrix(k,k) - hkl
-    enddo
-    print*,'Dressed matrix'
-    do k = 1, N_det_generators
-     write(*,'(100(F12.5,X))')dressing_matrix(k,:)
-    enddo
-    deallocate(dressing_matrix)
+
+    
+     hkl = dressing_matrix(1,1)
+     do k = 1, N_det_generators
+       dressing_matrix(k,k) = dressing_matrix(k,k) - hkl
+     enddo
+     print*,''
+     print*,'Variational dressing of the matrix'
+     do k = 1, N_det_generators
+      write(*,'(100(F12.5,X))')dressing_matrix(k,:)
+     enddo
+     deallocate(dressing_matrix)
    else 
-    if(.not.do_it_perturbative)cycle
-    if(.not. is_ok_perturbative)cycle
+     if(.not.do_it_perturbative)cycle
+     if(.not. is_ok_perturbative)cycle
    endif
    call set_intermediate_normalization_lmct_old(norm_tmp,i_hole_osoci)
 
    do k = 1, N_states
-    print*,'norm_tmp = ',norm_tmp(k)
     norm_total(k) += norm_tmp(k)
    enddo
    call update_density_matrix_osoci
@@ -122,7 +136,11 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
     if(.not.test_sym)cycle
     call set_generators_to_generators_restart
     call set_psi_det_to_generators
-    print*,'i_particl_osoci= ',i_particl_osoci
+    print*,''
+    print*,'--------------------------'
+    print*,''
+    print*,'Perturbative test for the i_particl_osoci ',i_particl_osoci
+    print*,''
     ! Initialize the bitmask to the restart ones
     call initialize_bitmask_to_restart_ones
     ! Impose that only the hole i_hole_osoci can be done
@@ -136,8 +154,7 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
     call set_bitmask_particl_as_input(reunion_of_bitmask)
     call set_bitmask_hole_as_input(reunion_of_bitmask)
   ! so all the single excitation on the new generators 
-    call is_a_good_candidate(threshold_mlct,is_ok,e_pt2,verbose,exit_loop,is_ok_perturbative)
-    print*,'is_ok = ',is_ok
+    call is_a_good_candidate(threshold_mlct,is_ok,e_pt2,exit_loop,is_ok_perturbative)
     if(is_ok)then
       allocate(dressing_matrix(N_det_generators,N_det_generators))
       dressing_matrix = 0.d0
@@ -147,12 +164,36 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
          dressing_matrix(k,l) = hkl
        enddo
       enddo
+      print*,''
+      print*,''
+      print*,''
+      print*,'Peturbative test is passed !'
+      print*,''
+      print*,''
+      print*,'Doing all the single excitations ...'
+      print*,''
+      print*,''
       call all_single(e_pt2)
       call make_s2_eigenfunction_first_order
       threshold_davidson = 1.d-6
       soft_touch threshold_davidson threshold_davidson
-     
+
       call diagonalize_ci
+     
+      hkl = dressing_matrix(1,1)
+      do k = 1, N_det_generators
+        dressing_matrix(k,k) = dressing_matrix(k,k) - hkl
+      enddo
+      print*,'Naked matrix'
+      do k = 1, N_det_generators
+       write(*,'(100(F12.5,X))')dressing_matrix(k,:)
+      enddo
+      call provide_matrix_dressing(dressing_matrix,n_det_generators,psi_det_generators)
+      print*,''
+      print*,'Variational dressing of the matrix'
+      do k = 1, N_det_generators
+       write(*,'(100(F12.5,X))')dressing_matrix(k,:)
+      enddo
       deallocate(dressing_matrix)
     else
      if(exit_loop)then
@@ -166,7 +207,6 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
     endif
     call set_intermediate_normalization_mlct_old(norm_tmp,i_particl_osoci)
     do k = 1, N_states
-     print*,'norm_tmp = ',norm_tmp(k)
      norm_total(k) += norm_tmp(k)
     enddo
     call update_density_matrix_osoci
