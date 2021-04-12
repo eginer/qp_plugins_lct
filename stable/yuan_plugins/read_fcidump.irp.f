@@ -34,6 +34,13 @@ subroutine routine
   endif
   n_integrals += 1 
   call mo_two_e_integrals_index(i,j,k,l,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(k,j,i,l,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(i,l,k,j,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(k,l,i,j,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(j,i,l,k,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(j,k,l,i,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(l,i,j,k,buffer_i(n_integrals))
+  call mo_two_e_integrals_index(l,k,j,i,buffer_i(n_integrals))
   buffer_value(n_integrals) = 1.0d0 * integral
 !  print*,integral,i,k,j,l
   if (n_integrals == size_buffer) then

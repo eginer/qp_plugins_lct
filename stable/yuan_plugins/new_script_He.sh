@@ -1,5 +1,5 @@
 
-source ~/programs/qp2/quantum_package.rc
+source ~/data/dft_emmanuel/qp2/quantum_package.rc
 
 #rm -rf H2.ezfio*
 ezfio=h2_6-31g.h5.ezfio
