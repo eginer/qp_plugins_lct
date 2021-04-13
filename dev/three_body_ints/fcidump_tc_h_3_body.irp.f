@@ -38,7 +38,7 @@ subroutine fcidump_3_tc
         integral = three_body_ints(i,j,m,k,l,n)
         integral = integral * 1.d0/3.d0 !!!! For NECI convention 
         if(dabs(integral).lt.1.d-12)cycle
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, i, j, m, k, l, n
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, ii, jj, mm, kk, ll, nn
        enddo
       enddo
      enddo

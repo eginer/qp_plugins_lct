@@ -37,17 +37,17 @@ subroutine fcidump_3_tc
         call give_integrals_3_body(i,j,m,k,l,n,integral)
         integral = -integral * 1.d0/3.d0 !!!! For NECI convention 
         if(dabs(integral).lt.1.d-12)cycle
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, i, j, m, k, l, n
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, k,j,m,i,l,n
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, k,l,m,i,j,n
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, k,j,n,i,l,m
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, k,l,n,i,j,m
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, i,l,m,k,j,n
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, k,l,m,i,j,n
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, i,l,n,k,j,m
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, i,j,n,k,l,m
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, k,j,n,i,l,m
-        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, i,l,n,k,j,m
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, ii,jj,mm,kk,ll,nn
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, kk,jj,mm,ii,ll,nn
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, kk,ll,mm,ii,jj,nn
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, kk,jj,nn,ii,ll,mm
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, kk,ll,nn,ii,jj,mm
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, ii,ll,mm,kk,jj,nn
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, kk,ll,mm,ii,jj,nn
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, ii,ll,nn,kk,jj,mm
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, ii,jj,nn,kk,ll,mm
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, kk,jj,nn,ii,ll,mm
+        write(i_unit_output_physicist,'(E20.10,6(I3,X))') integral, ii,ll,nn,kk,jj,mm
        enddo
       enddo
      enddo

@@ -1495,6 +1495,7 @@ but as
 one obtains 
 \begin{equation}
  \begin{aligned}
+  \label{eq:grad_mur_1}
  \deriv{}{x_1}{} u(r_{12};\mur{1}) =& \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \\
                                    +&\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.  
  \end{aligned}
@@ -1587,74 +1588,66 @@ Summing all terms and noticing that $\bigg(x_1 - x_2\bigg)^2 + \bigg(y_1 - y_2\b
 \bibliography{srDFT_SC}
 
 % f(x) = (3*erf(mu*x) - 1)/(2*x) + 1.5*mu/sqpi * exp(-(mu*x)**2.) - 0.25 * (1 - erf(mu*x))**2.
-
-\section{Form of the adjoint operator}
-One can write $\tilde{H}[\mu]$ in terms of its hermitian and non hermitian parts 
+\subsection{Proposal of an ad-hoc symmetrization}
+Let us assume that we only take a non symmetric form 
 \begin{equation}
- \tilde{H}[\mu] = \tilde{H}^h[\mu] + \tilde{H}^{nh}[\mu]
+ \tilde{u}(\bd{r_1},\bd{r_2}) = u(r_{12};\mur{1}), 
 \end{equation}
-where the hermitian part is 
-\begin{equation}
- \tilde{H}^h[\mu] = H - \bigg( \Delta_1 u(r_{12},\mu) + \big( \nabla_1 u(r_{12},\mu)\big)^2\bigg) 
-\end{equation}
-with 
-\begin{equation}
- \Delta_1 u(r_{12},\mu) = \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} - \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2},
-\end{equation}
-\begin{equation}
- \big( \nabla_1 u(r_{12},\mu)\big)^2 = \frac{\bigg(1 - \text{erf}(\mu r_{12})\bigg)^2}{4}, 
-\end{equation}
-and 
-\begin{equation}
- \tilde{H}^{nh}[\mu] = \nabla_{1}u(r_{12},\mu) \cdot \big(\nabla_1 - \nabla_2\big)
-\end{equation}
-The adjoint of the non hermitian operator $\tilde{H}^{nh}[\mu]$ is 
-\begin{equation}
- \bigg( \tilde{H}^{nh}[\mu] \bigg)^\dagger =  \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_1 \bigg)^\dagger - \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 \bigg)^\dagger,
-\end{equation}
-with 
-\begin{equation}
- \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_1 \bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \nabla_1 
-                                                                - \nabla_1^2 u(r_{12},\mu)
-\end{equation}
-\begin{equation}
- \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 \bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 
-                                                                - \nabla_1 \cdot \nabla_2 u(r_{12},\mu)
-\end{equation}
-but as 
-\begin{equation}
- \nabla_2 u(r_{12},\mu) = - \nabla_{1}u(r_{12},\mu)
-\end{equation}
-one has
-\begin{equation}
- \nabla_1 \cdot \nabla_2 u(r_{12},\mu) = - \nabla_1^2 u(r_{12},\mu)
-\end{equation}
-and therefore 
-\begin{equation}
- \bigg( \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 \bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \nabla_2 
-                                                                + \nabla_1^2 u(r_{12},\mu)
-\end{equation}
-which gives for the adjoint of the non hermitian operator 
-\begin{equation}
- \bigg( \tilde{H}^{nh}[\mu]\bigg)^\dagger = - \nabla_{1}u(r_{12},\mu) \cdot \big( \nabla_1 -\nabla_2 \big) - 2 \nabla_1^2 u(r_{12},\mu).
-\end{equation}
-Therefore the adjoint of the TC Hamiltonian is
+and we will see afterwards how to symmetrize the Hamiltonian.
+\subsubsection{Computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2$ }
+therefore, according to Eq. \eqref{eq:grad_mur_1} one has 
 \begin{equation}
  \begin{aligned}
-\bigg(\tilde{H}[\mu]\bigg)^\dagger & = \tilde{H}^h[\mu] + \bigg( \tilde{H}^{nh}[\mu] \bigg)^\dagger \\
-                                   & = \tilde{H}^h[\mu]  - \nabla_{1}u(r_{12},\mu) \cdot \big( \nabla_1 -\nabla_2 \big) - 2 \nabla_1^2 u(r_{12},\mu)  \\
-                                   & = \tilde{H}^h[\mu]  - \tilde{H}^{nh}[\mu] - 2 \nabla_1^2 u(r_{12},\mu) 
+ \deriv{}{x_1}{} u(r_{12};\mur{1}) =& \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \\
+                                   +&\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.  
  \end{aligned}
 \end{equation}
-Then 
+Therefore, the computation of $\big( \deriv{}{x_1}{} u(r_{12};\mur{1}) \big)^2$ yields 
 \begin{equation}
  \begin{aligned}
- \frac{\tilde{H}[\mu] + \bigg(\tilde{H}[\mu]\bigg)^\dagger}{2}& = \tilde{H}^h[\mu] - \nabla_1^2 u(r_{12},\mu) \\
-                                                              & = H - \bigg( \Delta_1 u(r_{12},\mu) + \big( \nabla_1 u(r_{12},\mu)\big)^2\bigg) - \nabla_1^2 u(r_{12},\mu) \\
-                                                              & = H - \bigg( 2 \Delta_1 u(r_{12},\mu) + \big( \nabla_1 u(r_{12},\mu)\big)^2\bigg) \\
-                                                              & = h_c + \frac{1}{r_{12}} - 2 \frac{1 - \text{erf}(\mu r_{12})}{r_{12}} + 2 \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2} 
-                                                                 - \frac{\bigg(1 - \text{erf}(\mu r_{12})\bigg)^2}{4} \\
-                                                              & = h_c - \frac{1 - 2 \text{erf}(\mu r_{12})}{r_{12}} + 2 \frac{\mu}{\sqrt{\pi}} e^{-\big(\mu r_{12} \big)^2}  - \frac{\bigg(1 - \text{erf}(\mu r_{12})\bigg)^2}{4}
+ \bigg( \deriv{}{x_1}{} u(r_{12};\mur{1}) \bigg)^2 = & \frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4 \big(r_{12}\big)^2}\big( x_1 - x_2)^2 \\
+ + & \frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg(\deriv{\mur{1}}{x_1}{} \bigg)^2 \\ 
+ + & \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{r_{12}}\big( x_1 - x_2) \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.
+ \end{aligned}
+\end{equation}
+Therefore, the computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2$ yields 
+\begin{equation}
+ \begin{aligned}
+  \bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2  = &\frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4} 
+   +   \frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2 \\ 
+   + & \nabla_1  \mur{1} \, \cdot \, \big( \br{}_1 - \br{}_2\big) \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{r_{12}} \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi}\mu(\bri{1})^2} 
+ \end{aligned}
+\end{equation}
+
+\subsubsection{Computation of $\nabla_1^2  u(r_{12};\mur{1})$ }
+One has to perform first 
+\begin{equation}
+ \begin{aligned}
+  \deriv{}{x_1}{2} u(r_{12};\mur{1}) =  & \deriv{}{x_1}{}  \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \bigg) \\ 
+      + & \deriv{}{x_1}{}  \bigg(\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{} \bigg).
+ \end{aligned}
+\end{equation}
+Let us begin with the first term 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_1}{}  \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \bigg)  = 
+&  \big( x_1 - x_2 \big) \deriv{}{x_1}{} \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \bigg) \\
++ & \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}.
+ \end{aligned}
+\end{equation}
+Then on has that 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_1}{} \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \bigg) &= 
+ \deriv{}{r_{12}}{} \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \deriv{r_{12}}{x_1}{} \\  
+ & + \deriv{}{\mur{1}}{}\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \deriv{\mur{1}}{x_1}{}.
+ \end{aligned}
+\end{equation}
+The first term reads 
+\begin{equation}
+ \begin{aligned}
+& \deriv{}{r_{12}}{} \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \deriv{r_{12}}{x_1}{} = \\
+& -\frac{(x_1 - x_2)}{\big(r_{12}\big)^2} \bigg( \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} + \frac{\mu(\br{}_1)}{\sqrt{\pi}} e^{-\big(\mu(\br{}_1) r_{12}\big)^2}\bigg).  
  \end{aligned}
 \end{equation}
 
