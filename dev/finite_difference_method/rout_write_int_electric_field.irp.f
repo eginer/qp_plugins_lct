@@ -1,56 +1,49 @@
-subroutine save_one_e_tot_eff_pot_basis_electric_field
+subroutine save_v_ne_and_electric_filed_ao_ints
  implicit none
  BEGIN_DOC 
-! used to save the effective_one_e_potential into the one-body integrals in the ezfio folder
-! this effective_one_e_potential is computed with the current density 
-! and will couple the WFT with DFT for the next regular WFT calculation
+
  END_DOC
 
- call ezfio_set_mo_one_e_ints_mo_integrals_n_e(mo_one_e_integrals_electric_field) ! mo_integrals_n_e + mo_kinetic_integrals + epsilon_<mu_z>_mo 
- call ezfio_set_mo_one_e_ints_mo_integrals_kinetic(- mo_kinetic_integrals)
-
- call ezfio_set_ao_one_e_ints_ao_integrals_n_e(ao_one_e_integrals_electric_field) ! ao_integrals_n_e + ao_kinetic_integrals + epsilon_<mu_z>_ao 
- call ezfio_set_ao_one_e_ints_ao_integrals_kinetic(- ao_kinetic_integrals)
-
- call ezfio_set_mo_one_e_ints_io_mo_integrals_n_e("Read")
- call ezfio_set_mo_one_e_ints_io_mo_integrals_kinetic("Read")
+ call ezfio_set_ao_one_e_ints_ao_integrals_n_e(ao_one_e_potential_n_e_and_electric_field) ! ao_integrals_n_e - epsilon_<mu_z>_ao 
  call ezfio_set_ao_one_e_ints_io_ao_integrals_n_e("Read")
- call ezfio_set_ao_one_e_ints_io_ao_integrals_kinetic("Read")
-
- print *,  'Effective DFT potential is written on disk on the one electron integrals on the AO/MO basis'
-                              
-
 end
 
-!subroutine save_eff_basis_two_e_ints
-!implicit none
-!integer :: i,j,k,l
-!PROVIDE mo_two_e_int_mu_of_r_in_map
-!print*,'Writting effective integrals in EZFIO'
-!call ezfio_set_work_empty(.False.)
-!call map_save_to_disk(trim(ezfio_filename)//'/work/mo_ints',mo_int_mu_of_r_map)
-!call ezfio_set_mo_two_e_ints_io_mo_two_e_integrals('Read')
-!end
+ BEGIN_PROVIDER [ double precision, ao_one_e_integrals_tot_electric_field,(ao_num,ao_num)]
+&BEGIN_PROVIDER [ double precision, ao_one_e_potential_n_e_and_electric_field,(ao_num,ao_num)]
+  implicit none
+  BEGIN_DOC
+ ! One-electron Hamiltonian in the |AO| basis.
+  END_DOC
 
-!subroutine save_regular_two_e_ints_mo
-!implicit none
-!integer :: i,j,k,l
-!PROVIDE mo_two_e_integrals_in_map
-!call ezfio_set_work_empty(.False.)
-!call map_save_to_disk(trim(ezfio_filename)//'/work/mo_ints',mo_integrals_map)
-!call ezfio_set_mo_two_e_ints_io_mo_two_e_integrals('Read')
-!end
+  ao_one_e_integrals_tot_electric_field = ao_integrals_n_e + ao_kinetic_integrals - field_strenght*ao_dipole_total_z
+  ao_one_e_potential_n_e_and_electric_field = ao_integrals_n_e - field_strenght*ao_dipole_total_z
+END_PROVIDER
 
-
-subroutine write_all_ints_basis_electric_field
+BEGIN_PROVIDER [ double precision, ao_dipole_total_z, (ao_num, ao_num)]
  implicit none
- BEGIN_DOC
- ! saves all integrals needed for RS-DFT-MRCI calculation: 
- !
- ! one-body effective potential and two-elec erf integrals
- END_DOC
- call save_one_e_tot_eff_pot_basis_electric_field
- call save_regular_two_e_ints_mo
-end
+ integer :: i,j
+ double precision :: nuclei_part 
+ nuclei_part = 0.d0
+ do i = 1,nucl_num
+  nuclei_part += nucl_charge(i) * nucl_coord(i,3)
+ enddo
+ print*,'nuclei_part = ',nuclei_part
+ do i = 1, ao_num
+   do j = 1, ao_num
+!   ao_dipole_total_z(j,i) = ao_overlap(j,i) * nuclei_part - ao_dipole_z(j,i)
+    ao_dipole_total_z(j,i) =  - ao_dipole_z(j,i)
+   enddo
+ enddo
+
+END_PROVIDER 
 
 
+BEGIN_PROVIDER [ double precision, mo_one_e_integrals_electric_field,(mo_num,mo_num)]
+  implicit none
+  integer                        :: i,j,n,l
+  BEGIN_DOC
+  ! array of the one-electron Hamiltonian on the |MO| basis :
+  ! sum of the kinetic and nuclear electronic potentials (and pseudo potential if needed)
+  END_DOC
+  mo_one_e_integrals_electric_field  = mo_integrals_n_e + mo_kinetic_integrals - field_strenght*mo_dipole_z
+END_PROVIDER
