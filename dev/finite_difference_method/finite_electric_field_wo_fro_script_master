@@ -1,0 +1,111 @@
+#/bin/bash                                                                                              
+# This is a sample PBS script
+# temps CPU a ajuster au calcul
+   #PBS -l cput=500:00:00
+   #PBS -l nodes=1:ppn=12
+# memoire a ajuster au calcul
+   #PBS -l vmem=100gb
+# a changer
+   #   Request that regular output and terminal output go to the same file
+   #      #PBS -j oe
+# Pour savoir sur quel noeud on est
+#echo $HOSTNAME
+# Startdir = ou sont les fichiers d'input, par defaut HOMEDIR
+#
+StartDir=$PBS_O_WORKDIR
+echo $StartDir
+#
+# SCRATCHDIR = espace temporaire (local au noeud et a vider apres le calcul)
+# NE PAS MODIFIER
+ulimit -s unlimited
+export SCRATCHDIR=/scratch/$USER/$PBS_JOBID
+#
+cd $StartDir
+
+
+############################################################################
+####### YOU PUT THE PATH TO YOUR
+QP_ROOT=~/programs/qp2/
+source ${QP_ROOT}/quantum_package.rc
+####### YOU LOAD SOME LIBRARIES
+alias python3='/programmes/installation/Python/3.7.1/bin/python3'
+type -a python3
+
+#export OMP_NUM_THREADS=12
+
+module load intel2016_OMPI-V2
+
+multiplicity=1
+#basis="aug-cc-pcvdz aug-cc-pcvtz"
+basis="aug-cc-pcvqz" 
+#-------------------------------------------------------------------------------
+#system=HCl
+#mkdir ${system}
+#cd ${system}
+
+#for b in ${basis}
+#do
+# echo "------------------------------------"
+# echo "System :" ${system}
+# echo "------------------------------------"
+# #[[ -d ${s} ]] && rm -rf ${s}
+# mkdir $b
+# cp ../../xyz/${system}.xyz ${b}
+# cd ${b}
+# qp create_ezfio -b "Cl:aug-cc-pcvdz|H:cc-pvdz" -m $multiplicity -o ${system}_${b}.ezfio ${system}.xyz
+# qp run scf | tee scf_${system}_${b}.out
+# # Call finite_electric_field with ezfio, basis and xyz file.
+# qp unset_file
+# ../../finite_electric_field.sh ${system}_${b}.ezfio $b ${system}.xyz | tee finite_diff_${system}_${b}.out
+# qp unset_file
+# cd ..
+#cd ../
+
+ systems="LiF AlF ClF NaF BF CO"
+ #systems="AlF CO"
+ for s in ${systems}
+ do 
+  #mkdir ${s}
+  cd ${s}
+
+  for b in ${basis}
+  do
+   echo "------------------------------------"
+   echo "System :" ${s}
+   echo "------------------------------------"
+   #[[ -d ${s} ]] && rm -rf ${s}
+   mkdir $b
+   cp ../../xyz/${s}.xyz ${b}
+   cd ${b}
+   qp create_ezfio -b ${b} -m $multiplicity -o ${s}_${b}.ezfio ${s}.xyz
+   qp run scf | tee scf_${s}_${b}.out
+   # Call finite_electric_field with ezfio, basis and xyz file.
+   qp unset_file
+   ../../finite_electric_field.sh ${s}_${b}.ezfio $b ${s}.xyz | tee finite_diff_${s}_${b}.out
+   qp unset_file
+   cd ..
+  done
+  cd ../
+ done
+
+#system=BF
+#multiplicity=1
+#basis="aug-cc-pcvdz aug-cc-pcvtz aug-cc-pcvqz"
+
+#for b in ${basis}
+#do
+#echo "------------------------------------"
+#echo "System :" ${system}
+#echo "------------------------------------"
+##[[ -d ${s} ]] && rm -rf ${s}
+#mkdir $b
+#cp ../xyz/${system}.xyz ${b}
+#cd ${b}
+#qp create_ezfio -b $b -m $multiplicity -o ${system}_${b}.ezfio ${system}.xyz
+#qp run scf | tee scf_${system}_${b}.out
+## Call finite_electric_field with ezfio, basis and xyz file.
+#qp unset_file
+#../finite_electric_field.sh ${system}_${b}.ezfio $b ${system}.xyz | tee finite_diff_${system}_${b}.out
+#qp unset_file
+#cd ..
+#done
