@@ -1588,12 +1588,12 @@ Summing all terms and noticing that $\bigg(x_1 - x_2\bigg)^2 + \bigg(y_1 - y_2\b
 \bibliography{srDFT_SC}
 
 % f(x) = (3*erf(mu*x) - 1)/(2*x) + 1.5*mu/sqpi * exp(-(mu*x)**2.) - 0.25 * (1 - erf(mu*x))**2.
-\subsection{Proposal of an ad-hoc symmetrization}
-Let us assume that we only take a non symmetric form 
+\subsection{Proposal of different symmetrization}
+Let us assume that we only take the following form as a Jastrow factor 
 \begin{equation}
- \tilde{u}(\bd{r_1},\bd{r_2}) = u(r_{12};\mur{1}), 
+ J(\br_1,\br_2) = \frac{e^{ u(r_{12};\mur{1})} + e^{u(r_{12};\mur{2})}}{2}. 
 \end{equation}
-and we will see afterwards how to symmetrize the Hamiltonian.
+
 \subsubsection{Computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2$ }
 therefore, according to Eq. \eqref{eq:grad_mur_1} one has 
 \begin{equation}
@@ -1629,6 +1629,7 @@ One has to perform first
 \end{equation}
 Let us begin with the first term 
 \begin{equation}
+ \label{eq:_d_x_11}
  \begin{aligned}
  \deriv{}{x_1}{}  \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \bigg)  = 
 &  \big( x_1 - x_2 \big) \deriv{}{x_1}{} \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \bigg) \\
@@ -1647,7 +1648,31 @@ The first term reads
 \begin{equation}
  \begin{aligned}
 & \deriv{}{r_{12}}{} \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \deriv{r_{12}}{x_1}{} = \\
-& -\frac{(x_1 - x_2)}{\big(r_{12}\big)^2} \bigg( \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} + \frac{\mu(\br{}_1)}{\sqrt{\pi}} e^{-\big(\mu(\br{}_1) r_{12}\big)^2}\bigg).  
+& -\frac{(x_1 - x_2)}{\big(r_{12}\big)^2} \bigg( \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} + \frac{\mu(\br{}_1)}{\sqrt{\pi}} e^{-\big(\mu(\br{}_1) r_{12}\big)^2}\bigg),  
+ \end{aligned}
+\end{equation}
+and the second term reads
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{\mur{1}}{}\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \deriv{\mur{1}}{x_1}{}  = \\
+ - \deriv{\mur{1}}{x_1}{} \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{\sqrt{\pi}},
+ \end{aligned}
+\end{equation}
+and eventually 
+\begin{equation}
+ \begin{aligned}
+& \deriv{}{x_1}{} \bigg(\frac{1 - \text{erf}\big(\mur{1} r_{12} \big)}{2 r_{12}} \bigg) = 
+- \deriv{\mur{1}}{x_1}{} \frac{e^{-\big(\mur(1) r_{12}\big)^2}}{\sqrt{\pi}}\\
+& -\frac{(x_1 - x_2)}{\big(r_{12}\big)^2} \bigg( \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} + \frac{\mu(\br{}_1)}{\sqrt{\pi}} e^{-\big(\mur{1} r_{12}\big)^2}\bigg)
+ \end{aligned} 
+\end{equation}
+and therefore Eq. \eqref{eq:_d_x_11} becomes 
+\begin{equation}
+ \begin{aligned}
+& \deriv{}{x_1}{}  \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \bigg)  = 
+\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} \\
+&- \deriv{\mur{1}}{x_1}{} \frac{(x_1 - x_2)e^{-\big(\mur{1} r_{12}\big)^2}}{\sqrt{\pi}}\\
+& -\frac{(x_1 - x_2)^2}{\big(r_{12}\big)^2} \bigg( \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} + \frac{\mu(\br{}_1)}{\sqrt{\pi}} e^{-\big(\mur{1} r_{12}\big)^2}\bigg)
  \end{aligned}
 \end{equation}
 
