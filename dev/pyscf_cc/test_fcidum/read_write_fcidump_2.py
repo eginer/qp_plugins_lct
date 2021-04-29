@@ -14,7 +14,7 @@ from pyscf.cc import ccsd_t
 from pyscf import symm
 from pyscf.tools import fcidump
 
-mol = gto.M(atom='H 0 0 0; H 0 0 0.7', basis='sto-3g')
+mol = gto.M(atom='H 0 0 0; H 0 0 0.7', basis='cc-pvtz')
 #myhf = scf.RHF(mol)
 #myhf.kernel()
 #
@@ -39,3 +39,4 @@ mf.MP2().run()
 
 mycc = cc.CCSD(mf)
 mycc.kernel()
+e_ee, c_ee = mycc.eeccsd(nroots=5)
