@@ -156,6 +156,42 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,herf,heff,hderiv,hthree,htot)
       enddo
      enddo
     enddo
+
+    ! alpha/alpha/alpha three-body
+    do i = 1, Ne(1)
+     ii = occ(i,1) ! 1
+     do j = i+1, Ne(1)
+      jj = occ(j,1) ! 2 
+      do k = j+1, Ne(1)
+       kk = occ(k,1) ! 3 
+       !               direct   :       3  2  1  
+       direct_int = three_body_3_index(kk,jj,ii)
+       exchange_int_12 = three_body_3_index_exch_12(kk,jj,ii)
+       exchange_int_13 = three_body_3_index_exch_13(kk,jj,ii)
+       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
+       hthree +=  direct_int - exchange_int_12 - exchange_int_13 - exchange_int_23 
+      enddo
+     enddo
+    enddo
+
+    ! beta/beta/beta three-body
+    do i = 1, Ne(2)
+     ii = occ(i,2) ! 1
+     do j = i+1, Ne(2)
+      jj = occ(j,2) ! 2
+      do k = j+1, Ne(2)
+       kk = occ(k,2) ! 3
+       !               direct   :       3  2  1  
+       direct_int = three_body_3_index(kk,jj,ii)
+       exchange_int_12 = three_body_3_index_exch_12(kk,jj,ii)
+       exchange_int_13 = three_body_3_index_exch_13(kk,jj,ii)
+       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
+       hthree +=  direct_int - exchange_int_12 - exchange_int_13 - exchange_int_23 
+      enddo
+     enddo
+    enddo
+
+
    endif
   endif
   htot = hmono + herf + heff + hderiv + hthree

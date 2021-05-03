@@ -381,8 +381,6 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_12, (mo_num, mo_num, 
  three_body_3_index_exch_12 = 0.d0
  print*,'Providing the three_body_3_index_exch_12 ...'
  call wall_time(wall0)
- call wall_time(wall1)
- print*,'wall time for three_body_3_index_exch_12',wall1 - wall0
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
@@ -403,6 +401,8 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_12, (mo_num, mo_num, 
  !$OMP END DO
  !$OMP END PARALLEL
 
+ call wall_time(wall1)
+ print*,'wall time for three_body_3_index_exch_12',wall1 - wall0
 END_PROVIDER 
 
 BEGIN_PROVIDER [ double precision, three_body_3_index_exch_23, (mo_num, mo_num, mo_num)]
@@ -420,10 +420,8 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_23, (mo_num, mo_num, 
  name_file = 'six_index_tensor'
  provide x_W_ij_erf_rk
  three_body_3_index_exch_23 = 0.d0
- print*,'Providing the three_body_3_index_exch_13 ...'
+ print*,'Providing the three_body_3_index_exch_23 ...'
  call wall_time(wall0)
- call wall_time(wall1)
- print*,'wall time for three_body_3_index_exch_13',wall1 - wall0
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
@@ -443,6 +441,8 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_23, (mo_num, mo_num, 
   enddo
  !$OMP END DO
  !$OMP END PARALLEL
+ call wall_time(wall1)
+ print*,'wall time for three_body_3_index_exch_23',wall1 - wall0
 
 END_PROVIDER 
 
@@ -463,8 +463,6 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_13, (mo_num, mo_num, 
  three_body_3_index_exch_13 = 0.d0
  print*,'Providing the three_body_3_index_exch_13 ...'
  call wall_time(wall0)
- call wall_time(wall1)
- print*,'wall time for three_body_3_index_exch_13',wall1 - wall0
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
@@ -485,4 +483,6 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_13, (mo_num, mo_num, 
  !$OMP END DO
  !$OMP END PARALLEL
 
+ call wall_time(wall1)
+ print*,'wall time for three_body_3_index_exch_13',wall1 - wall0
 END_PROVIDER 
