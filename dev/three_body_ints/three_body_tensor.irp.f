@@ -323,6 +323,7 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, 
 END_PROVIDER 
 
 
+
 BEGIN_PROVIDER [ double precision, three_body_3_index, (mo_num, mo_num, mo_num)]
  implicit none
  BEGIN_DOC
@@ -595,6 +596,7 @@ BEGIN_PROVIDER [ double precision, three_body_4_index_exch_12_part, (mo_num, mo_
     do m = 1, mo_num
      do j = 1, mo_num
       integral = 0.d0
+      !                          
       call give_integrals_3_body(i,j,m,j,k,m,integral)
 
       three_body_4_index_exch_12_part(j,m,k,i) = -1.d0 * integral 

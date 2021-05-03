@@ -283,15 +283,31 @@ subroutine double_htilde_mu_mat_5_index(key_j,key_i,hmono,herf,heff,hderiv,hthre
     ! alpha/alpha/beta threee-body 
     if(Ne(1)+Ne(2).ge.3)then
      if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
-      do k = 1, Ne(2)
+      do k = 1, Ne(2) ! beta - alpha/alpha
        kk = occ(k,2)
        hthree += three_body_5_index(kk,h1,h2,p1,p2)
       enddo
+      do k = 1, Ne(1) ! alpha/alpha/alpha
+       kk = occ(k,1)
+       hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index(kk,h1,h2,p2,p1)       ! p1 <-> p2
+       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)    ! p1 <-> kk 
+       hthree -=  three_body_5_index_exch_13(kk,h2,h1,p2,p1)    ! p2 <-> kk  
+      enddo 
      else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
-      do k = 1, Ne(1)
+      do k = 1, Ne(1) ! alpha- beta/beta
        kk = occ(k,1)
        hthree += three_body_5_index(kk,h1,h2,p1,p2)
       enddo
+      do k = 1, Ne(2) ! beta/beta/beta
+       kk = occ(k,2)
+       hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index(kk,h1,h2,p2,p1)       ! p1 <-> p2
+       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)    ! p1 <-> kk 
+       !                                     h1 h2 kk kk p2 p1
+       !                                     h1 h2 kk p1 kk p2
+       hthree -=  three_body_5_index_exch_13(kk,h2,h1,p2,p1)    ! p2 <-> kk  
+      enddo 
      else ! double alpha/beta 
       if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
        do k = 1, Ne(1)
@@ -342,7 +358,7 @@ subroutine single_htilde_mu_mat_4_index(key_j,key_i,hmono,herf,heff,hderiv,hthre
   integer                        :: h1, p1, h2, p2, s1, s2
   double precision :: get_mo_two_e_integral_erf,mo_two_e_integral_eff_pot,phase
   double precision :: get_two_e_integral
-  double precision :: direct_int,exchange_int_12
+  double precision :: direct_int,exchange_int_12,exchange_int_23,exchange_int_13
   integer :: other_spin(2)
   PROVIDE mo_two_e_integrals_in_map mo_integrals_map big_array_exchange_integrals 
   PROVIDE mo_two_e_integrals_eff_pot_in_map mo_two_e_integrals_erf_in_map
@@ -457,6 +473,22 @@ subroutine single_htilde_mu_mat_4_index(key_j,key_i,hmono,herf,heff,hderiv,hthre
        hthree += direct_int - exchange_int_12
       enddo
      enddo
+
+     ! beta-beta-beta
+     do i = 1, Ne(2)
+      ii = occ(i,2)
+      do j = i+1, Ne(2)
+       jj = occ(j,2)
+       direct_int = three_body_4_index(jj,ii,h1,p1)                    ! < h1 jj ii | p1 jj ii >
+       exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)       ! < h1 jj ii | p1 ii jj >
+       exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       exchange_int_13 = three_body_4_index_exch_12_part(jj,ii,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       hthree += direct_int & 
+              -  exchange_int_23 & ! ii <-> jj
+              -  exchange_int_12 & ! p1 <-> jj
+              -  exchange_int_13   ! p1 <-> ii
+      enddo
+     enddo
   
     else ! single alpha 
      ! beta-beta + hole/particle alpha 
@@ -481,6 +513,22 @@ subroutine single_htilde_mu_mat_4_index(key_j,key_i,hmono,herf,heff,hderiv,hthre
        !                         a  a b   a  a b                       a  a b   a  a b   
        !                       < h1 j i | p1 j i >  -                < h1 j i | j p1 i >  
        hthree += direct_int - exchange_int_12
+      enddo
+     enddo
+
+     ! alpha-alpha-alpha
+     do i = 1, Ne(1)
+      ii = occ(i,1)
+      do j = i+1, Ne(1)
+       jj = occ(j,1)
+       direct_int = three_body_4_index(jj,ii,h1,p1)                    ! < h1 jj ii | p1 jj ii >
+       exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)       ! < h1 jj ii | p1 ii jj >
+       exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       exchange_int_13 = three_body_4_index_exch_12_part(jj,ii,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       hthree += direct_int & 
+              -  exchange_int_23 & ! ii <-> jj
+              -  exchange_int_12 & ! p1 <-> jj
+              -  exchange_int_13   ! p1 <-> ii
       enddo
      enddo
   
