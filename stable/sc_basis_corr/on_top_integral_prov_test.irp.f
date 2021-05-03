@@ -4,10 +4,6 @@ program on_top
  !
  END_DOC
 
- integer          :: ipoint, istate, nx
- double precision :: r(3), xmax, dx
- double precision :: rho2, rho2_ex
- double precision :: mu_correction_of_on_top, mu_of_r, f_psi
  read_wf = .true.
  touch read_wf
  ! total one-e integrals 
@@ -35,6 +31,20 @@ program on_top
  ! integral of the effective potential 
  io_mo_int_mu_of_r = "None" 
  touch io_mo_int_mu_of_r 
+ call test_compare_on_top
+end program
+
+subroutine test_compare_on_top
+ implicit none
+ BEGIN_DOC
+ !
+ END_DOC
+
+ integer          :: ipoint, istate, nx
+ double precision :: r(3), xmax, dx
+ double precision :: rho2, rho2_ex
+ double precision :: mu_correction_of_on_top, mu_of_r, f_psi
+
  nx = 500
  xmax = 4.d0
  dx = xmax/dble(nx)
@@ -59,4 +69,4 @@ program on_top
   r(3) += dx  
  enddo
 
-end program
+end

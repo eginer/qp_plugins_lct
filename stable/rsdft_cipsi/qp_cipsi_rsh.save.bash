@@ -185,7 +185,7 @@ qp  set  density_for_dft    damping_for_rs_dft      $damp
 if [[ $readints = "False" ]]; then
 # write the effective Hamiltonian containing long-range interaction and short-range effective potential to be diagonalized in a self-consistent way
   echo "#" iter evar old     evar new    deltae      threshold  > ${ezfio}_data_rsdft-${mu}-${functional}
-  qp run write_effective_rsdft_hamiltonian | tee ${ezfio}/work/rsdft-${mu}-${functional}-0
+  qp run write_effective_rsdft_hamiltonian_old | tee ${ezfio}/work/rsdft-${mu}-${functional}-0
   EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/rsdft-${mu}-${functional}-0 | cut -d "=" -f 2`
 # save the RS-KS one-e density for the damping on the density 
   qp run save_one_e_dm 
@@ -205,7 +205,7 @@ if [[ $readints = "False" ]]; then
      for j in {1..100}
      do
         # write the new effective Hamiltonian with the damped density (and the current density to be damped with the next density)
-        qp run write_effective_rsdft_hamiltonian | tee ${ezfio}/work/rsdft-${mu}-${functional}-${i}-${j}
+        qp run write_effective_rsdft_hamiltonian_old | tee ${ezfio}/work/rsdft-${mu}-${functional}-${i}-${j}
         # value of the variational RS-DFT energy 
         EV_new=`grep "TOTAL ENERGY        =" ${ezfio}/work/rsdft-${mu}-${functional}-${i}-${j} | cut -d "=" -f 2`
         # rediagonalize the new effective Hamiltonian to obtain a new wave function and a new density 
@@ -221,7 +221,7 @@ if [[ $readints = "False" ]]; then
         EV=$EV_new
       done
      
-      qp run  write_effective_rsdft_hamiltonian | tee ${ezfio}/work/rsdft-${mu}-${functional}-${i}-final
+      qp run  write_effective_rsdft_hamiltonian_old | tee ${ezfio}/work/rsdft-${mu}-${functional}-${i}-final
       EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/rsdft-${mu}-${functional}-${i}-final | cut -d "=" -f 2`
       # checking the convergence
       DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`

@@ -23,7 +23,7 @@ implicit none
  mu_array = (/ 0.d0, 0.125d0, 0.25d0, 0.375d0, 0.5d0, 0.625d0, 0.75d0, 0.875d0, 1.d0, 1.5d0, 2.d0, 2.5d0, 3.d0, 4.d0, 5.d0, 6.d0, 7.d0, 8.d0, 9.d0, 10.d0 /)
 print*, '#r_norm    rho      grad_rho_2        mu      dexdrho      decdrho       decdgrad_rho_2       dexdgrad_rho_2'
 
-print*,'#mu   energy_c_sr_pbe_md   energy_x_sr_pbe_md'
+!print*,'#mu   energy_c_sr_pbe_md   energy_x_sr_pbe_md'
 do p = 1, 20  ! loop over mu_array  !do1 
 ! print*, mu_array(p)
  mu = mu_array(p)
@@ -34,7 +34,7 @@ do i=1, n_points_final_grid
  r(3) = final_grid_points(3,i)
  r_norm = dsqrt(r(1)**2 + r(2)**2 + r(3)**2)
  weight = final_weight_at_r_vector(i)
-
+ ! print*, r(1), r(2), r(3), r_norm
  do istate=1, N_states
    rho_a =  one_e_dm_and_grad_alpha_in_r(4,i,istate)
    rho_b =  one_e_dm_and_grad_beta_in_r(4,i,istate)
@@ -54,12 +54,19 @@ do i=1, n_points_final_grid
  !call exmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ex_srmuPBE,dexdrho_a,dexdrho_b,dexdrho,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2)
  !call ecmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ec_srmuPBE,decdrho_a,decdrho_b,decdrho,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2)
  call exc_dexc_md_sr_PBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
-       ex_srmuPBE,dexdrho_a,dexdrho_b,dexdrho,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, dexdgrad_rho_2, &
-       ec_srmuPBE,decdrho_a,decdrho_b,decdrho,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2)
+       ex_srmuPBE,dexdrho_a,dexdrho_b,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, &
+       ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
+ 
+ dexdrho = 0.5d0*(dexdrho_a + dexdrho_b)
+ dexdgrad_rho_2 = 0.25d0*(dexdgrad_rho_a_2 + dexdgrad_rho_b_2 + dexdgrad_rho_a_b)
+ decdrho = 0.5d0*(decdrho_a + decdrho_b)
+ decdgrad_rho_2 = 0.25d0*(decdgrad_rho_a_2 + decdgrad_rho_b_2 + decdgrad_rho_a_b)
 
  energy_c_sr_pbe_md(istate) += ec_srmuPBE*weight
  energy_x_sr_pbe_md(istate) += ex_srmuPBE*weight
       test_r = 0
+     
+!   print*, '1', r(1), r(2), r(3), r_norm
      do k=1, i
         !if ((r_norm - r_norm_prec(k)) < 1.d-10 .AND. (mu - mu_tab(k)) < 1.d-10) then
        
@@ -70,8 +77,11 @@ do i=1, n_points_final_grid
      enddo
      r_norm_prec(i) = r_norm
      mu_tab(i) = mu
+   
      if(test_r==0)then
-      print*, r_norm, rho, grad_rho_2, mu, dexdrho, decdrho, dexdgrad_rho_2, decdgrad_rho_2
+   
+ !print*, '2', r(1), r(2), r(3), r_norm
+        print*, r_norm, rho, grad_rho_2, mu, dexdrho, decdrho, dexdgrad_rho_2, decdgrad_rho_2
 !      print*, r_norm, rho
       endif
  
