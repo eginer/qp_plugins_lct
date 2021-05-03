@@ -322,3 +322,175 @@ subroutine double_htilde_mu_mat_5_index(key_j,key_i,hmono,herf,heff,hderiv,hthre
   hthree  *= phase
   htot = herf + heff + hderiv + hthree
  end
+
+
+subroutine single_htilde_mu_mat_4_index(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
+  use bitmasks
+  BEGIN_DOC
+! <key_j | H_tilde | key_i> for single excitation  
+!!
+!! WARNING !!
+! 
+! Non hermitian !!
+  END_DOC
+  implicit none
+  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
+  double precision, intent(out)  :: hmono,herf,heff,hderiv,hthree, htot
+  integer                        :: occ(N_int*bit_kind_size,2)
+  integer                        :: Ne(2),i,j,ii,jj,ispin,jspin,k,kk
+  integer                        :: degree,exc(0:2,2,2)
+  integer                        :: h1, p1, h2, p2, s1, s2
+  double precision :: get_mo_two_e_integral_erf,mo_two_e_integral_eff_pot,phase
+  double precision :: get_two_e_integral
+  double precision :: direct_int,exchange_int_12
+  integer :: other_spin(2)
+  PROVIDE mo_two_e_integrals_in_map mo_integrals_map big_array_exchange_integrals 
+  PROVIDE mo_two_e_integrals_eff_pot_in_map mo_two_e_integrals_erf_in_map
+  other_spin(1) = 2
+  other_spin(2) = 1
+
+  integer(bit_kind) :: key_j_core(N_int,2),key_i_core(N_int,2)
+
+  hmono = 0.d0
+  herf  = 0.d0
+  heff  = 0.d0
+  hderiv= 0.d0
+  hthree = 0.d0
+  htot = 0.d0
+  call get_excitation_degree(key_i,key_j,degree,N_int)
+  if(degree.ne.1)then
+   return
+  endif
+  if(core_tc_op)then
+   do i = 1, N_int
+    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
+    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
+    key_j_core(i,1) = xor(key_j(i,1),core_bitmask(i,1))
+    key_j_core(i,2) = xor(key_j(i,2),core_bitmask(i,2))
+   enddo
+   call bitstring_to_list_ab(key_i_core,occ,Ne,N_int)
+  else
+   call bitstring_to_list_ab(key_i,occ,Ne,N_int)
+  endif
+
+
+  call get_single_excitation(key_i,key_j,exc,phase,N_int)
+  call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
+
+  hmono = mo_one_e_integrals(h1,p1) * phase
+  if(core_tc_op)then
+   hmono += phase * core_fock_operator(h1,p1)
+  endif
+  
+  if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
+   ! alpha/beta two-body 
+   ispin = other_spin(s1)
+   do i = 1, Ne(ispin)
+    ii = occ(i,ispin) 
+    herf   += get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map)
+    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) 
+    hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1) 
+   enddo
+   ! same spin two-body 
+   do i = 1, Ne(s1)
+    ii = occ(i,s1) 
+    ! (h1p1|ii ii) - (h1 ii| p1 ii)
+    herf   += get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,p1,h1,ii,mo_integrals_erf_map) 
+    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) - mo_two_e_integral_eff_pot(ii,p1,h1,ii)
+    hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1) & 
+           -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,p1,h1,ii) & 
+           -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,ii,ii,h1)
+   enddo
+   
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
+  else 
+   ! alpha/beta two-body 
+   ispin = other_spin(s1)
+   do i = 1, Ne(ispin)
+    ii = occ(i,ispin) 
+    herf   += 2.d0 * get_two_e_integral(ii,p1,ii,h1,mo_integrals_map) ! 2 / r_12 
+    herf   -= get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map) ! - erf(mu r12)/r12
+    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1)  ! thanks to "adjoint_tc_h" keyword, proper eff two e pot
+    hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1)  !MARK THE MINUS SIGN HERE 
+   enddo
+   ! same spin two-body 
+   do i = 1, Ne(s1)
+    ii = occ(i,s1) 
+    ! (h1p1|ii ii) - (h1 ii| p1 ii)
+    herf   += 2.d0 * (get_two_e_integral(ii,p1,ii,h1,mo_integrals_map) - get_two_e_integral(ii,p1,h1,ii,mo_integrals_map) )
+    herf   -= get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,p1,h1,ii,mo_integrals_erf_map) 
+    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) - mo_two_e_integral_eff_pot(ii,p1,h1,ii)
+    hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1) & 
+           -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,p1,h1,ii) & 
+           -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,ii,ii,h1)
+   enddo
+  endif 
+
+  if(three_body_h_tc)then
+   ! alpha/alpha/beta three-body
+   if(Ne(1)+Ne(2).ge.3)then
+    if(s1 == 2)then ! single beta 
+     ! alpha-alpha + hole/particle beta 
+     do i = 1, Ne(1)
+      ii = occ(i,1) 
+      do j = i+1, Ne(1)
+       jj = occ(j,1) 
+       !                         b  a a     b a a       b  a a   b a a
+       !                       < h1 j  i | p1 j i > - < h1 j i | p1 i j >
+       direct_int  = three_body_4_index(jj,ii,h1,p1)
+       exchange_int_12 = three_body_4_index_exch_12(jj,ii,h1,p1)
+       hthree += direct_int - exchange_int_12
+      enddo
+     enddo
+  
+     ! alpha-beta + hole/particle beta
+     do i = 1, Ne(1)
+      ii = occ(i,1) 
+      do j = 1, Ne(2)
+       jj = occ(j,2) 
+       direct_int  = three_body_4_index(jj,ii,h1,p1)
+       exchange_int_12 = three_body_4_index_exch_12_part(jj,ii,h1,p1)
+       !                         b  b a   b b a         b  b a   b b a
+       !                       < h1 j  i | p1 j i > - < h1 j i | j p1 i >
+       hthree += direct_int - exchange_int_12
+      enddo
+     enddo
+  
+    else ! single alpha 
+     ! beta-beta + hole/particle alpha 
+     do i = 1, Ne(2)
+      ii = occ(i,2) 
+      do j = i+1, Ne(2)
+       jj = occ(j,2)
+       direct_int  = three_body_4_index(jj,ii,h1,p1)
+       exchange_int_12 = three_body_4_index_exch_12(jj,ii,h1,p1)
+       !                         a  b b   a  b b       a  b b   a  b b
+       !                       < h1 j i | p1 j i > - < h1 j i | p1 i j >
+       hthree += direct_int - exchange_int_12
+      enddo
+     enddo
+     ! alpha-beta + hole/particle alpha 
+     do i = 1, Ne(2)
+      ii = occ(i,2) 
+      do j = 1, Ne(1)
+       jj = occ(j,1)
+       direct_int  = three_body_4_index(jj,ii,h1,p1)
+       exchange_int_12 = three_body_4_index_exch_12_part(jj,ii,h1,p1)
+       !                         a  a b   a  a b                       a  a b   a  a b   
+       !                       < h1 j i | p1 j i >  -                < h1 j i | j p1 i >  
+       hthree += direct_int - exchange_int_12
+      enddo
+     enddo
+  
+    endif
+   endif
+  endif
+
+  herf    *= phase
+  heff    *= phase
+  hderiv  *= phase
+  hthree  *= phase
+  htot = hmono + herf + heff + hderiv + hthree
+end

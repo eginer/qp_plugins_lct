@@ -557,14 +557,14 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
      call triple_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
     endif
    else if(degree == 2)then
-    double precision  :: hmono_tmp,herf_tmp,heff_tmp,hderiv_tmp,hthree_tmp,htot_tmp
 !    call double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
     call double_htilde_mu_mat_5_index(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    else if(degree == 1)then
-    call single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
+!    call single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
+    call single_htilde_mu_mat_4_index(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    else if(degree == 0)then
-    call diag_htilde_mu_mat_3_index(key_i,hmono,herf,heff,hderiv,hthree,htot)
 !    call diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
+    call diag_htilde_mu_mat_3_index(key_i,hmono,herf,heff,hderiv,hthree,htot)
    endif
    
 end
