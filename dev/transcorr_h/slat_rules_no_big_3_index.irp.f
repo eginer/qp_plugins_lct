@@ -137,7 +137,8 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,herf,heff,hderiv,hthree,htot)
       do k = 1, Ne(2)
        kk = occ(k,2) 
        direct_int = three_body_3_index(kk,jj,ii)
-       hthree += direct_int - three_body_ints(kk,jj,ii,kk,ii,jj) 
+       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
+       hthree += direct_int - exchange_int_23
       enddo
      enddo
     enddo
@@ -150,7 +151,8 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,herf,heff,hderiv,hthree,htot)
       do k = 1, Ne(1)
        kk = occ(k,1) 
        direct_int = three_body_3_index(kk,jj,ii)
-       hthree += direct_int - three_body_ints(kk,ii,jj,kk,jj,ii) 
+       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
+       hthree += direct_int - exchange_int_23
       enddo
      enddo
     enddo

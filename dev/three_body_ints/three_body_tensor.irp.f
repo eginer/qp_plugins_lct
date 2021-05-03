@@ -404,3 +404,85 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_12, (mo_num, mo_num, 
  !$OMP END PARALLEL
 
 END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, three_body_3_index_exch_23, (mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 3 index matrix EXCHANGE element of the -L  three-body operator 
+!
+! three_body_3_index_exch_12(k,l,n) = < phi_k phi_l phi_n | phi_k phi_n phi_l >
+!
+! notice the -1 sign: in this way three_body_3_index_exch_12 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: k,l,n
+ double precision :: integral, wall1, wall0
+ character*(128) :: name_file 
+ name_file = 'six_index_tensor'
+ provide x_W_ij_erf_rk
+ three_body_3_index_exch_23 = 0.d0
+ print*,'Providing the three_body_3_index_exch_13 ...'
+ call wall_time(wall0)
+ call wall_time(wall1)
+ print*,'wall time for three_body_3_index_exch_13',wall1 - wall0
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (k,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_3_index_exch_23)
+ !$OMP DO SCHEDULE (dynamic)
+  do n = 1, mo_num ! 3
+   do l = 1, mo_num ! 2 
+    do k = 1, mo_num ! 1 
+     integral = 0.d0
+     !                          1 2 3 1 2 3
+     call give_integrals_3_body(k,l,n,k,n,l,integral)
+
+     three_body_3_index_exch_23(k,l,n) = -1.d0 * integral 
+  
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, three_body_3_index_exch_13, (mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 3 index matrix EXCHANGE element of the -L  three-body operator 
+!
+! three_body_3_index_exch_12(k,l,n) = < phi_k phi_l phi_n | phi_k phi_n phi_l >
+!
+! notice the -1 sign: in this way three_body_3_index_exch_12 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: k,l,n
+ double precision :: integral, wall1, wall0
+ character*(128) :: name_file 
+ name_file = 'six_index_tensor'
+ provide x_W_ij_erf_rk
+ three_body_3_index_exch_13 = 0.d0
+ print*,'Providing the three_body_3_index_exch_13 ...'
+ call wall_time(wall0)
+ call wall_time(wall1)
+ print*,'wall time for three_body_3_index_exch_13',wall1 - wall0
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (k,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_3_index_exch_13)
+ !$OMP DO SCHEDULE (dynamic)
+  do n = 1, mo_num ! 3
+   do l = 1, mo_num ! 2 
+    do k = 1, mo_num ! 1 
+     integral = 0.d0
+     !                          1 2 3 1 2 3
+     call give_integrals_3_body(k,l,n,n,l,k,integral)
+
+     three_body_3_index_exch_13(k,l,n) = -1.d0 * integral 
+  
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+END_PROVIDER 
