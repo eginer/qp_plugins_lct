@@ -1,0 +1,388 @@
+
+\documentclass[aip,jcp,reprint,noshowkeys,superscriptaddress]{revtex4-1}
+\usepackage{graphicx,dcolumn,bm,xcolor,microtype,multirow,amsmath,amssymb,amsfonts,physics,mhchem,xspace,subfigure}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{txfonts}
+
+\usepackage[
+	colorlinks=true,
+    citecolor=blue,
+    breaklinks=true
+	]{hyperref}
+\urlstyle{same}
+
+\definecolor{darkgreen}{HTML}{009900}
+\usepackage[normalem]{ulem}
+\newcommand{\sphi}[1]{\hat{{\bf S}}_{#1}}
+\newcommand{\overlap}[2]{\langle #1 | #2 \rangle}
+\newcommand{\matelem}[3]{\langle #1 | #2 | #3 \rangle}
+\newcommand{\deriv}[3]{\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+\newcommand{\bd}[1]{{\bf {#1}}}
+\newcommand{\br}[0]{{\bf {r}}}
+\newcommand{\bri}[1]{{\bf r}_{#1}}
+\newcommand{\bs}[0]{{\bf {s}}}
+\newcommand{\dr}[1]{\text{d}{\bf r_{#1}}}
+\newcommand{\psiex}[0]{\Psi^{\text{ex}}_0}
+\newcommand{\phiex}[0]{\Phi^{\text{ex}}_0}
+\newcommand{\phimu}[0]{\Phi^{\text{ex},\mu}_0}
+\newcommand{\phimub}[0]{\Phi^{\mathcal{B},\mu}_0}
+\newcommand{\xhimub}[0]{X^{\mathcal{B},\mu}_0}
+\newcommand{\psimub}[0]{\Psi^{\mathcal{B},\mu}_0}
+\newcommand{\phiimub}[0]{\Phi^{\mathcal{B},\mu}_i}
+\newcommand{\basis}[0]{\mathcal{B}}
+\newcommand{\energyex}[0]{E^{\text{ex}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\identity}{\mathds{1}}
+\newcommand{\mur}[1]{\mu({\bf r_{#1}})}
+\newcommand{\muueg}{\mu_{\text{UEG}}}
+\newcommand{\muuegav}{\langle \mu_{\text{UEG}}\rangle}
+\newcommand{\muav}{\langle \mu\rangle}
+\newcommand{\mursc}{ \mu_{r_{s,c}}}
+\newcommand{\murscav}{\langle \mu_{r_{s,c}}\rangle}
+\newcommand{\mursclda}{\langle \mu_{r_{s,c}^{\text{UEG}}}\rangle}
+
+
+
+\begin{document}	
+
+\title{A new form of transcorrelated Hamiltonian inspired by range-separated DFT: II }
+
+\author{Emmanuel Giner}
+\email{emmanuel.giner@lct.jussieu.fr}
+
+\begin{abstract}
+
+\end{abstract}
+
+\maketitle
+
+\section{The general scope}
+According to Eq. (2) of Ref. \onlinecite{CohLuoGutDobTewAla-JCP-19}, the similarity transformed Hamiltonian can be written as 
+\begin{equation}
+ \label{ht_def_g}
+ e^{-\hat{\tau}} \hat{H} e^{\hat{\tau}} = H + \big[ H,\hat{\tau} \big] + \frac{1}{2}\bigg[ \big[H,\hat{\tau}\big],\hat{\tau}\bigg]
+\end{equation}
+where $\hat{\tau} = \sum_{i<j}u(\br{}_i,\br{}_j)$ and $\hat{H} = \sum_i -\frac{1}{2} \nabla^2_i + v(\br{}_i) + \sum_{i<j} \frac{1}{r_{ij}}$. 
+This leads to the following similarity transformed Hamiltonian 
+\begin{equation}
+ \begin{aligned}
+ \label{ht_def_gu}
+ \tilde{H} & = H - \sum_i \bigg( \frac{1}{2} \nabla_i^2 \hat{\tau} + \big(\nabla_i \hat{\tau} \big) + \frac{1}{2} \big(\nabla_i \hat{\tau} \big)^2  \bigg) \\
+           & = H - \sum_{i<j} \hat{K}(\bri{i},\bri{u}) - \sum_{i<j<k} \hat{L}(\bri{i},\bri{u},\bri{k}),
+ \end{aligned}
+\end{equation}
+where the effective two- and three-body operators $\hat{K}(\bri{i},\bri{u})$ and $\hat{L}(\bri{i},\bri{u},\bri{k})$ are defined as
+\begin{equation}
+ \begin{aligned}
+ \label{def_k}
+  \hat{K}(\bri{1},\bri{2}) ) = \frac{1}{2} \bigg( &\nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) \\
+                                               + &\big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 + \big(\nabla_1 u(\bri{1},\bri{2}) \big) ^2 \bigg) \\
+                                               + &\nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1,
+ \end{aligned}
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+ \label{def_k}
+  \hat{L}(\bri{1},\bri{2},\bri{3}) ) = & \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_1 u(\bri{1},\bri{3}) + \nabla_2 u(\bri{2},\bri{1}) \cdot \nabla_2 u(\bri{2},\bri{3})  \\
+                                     + & \nabla_3 u(\bri{3},\bri{1}) \cdot \nabla_3 u(\bri{3},\bri{2}).
+ \end{aligned}
+\end{equation}
+
+Here we propose to use a non-symmetric Jastrow factor $ u(r_{12},\mur{1})$ and therefore we need to compute the integrals of the $\hat{K}(\bri{1},\bri{2})$ and $\hat{L}(\bri{1},\bri{2},\bri{3})$ operators with such a Jastrow factor. 
+Here, we will give the equations for a general $\mur{1}$. 
+To derive properly the integrals for such a new Jastrow factor, one needs to derive the different terms involving gradients and so on. 
+
+
+\subsection{Gradients of ${u}(r_{12},\mur{1})$}
+A fundamental quantity is the gradient of ${u}(\bd{r_1},\bd{r_2})$ which is 
+\begin{equation}
+ \nabla_1 {u}(\bd{r_1},\bd{r_2}) = \deriv{}{x_1}{} {u}(\bd{r_1},\bd{r_2}) {\bf e}_{x_1} + \deriv{}{y_1}{} {u}(\bd{r_1},\bd{r_2}) {\bf e}_{y_1} + \deriv{}{z_1}{} {u}(\bd{r_1},\bd{r_2}) {\bf e}_{z_1}.
+\end{equation}
+Let us begin with the first term 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_1}{} u(r_{12};\mur{1})=& \deriv{}{r_{12}}{} u(r_{12};\mur{1})\deriv{r_{12}}{x_1}{} \\ 
+                                  +& \deriv{}{\mur{1}}{}u(r_{12};\mur{1}) \deriv{\mur{1}}{x_1}{},
+ \end{aligned}
+\end{equation}
+but as 
+\begin{equation}
+ \deriv{}{\mu}{}u(r_{12};\mu) = \frac{e^{-(\mu r_{12})^2}}{2 \sqrt{\pi} \mu^2}
+\end{equation}
+one obtains 
+\begin{equation}
+ \begin{aligned}
+  \label{eq:grad_mur_1}
+ \deriv{}{x_1}{} u(r_{12};\mur{1}) =& \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \\
+                                   +&\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.  
+ \end{aligned}
+\end{equation}
+Similarly, as by definition $\deriv{\mur{1}}{x_2}{} = 0$, one obtains that 
+\begin{equation}
+ \label{eq_grad_mur_r2}
+ \deriv{}{x_2}{} u(r_{12};\mur{1}) = -\big(x_1 - x_2 \big)\frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} .
+\end{equation}
+
+\subsection{Computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2 + \bigg( \nabla_2  u(r_{12};\mur{1})\bigg)^2$ }
+According to Eq. \eqref{eq:grad_mur_1} one has 
+\begin{equation}
+ \begin{aligned}
+ \deriv{}{x_1}{} u(r_{12};\mur{1}) =& \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2) \\
+                                   +&\frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.  
+ \end{aligned}
+\end{equation}
+Therefore, the computation of $\big( \deriv{}{x_1}{} u(r_{12};\mur{1}) \big)^2$ yields 
+\begin{equation}
+ \begin{aligned}
+ \bigg( \deriv{}{x_1}{} u(r_{12};\mur{1}) \bigg)^2 = & \frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4 \big(r_{12}\big)^2}\big( x_1 - x_2)^2 \\
+ + & \frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg(\deriv{\mur{1}}{x_1}{} \bigg)^2 \\ 
+ + & \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{r_{12}}\big( x_1 - x_2) \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \deriv{\mur{1}}{x_1}{}.
+ \end{aligned}
+\end{equation}
+Therefore, the computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2$ yields 
+\begin{equation}
+ \begin{aligned}
+  \bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2  = &\frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4} 
+   +   \frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2 \\ 
+   + & \nabla_1  \mur{1} \, \cdot \, \big( \br{}_1 - \br{}_2\big) \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{r_{12}} \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi}\mu(\bri{1})^2} 
+ \end{aligned}
+\end{equation}
+
+Eventually, the total operator yields
+\begin{equation}
+ \label{eq:nabl_2}
+ \begin{aligned}
+ & \frac{\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2 + \bigg( \nabla_2  u(r_{12};\mur{1})\bigg)^2}{2} =  \frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4} \\
+ &  +  \frac{1}{2}\frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2 \\ 
+ &  +  \frac{1}{2} \nabla_1  \mur{1} \, \cdot \, \big( \br{}_1 - \br{}_2\big) \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{r_{12}} \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi}\mu(\bri{1})^2} .
+ \end{aligned}
+\end{equation}
+Note the $\frac{1}{2}$ factor in the second and third lines of Eq. \eqref{eq:nabl_2} which is due to the fact that $\mur{1}$ depends only on $\bd{r}_1$. 
+These integrals remain still possible through an analytical integration on $\bd{r}_2$ and numerical integration on $\bd{r}_1$. 
+
+\subsubsection{Computation of $\nabla_1^2  u(r_{12};\mur{1})$ }
+The computation of the analytical form of the Laplacian is rather tedious, so therefore we propose to compute these integrals using the integration by part using 
+\begin{equation}
+ \begin{aligned}
+&  \matelem{kl}{\nabla^2_1 u(r_{12};\mur{1})}{ij} \\ 
+= & \int \text{d}\br_{1} \text{d}\br_{2}   \phi_l(\br_2) \phi_j(\br_2) \nabla^2_1 u(r_{12};\mur{1}) \phi_i(\br_1) \phi_k(\br_1) \\
+= & -\int \text{d}\br_{1} \text{d}\br_{2}  \phi_l(\br_2) \phi_j(\br_2) \nabla_1 u(r_{12};\mur{1}) \\ & \cdot \big[ \phi_i(\br_1) \nabla_1 \phi_k(\br_1) +  \phi_k(\br_1) \nabla_1 \phi_i(\br_1)\big].
+ \end{aligned}
+\end{equation}
+Therefore one has 
+\begin{equation}
+ \label{eq:lapl_1}
+ \begin{aligned}
+&  \matelem{kl}{\nabla^2_1 u(r_{12};\mur{1})}{ij} \\ 
+= & -\int \text{d}\br_{1} \text{d}\br_{2}  \phi_l(\br_2) \phi_j(\br_2) \nabla_1 u(r_{12};\mur{1}) \\ & \cdot \big[ \phi_i(\br_1) \nabla_1 \phi_k(\br_1) +  \phi_k(\br_1) \nabla_1 \phi_i(\br_1)\big].
+ \end{aligned}
+\end{equation}
+Then one has also to compute the same quantity for $\br_2$:
+\begin{equation}
+ \label{eq:lapl_2}
+ \begin{aligned}
+&  \matelem{kl}{\nabla^2_2 u(r_{12};\mur{1})}{ij} \\ 
+= & -\int \text{d}\br_{1} \text{d}\br_{2} \phi_i(\br_1) \phi_k(\br_1) \nabla_2 u(r_{12};\mur{1}) \\ & \cdot \big[\phi_l(\br_2)  \nabla_2  \phi_j(\br_2) + \phi_j(\br_2)  \nabla_2  \phi_l(\br_2)   \big].
+ \end{aligned}
+\end{equation}
+
+\subsection{Computation of the non hermitian term}
+The two integrals involved in the non hermitian term are the following: 
+\begin{equation}
+ \label{eq:nh_1}
+ \begin{aligned}
+&   \matelem{kl}{ \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 }{ij} \\ 
+=& \int \text{d}\br_{1} \text{d}\br_{2} \phi_k(\br_1) \phi_l(\br_2) \phi_i(\br_1) \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 \phi_j(\br_2), 
+ \end{aligned}
+\end{equation}
+and 
+\begin{equation}
+ \label{eq:nh_2}
+ \begin{aligned}
+&   \matelem{kl}{ \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1 }{ij} \\ 
+=& \int \text{d}\br_{1} \text{d}\br_{2} \phi_k(\br_1) \phi_l(\br_2) \phi_j(\br_2) \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1 \phi_i(\br_1). 
+ \end{aligned}
+\end{equation}
+
+\subsection{Integrals to be computed for the Laplacian and non hermitian term}
+\subsubsection{Sum of all terms}
+Regarding the two-body part of the effective TC operator $\hat{K}(\bri{1},\bri{2}) ) $, one can notice that there are some terms which cancel each other between Eq. \eqref{eq:lapl_1}, \eqref{eq:lapl_2} and \eqref{eq:nh_1}, \eqref{eq:nh_2}. 
+From Eqs. \eqref{eq:grad_mur_1} and \eqref{eq_grad_mur_r2}, one can write that
+\begin{equation}
+ \nabla_1 u(r_{12};\mur{1})  = - \nabla_2 u(r_{12};\mur{1}) + {\bf {\gamma}}(\br_1, r_{12}), 
+\end{equation}
+with 
+\begin{equation}
+ {\bf {\gamma}}(\br_1, r_{12}) = \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \nabla_1{\mur{1}}
+\end{equation}
+Taking the chemist notation that
+\begin{equation}
+ \big(jl|f(\br_1,\br_2) \big) = \int \text{d}\br_{1} \text{d}\br_{2} \phi_l(\br_2) \phi_j(\br_2) f(\br_1,\br_2) 
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+& \matelem{kl}{\frac{1}{2}\bigg( \nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) + \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1 \bigg)}{ij} \\
+ =& -\big(jl| \nabla_1 u(r_{12};\mur{1}) \big[ \phi_k(\br_1) \nabla_1 \phi_i(\br_1) + \phi_i(\br_1)\nabla_1 \phi_k(\br_1)\big] \big) \\
+ &  +\big(jl| \nabla_2 u(r_{12};\mur{1}  \,\, \,\,      \phi_k(\br_1) \nabla_1 \phi_i(\br_1) \\
+ &  -\big(ik| \nabla_2 u(r_{12};\mur{1}) \big[ \phi_l(\br_2) \nabla_2 \phi_j(\br_2) + \phi_j(\br_2)\nabla_2 \phi_l(\br_2)\big] \big) \\
+ &  +\big(ik| \nabla_1 u(r_{12};\mur{1}) \,\, \,\,      \phi_l(\br_2) \nabla_2 \phi_j(\br_2) \\
+ =& -2     \big(ik|\nabla_2u(r_{12};\mur{1}) \phi_l(\br_2) \nabla_2 \phi_j(\br_2)\big) \\
+  & -\,\,\,\big(ik|\nabla_2u(r_{12};\mur{1}) \phi_j(\br_2)\nabla_2 \phi_l(\br_2) \big) \\
+  & +       \big(ik|{\bf {\gamma}}(\br_1, r_{12}) \big[ \phi_l(\br_2)\nabla_2 \phi_j(\br_2) + \phi_j(\br_2)\nabla_2 \phi_l(\br_2) \big] \big) \\
+  & +2      \big(jl|\nabla_2 u(r_{12};\mur{1}) \phi_k(\br_1) \nabla_1 \phi_i(\br_1) \big) \\
+  & + \,\,\,\big(jl|\nabla_2 u(r_{12};\mur{1}) \phi_i(\br_1) \nabla_1 \phi_k(\br_1) \big) \\
+  & - \,\,\,\big(jl|{\bf {\gamma}}(\br_1, r_{12}) \big[ \phi_k(\br_1) \nabla_1 \phi_i(\br_1) + \phi_i(\br_1) \nabla_1 \phi_k(\br_1) \big] \big)
+ \end{aligned}
+\end{equation}
+or in a more compact form 
+\begin{equation}
+ \label{eq:lapl_nh_0}
+ \begin{aligned}
+& \matelem{kl}{\frac{1}{2}\bigg( \nabla_1^2 u(\bri{1},\bri{2}) + \nabla_2^2u(\bri{1},\bri{2}) + \nabla_1 u(\bri{1},\bri{2}) \cdot \nabla_2 + \nabla_2 u(\bri{1},\bri{2}) \cdot \nabla_1 \bigg)}{ij} \\
+=& -\frac{1}{2} \big(ik|\nabla_2u(r_{12};\mur{1}) \big[ \phi_j(\br_2)\nabla_2 \phi_l(\br_2) + 2 \phi_l(\br_2) \nabla_2 \phi_j(\br_2)\big] \big) \\
+ & +\frac{1}{2} \big(jl|\nabla_2u(r_{12};\mur{1}) \big[ \phi_i(\br_1)\nabla_1 \phi_k(\br_2) + 2 \phi_k(\br_1) \nabla_1 \phi_i(\br_1)\big] \big) \\
+ & +\frac{1}{2} \big(ik|{\bf {\gamma}}(\br_1, r_{12}) \big[ \phi_l(\br_2)\nabla_2 \phi_j(\br_2) + \phi_j(\br_2)\nabla_2 \phi_l(\br_2) \big] \big) \\
+ & -\frac{1}{2} \big(jl|{\bf {\gamma}}(\br_1, r_{12}) \big[ \phi_k(\br_1) \nabla_1 \phi_i(\br_1) + \phi_i(\br_1) \nabla_1 \phi_k(\br_1) \big] \big).
+ \end{aligned}
+\end{equation}
+
+\subsubsection{The two basic types of integrals}
+The integrals in Eq. \eqref{eq:lapl_nh_0} can be obtained from mixed numerical analytical integration. 
+Let us take for instance the first integral of Eq. \eqref{eq:lapl_nh_0}:
+\begin{equation}
+ \label{eq:lapl_nh_1}
+ \begin{aligned}
+ &\big(ik|\nabla_2 u(r_{12};\mur{1}) \big[ \phi_j(\br_2)\nabla_2 \phi_l(\br_2) + 2 \phi_l(\br_2) \nabla_2 \phi_j(\br_2)\big] \big) \\
+ &= -\int \text{d}\br_{1} \text{d}\br_{2} \frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} \big(\br_1 - \br_2 \big) \cdot\\
+ &   \phi_i(\br_1) \phi_k(\br_1) \big[ \phi_j(\br_2)\nabla_2 \phi_l(\br_2) + 2 \phi_l(\br_2) \nabla_2 \phi_j(\br_2)\big] .
+ \end{aligned}
+\end{equation}
+Such an integral can be decomposed as the sum of the three components of the scalar product 
+\begin{equation}
+ \label{eq:lapl_nh_2}
+ \begin{aligned}
+ &\big(ik|\nabla_2 u(r_{12};\mur{1}) \big[ \phi_j(\br_2)\nabla_2 \phi_l(\br_2) + 2 \phi_l(\br_2) \nabla_2 \phi_j(\br_2)\big] \big) \\
+&=-\big( I_{ijkl}^x + I_{ijkl}^y + I_{ijkl}^z\big),
+ \end{aligned}
+\end{equation}
+where for instance the $x$ component  of Eq. \eqref{eq:lapl_nh_2} is simply 
+\begin{equation}
+ \label{eq:lapl_nh_3}
+ \begin{aligned}
+ &I_{ijkl}^x = \int \text{d}\br_{1} \text{d}\br_{2} \frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} \big(x_1 - x_2 \big) \\
+ &   \phi_i(\br_1) \phi_k(\br_1) \big[ \phi_j(\br_2)\deriv{}{x_2}{} \phi_l(\br_2) + 2 \phi_l(\br_2) \deriv{}{x_2}{} \phi_j(\br_2)\big] .
+ \end{aligned}
+\end{equation}
+By defining the following integrals
+\begin{equation}
+ \label{eq:u_jl}
+ \mathcal{U}_{jl}^{x}(\br) = \int \text{d}\br' \frac{1 - \text{erf}(\mu (\br') |\br - \br'|)}{2 |\br - \br'|} \phi_j(\br') \deriv{}{x'}{} \phi_l(\br'),
+\end{equation}
+\begin{equation}
+ \label{eq:ux_jl}
+ \mathcal{U}_{jl}^{xx}(\br) = \int \text{d}\br' x' \frac{1 - \text{erf}(\mu (\br') |\br - \br'|)}{2 |\br - \br'|} \phi_j(\br') \deriv{}{x'}{} \phi_l(\br'),
+\end{equation}
+then the integral $I_{ijkl}^x $ of Eq. \eqref{eq:lapl_nh_3} becomes 
+\begin{equation}
+ \label{eq:lapl_nh_1}
+ \begin{aligned}
+ &I_{ijkl}^x = \int \text{d}\br \phi_i(\br) \phi_k(\br) \bigg[ x \mathcal{U}_{jl}^x(\br) - \mathcal{U}_{jl}^{xx}(\br) + 2 \bigg(x \mathcal{U}_{lj}^x(\br) - \mathcal{U}_{lj}^{xx}(\br) \bigg)\bigg].
+ \end{aligned}
+\end{equation}
+Then, the second term of Eq. \eqref{eq:lapl_nh_0} can be obtained with a similar expression
+\begin{equation}
+ \begin{aligned}
+ & \big(jl|\nabla_2u(r_{12};\mur{1}) \big[ \phi_i(\br_1)\nabla_1 \phi_k(\br_2) + 2 \phi_k(\br_1) \nabla_1 \phi_i(\br_1)\big] \big) \\
+ &=-\big( J_{ijkl}^x + J_{ijkl}^y + J_{ijkl}^z \big)
+ \end{aligned}
+\end{equation}
+where 
+\begin{equation}
+ \begin{aligned}
+  J_{ijkl}^x = \int \text{d}\br_1 \text{d}\br_2 & \bigg[ \phi_i(\br_1)\deriv{}{x_1}{} \phi_k(\br_2) + 2 \phi_k(\br_1) \deriv{}{x_1}{} \phi_i(\br_1)\bigg] \\  
+ & \frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} \big(x_1 - x_2 \big) \phi_j(\br_2) \phi_l(\br_2).
+ \end{aligned}
+\end{equation}
+
+
+\bibliography{srDFT_SC}
+
+
+
+
+
+
+
+\section{Garbage for fully symmetric forms}
+\subsection{Computation of $\bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2$}
+Then one needs to compute 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 = \\
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{y_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{y_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 +  \\
+& \bigg(\deriv{}{z_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{z_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2.
+ \end{aligned}
+\end{equation}
+According to Eq.\eqref{eq:d_dx1_jtilde}, 
+and defining the complementary error function as 
+\begin{equation}
+ \text{erfc}(x) = 1 - \text{erf}(x)
+\end{equation}
+one has that 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 \\
+ + & \frac{\big(x_1 - x_2\big)}{r_{12}} \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
+ \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
+ \end{aligned}
+\end{equation}
+Similarly 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{4}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2 \\
+ + & \frac{\big(x_2 - x_1\big)}{r_{12}} \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{2\sqrt{\pi} \big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} 
+ \frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{2}.
+ \end{aligned}
+\end{equation}
+Therefore, 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\deriv{}{x_1}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2 + \bigg(\deriv{}{x_2}{}\tilde{u}(\bd{r_1},\bd{r_2}) \bigg)^2  \\
+ = & \frac{1}{2}\frac{\big( x_1 - x_2 \big)^2}{4 \big(r_{12}\big)^2} \bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+ + & \frac{\big(x_1 - x_2\big)}{2 \sqrt{\pi}r_{12}}  \frac{\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)}{2} \\
+&\bigg(   \frac{e^{-\big(\mur{1} r_{12}\big)^2}}{\big(\mur{1}\big)^2} \deriv{}{x_1}{}\mur{1} 
+- \frac{e^{-\big(\mur{2} r_{12}\big)^2}}{\big(\mur{2}\big)^2} \deriv{}{x_2}{}\mur{2} \bigg) \\
+ + & \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 
+ + \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2.
+ \end{aligned}
+\end{equation}
+
+Summing all terms and noticing that $\bigg(x_1 - x_2\bigg)^2 + \bigg(y_1 - y_2\bigg)^2 + \bigg(z_1 - z_2\bigg)^2 = \bigg(r_{12}\bigg)^2$ leads to 
+\begin{equation}
+ \begin{aligned}
+& \bigg(\nabla_1\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 + \bigg(\nabla_2\tilde{u}(\bd{r_1},\bd{r_2})\bigg)^2 = 
+  \frac{1}{8}\bigg(\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big) \bigg)^2  \\
+&+\frac{\text{erfc}\big(\mur{1} r_{12}\big) + \text{erfc}\big(\mur{2} r_{12}\big)}{4 \sqrt{\pi}r_{12}}  \\
+& \big( \bri{1} - \bri{2}\big)\cdot
+\bigg(\frac{e^{- \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \nabla_1 \mur{1}
+  -   \frac{e^{- \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \nabla_2 \mur{2}  \bigg) \\
+  &+ \frac{e^{-2 \,\big(\mur{1}r_{12} \big)^2}}{4\pi \big(\mur{1}\big)^4} \bigg( \deriv{}{x_1}{}\mur{1} \bigg)^2 
+ + \frac{e^{-2 \,\big(\mur{2}r_{12} \big)^2}}{4\pi \big(\mur{2}\big)^4} \bigg( \deriv{}{x_2}{}\mur{2} \bigg)^2.
+ \end{aligned}
+\end{equation}
+
+% f(x) = (3*erf(mu*x) - 1)/(2*x) + 1.5*mu/sqpi * exp(-(mu*x)**2.) - 0.25 * (1 - erf(mu*x))**2.
+\subsection{Proposal of different symmetrization}
+Let us assume that we only take the following form as a Jastrow factor 
+\begin{equation}
+ J(\br_1,\br_2) = \frac{e^{ u(r_{12};\mur{1})} + e^{u(r_{12};\mur{2})}}{2}. 
+\end{equation}
+
+\end{document}
