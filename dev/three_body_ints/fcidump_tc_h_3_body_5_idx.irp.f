@@ -17,10 +17,12 @@ subroutine fcidump_3_tc
  character*(128) :: output_physicist
  integer :: i_unit_output_physicist,inint,i_accu
  integer :: getUnitAndOpen
- integer(bit_kind) :: key(N_int)
+ integer(bit_kind), allocatable :: key(:)
  integer :: ii,jj,kk,ll,mm,nn
+ character*(2048)                :: output(1)
  output_physicist =trim(ezfio_filename)//'/FCIDUMP_3_body_tc_5_idx'
  i_unit_output_physicist = getUnitAndOpen(output_physicist,'w')
+ allocate(key(N_int))
 !if(read_six_index_tensor)then
  do nn = 1, n_act_orb
   n = list_act(nn)
@@ -45,7 +47,7 @@ subroutine fcidump_3_tc
         do inint = 1, N_int
          i_accu += popcnt(key(inint))
         enddo
-        if(i_accu == 6)cycle
+        if(i_accu .gt.5)cycle
         !                          1 2 3 1 2 3
         !                         <i j m|k l n>
         call give_integrals_3_body(i,j,m,k,l,n,integral)

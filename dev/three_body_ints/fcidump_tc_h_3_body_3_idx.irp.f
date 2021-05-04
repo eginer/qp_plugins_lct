@@ -17,9 +17,10 @@ subroutine fcidump_3_tc
  character*(128) :: output_physicist
  integer :: i_unit_output_physicist,inint,i_accu
  integer :: getUnitAndOpen
- integer(bit_kind) :: key(N_int)
+ integer(bit_kind), allocatable :: key(:)
+ allocate(key(N_int))
  integer :: ii,jj,kk,ll,mm,nn
- output_physicist =trim(ezfio_filename)//'/FCIDUMP_3_body_tc_5_idx'
+ output_physicist =trim(ezfio_filename)//'/FCIDUMP_3_body_tc_3_idx'
  i_unit_output_physicist = getUnitAndOpen(output_physicist,'w')
 !if(read_six_index_tensor)then
  do nn = 1, n_act_orb
