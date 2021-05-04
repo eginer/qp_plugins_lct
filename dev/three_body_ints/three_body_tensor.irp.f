@@ -177,7 +177,7 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, 
  BEGIN_DOC
 ! 5 index matrix element of the -L  three-body operator 
 !
-! three_body_5_index_exch_13(i,j,m,l,n) = < phi_i phi_j phi_m | phi_i phi_l phi_n >
+! three_body_5_index_exch_13(k,j,m,l,n) = < phi_j phi_m phi_k | phi_k phi_n phi_l >
 !
 ! notice the -1 sign: in this way three_body_5_index_exch_13 can be directly used to compute Slater rules :)
  END_DOC
