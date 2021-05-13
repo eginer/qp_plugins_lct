@@ -85,7 +85,7 @@ subroutine phi_j_erf_mu_r_dxyz_phi(i,j,mu_in, C_center, dxyz_ints)
      power_B_tmp(mm) += 1
      contrib = NAI_pol_mult_erf(A_center,B_center,power_A,power_B_tmp,alpha,beta,C_center,n_pt_in,mu_in)  
      dxyz_ints(mm) += contrib * (-2.d0 * beta )  * ao_coef_normalized_ordered_transp(l,j)             &
-                                                  * ao_coef_normalized_ordered_transp(m,i) 
+                                                 * ao_coef_normalized_ordered_transp(m,i) 
     enddo
   enddo
  enddo

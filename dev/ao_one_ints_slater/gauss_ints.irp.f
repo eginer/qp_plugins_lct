@@ -115,6 +115,9 @@ end
 
 double precision function overlap_gauss_r12_ao(D_center,delta,i,j)
  implicit none
+ BEGIN_DOC
+! \int dr AO_i(r) AO_j(r) e^{-delta |r-D_center|^2}
+ END_DOC
  integer, intent(in) :: i,j
  double precision, intent(in) :: D_center(3), delta
 
