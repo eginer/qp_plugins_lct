@@ -436,10 +436,10 @@ end
 
 subroutine test_overlap_gauss_r12_ao
  implicit none
- integer :: i,j
+ integer :: i,j,m
  double precision :: D_center(3), delta
  double precision :: weight, r(3),accu,overlap_gauss_r12_ao,exact,aos_array(ao_num)
- double precision :: r12
+ double precision :: r12,gauss_ints(3),accu_xyz(3)
  integer :: ipoint
 
  D_center = 0.d0
@@ -449,7 +449,9 @@ subroutine test_overlap_gauss_r12_ao
  do i = 1, ao_num
   do j = 1, ao_num
    exact = overlap_gauss_r12_ao(D_center,delta,i,j)
+   call overlap_gauss_xyz_r12_ao(D_center,delta,i,j,gauss_ints)
    accu = 0.d0
+   accu_xyz = 0.d0
    do ipoint = 1, n_points_final_grid
     r(1) = final_grid_points(1,ipoint)
     r(2) = final_grid_points(2,ipoint)
@@ -458,9 +460,21 @@ subroutine test_overlap_gauss_r12_ao
     r12 = (r(1) - D_center(1))**2.d0 + (r(2) - D_center(2))**2.d0 + (r(3) - D_center(3))**2.d0
     call give_all_aos_at_r(r,aos_array)
     accu += weight * aos_array(i) * aos_array(j) * dexp(-delta * r12)
+    do m = 1, 3
+     accu_xyz(m) += weight * aos_array(i) * aos_array(j) * dexp(-delta * r12) * r(m)
+    enddo
    enddo
    print*,'i,j',i,j
    print*,accu,exact,dabs(accu - exact)
+   print*,'exact xyz '
+   print*,gauss_ints
+   print*,'approx xyz'
+   print*,accu_xyz
+   accu = 0.d0
+   do m = 1, 3
+    accu += dabs(gauss_ints(m) - accu_xyz(m))
+   enddo
+   print*,'accu xyz = ',accu
   enddo
  enddo
 

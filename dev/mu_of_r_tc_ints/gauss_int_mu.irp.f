@@ -69,13 +69,94 @@ BEGIN_PROVIDER [ double precision, gauss_ij_rk,  ( ao_num, ao_num,n_points_final
 
 END_PROVIDER 
 
+BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_final_grid,3)]
+ implicit none
+ BEGIN_DOC
+! mu_of_r_gauss(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-\mu(R) |r - R|^2)
+!
+! with m == 1 ==> x, m == 2 ==> y, m == 3 ==> z
+ END_DOC
+ integer :: i,j,ipoint,m
+ double precision :: mu,r(3),overlap_gauss_r12_ao
+ double precision :: int_mu, delta
+ double precision :: overlap_gauss_xyz_r12_ao_specific
+ provide mu_erf final_grid_points constant_mu 
+ double precision :: wall0, wall1
+ call wall_time(wall0)
+ if(constant_mu)then
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,m) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,gauss_ij_xyz_rk,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+    do i = 1, ao_num
+     do j = i, ao_num
+      mu = mu_erf 
+      r(1) = final_grid_points(1,ipoint)
+      r(2) = final_grid_points(2,ipoint)
+      r(3) = final_grid_points(3,ipoint)
+      delta = mu * mu
+      int_mu = overlap_gauss_xyz_r12_ao_specific(r,delta,i,j,m)
+      gauss_ij_xyz_rk(j,i,ipoint,m)= int_mu 
+    enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ else 
+  provide mu_of_r_prov
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,gauss_ij_xyz_rk,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+    do i = 1, ao_num
+     do j = i, ao_num
+      mu = mu_of_r_prov(ipoint,1)
+      delta = mu * mu
+      r(1) = final_grid_points(1,ipoint)
+      r(2) = final_grid_points(2,ipoint)
+      r(3) = final_grid_points(3,ipoint)
+      int_mu = overlap_gauss_xyz_r12_ao_specific(r,delta,i,j,m)
+      gauss_ij_xyz_rk(j,i,ipoint,m)= int_mu 
+    enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ endif
+
+ do m = 1, 3
+  do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = 1, i-1
+      gauss_ij_xyz_rk(j,i,ipoint,m)= gauss_ij_xyz_rk(i,j,ipoint,m)
+    enddo
+   enddo
+  enddo
+ enddo
+
+ call wall_time(wall1)
+ print*,'wall time for gauss_ij_xyz_rk  ',wall1 - wall0
+
+END_PROVIDER 
+
 subroutine test_gauss_ij_rk
  implicit none
  integer :: ipoint,i,j,m,jpoint
  double precision :: r1(3)
- double precision :: C_center(3), weight1,mu,r12,integral,delta
- double precision, allocatable :: ao_mat(:,:,:), aos_array_r1(:)
+ double precision :: C_center(3), weight1,mu,r12,integral,delta, num_int
+ double precision, allocatable :: ao_mat(:,:,:), aos_array_r1(:),ao_mat_xyz(:,:,:,:)
  allocate(ao_mat(ao_num,ao_num,n_points_final_grid), aos_array_r1(ao_num))
+ allocate(ao_mat_xyz(ao_num,ao_num,n_points_final_grid,3))
  do jpoint = 1, n_points_final_grid
   mu = mu_of_r_prov(jpoint,1)
   delta = mu * mu
@@ -91,6 +172,9 @@ subroutine test_gauss_ij_rk
    do i = 1, ao_num
     do j = 1, ao_num
      ao_mat(j,i,jpoint)  += aos_array_r1(i) * aos_array_r1(j) * weight1 * dexp(-delta*r12)
+     do m = 1, 3
+     ao_mat_xyz(j,i,jpoint,m)  += aos_array_r1(i) * aos_array_r1(j) * weight1 * dexp(-delta*r12) * r1(m)
+     enddo
     enddo
    enddo
   enddo
@@ -104,20 +188,48 @@ subroutine test_gauss_ij_rk
   do i = 1, ao_num
    do j = 1, ao_num
     integral =  gauss_ij_rk(j,i,jpoint)
-    if(dabs(ao_mat(j,i,jpoint)).gt.1.d-10)then
-     accu1relat = dabs(integral - ao_mat(j,i,jpoint))/dabs(ao_mat(j,i,jpoint))
+    num_int  =  ao_mat(j,i,jpoint)
+    if(dabs(num_int).gt.1.d-10)then
+     accu1relat = dabs(integral - num_int )/dabs(num_int)
     endif
-    if(dabs(integral - ao_mat(j,i,jpoint)).gt.1.d-5)then
+    if(dabs(integral - num_int).gt.1.d-5)then
      print*,'i,j,jpoint',i,j,jpoint
      print*,'prov, num, difference'
-     print*,integral,ao_mat(j,i,jpoint),dabs(integral - ao_mat(j,i,jpoint))
+     print*,integral,num_int,dabs(integral - num_int)
     endif
-    accu1 += dabs(integral - ao_mat(j,i,jpoint))
+    accu1 += dabs(integral - num_int)
    enddo
   enddo
   print*,'accu1      = ',accu1/dble(ao_num * ao_num)
   print*,''
   print*,'accu1relat = ',accu1relat/dble(ao_num * ao_num)
+ enddo
+
+ do m = 1, 3
+  print*,'m = ',m
+  do jpoint = 1, n_points_final_grid
+   accu1 = 0.d0
+   accu1relat = 0.d0
+   print*,'jpoint = ',jpoint
+   do i = 1, ao_num
+    do j = 1, ao_num
+     integral =  gauss_ij_xyz_rk(j,i,jpoint,m)
+     num_int  = ao_mat_xyz(j,i,jpoint,m) 
+     if(dabs(num_int).gt.1.d-10)then
+      accu1relat = dabs(integral - num_int)/dabs(num_int)
+     endif
+     if(dabs(integral - num_int).gt.1.d-5)then
+      print*,'i,j,jpoint',i,j,jpoint
+      print*,'prov, num, difference'
+      print*,integral,num_int,dabs(integral - num_int)
+     endif
+     accu1 += dabs(integral - num_int)
+    enddo
+   enddo
+   print*,'accu1      = ',accu1/dble(ao_num * ao_num)
+   print*,''
+   print*,'accu1relat = ',accu1relat/dble(ao_num * ao_num)
+  enddo
  enddo
 
 end
