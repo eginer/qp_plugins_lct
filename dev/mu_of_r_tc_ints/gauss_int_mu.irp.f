@@ -1,7 +1,7 @@
 BEGIN_PROVIDER [ double precision, gauss_ij_rk,  ( ao_num, ao_num,n_points_final_grid)]
  implicit none
  BEGIN_DOC
-! mu_of_r_gauss(j,i,R) = int dr phi_i(r) phi_j(r) exp(-\mu(R) |r - R|^2)
+! mu_of_r_gauss(j,i,R) = int dr phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
  END_DOC
  integer :: i,j,ipoint
  double precision :: mu,r(3),overlap_gauss_r12_ao
@@ -69,10 +69,81 @@ BEGIN_PROVIDER [ double precision, gauss_ij_rk,  ( ao_num, ao_num,n_points_final
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_final_grid,3)]
+BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  ( ao_num, ao_num,n_points_final_grid)]
  implicit none
  BEGIN_DOC
-! mu_of_r_gauss(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-\mu(R) |r - R|^2)
+! mu_of_r_gauss(j,i,R) = int dr phi_i(r) phi_j(r) exp(-2(\mu(R) |r - R|)^2)
+ END_DOC
+ integer :: i,j,ipoint
+ double precision :: mu,r(3),overlap_gauss_r12_ao
+ double precision :: int_mu, delta
+ provide mu_erf final_grid_points constant_mu 
+ double precision :: wall0, wall1
+ call wall_time(wall0)
+ if(constant_mu)then
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,gauss_2_ij_rk,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
+ do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     mu = mu_erf 
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     delta = 2.d0 * mu * mu
+     int_mu = overlap_gauss_r12_ao(r,delta,i,j)
+     gauss_2_ij_rk(j,i,ipoint)= int_mu 
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ else 
+  provide mu_of_r_prov
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,gauss_2_ij_rk,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
+ do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     mu = mu_of_r_prov(ipoint,1)
+     delta = 2.d0 * mu * mu
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     int_mu = overlap_gauss_r12_ao(r,delta,i,j)
+     gauss_2_ij_rk(j,i,ipoint)= int_mu 
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ endif
+
+ do ipoint = 1, n_points_final_grid
+  do i = 1, ao_num
+   do j = 1, i-1
+     gauss_2_ij_rk(j,i,ipoint)= gauss_2_ij_rk(i,j,ipoint)
+    enddo
+   enddo
+  enddo
+
+ call wall_time(wall1)
+ print*,'wall time for gauss_2_ij_rk  ',wall1 - wall0
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_bis,  ( ao_num, ao_num,n_points_final_grid,3)]
+ implicit none
+ BEGIN_DOC
+! mu_of_r_gauss(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
 !
 ! with m == 1 ==> x, m == 2 ==> y, m == 3 ==> z
  END_DOC
@@ -87,7 +158,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_f
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,m) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,gauss_ij_xyz_rk,final_grid_points)
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,gauss_ij_xyz_rk_bis,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
  do m = 1, 3
   do ipoint = 1, n_points_final_grid
@@ -99,7 +170,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_f
       r(3) = final_grid_points(3,ipoint)
       delta = mu * mu
       int_mu = overlap_gauss_xyz_r12_ao_specific(r,delta,i,j,m)
-      gauss_ij_xyz_rk(j,i,ipoint,m)= int_mu 
+      gauss_ij_xyz_rk_bis(j,i,ipoint,m)= int_mu 
     enddo
    enddo
   enddo
@@ -112,7 +183,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_f
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,gauss_ij_xyz_rk,final_grid_points)
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,gauss_ij_xyz_rk_bis,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
  do m = 1, 3
   do ipoint = 1, n_points_final_grid
@@ -124,7 +195,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_f
       r(2) = final_grid_points(2,ipoint)
       r(3) = final_grid_points(3,ipoint)
       int_mu = overlap_gauss_xyz_r12_ao_specific(r,delta,i,j,m)
-      gauss_ij_xyz_rk(j,i,ipoint,m)= int_mu 
+      gauss_ij_xyz_rk_bis(j,i,ipoint,m)= int_mu 
     enddo
    enddo
   enddo
@@ -138,11 +209,90 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  ( ao_num, ao_num,n_points_f
   do ipoint = 1, n_points_final_grid
    do i = 1, ao_num
     do j = 1, i-1
-      gauss_ij_xyz_rk(j,i,ipoint,m)= gauss_ij_xyz_rk(i,j,ipoint,m)
+      gauss_ij_xyz_rk_bis(j,i,ipoint,m)= gauss_ij_xyz_rk_bis(i,j,ipoint,m)
     enddo
    enddo
   enddo
  enddo
+
+ call wall_time(wall1)
+ print*,'wall time for gauss_ij_xyz_rk_bis  ',wall1 - wall0
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  (3, ao_num, ao_num,n_points_final_grid)]
+ implicit none
+ BEGIN_DOC
+! mu_of_r_gauss(m,j,i,R) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
+!
+! with m == 1 ==> x, m == 2 ==> y, m == 3 ==> z
+ END_DOC
+ integer :: i,j,ipoint,m
+ double precision :: mu,r(3),overlap_gauss_r12_ao
+ double precision :: int_mu(3), delta
+ provide mu_erf final_grid_points constant_mu 
+ double precision :: wall0, wall1
+ call wall_time(wall0)
+ if(constant_mu)then
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,m) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,gauss_ij_xyz_rk,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
+ do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     mu = mu_erf 
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     delta = mu * mu
+     call overlap_gauss_xyz_r12_ao(r,delta,i,j,int_mu)
+     do m = 1, 3
+      gauss_ij_xyz_rk(m,j,i,ipoint)= int_mu(m) 
+     enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ else 
+  provide mu_of_r_prov
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,m) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,gauss_ij_xyz_rk,final_grid_points)
+ !$OMP DO SCHEDULE (dynamic)
+ do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     mu = mu_of_r_prov(ipoint,1)
+     delta = mu * mu
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     call overlap_gauss_xyz_r12_ao(r,delta,i,j,int_mu)
+     do m = 1, 3
+      gauss_ij_xyz_rk(m,j,i,ipoint)= int_mu(m) 
+     enddo
+   enddo
+  enddo
+ enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+ endif
+
+  do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = 1, i-1
+     do m = 1, 3
+      gauss_ij_xyz_rk(m,j,i,ipoint)= gauss_ij_xyz_rk(m,i,j,ipoint)
+     enddo
+    enddo
+   enddo
+  enddo
 
  call wall_time(wall1)
  print*,'wall time for gauss_ij_xyz_rk  ',wall1 - wall0
@@ -156,7 +306,7 @@ subroutine test_gauss_ij_rk
  double precision :: C_center(3), weight1,mu,r12,integral,delta, num_int
  double precision, allocatable :: ao_mat(:,:,:), aos_array_r1(:),ao_mat_xyz(:,:,:,:)
  allocate(ao_mat(ao_num,ao_num,n_points_final_grid), aos_array_r1(ao_num))
- allocate(ao_mat_xyz(ao_num,ao_num,n_points_final_grid,3))
+ allocate(ao_mat_xyz(3,ao_num,ao_num,n_points_final_grid))
  do jpoint = 1, n_points_final_grid
   mu = mu_of_r_prov(jpoint,1)
   delta = mu * mu
@@ -173,7 +323,7 @@ subroutine test_gauss_ij_rk
     do j = 1, ao_num
      ao_mat(j,i,jpoint)  += aos_array_r1(i) * aos_array_r1(j) * weight1 * dexp(-delta*r12)
      do m = 1, 3
-     ao_mat_xyz(j,i,jpoint,m)  += aos_array_r1(i) * aos_array_r1(j) * weight1 * dexp(-delta*r12) * r1(m)
+     ao_mat_xyz(m,j,i,jpoint)  += aos_array_r1(i) * aos_array_r1(j) * weight1 * dexp(-delta*r12) * r1(m)
      enddo
     enddo
    enddo
@@ -205,16 +355,16 @@ subroutine test_gauss_ij_rk
   print*,'accu1relat = ',accu1relat/dble(ao_num * ao_num)
  enddo
 
- do m = 1, 3
-  print*,'m = ',m
-  do jpoint = 1, n_points_final_grid
-   accu1 = 0.d0
-   accu1relat = 0.d0
-   print*,'jpoint = ',jpoint
-   do i = 1, ao_num
-    do j = 1, ao_num
-     integral =  gauss_ij_xyz_rk(j,i,jpoint,m)
-     num_int  = ao_mat_xyz(j,i,jpoint,m) 
+ print*,'m = ',m
+ do jpoint = 1, n_points_final_grid
+  accu1 = 0.d0
+  accu1relat = 0.d0
+  print*,'jpoint = ',jpoint
+  do i = 1, ao_num
+   do j = 1, ao_num
+    do m = 1, 3
+     integral =  gauss_ij_xyz_rk(m,j,i,jpoint)
+     num_int  = ao_mat_xyz(m,j,i,jpoint) 
      if(dabs(num_int).gt.1.d-10)then
       accu1relat = dabs(integral - num_int)/dabs(num_int)
      endif
@@ -226,10 +376,10 @@ subroutine test_gauss_ij_rk
      accu1 += dabs(integral - num_int)
     enddo
    enddo
-   print*,'accu1      = ',accu1/dble(ao_num * ao_num)
-   print*,''
-   print*,'accu1relat = ',accu1relat/dble(ao_num * ao_num)
   enddo
+  print*,'accu1      = ',accu1/dble(ao_num * ao_num)
+  print*,''
+  print*,'accu1relat = ',accu1relat/dble(ao_num * ao_num)
  enddo
 
 end
