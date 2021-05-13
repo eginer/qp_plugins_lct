@@ -1,5 +1,8 @@
 subroutine fit_erf_mu_squared(mu, expo_fit, coef_fit)
  implicit none
+ BEGIN_DOC
+! fit of (erf(mu * |r - r'|) - 1)^2 with a linear combination of Gaussians
+ END_DOC
  double precision, intent(in) :: mu
  double precision, intent(out):: expo_fit(n_max_fit_slat)
  double precision, intent(out):: coef_fit(n_max_fit_slat)
@@ -16,6 +19,11 @@ end
 
 BEGIN_PROVIDER [double precision, erf_mu_squared_ij_rk,( ao_num, ao_num,n_points_final_grid)]
  implicit none
+ BEGIN_DOC
+! erf_mu_squared_ij_rk(i,j,r) = \int dr' phi_i(r') phi_j(r') (erf(mu(r) * |r - r'|) - 1)^2
+!
+! it is fitted with fit_erf_mu_squared
+ END_DOC
  double precision :: expo_fit(n_max_fit_slat)
  double precision :: coef_fit(n_max_fit_slat),overlap_gauss_r12_ao
  double precision :: mu,r(3),int_mu,delta,wall0,wall1

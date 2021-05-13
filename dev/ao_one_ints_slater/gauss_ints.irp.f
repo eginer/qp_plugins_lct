@@ -315,34 +315,6 @@ double precision function overlap_gauss_xyz_r12_ao_specific(D_center,delta,i,j,m
 end
 
 
-!double precision function overlap_gauss_r12_ao(D_center,delta,i,j)
-! implicit none
-! BEGIN_DOC
-! \int dr AO_i(r) AO_j(r) e^{-delta |r-D_center|^2}
-! END_DOC
-! integer, intent(in) :: i,j
-! double precision, intent(in) :: D_center(3), delta
-!
-! integer :: num_a,num_b,power_A(3), power_B(3),l,k
-! double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,analytical_j
-! num_A = ao_nucl(i)
-! power_A(1:3)= ao_power(i,1:3)
-! A_center(1:3) = nucl_coord(num_A,1:3)
-! num_B = ao_nucl(j)
-! power_B(1:3)= ao_power(j,1:3)
-! B_center(1:3) = nucl_coord(num_B,1:3)
-! overlap_gauss_r12_ao = 0.d0
-! do l=1,ao_prim_num(i)
-!  alpha = ao_expo_ordered_transp(l,i)     
-!  do k=1,ao_prim_num(j)
-!   beta = ao_expo_ordered_transp(k,j)     
-!   analytical_j = overlap_gauss_r12(D_center,delta,A_center,B_center,power_A,power_B,alpha,beta)
-!   overlap_gauss_r12_ao += analytical_j *  ao_coef_normalized_ordered_transp(l,i)             &
-!                                        *  ao_coef_normalized_ordered_transp(k,j) 
-!  enddo 
-! enddo
-!end
-
 subroutine overlap_gauss_r12_all_ao(D_center,delta,aos_ints)
  implicit none
  double precision, intent(in) :: D_center(3), delta
@@ -433,31 +405,4 @@ double precision function overlap_gauss_r12_ao(D_center,delta,i,j)
  enddo
 end
 
-!subroutine overlap_gauss_r12_all_ao(D_center,delta,aos_ints)
-! implicit none
-! double precision, intent(in) :: D_center(3), delta
-! double precision, intent(out):: aos_ints(ao_num,ao_num)
-!
-! integer :: num_a,num_b,power_A(3), power_B(3),l,k,i,j
-! double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,analytical_j
-! aos_ints = 0.d0
-! do i = 1, ao_num
-!  do j = 1, ao_num
-!   num_A = ao_nucl(i)
-!   power_A(1:3)= ao_power(i,1:3)
-!   A_center(1:3) = nucl_coord(num_A,1:3)
-!   num_B = ao_nucl(j)
-!   power_B(1:3)= ao_power(j,1:3)
-!   B_center(1:3) = nucl_coord(num_B,1:3)
-!   do l=1,ao_prim_num(i)
-!    alpha = ao_expo_ordered_transp(l,i)     
-!    do k=1,ao_prim_num(j)
-!     beta = ao_expo_ordered_transp(k,j)     
-!     analytical_j = overlap_gauss_r12(D_center,delta,A_center,B_center,power_A,power_B,alpha,beta)
-!     aos_ints(j,i) += analytical_j *  ao_coef_normalized_ordered_transp(l,i)             &
-!                                   *  ao_coef_normalized_ordered_transp(k,j) 
-!    enddo 
-!   enddo
-!  enddo
-! enddo
-!end
+
