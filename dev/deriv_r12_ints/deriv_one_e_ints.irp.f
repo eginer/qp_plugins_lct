@@ -176,7 +176,7 @@ subroutine erf_mu_gauss_xyz(D_center,delta,mu,A_center,B_center,power_A,power_B,
   !
   ! .. math::
   ! 
-  !   \int dr exp(-delta (r - D)^2 ) x * erf(mu |r-r'|)/ |r-r'| * (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
+  !   \int dr exp(-delta (r - D)^2 ) x * (1 - erf(mu |r-r'|))/ |r-r'| * (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
   !
   !   xyz_ints(1) = x , xyz_ints(2) = y, xyz_ints(3) = z, xyz_ints(4) = x^0 
   END_DOC
@@ -195,10 +195,11 @@ subroutine erf_mu_gauss_xyz(D_center,delta,mu,A_center,B_center,power_A,power_B,
  integer           :: iorder_a_new(3)   ! i_order(i) = order of the new polynom ==> should be equal to power_A
  double precision  :: alpha_new         ! new exponent
  double precision  :: fact_a_new        ! constant factor
- double precision  :: accu,coefx,coefy,coefz,coefxy,coefxyz,thr,contrib
+ double precision  :: accu,coefx,coefy,coefz,coefxy,coefxyz,thr,contrib,contrib_inf,mu_inf
  integer           :: d(3),i,lx,ly,lz,iorder_tmp(3),dim1,mm
  integer           :: power_B_tmp(3)
  dim1=100
+ mu_inf = 1.d+10
  thr = 1.d-10
  d = 0 ! order of the polynom for the gaussian exp(-delta (r - D)^2 )  == 0
 
@@ -206,7 +207,7 @@ subroutine erf_mu_gauss_xyz(D_center,delta,mu,A_center,B_center,power_A,power_B,
  call give_explicit_poly_and_gaussian(A_new , A_center_new , alpha_new, fact_a_new , iorder_a_new , & 
                                       delta,alpha,d,power_A,D_center,A_center,n_pt_max_integrals)
  ! The new gaussian exp(-delta (r - D)^2 ) (x-A_x)^a \exp(-\alpha (x-A_x)^2
- accu = 0.d0
+ xyz_ints = 0.d0
  do lx = 0, iorder_a_new(1)
   coefx = A_new(lx,1)
   if(dabs(coefx).lt.thr)cycle
@@ -223,23 +224,26 @@ subroutine erf_mu_gauss_xyz(D_center,delta,mu,A_center,B_center,power_A,power_B,
     iorder_tmp(3) = lz
      power_B_tmp = power_B
      contrib = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B_tmp,alpha_new,beta,D_center,n_pt_in,mu)  
-     xyz_ints(4) += contrib * coefxyz ! usual term with no x/y/z 
+     contrib_inf = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B_tmp,alpha_new,beta,D_center,n_pt_in,mu_inf)  
+     xyz_ints(4) += (contrib_inf - contrib) * coefxyz ! usual term with no x/y/z 
                                       
      do mm = 1, 3 
       ! (x phi_i ) * phi_j 
-      ! x * (x - B_x)^b_x = b_x (x - B_x)^b_x + 1 * (x - B_x)^{b_x+1}
+      ! x * (x - B_x)^b_x = B_x (x - B_x)^b_x + 1 * (x - B_x)^{b_x+1}
       
       !
       ! first contribution :: B_x (x - B_x)^b_x :: usual integral multiplied by B_x
       power_B_tmp = power_B
+      contrib_inf = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B_tmp,alpha_new,beta,D_center,n_pt_in,mu_inf)  
       contrib = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B_tmp,alpha_new,beta,D_center,n_pt_in,mu)  
-      xyz_ints(mm) += contrib * B_center(mm) * coefxyz 
+      xyz_ints(mm) += (contrib_inf - contrib) * B_center(mm) * coefxyz 
                                                        
       !
       ! second contribution :: (x - B_x)^(b_x+1) :: integral with b_x=>b_x+1 
       power_B_tmp(mm) += 1
       contrib = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B_tmp,alpha_new,beta,D_center,n_pt_in,mu)  
-      xyz_ints(mm) += contrib * coefxyz     
+      contrib_inf = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B_tmp,alpha_new,beta,D_center,n_pt_in,mu_inf)  
+      xyz_ints(mm) += (contrib_inf -  contrib) * coefxyz     
      enddo
    enddo
   enddo
