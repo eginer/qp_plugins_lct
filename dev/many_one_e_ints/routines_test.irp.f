@@ -17,7 +17,7 @@ subroutine test_erf_mu_gauss_xyz
   C_center(:) = final_grid_points(:,jpoint)
   do i = 1, ao_num
    do j = 1, ao_num
-    call erf_mu_gauss_xyz_ij_ao(i,j,mu, C_center, delta,integrals)
+    call erfc_mu_gauss_xyz_ij_ao(i,j,mu, C_center, delta,integrals)
     integral_scal(j,i) = integrals(4) 
     do m = 1, 3
      integral_tmp(m,j,i) = integrals(4) * C_center(m) - integrals(m) 
