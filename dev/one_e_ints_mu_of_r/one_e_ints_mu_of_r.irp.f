@@ -4,6 +4,7 @@ program one_e_ints_mu_of_r
 ! TODO : Put the documentation of the program here
   END_DOC
   print *, 'Hello world'
-  call test_erf_mu_squared_ij_rk
-  call test_gauss_ij_rk
+!  call test_erf_mu_squared_ij_rk
+!  call test_gauss_ij_rk
+  call test_gauss_2_ij
 end
