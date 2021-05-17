@@ -1,11 +1,9 @@
-program ao_one_ints_slater
+program one_e_ints_mu_of_r
   implicit none
   BEGIN_DOC
 ! TODO : Put the documentation of the program here
   END_DOC
   print *, 'Hello world'
-
-!  call test_int_bis
-!  call test_int_full_j
-! call test_overlap_gauss_r12_ao
+  call test_erf_mu_squared_ij_rk
+  call test_gauss_ij_rk
 end

@@ -32,16 +32,16 @@ BEGIN_PROVIDER [ double precision, v_ij_erf_rk, ( ao_num, ao_num,n_points_final_
  !$OMP END PARALLEL
 
  else 
-  provide mu_of_r_prov
+  provide mu_of_r_for_ints
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,int_coulomb) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,v_ij_erf_rk,final_grid_points)
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,v_ij_erf_rk,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
  do ipoint = 1, n_points_final_grid
    do i = 1, ao_num
     do j = i, ao_num
-     mu = mu_of_r_prov(ipoint,1)
+     mu = mu_of_r_for_ints(ipoint,1)
      r(1) = final_grid_points(1,ipoint)
      r(2) = final_grid_points(2,ipoint)
      r(3) = final_grid_points(3,ipoint)
@@ -104,13 +104,13 @@ BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk, (ao_num, ao_num,n_points_final
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,ipoint,mu,r,ints,m,ints_coulomb) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,x_v_ij_erf_rk,final_grid_points)
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,x_v_ij_erf_rk,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
  do m = 1, 3
   do ipoint = 1, n_points_final_grid
     do i = 1, ao_num
      do j = i, ao_num
-      mu = mu_of_r_prov(ipoint,1)
+      mu = mu_of_r_for_ints(ipoint,1)
       r(1) = final_grid_points(1,ipoint)
       r(2) = final_grid_points(2,ipoint)
       r(3) = final_grid_points(3,ipoint)
@@ -176,13 +176,13 @@ BEGIN_PROVIDER [ double precision, x_v_ij_erf_rk_transp, (ao_num, ao_num,3,n_poi
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,ipoint,mu,r,ints,m,ints_coulomb) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,x_v_ij_erf_rk_transp,final_grid_points)
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,x_v_ij_erf_rk_transp,final_grid_points)
  !$OMP DO SCHEDULE (dynamic)
  do ipoint = 1, n_points_final_grid
   do m = 1, 3
     do i = 1, ao_num
      do j = i, ao_num
-      mu = mu_of_r_prov(ipoint,1)
+      mu = mu_of_r_for_ints(ipoint,1)
       r(1) = final_grid_points(1,ipoint)
       r(2) = final_grid_points(2,ipoint)
       r(3) = final_grid_points(3,ipoint)

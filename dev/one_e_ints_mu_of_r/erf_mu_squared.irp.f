@@ -28,33 +28,60 @@ BEGIN_PROVIDER [double precision, erf_mu_squared_ij_rk,( ao_num, ao_num,n_points
  double precision :: coef_fit(n_max_fit_slat),overlap_gauss_r12_ao
  double precision :: mu,r(3),int_mu,delta,wall0,wall1
  integer :: i,j,ipoint,ifit
-  provide mu_of_r_prov
+  provide mu_of_r_for_ints
   call fit_erf_mu_squared(1.d0, expo_fit, coef_fit)
  call wall_time(wall0)
- !$OMP PARALLEL                  &
- !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,ifit,expo_fit,coef_fit) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_prov,erf_mu_squared_ij_rk,final_grid_points,n_max_fit_slat)
- !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = i, ao_num
-    mu = mu_of_r_prov(ipoint,1)
-    call fit_erf_mu_squared(mu, expo_fit, coef_fit)
-    r(1) = final_grid_points(1,ipoint)
-    r(2) = final_grid_points(2,ipoint)
-    r(3) = final_grid_points(3,ipoint)
-    erf_mu_squared_ij_rk(j,i,ipoint) = 0.d0
-    do ifit = 1, n_max_fit_slat
-     delta = expo_fit(ifit)
-     int_mu = overlap_gauss_r12_ao(r,delta,i,j)
-     erf_mu_squared_ij_rk(j,i,ipoint) += coef_fit(ifit) * int_mu 
+ if(constant_mu)then
+  !$OMP PARALLEL                  &
+  !$OMP DEFAULT (NONE)            &
+  !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,ifit,expo_fit,coef_fit) & 
+  !$OMP SHARED (ao_num,n_points_final_grid,mu_erf,erf_mu_squared_ij_rk,final_grid_points,n_max_fit_slat)
+  !$OMP DO SCHEDULE (dynamic)
+  do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     mu = mu_erf 
+     call fit_erf_mu_squared(mu, expo_fit, coef_fit)
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     erf_mu_squared_ij_rk(j,i,ipoint) = 0.d0
+     do ifit = 1, n_max_fit_slat
+      delta = expo_fit(ifit)
+      int_mu = overlap_gauss_r12_ao(r,delta,i,j)
+      erf_mu_squared_ij_rk(j,i,ipoint) += coef_fit(ifit) * int_mu 
+     enddo
     enddo
    enddo
   enddo
- enddo
- !$OMP END DO
- !$OMP END PARALLEL
+  !$OMP END DO
+  !$OMP END PARALLEL
+ else
+  !$OMP PARALLEL                  &
+  !$OMP DEFAULT (NONE)            &
+  !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,ifit,expo_fit,coef_fit) & 
+  !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,erf_mu_squared_ij_rk,final_grid_points,n_max_fit_slat)
+  !$OMP DO SCHEDULE (dynamic)
+  do ipoint = 1, n_points_final_grid
+   do i = 1, ao_num
+    do j = i, ao_num
+     mu = mu_of_r_for_ints(ipoint,1)
+     call fit_erf_mu_squared(mu, expo_fit, coef_fit)
+     r(1) = final_grid_points(1,ipoint)
+     r(2) = final_grid_points(2,ipoint)
+     r(3) = final_grid_points(3,ipoint)
+     erf_mu_squared_ij_rk(j,i,ipoint) = 0.d0
+     do ifit = 1, n_max_fit_slat
+      delta = expo_fit(ifit)
+      int_mu = overlap_gauss_r12_ao(r,delta,i,j)
+      erf_mu_squared_ij_rk(j,i,ipoint) += coef_fit(ifit) * int_mu 
+     enddo
+    enddo
+   enddo
+  enddo
+  !$OMP END DO
+  !$OMP END PARALLEL
+ endif
 
 
  do ipoint = 1, n_points_final_grid
@@ -78,7 +105,11 @@ subroutine test_erf_mu_squared_ij_rk
  double precision, allocatable :: ao_mat(:,:,:), aos_array_r1(:)
  allocate(ao_mat(ao_num,ao_num,n_points_final_grid), aos_array_r1(ao_num))
  do jpoint = 1, n_points_final_grid
-  mu = mu_of_r_prov(jpoint,1)
+  if(constant_mu)then
+   mu = mu_erf
+  else
+   mu = mu_of_r_for_ints(jpoint,1)
+  endif
   C_center(:) = final_grid_points(:,jpoint)
   ao_mat(:,:,jpoint) = 0.d0
   do ipoint = 1, n_points_final_grid
