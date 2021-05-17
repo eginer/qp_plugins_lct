@@ -53,7 +53,7 @@ BEGIN_PROVIDER [double precision, erf_mu_r12_inv_r12_rk,( ao_num, ao_num,n_point
  do ipoint = 1, n_points_final_grid
   do i = 1, ao_num
    do j = 1, i-1
-    erf_mu_r12_inv_r12_rk(j,i,ipoint)= erf_mu_squared_ij_rk(i,j,ipoint)
+    erf_mu_r12_inv_r12_rk(j,i,ipoint)= erf_mu_r12_inv_r12_rk(i,j,ipoint)
    enddo
   enddo
  enddo
@@ -96,7 +96,7 @@ BEGIN_PROVIDER [double precision, coulomb_rk,( ao_num, ao_num,n_points_final_gri
  do ipoint = 1, n_points_final_grid
   do i = 1, ao_num
    do j = 1, i-1
-    coulomb_rk(j,i,ipoint)= erf_mu_squared_ij_rk(i,j,ipoint)
+    coulomb_rk(j,i,ipoint)= coulomb_rk(i,j,ipoint)
    enddo
   enddo
  enddo
