@@ -92,60 +92,6 @@ BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  ( ao_num, ao_num,n_points_fin
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp_bis,  ( ao_num, ao_num,n_points_final_grid,3)]
- implicit none
- BEGIN_DOC
-! mu_of_r_gauss(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
-!
-! with m == 1 ==> x, m == 2 ==> y, m == 3 ==> z
- END_DOC
- integer :: i,j,ipoint,m
- double precision :: mu,r(3),overlap_gauss_r12_ao
- double precision :: int_mu, delta
- double precision :: overlap_gauss_xyz_r12_ao_specific
- provide mu_erf final_grid_points 
- double precision :: wall0, wall1
- call wall_time(wall0)
-  provide mu_of_r_for_ints
- !$OMP PARALLEL                  &
- !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_ij_xyz_rk_tmp_bis,final_grid_points)
- !$OMP DO SCHEDULE (dynamic)
- do m = 1, 3
-  do ipoint = 1, n_points_final_grid
-    do i = 1, ao_num
-     do j = i, ao_num
-      mu = mu_of_r_for_ints(ipoint,1)
-      delta = mu * mu
-      r(1) = final_grid_points(1,ipoint)
-      r(2) = final_grid_points(2,ipoint)
-      r(3) = final_grid_points(3,ipoint)
-      int_mu = overlap_gauss_xyz_r12_ao_specific(r,delta,i,j,m)
-      gauss_ij_xyz_rk_tmp_bis(j,i,ipoint,m)= int_mu 
-    enddo
-   enddo
-  enddo
- enddo
- !$OMP END DO
- !$OMP END PARALLEL
-
-
- do m = 1, 3
-  do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = 1, i-1
-      gauss_ij_xyz_rk_tmp_bis(j,i,ipoint,m)= gauss_ij_xyz_rk_tmp_bis(i,j,ipoint,m)
-    enddo
-   enddo
-  enddo
- enddo
-
- call wall_time(wall1)
- print*,'wall time for gauss_ij_xyz_rk_tmp_bis  ',wall1 - wall0
-
-END_PROVIDER 
-
 BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3, ao_num, ao_num,n_points_final_grid)]
  implicit none
  BEGIN_DOC
@@ -226,6 +172,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  (ao_num, ao_num,n_points_fi
 
  call wall_time(wall1)
  print*,'wall time for gauss_ij_xyz_rk = ',wall1 - wall0
+ FREE gauss_ij_xyz_rk_tmp
 
 
 END_PROVIDER

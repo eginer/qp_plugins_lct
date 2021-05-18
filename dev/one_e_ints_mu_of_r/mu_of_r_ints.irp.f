@@ -1,6 +1,6 @@
 
  BEGIN_PROVIDER [double precision, mu_of_r_for_ints, (n_points_final_grid,N_states) ]
-&BEGIN_PROVIDER [double precision, inv_sq_mu_of_r_for_ints, (n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, inv_2_mu_of_r_for_ints, (n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, inv_4_mu_of_r_for_ints, (n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, grad_mu_of_r_for_ints, (3,n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, grad_sq_mu_of_r_for_ints, (n_points_final_grid,N_states) ]
@@ -32,7 +32,7 @@
      print*,'which does not correspond to any of the options for such keyword'
      stop
     endif
-    inv_sq_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**2.d0
+    inv_2_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**2.d0
     inv_4_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**4.d0
     grad_sq_mu_of_r_for_ints(ipoint,istate) = 0.d0
     do mm = 1, 3
