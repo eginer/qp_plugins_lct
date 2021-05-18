@@ -3,7 +3,7 @@
  BEGIN_DOC
 ! number of gaussian to fit exp(-x)
 !
-! I took the 8 gaussians of the ANO-RCC basis set of the H atom
+! I took 20 gaussians from the program bassto.f
  END_DOC
  n_max_fit_slat = 20
  END_PROVIDER
@@ -15,9 +15,9 @@
  BEGIN_DOC
  ! fit the exp(-x) as 
  !
- ! \sum_{i = 1, 8} coef_fit_slat_gauss(i) * exp(-expo_fit_slat_gauss(i) * x**2)
+ ! \sum_{i = 1, n_max_fit_slat} coef_fit_slat_gauss(i) * exp(-expo_fit_slat_gauss(i) * x**2)
  !
- ! The coefficient are taken from the ano-rcc expansion of the hydrogen 1s orbital
+ ! The coefficient are taken from the program bassto.f
  END_DOC
 
 

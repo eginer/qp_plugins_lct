@@ -67,6 +67,10 @@ subroutine phi_j_erf_mu_r_xyz_phi(i,j,mu_in, C_center, xyz_ints)
  integer :: num_A,power_A(3), num_b, power_B(3),power_B_tmp(3)
  double precision :: alpha, beta, A_center(3), B_center(3),contrib,NAI_pol_mult_erf
  integer :: n_pt_in,l,m,mm
+ xyz_ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  n_pt_in = n_pt_max_integrals
  ! j 
  num_A = ao_nucl(j)
@@ -77,7 +81,6 @@ subroutine phi_j_erf_mu_r_xyz_phi(i,j,mu_in, C_center, xyz_ints)
  power_B(1:3)= ao_power(i,1:3)
  B_center(1:3) = nucl_coord(num_B,1:3)
 
- xyz_ints = 0.d0
  do l=1,ao_prim_num(j)
   alpha = ao_expo_ordered_transp(l,j)
   do m=1,ao_prim_num(i)
@@ -112,6 +115,10 @@ double precision function phi_j_erf_mu_r_phi(i,j,mu_in, C_center)
  integer :: num_A,power_A(3), num_b, power_B(3)
  double precision :: alpha, beta, A_center(3), B_center(3),contrib,NAI_pol_mult_erf
  integer :: n_pt_in,l,m
+ phi_j_erf_mu_r_phi = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  n_pt_in = n_pt_max_integrals
  ! j 
  num_A = ao_nucl(j)
@@ -122,7 +129,6 @@ double precision function phi_j_erf_mu_r_phi(i,j,mu_in, C_center)
  power_B(1:3)= ao_power(i,1:3)
  B_center(1:3) = nucl_coord(num_B,1:3)
 
- phi_j_erf_mu_r_phi = 0.d0
  do l=1,ao_prim_num(j)
   alpha = ao_expo_ordered_transp(l,j)
   do m=1,ao_prim_num(i)
@@ -153,6 +159,10 @@ subroutine erfc_mu_gauss_xyz_ij_ao(i,j,mu, C_center, delta,gauss_ints)
  double precision :: alpha, beta, A_center(3), B_center(3),contrib,NAI_pol_mult_erf
  double precision :: xyz_ints(4)
  integer :: n_pt_in,l,m,mm
+ gauss_ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  n_pt_in = n_pt_max_integrals
  ! j 
  num_A = ao_nucl(j)
@@ -186,7 +196,7 @@ subroutine erfc_mu_gauss_xyz(D_center,delta,mu,A_center,B_center,power_A,power_B
   !
   ! .. math::
   ! 
-  !   \int dr exp(-delta (r - D)^2 ) x * (1 - erf(mu |r-r'|))/ |r-r'| * (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
+  !   \int dr exp(-delta (r - D)^2 ) x/y/z * (1 - erf(mu |r-r'|))/ |r-r'| * (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
   !
   !   xyz_ints(1) = x , xyz_ints(2) = y, xyz_ints(3) = z, xyz_ints(4) = x^0 
   END_DOC
@@ -261,6 +271,106 @@ subroutine erfc_mu_gauss_xyz(D_center,delta,mu,A_center,B_center,power_A,power_B
  xyz_ints *= fact_a_new 
 end
 
+
+double precision function erf_mu_gauss(D_center,delta,mu,A_center,B_center,power_A,power_B,alpha,beta,n_pt_in)
+  BEGIN_DOC
+  ! Computes the following integral :
+  !
+  ! .. math::
+  ! 
+  !   \int dr exp(-delta (r - D)^2 ) erf(mu*|r-r'|)/ |r-r'| * (x-A_x)^a (x-B_x)^b \exp(-\alpha (x-A_x)^2 - \beta (x-B_x)^2 )
+  !
+  END_DOC
+
+ implicit none
+  include 'constants.include.F'
+ double precision, intent(in)    :: D_center(3), delta,mu  ! pure gaussian "D" and mu parameter
+ double precision, intent(in)    :: A_center(3),B_center(3),alpha,beta ! gaussian/polynoms "A" and "B"
+ integer, intent(in)             :: power_A(3),power_B(3),n_pt_in
+
+ double precision  :: NAI_pol_mult_erf
+ ! First you multiply the usual gaussian "A" with the gaussian exp(-delta (r - D)^2 )
+ double precision  :: A_new(0:max_dim,3)! new polynom 
+ double precision  :: A_center_new(3)   ! new center
+ integer           :: iorder_a_new(3)   ! i_order(i) = order of the new polynom ==> should be equal to power_A
+ double precision  :: alpha_new         ! new exponent
+ double precision  :: fact_a_new        ! constant factor
+ double precision  :: accu,coefx,coefy,coefz,coefxy,coefxyz,thr,contrib,contrib_inf,mu_inf
+ integer           :: d(3),i,lx,ly,lz,iorder_tmp(3),dim1,mm
+ dim1=100
+ mu_inf = 1.d+10
+ thr = 1.d-10
+ d = 0 ! order of the polynom for the gaussian exp(-delta (r - D)^2 )  == 0
+
+ ! New gaussian/polynom defined by :: new pol new center new expo   cst fact new order                                
+ call give_explicit_poly_and_gaussian(A_new , A_center_new , alpha_new, fact_a_new , iorder_a_new , & 
+                                      delta,alpha,d,power_A,D_center,A_center,n_pt_max_integrals)
+ ! The new gaussian exp(-delta (r - D)^2 ) (x-A_x)^a \exp(-\alpha (x-A_x)^2
+ erf_mu_gauss = 0.d0
+ do lx = 0, iorder_a_new(1)
+  coefx = A_new(lx,1)
+  if(dabs(coefx).lt.thr)cycle
+  iorder_tmp(1) = lx
+  do ly = 0, iorder_a_new(2)
+   coefy = A_new(ly,2)
+   coefxy = coefx * coefy 
+   if(dabs(coefxy).lt.thr)cycle
+   iorder_tmp(2) = ly
+   do lz = 0, iorder_a_new(3)
+    coefz = A_new(lz,3)
+    coefxyz = coefxy * coefz 
+    if(dabs(coefxyz).lt.thr)cycle
+    iorder_tmp(3) = lz
+    contrib = NAI_pol_mult_erf(A_center_new,B_center,iorder_tmp,power_B,alpha_new,beta,D_center,n_pt_in,mu)
+    erf_mu_gauss += contrib * coefxyz     
+   enddo
+  enddo
+ enddo
+ erf_mu_gauss *= fact_a_new 
+end
+
+
+subroutine erf_mu_gauss_ij_ao(i,j,mu, C_center, delta,gauss_ints)
+ implicit none
+ BEGIN_DOC
+  ! gauss_ints(m) =   \int dr exp(-delta (r - C)^2 )  * erf(mu |r-r'|)/ |r-r'| * AO_i(r') * AO_j(r')
+  !
+ END_DOC
+ integer, intent(in) :: i,j
+ double precision, intent(in) :: mu, C_center(3),delta
+ double precision, intent(out):: gauss_ints
+
+ integer :: num_A,power_A(3), num_b, power_B(3)
+ double precision :: alpha, beta, A_center(3), B_center(3),contrib,NAI_pol_mult_erf
+ double precision :: integral , erf_mu_gauss
+ integer :: n_pt_in,l,m,mm
+ gauss_ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
+ n_pt_in = n_pt_max_integrals
+ ! j 
+ num_A = ao_nucl(j)
+ power_A(1:3)= ao_power(j,1:3)
+ A_center(1:3) = nucl_coord(num_A,1:3)
+ ! i 
+ num_B = ao_nucl(i)
+ power_B(1:3)= ao_power(i,1:3)
+ B_center(1:3) = nucl_coord(num_B,1:3)
+
+ do l=1,ao_prim_num(j)
+  alpha = ao_expo_ordered_transp(l,j)
+  do m=1,ao_prim_num(i)
+    beta = ao_expo_ordered_transp(m,i)
+    if(dabs(ao_coef_normalized_ordered_transp(l,j) * ao_coef_normalized_ordered_transp(m,i)).lt.1.d-12)cycle
+    integral = erf_mu_gauss(C_center,delta,mu,A_center,B_center,power_A,power_B,alpha,beta,n_pt_in)
+    gauss_ints += integral * ao_coef_normalized_ordered_transp(l,j)             &
+                           * ao_coef_normalized_ordered_transp(m,i) 
+  enddo
+ enddo
+end
+
+
 subroutine NAI_pol_x_mult_erf_ao(i_ao,j_ao,mu_in,C_center,ints)
  implicit none
   BEGIN_DOC
@@ -278,6 +388,10 @@ subroutine NAI_pol_x_mult_erf_ao(i_ao,j_ao,mu_in,C_center,ints)
  double precision               :: A_center(3), B_center(3),integral, alpha,beta
  double precision               :: NAI_pol_mult_erf
  integer                        :: i,j,num_A,num_B, power_A(3), power_B(3), n_pt_in, power_xA(3),m
+ ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  num_A = ao_nucl(i_ao)
  power_A(1:3)= ao_power(i_ao,1:3)
  A_center(1:3) = nucl_coord(num_A,1:3)
@@ -286,7 +400,6 @@ subroutine NAI_pol_x_mult_erf_ao(i_ao,j_ao,mu_in,C_center,ints)
  B_center(1:3) = nucl_coord(num_B,1:3)
  n_pt_in = n_pt_max_integrals
 
- ints = 0.d0
 
  do i = 1, ao_prim_num(i_ao)
   alpha = ao_expo_ordered_transp(i,i_ao)
@@ -320,6 +433,10 @@ subroutine NAI_pol_x_specify_mult_erf_ao(i_ao,j_ao,mu_in,C_center,m,ints)
  double precision               :: A_center(3), B_center(3),integral, alpha,beta
  double precision               :: NAI_pol_mult_erf
  integer                        :: i,j,num_A,num_B, power_A(3), power_B(3), n_pt_in, power_xA(3)
+ ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  num_A = ao_nucl(i_ao)
  power_A(1:3)= ao_power(i_ao,1:3)
  A_center(1:3) = nucl_coord(num_A,1:3)
@@ -328,7 +445,6 @@ subroutine NAI_pol_x_specify_mult_erf_ao(i_ao,j_ao,mu_in,C_center,m,ints)
  B_center(1:3) = nucl_coord(num_B,1:3)
  n_pt_in = n_pt_max_integrals
 
- ints = 0.d0
 
  do i = 1, ao_prim_num(i_ao)
   alpha = ao_expo_ordered_transp(i,i_ao)

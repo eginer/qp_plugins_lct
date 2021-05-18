@@ -104,18 +104,6 @@ BEGIN_PROVIDER [ double precision, big_array_naive, (ao_num, ao_num, ao_num, ao_
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, big_array_dgemm, (ao_num, ao_num, ao_num, ao_num)]
- implicit none
-
- big_array_dgemm = 0.d0
-! call all_erf_mu_r1_lr_int_big_mat(big_array_dgemm)
-! call all_gauss_r12_big_mat(big_array_dgemm)
-! call all_erf_r12_sq_big_mat(big_array_dgemm)
-! call all_nabla_mu_r1_sq_big_mat(big_array_dgemm)
-! call all_nabla_mu_r1_cdot_r12_big_mat(big_array_dgemm)
-  call all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(big_array_dgemm)
-END_PROVIDER 
-
 
 subroutine test_big_array
  implicit none
@@ -138,12 +126,12 @@ subroutine test_big_array
        print*,contrib,exact, big_array_naive(i,k,j,l)
       endif
 
-      contrib = dabs(big_array_dgemm(i,k,j,l) - exact)
+      contrib = dabs(scalar_mu_r_pot_chemist_ao(i,k,j,l) - exact)
       accu2 += contrib
       if(contrib .gt. 1.d-10)then
        print*,'dgemm'
        print*,'i,k,j,l',i,k,j,l
-       print*,contrib,exact, big_array_dgemm(i,k,j,l)
+       print*,contrib,exact, scalar_mu_r_pot_chemist_ao(i,k,j,l)
       endif
      enddo
     enddo
@@ -189,11 +177,11 @@ subroutine test_int_r6
       do i = j, j
        ao_prod_r1 = aos_in_r_array(i,ipoint) * aos_in_r_array(k,ipoint) * weight1
        if(dabs(ao_prod_r1).lt.sq_thr)cycle
-!        accu(i,k,j,l) += erf_mur1(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
-!        accu(i,k,j,l) += gauss_r12_mu_r1(ipoint,jpoint,cst_gauss_r12) * ao_prod_r1 * ao_prod_r2
-!        accu(i,k,j,l) += erf_mu_sq(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
-!        accu(i,k,j,l) += nabla_sq_term(ipoint,jpoint,cst_nabla) * ao_prod_r1 * ao_prod_r2
-!        accu(i,k,j,l) += nabla_r12_1(ipoint,jpoint,cst_nabla_r12_1) * ao_prod_r1 * ao_prod_r2
+        accu(i,k,j,l) += erf_mur1(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
+        accu(i,k,j,l) += gauss_r12_mu_r1(ipoint,jpoint,cst_gauss_r12) * ao_prod_r1 * ao_prod_r2
+        accu(i,k,j,l) += erf_mu_sq(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
+        accu(i,k,j,l) += nabla_sq_term(ipoint,jpoint,cst_nabla) * ao_prod_r1 * ao_prod_r2
+        accu(i,k,j,l) += nabla_r12_1(ipoint,jpoint,cst_nabla_r12_1) * ao_prod_r1 * ao_prod_r2
         accu(i,k,j,l) += nabla_r12_2(ipoint,jpoint,cst_nabla_r12_2) * ao_prod_r1 * ao_prod_r2
       enddo
      enddo
@@ -213,12 +201,12 @@ subroutine test_int_r6
    do k = l, l
     do i = j, j
      num_int = accu(i,k,j,l)
-     contrib = dabs(num_int - big_array_dgemm(i,k,j,l) )
+     contrib = dabs(num_int - scalar_mu_r_pot_chemist_ao(i,k,j,l) )
      accu_naive += contrib
      if(contrib .gt. 1.d-10)then
-      print*,'naive'
+      print*,''
       print*,'i,k,j,l',i,k,j,l
-      print*,contrib,num_int, big_array_dgemm(i,k,j,l)
+      print*,contrib,num_int, scalar_mu_r_pot_chemist_ao(i,k,j,l)
      endif
      
     enddo
@@ -231,26 +219,6 @@ subroutine test_int_r6
 
 
 end
-
-
-!subroutine test_big
-! implicit none
-! integer :: i,j,k,l
-!
-! do l = 1, ao_num
-!  do j = 1, ao_num
-!   do k = 1, ao_num
-!    do i = 1, ao_num
-!     if(dabs(big_array_dgemm_2(i,k,j,l) - big_array_dgemm(i,k,j,l)).gt.1.d-12)then
-!      print*,'i,k,j,l',i,k,j,l
-!      print*,big_array_dgemm_2(i,k,j,l),big_array_dgemm(i,k,j,l),dabs(big_array_dgemm_2(i,k,j,l) - big_array_dgemm(i,k,j,l))
-!     endif
-!    enddo
-!   enddo
-!  enddo
-! enddo
-!end
-
 
 double precision function nabla_sq_term(ipoint,jpoint,cst)
  implicit none

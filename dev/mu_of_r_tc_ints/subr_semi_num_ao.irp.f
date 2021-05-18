@@ -1,3 +1,39 @@
+BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_chemist_ao, (ao_num, ao_num, ao_num, ao_num)]
+ implicit none
+ BEGIN_DOC
+! scalar_mu_r_pot_chemist_ao(i,k,j,l) = \int dr1 \int dr2 \phi_i(r1) \phi_k(r1) W_ee(r12,\mu(r1)) \phi_j(r2) \phi_l(r2)
+!
+! NOTICE THAT : because of mu(r1) and the non symmetric form of the Jastrow factor, the integrals ARE NOT SYMMETRIC in r1, r2 
+!
+! scalar_mu_r_pot_chemist_ao(i,k,j,l) NOT EQUAL TO scalar_mu_r_pot_chemist_ao(j,l,i,k) for instance 
+ END_DOC
+
+ print*,''
+ print*,'providing scalar_mu_r_pot_chemist_ao ...'
+ print*,''
+ print*,''
+ call wall_time(wall0)
+ double precision :: wall0,wall1
+
+
+ scalar_mu_r_pot_chemist_ao = 0.d0
+
+ call all_erf_mu_r1_lr_int_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_gauss_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_erf_r12_sq_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_sq_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_cdot_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call wall_time(wall1)
+ print*,''
+ print*,''
+ print*,'wall time for calar_mu_r_pot_chemist_ao ', wall1 - wall0   
+ print*,''
+ print*,''
+END_PROVIDER 
+
+
+
 subroutine all_erf_mu_r1_lr_int_big_mat(big_mat)
  implicit none
  BEGIN_DOC
@@ -28,6 +64,55 @@ subroutine all_erf_mu_r1_lr_int_big_mat(big_mat)
 
  ! erf(mu(r) * r12)/r12
  call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,erf_mu_r12_inv_r12_rk(1,1,1),ao_num*ao_num & 
+                   ,a_mat(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
+
+ call wall_time(wall1)
+ print*,'wall time for all_erf_mu_r1_lr_int_big_mat ',wall1 - wall0   
+
+end
+
+subroutine all_erf_mu_r1_lr_int_big_mat_bis(big_mat)
+ implicit none
+ BEGIN_DOC
+! enters with the array big_mat and add the following integrals 
+!
+! big_mat(i,k,j,l) += \int dr1 \phi_i(r1) \phi_k(r1) \int dr2 erf(\mu(r1) r12)/r12 \phi_j(r2) \phi_l(r2)
+ END_DOC
+ include 'constants.include.F'
+ integer :: i,k,j,l,ipoint,m
+ double precision :: weight,mu
+ double precision, allocatable :: a_mat(:,:,:)
+ double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
+
+ print*,'computing all_erf_mu_r1_lr_int_big_mat ...'
+ call wall_time(wall0)
+ double precision :: wall0,wall1
+ double precision:: ints_coulomb(ao_num)
+ ! First you put the full interaction -1 /r12
+ do l = 1, ao_num
+  do j = 1, ao_num
+   do k = 1, ao_num
+    call get_ao_two_e_integrals(j,k,l,ao_num,ints_coulomb)
+    do i = 1, ao_num
+     big_mat(i,k,j,l) += -1.D0 * ints_coulomb(i)
+    enddo
+   enddo
+  enddo
+ enddo
+
+ allocate(a_mat(n_points_final_grid,ao_num,ao_num))
+
+ do i = 1, ao_num
+  do k = 1, ao_num
+   do ipoint = 1, n_points_final_grid
+    weight = final_weight_at_r_vector(ipoint)
+    a_mat(ipoint,k,i) = aos_in_r_array_transp(ipoint,k) * aos_in_r_array_transp(ipoint,i) * weight
+   enddo
+  enddo
+ enddo
+
+ ! -1/r12 + (erf(mu(r1)) - 1)/r12
+ call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,v_ij_erf_rk(1,1,1),ao_num*ao_num & 
                    ,a_mat(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
 
  call wall_time(wall1)

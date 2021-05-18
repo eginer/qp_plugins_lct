@@ -136,13 +136,16 @@ subroutine overlap_gauss_xyz_r12_ao(D_center,delta,i,j,gauss_ints)
 
  integer :: num_a,num_b,power_A(3), power_B(3),l,k,m
  double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,gauss_ints_tmp(3)
+ gauss_ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  num_A = ao_nucl(i)
  power_A(1:3)= ao_power(i,1:3)
  A_center(1:3) = nucl_coord(num_A,1:3)
  num_B = ao_nucl(j)
  power_B(1:3)= ao_power(j,1:3)
  B_center(1:3) = nucl_coord(num_B,1:3)
- gauss_ints = 0.d0
  do l=1,ao_prim_num(i)
   alpha = ao_expo_ordered_transp(l,i)     
   do k=1,ao_prim_num(j)
@@ -238,13 +241,16 @@ double precision function overlap_gauss_xyz_r12_ao_specific(D_center,delta,i,j,m
  double precision :: gauss_int
  double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta
  double precision :: overlap_gauss_xyz_r12_specific
+ overlap_gauss_xyz_r12_ao_specific = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  num_A = ao_nucl(i)
  power_A(1:3)= ao_power(i,1:3)
  A_center(1:3) = nucl_coord(num_A,1:3)
  num_B = ao_nucl(j)
  power_B(1:3)= ao_power(j,1:3)
  B_center(1:3) = nucl_coord(num_B,1:3)
- overlap_gauss_xyz_r12_ao_specific = 0.d0
  do l=1,ao_prim_num(i)
   alpha = ao_expo_ordered_transp(l,i)     
   do k=1,ao_prim_num(j)
@@ -265,6 +271,9 @@ subroutine overlap_gauss_r12_all_ao(D_center,delta,aos_ints)
  integer :: num_a,num_b,power_A(3), power_B(3),l,k,i,j
  double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,analytical_j
  aos_ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  do i = 1, ao_num
   do j = 1, ao_num
    num_A = ao_nucl(i)
@@ -296,13 +305,16 @@ double precision function overlap_gauss_r12_ao(D_center,delta,i,j)
 
  integer :: num_a,num_b,power_A(3), power_B(3),l,k
  double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,analytical_j
+ overlap_gauss_r12_ao = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
  num_A = ao_nucl(i)
  power_A(1:3)= ao_power(i,1:3)
  A_center(1:3) = nucl_coord(num_A,1:3)
  num_B = ao_nucl(j)
  power_B(1:3)= ao_power(j,1:3)
  B_center(1:3) = nucl_coord(num_B,1:3)
- overlap_gauss_r12_ao = 0.d0
  do l=1,ao_prim_num(i)
   alpha = ao_expo_ordered_transp(l,i)     
   do k=1,ao_prim_num(j)

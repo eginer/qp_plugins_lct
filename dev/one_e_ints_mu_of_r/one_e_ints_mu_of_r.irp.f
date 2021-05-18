@@ -6,5 +6,7 @@ program one_e_ints_mu_of_r
   print *, 'Hello world'
 !  call test_erf_mu_squared_ij_rk
 !  call test_gauss_ij_rk
-  call test_erfc_gauss
+!  call test_erfc_gauss
+! call test_fit_erfc
+ call test_erfc_rij
 end

@@ -9,6 +9,11 @@ subroutine phi_j_erf_mu_r_dxyz_phi(i,j,mu_in, C_center, dxyz_ints)
  integer :: num_A,power_A(3), num_b, power_B(3),power_B_tmp(3)
  double precision :: alpha, beta, A_center(3), B_center(3),contrib,NAI_pol_mult_erf
  integer :: n_pt_in,l,m,mm
+ dxyz_ints = 0.d0
+ if(ao_overlap_abs(j,i).lt.1.d-12)then
+  return
+ endif
+
  n_pt_in = n_pt_max_integrals
  ! j 
  num_A = ao_nucl(j)
@@ -19,7 +24,6 @@ subroutine phi_j_erf_mu_r_dxyz_phi(i,j,mu_in, C_center, dxyz_ints)
  power_B(1:3)= ao_power(i,1:3)
  B_center(1:3) = nucl_coord(num_B,1:3)
 
- dxyz_ints = 0.d0
  do l=1,ao_prim_num(j)
   alpha = ao_expo_ordered_transp(l,j)
   do m=1,ao_prim_num(i)
