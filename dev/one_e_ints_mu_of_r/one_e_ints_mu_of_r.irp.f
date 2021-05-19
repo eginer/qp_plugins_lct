@@ -8,5 +8,6 @@ program one_e_ints_mu_of_r
 !  call test_gauss_ij_rk
 !  call test_erfc_gauss
 ! call test_fit_erfc
- call test_erfc_rij
+! call test_erfc_rij
+ print*,'final_weight_at_r_vector_extra',final_weight_at_r_vector_extra
 end
