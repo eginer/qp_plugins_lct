@@ -299,9 +299,9 @@ with
 \end{equation}
 \begin{equation}
  \begin{aligned}
- \tilde{\mathcal{V}}(r_{ij},\mur{1}) = & \frac{1}{2}\bigg( \nabla_1 \cdot \gamma(\br_1, r_{12}) \bigg) + \gamma(\br_1, r_{12}) \cdot \nabla_1 
+ \tilde{\mathcal{V}}(r_{ij},\mur{1}) = & -\frac{1}{2}\bigg( \nabla_1 \cdot \gamma(\br_1, r_{12}) \bigg) - \gamma(\br_1, r_{12}) \cdot \nabla_1 
 \\ 
-&+ \frac{1}{2}\frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2
+&- \frac{1}{2}\frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2
  \end{aligned}
 \end{equation}
 
@@ -430,14 +430,14 @@ All numerical tests performed for $\mu > 0.1$ show that this fit is highly accur
 A more practical point of view for the computation of the non hermitian term is the following 
 \begin{equation}
  \begin{aligned}
- \tilde{t}(r_{12},\mur{1}) =& \frac{1 - \text{erf}(\mur{} r_{12})}{2 r_{12}} \\ 
+ \tilde{t}(r_{12},\mur{1}) =& \frac{\text{erf}(\mur{} r_{12})-1}{2 r_{12}} \\ 
                            &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
  \end{aligned}
 \end{equation}
 \begin{equation}
  \begin{aligned}
  \label{def_non_hermit}
-& \tilde{t}(r_{12},\mur{1})  = \frac{1 - \text{erf}(\mur{} r_{12})}{2 r_{12}} \\
+& \tilde{t}(r_{12},\mur{1})  = \frac{\text{erf}(\mur{} r_{12})-1}{2 r_{12}} \\
 & \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
          (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
 &  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).                                                
@@ -445,13 +445,13 @@ A more practical point of view for the computation of the non hermitian term is 
 \end{equation}
 We define the following integrals
 \begin{equation}
- {w}_{jl}^{x}(\br,\mu) = \int \dr{}' \phi_l(\br') x' \frac{1 - \text{erf}(\mu |\br' - \br| )}{|\br' - \br|} \phi_j(\br'),
+ {w}_{jl}^{x}(\br,\mu) = \int \dr{}' \phi_l(\br') x' \frac{\text{erf}(\mu |\br' - \br| )-1}{|\br' - \br|} \phi_j(\br'),
 \end{equation}
 \begin{equation}
- {w'}_{jl}^{x}(\br,\mu) = \int \dr{}' \phi_l(\br') \frac{1 - \text{erf}(\mu |\br' - \br| )}{|\br' - \br|}\deriv{}{x'}{} \phi_j(\br'),
+ {w'}_{jl}^{x}(\br,\mu) = \int \dr{}' \phi_l(\br') \frac{\text{erf}(\mu |\br' - \br| )-1}{|\br' - \br|}\deriv{}{x'}{} \phi_j(\br'),
 \end{equation}
 \begin{equation}
- {w'}_{jl}^{xx}(\br,\mu) = \int \dr{}' x' \, \,\phi_l(\br') \frac{1 - \text{erf}(\mu |\br' - \br| )}{|\br' - \br|}\deriv{}{x'}{} \phi_j(\br'),
+ {w'}_{jl}^{xx}(\br,\mu) = \int \dr{}' x' \, \,\phi_l(\br') \frac{\text{erf}(\mu |\br' - \br| )-1}{|\br' - \br|}\deriv{}{x'}{} \phi_j(\br'),
 \end{equation}
 and we decompose the integral $\matelem{kl}{\tilde{t}(r_{12},\mur{1})}{ij}$ in $x,y,z$ components 
 \begin{equation}
@@ -464,7 +464,7 @@ and we decompose the integral $\matelem{kl}{\tilde{t}(r_{12},\mur{1})}{ij}$ in $
 with 
 \begin{equation}
  \begin{aligned}
-  \matelem{kl}{\tilde{t}_x(r_{12},\mur{1})}{ij} = & \int \dr{1} \dr{2} \phi_l(\br_2) \phi_k(\br_1) \frac{1 - \text{erf}(\mur{} r_{12})}{2 r_{12}} \\
+  \matelem{kl}{\tilde{t}_x(r_{12},\mur{1})}{ij} = & \int \dr{1} \dr{2} \phi_l(\br_2) \phi_k(\br_1) \frac{\text{erf}(\mur{} r_{12}) - 1}{2 r_{12}} \\
 & (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) \phi_i(\br_1) \phi_j(\br_2).
  \end{aligned}
 \end{equation}
