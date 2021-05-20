@@ -53,7 +53,7 @@ subroutine all_gauss_r12_big_mat(big_mat)
  call wall_time(wall0)
  double precision :: wall0,wall1
 
- allocate(a_mat(ao_num,ao_num,n_points_extra_final_grid))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
  ! mu(r) / sqpi * exp[-(mu(r1)r12)^2]
   do ipoint = 1, n_points_final_grid
@@ -89,7 +89,7 @@ subroutine all_erf_r12_sq_big_mat(big_mat)
  call wall_time(wall0)
  double precision :: wall0,wall1
 
- allocate(a_mat(ao_num,ao_num,n_points_extra_final_grid))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
   ! - 1/4 (1 - erf(mu(r1)r12))^2
  do ipoint = 1, n_points_final_grid
@@ -125,7 +125,7 @@ subroutine all_nabla_mu_r1_sq_big_mat(big_mat)
  call wall_time(wall0)
  double precision :: wall0,wall1
 
- allocate(a_mat(ao_num,ao_num,n_points_extra_final_grid))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
  !  -1/2 * (grad mu(r1))^2/(4 * pi * mu(r1)^4)
   double precision :: min_inv_8_pi
@@ -163,7 +163,7 @@ subroutine all_nabla_mu_r1_cdot_r12_big_mat(big_mat)
  call wall_time(wall0)
  double precision :: wall0,wall1
 
- allocate(a_mat(ao_num,ao_num,n_points_extra_final_grid))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
 ! ! + 1/(2 * sqrt(pi)) e^{-(\mu(r1)r12)^2} (r_1 - r_2) . \nabla_1 \mu(r1)
   double precision :: inv_2_sqpi,r1(3)
@@ -219,7 +219,7 @@ subroutine all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(big_mat)
  print*,'computing all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
- allocate(a_mat(ao_num,ao_num,n_points_extra_final_grid))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
 ! ! - 1/(4 * sqrt(pi)) (1 - erf(mu * r12))/r12 * e^{-(\mu(r1)r12)^2} (r_1 - r_2) . \nabla_1 \mu(r1)
   double precision :: inv_2_sqpi,r1(3)

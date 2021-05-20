@@ -22,8 +22,8 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_ao, (ao_num, ao_num, a
 
  deriv_mu_r_pot_chemist_ao = 0.d0
 
- call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
-! call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
+! call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
+ call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
 
  call wall_time(wall1)
  print*,''
@@ -58,24 +58,22 @@ subroutine lapl_gamm_r1(big_mat)
  double precision :: wall0,wall1
  cst = 0.25d0 * inv_sq_pi 
 
- allocate(a_mat(n_points_final_grid,ao_num,ao_num))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
  do m = 1, 3
-   do i = 1, ao_num
+   do ipoint = 1, n_points_final_grid
+    mu = mu_of_r_for_ints(ipoint,1)
+    weight = final_weight_at_r_vector(ipoint)
     do k = 1, ao_num
-     do ipoint = 1, n_points_final_grid
-      mu = mu_of_r_for_ints(ipoint,1)
-      weight = final_weight_at_r_vector(ipoint)
-      a_mat(ipoint,k,i) = ( aos_grad_in_r_array_transp_bis(ipoint,k,m) * aos_in_r_array_transp(ipoint,i)   & 
-                          + aos_grad_in_r_array_transp_bis(ipoint,i,m) * aos_in_r_array_transp(ipoint,k) ) & 
+     do i = 1, ao_num
+      a_mat(i,k,ipoint) = ( aos_grad_in_r_array(k,ipoint,m) * aos_in_r_array(i,ipoint)   & 
+                          + aos_grad_in_r_array(i,ipoint,m) * aos_in_r_array(k,ipoint) ) & 
                           * weight * cst * inv_2_mu_of_r_for_ints(ipoint,1)     * grad_mu_of_r_transp_for_ints(ipoint,1,m)
      enddo
     enddo
    enddo
-!   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,gauss_ij_rk(1,1,1),ao_num*ao_num & 
-!                     ,a_mat(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
-   call dgemm("T","T",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,a_mat(1,1,1),n_points_final_grid & 
-                     ,gauss_ij_rk(1,1,1),ao_num*ao_num,1.d0,big_mat,ao_num*ao_num)
+   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,a_mat(1,1,1),ao_num*ao_num & 
+                     ,gauss_ij_rk(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
 
  enddo
   call wall_time(wall1)
@@ -106,21 +104,23 @@ subroutine gamma_nabla_r1(big_mat)
  double precision :: wall0,wall1
  cst = -1.d0 
 
- allocate(a_mat(n_points_final_grid,ao_num,ao_num))
+ allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
  do m = 1, 3
-   do k = 1, ao_num
-    do i = 1, ao_num
-     do ipoint = 1, n_points_final_grid
-      mu = mu_of_r_for_ints(ipoint,1)
-      weight = final_weight_at_r_vector(ipoint)
-      a_mat(ipoint,i,k) =  aos_grad_in_r_array_transp_bis(ipoint,i,m) * aos_in_r_array_transp(ipoint,k)   & 
+   do ipoint = 1, n_points_final_grid
+    mu = mu_of_r_for_ints(ipoint,1)
+    weight = final_weight_at_r_vector(ipoint)
+    do k = 1, ao_num
+     do i = 1, ao_num
+      a_mat(i,k,ipoint) =  aos_grad_in_r_array(i,ipoint,m) * aos_in_r_array(k,ipoint)   & 
                         * weight * cst * inv_2_mu_of_r_for_ints(ipoint,1) * grad_mu_of_r_transp_for_ints(ipoint,1,m)
      enddo
     enddo
    enddo
-   call dgemm("T","T",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,a_mat(1,1,1),n_points_final_grid & 
-                     ,gauss_ij_rk(1,1,1),ao_num*ao_num,1.d0,big_mat,ao_num*ao_num)
+!   call dgemm("T","T",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,a_mat(1,1,1),n_points_final_grid & 
+!                     ,gauss_ij_rk(1,1,1),ao_num*ao_num,1.d0,big_mat,ao_num*ao_num)
+   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,a_mat(1,1,1),ao_num*ao_num & 
+                     ,gauss_ij_rk(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
 
  enddo
   call wall_time(wall1)
@@ -157,8 +157,8 @@ subroutine test_lapl_gamm_r1
       do i = 1, 2
        ao_prod_r1 = aos_in_r_array(i,ipoint) * aos_in_r_array(k,ipoint) * weight1
        if(dabs(ao_prod_r1).lt.sq_thr)cycle
-        accu(i,k,j,l) += lapl_gamma(ipoint,jpoint,i,k,cst_lapl_gamma) * weight1 * ao_prod_r2
-!        accu(i,k,j,l) += func_gamma_nabla_r1(ipoint,jpoint,i,k,cst_gamma_nabla_r1) * weight1 * ao_prod_r2
+!        accu(i,k,j,l) += lapl_gamma(ipoint,jpoint,i,k,cst_lapl_gamma) * weight1 * ao_prod_r2
+        accu(i,k,j,l) += func_gamma_nabla_r1(ipoint,jpoint,i,k,cst_gamma_nabla_r1) * weight1 * ao_prod_r2
                          
       enddo
      enddo
