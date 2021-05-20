@@ -68,6 +68,7 @@ BEGIN_PROVIDER [double precision, erf_mu_r12_inv_r12_rk_extra,(n_points_extra_fi
   do j = l, ao_num
    do ipoint = 1, n_points_extra_final_grid
      mu = mu_of_r_for_ints(ipoint,1)
+     erf_mu_r12_inv_r12_rk_extra(ipoint,j,l) = 0.d0
      if(dabs( aos_in_r_array_transp(ipoint,j) * aos_in_r_array_transp(ipoint,l)).lt.thr)cycle
      r(1) = final_grid_points_extra(1,ipoint)
      r(2) = final_grid_points_extra(2,ipoint)

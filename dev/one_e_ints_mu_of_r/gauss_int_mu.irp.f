@@ -1,30 +1,33 @@
-BEGIN_PROVIDER [ double precision, gauss_ij_rk,  ( ao_num, ao_num,n_points_final_grid)]
+BEGIN_PROVIDER [ double precision, gauss_ij_rk,  (n_points_final_grid ,ao_num, ao_num)]
  implicit none
  BEGIN_DOC
-! mu_of_r_gauss(j,i,R) = int dr phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
+! mu_of_r_gauss(R,j,l) = int dr phi_l(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
  END_DOC
- integer :: i,j,ipoint
+ integer :: l,j,ipoint
  double precision :: mu,r(3),overlap_gauss_r12_ao
- double precision :: int_mu, delta
+ double precision :: int_mu, delta,thr
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1
+ thr = 1.d-12
  call wall_time(wall0)
   provide mu_of_r_for_ints
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_ij_rk,final_grid_points)
+ !$OMP PRIVATE (l,j,ipoint,mu,r,int_mu,delta) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_ij_rk,final_grid_points,aos_in_r_array_transp,thr)
  !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = i, ao_num
+ do l = 1, ao_num
+  do j = l, ao_num
+   do ipoint = 1, n_points_final_grid
+     gauss_ij_rk(ipoint,j,l) = 0.d0
+     if(dabs( aos_in_r_array_transp(ipoint,j) * aos_in_r_array_transp(ipoint,l)).lt.thr)cycle
      mu = mu_of_r_for_ints(ipoint,1)
      delta = mu * mu
      r(1) = final_grid_points(1,ipoint)
      r(2) = final_grid_points(2,ipoint)
      r(3) = final_grid_points(3,ipoint)
-     int_mu = overlap_gauss_r12_ao(r,delta,i,j)
-     gauss_ij_rk(j,i,ipoint)= int_mu 
+     int_mu = overlap_gauss_r12_ao(r,delta,l,j)
+     gauss_ij_rk(ipoint,j,l)= int_mu 
    enddo
   enddo
  enddo
@@ -32,46 +35,49 @@ BEGIN_PROVIDER [ double precision, gauss_ij_rk,  ( ao_num, ao_num,n_points_final
  !$OMP END PARALLEL
 
 
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, i-1
-     gauss_ij_rk(j,i,ipoint)= gauss_ij_rk(i,j,ipoint)
-    enddo
+ do l = 1, ao_num
+  do j = 1, l-1
+   do ipoint = 1, n_points_final_grid
+     gauss_ij_rk(ipoint,j,l)= gauss_ij_rk(ipoint,l,j)
    enddo
   enddo
+ enddo
 
  call wall_time(wall1)
  print*,'wall time for gauss_ij_rk  ',wall1 - wall0
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  ( ao_num, ao_num,n_points_final_grid)]
+BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  (n_points_final_grid ,ao_num, ao_num)]
  implicit none
  BEGIN_DOC
-! mu_of_r_gauss(j,i,R) = int dr phi_i(r) phi_j(r) exp(-2(\mu(R) |r - R|)^2)
+! mu_of_r_gauss(R,j,i) = int dr phi_i(r) phi_j(r) exp(-2(\mu(R) |r - R|)^2)
  END_DOC
- integer :: i,j,ipoint
+ integer :: l,j,ipoint
  double precision :: mu,r(3),overlap_gauss_r12_ao
- double precision :: int_mu, delta
+ double precision :: int_mu, delta,thr
+ thr = 1.d-12
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1
  call wall_time(wall0)
   provide mu_of_r_for_ints
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_2_ij_rk,final_grid_points)
+ !$OMP PRIVATE (l,j,ipoint,mu,r,int_mu,delta) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_2_ij_rk,final_grid_points,thr,aos_in_r_array_transp)
  !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = i, ao_num
+ do l = 1, ao_num
+  do j = l, ao_num
+   do ipoint = 1, n_points_final_grid
+     gauss_2_ij_rk(ipoint,j,l) = 0.d0
+     if(dabs( aos_in_r_array_transp(ipoint,j) * aos_in_r_array_transp(ipoint,l)).lt.thr)cycle
      mu = mu_of_r_for_ints(ipoint,1)
      delta = 2.d0 * mu * mu
      r(1) = final_grid_points(1,ipoint)
      r(2) = final_grid_points(2,ipoint)
      r(3) = final_grid_points(3,ipoint)
-     int_mu = overlap_gauss_r12_ao(r,delta,i,j)
-     gauss_2_ij_rk(j,i,ipoint)= int_mu 
+     int_mu = overlap_gauss_r12_ao(r,delta,l,j)
+     gauss_2_ij_rk(ipoint,j,l)= int_mu 
    enddo
   enddo
  enddo
@@ -79,10 +85,10 @@ BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  ( ao_num, ao_num,n_points_fin
  !$OMP END PARALLEL
 
 
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, i-1
-     gauss_2_ij_rk(j,i,ipoint)= gauss_2_ij_rk(i,j,ipoint)
+ do l = 1, ao_num
+  do j = 1, l-1
+   do ipoint = 1, n_points_final_grid
+     gauss_2_ij_rk(ipoint,j,l)= gauss_2_ij_rk(ipoint,l,j)
     enddo
    enddo
   enddo
@@ -92,7 +98,7 @@ BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  ( ao_num, ao_num,n_points_fin
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3, ao_num, ao_num,n_points_final_grid)]
+BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3,n_points_final_grid, ao_num, ao_num)]
  implicit none
  BEGIN_DOC
 ! gauss_ij_xyz_rk_tmp(m,j,i,R) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
@@ -101,29 +107,32 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3, ao_num, ao_num,n_po
 !
 ! only temporary --> will be reshaped in gauss_ij_xyz_rk with x/y/z index as the last index 
  END_DOC
- integer :: i,j,ipoint,m
+ integer :: l,j,ipoint,m
  double precision :: mu,r(3),overlap_gauss_r12_ao
  double precision :: int_mu(3), delta
  provide mu_erf final_grid_points 
- double precision :: wall0, wall1
+ double precision :: wall0, wall1,thr
+ thr = 1.d-12
  call wall_time(wall0)
   provide mu_of_r_for_ints
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,m) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_ij_xyz_rk_tmp,final_grid_points)
+ !$OMP PRIVATE (l,j,ipoint,mu,r,int_mu,delta,m) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_ij_xyz_rk_tmp,final_grid_points,thr,aos_in_r_array_transp)
  !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = i, ao_num
+ do l = 1, ao_num
+  do j = l, ao_num
+   do ipoint = 1, n_points_final_grid
+     gauss_ij_xyz_rk_tmp(:,ipoint,j,l) = 0.d0
+     if(dabs( aos_in_r_array_transp(ipoint,j) * aos_in_r_array_transp(ipoint,l)).lt.thr)cycle
      mu = mu_of_r_for_ints(ipoint,1)
      delta = mu * mu
      r(1) = final_grid_points(1,ipoint)
      r(2) = final_grid_points(2,ipoint)
      r(3) = final_grid_points(3,ipoint)
-     call overlap_gauss_xyz_r12_ao(r,delta,i,j,int_mu)
+     call overlap_gauss_xyz_r12_ao(r,delta,l,j,int_mu)
      do m = 1, 3
-      gauss_ij_xyz_rk_tmp(m,j,i,ipoint)= int_mu(m) 
+      gauss_ij_xyz_rk_tmp(m,ipoint,j,l)= int_mu(m) 
      enddo
    enddo
   enddo
@@ -132,11 +141,11 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3, ao_num, ao_num,n_po
  !$OMP END PARALLEL
 
 
-  do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = 1, i-1
+  do l = 1, ao_num
+   do j = 1, l-1
+    do ipoint = 1, n_points_final_grid
      do m = 1, 3
-      gauss_ij_xyz_rk_tmp(m,j,i,ipoint)= gauss_ij_xyz_rk_tmp(m,i,j,ipoint)
+      gauss_ij_xyz_rk_tmp(m,ipoint,j,l)= gauss_ij_xyz_rk_tmp(m,ipoint,l,j)
      enddo
     enddo
    enddo
@@ -147,7 +156,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3, ao_num, ao_num,n_po
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  (ao_num, ao_num,n_points_final_grid,3)]
+BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  (n_points_final_grid,ao_num, ao_num,3)]
  implicit none
  BEGIN_DOC
 ! gauss_ij_xyz_rk(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
@@ -155,16 +164,16 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk,  (ao_num, ao_num,n_points_fi
 ! with m == 1 ==> x, m == 2 ==> y, m == 3 ==> z
  END_DOC
 
- integer :: ipoint,i,j,m
+ integer :: ipoint,l,j,m
  provide gauss_ij_xyz_rk_tmp
 
  double precision :: wall0, wall1
  call wall_time(wall0)
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, ao_num
+ do l = 1, ao_num
+  do j = 1, ao_num
+   do ipoint = 1, n_points_final_grid
     do m = 1, 3
-     gauss_ij_xyz_rk(j,i,ipoint,m)= gauss_ij_xyz_rk_tmp(m,j,i,ipoint)
+     gauss_ij_xyz_rk(ipoint,j,l,m)= gauss_ij_xyz_rk_tmp(m,ipoint,j,l)
     enddo
    enddo
   enddo

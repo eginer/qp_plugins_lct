@@ -85,7 +85,7 @@ BEGIN_PROVIDER [double precision, coulomb_rk,( ao_num, ao_num,n_points_final_gri
 END_PROVIDER 
 
 
-BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk_tmp,  (4, ao_num, ao_num,n_points_final_grid)]
+BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk_tmp,  (4,n_points_final_grid, ao_num, ao_num)]
  implicit none
  BEGIN_DOC
 ! gauss_erfc_mu_r12_inv_r12_rk_tmp(m,j,i,R) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2) * (1 - erf(mu(R) |r-R|))/|r-R|
@@ -94,30 +94,33 @@ BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk_tmp,  (4, ao_num
 !
 ! only temporary --> will be reshaped in gauss_ij_xyz_rk with x/y/z index as the last index 
  END_DOC
- integer :: i,j,ipoint,m
+ integer :: l,j,ipoint,m
  double precision :: mu,r(3),overlap_gauss_r12_ao
- double precision :: int_mu(3), delta
+ double precision :: int_mu(3), delta, thr
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1
+ thr = 1.d-12
  call wall_time(wall0)
   provide mu_of_r_for_ints
   print*,'Providing gauss_erfc_mu_r12_inv_r12_rk_tmp ...'
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,m) & 
- !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_erfc_mu_r12_inv_r12_rk_tmp,final_grid_points)
+ !$OMP PRIVATE (l,j,ipoint,mu,r,int_mu,delta,m) & 
+ !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,gauss_erfc_mu_r12_inv_r12_rk_tmp,final_grid_points,thr,aos_in_r_array_transp)
  !$OMP DO SCHEDULE (dynamic)
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = i, ao_num
+ do l = 1, ao_num
+  do j = l, ao_num
+   do ipoint = 1, n_points_final_grid
+    gauss_erfc_mu_r12_inv_r12_rk_tmp(:,ipoint,j,l) = 0.d0
+    if(dabs( aos_in_r_array_transp(ipoint,j) * aos_in_r_array_transp(ipoint,l)).lt.thr)cycle
     mu = mu_of_r_for_ints(ipoint,1)
     delta = mu * mu
     r(1) = final_grid_points(1,ipoint)
     r(2) = final_grid_points(2,ipoint)
     r(3) = final_grid_points(3,ipoint)
-    call erfc_mu_gauss_xyz_ij_ao(i,j,mu, r, delta,int_mu)
+    call erfc_mu_gauss_xyz_ij_ao(l,j,mu, r, delta,int_mu)
     do m = 1, 4
-     gauss_erfc_mu_r12_inv_r12_rk_tmp(m,j,i,ipoint)= int_mu(m) 
+     gauss_erfc_mu_r12_inv_r12_rk_tmp(m,ipoint,j,l)= int_mu(m) 
     enddo
    enddo
   enddo
@@ -126,11 +129,11 @@ BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk_tmp,  (4, ao_num
  !$OMP END PARALLEL
 
 
-  do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = 1, i-1
+  do l = 1, ao_num
+   do j = 1, l-1
+    do ipoint = 1, n_points_final_grid
      do m = 1, 4
-      gauss_erfc_mu_r12_inv_r12_rk_tmp(m,j,i,ipoint)= gauss_erfc_mu_r12_inv_r12_rk_tmp(m,i,j,ipoint)
+      gauss_erfc_mu_r12_inv_r12_rk_tmp(m,ipoint,j,l)= gauss_erfc_mu_r12_inv_r12_rk_tmp(m,ipoint,l,j)
      enddo
     enddo
    enddo
@@ -141,7 +144,7 @@ BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk_tmp,  (4, ao_num
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk,  (ao_num, ao_num,n_points_final_grid,4)]
+BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk,  (n_points_final_grid,ao_num, ao_num,4)]
  implicit none
  BEGIN_DOC
 ! gauss_erfc_mu_r12_inv_r12_rk(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
@@ -154,11 +157,11 @@ BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk,  (ao_num, ao_nu
 
  double precision :: wall0, wall1
  call wall_time(wall0)
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, ao_num
+ do i = 1, ao_num
+  do j = 1, ao_num
+   do ipoint = 1, n_points_final_grid
     do m = 1, 4
-     gauss_erfc_mu_r12_inv_r12_rk(j,i,ipoint,m)= gauss_erfc_mu_r12_inv_r12_rk_tmp(m,j,i,ipoint)
+     gauss_erfc_mu_r12_inv_r12_rk(ipoint,j,i,m)= gauss_erfc_mu_r12_inv_r12_rk_tmp(m,ipoint,j,i)
     enddo
    enddo
   enddo

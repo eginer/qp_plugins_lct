@@ -17,38 +17,40 @@ subroutine fit_erf_mu_squared(mu, expo_fit, coef_fit)
  enddo
 end
 
-BEGIN_PROVIDER [double precision, erf_mu_squared_ij_rk,( ao_num, ao_num,n_points_final_grid)]
+BEGIN_PROVIDER [double precision, erf_mu_squared_ij_rk,(n_points_final_grid, ao_num, ao_num)]
  implicit none
  BEGIN_DOC
-! erf_mu_squared_ij_rk(i,j,r) = \int dr' phi_i(r') phi_j(r') (erf(mu(r) * |r - r'|) - 1)^2
+! erf_mu_squared_ij_rk(r,i,j) = \int dr' phi_i(r') phi_j(r') (erf(mu(r) * |r - r'|) - 1)^2
 !
 ! it is fitted with fit_erf_mu_squared
  END_DOC
  double precision :: expo_fit(n_max_fit_slat)
  double precision :: coef_fit(n_max_fit_slat),overlap_gauss_r12_ao
- double precision :: mu,r(3),int_mu,delta,wall0,wall1
- integer :: i,j,ipoint,ifit
+ double precision :: mu,r(3),int_mu,delta,wall0,wall1,thr
+ integer :: l,j,ipoint,ifit
   provide mu_of_r_for_ints
+  thr = 1.d-12
   call fit_erf_mu_squared(1.d0, expo_fit, coef_fit)
  call wall_time(wall0)
   !$OMP PARALLEL                  &
   !$OMP DEFAULT (NONE)            &
-  !$OMP PRIVATE (i,j,ipoint,mu,r,int_mu,delta,ifit,expo_fit,coef_fit) & 
-  !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,erf_mu_squared_ij_rk,final_grid_points,n_max_fit_slat)
+  !$OMP PRIVATE (l,j,ipoint,mu,r,int_mu,delta,ifit,expo_fit,coef_fit) & 
+  !$OMP SHARED (ao_num,n_points_final_grid,mu_of_r_for_ints,erf_mu_squared_ij_rk,final_grid_points,n_max_fit_slat,thr,aos_in_r_array_transp)
   !$OMP DO SCHEDULE (dynamic)
-  do ipoint = 1, n_points_final_grid
-   do i = 1, ao_num
-    do j = i, ao_num
+  do l = 1, ao_num
+   do j = l, ao_num
+    do ipoint = 1, n_points_final_grid
+     erf_mu_squared_ij_rk(ipoint,j,l) = 0.d0
+     if(dabs( aos_in_r_array_transp(ipoint,j) * aos_in_r_array_transp(ipoint,l)).lt.thr)cycle
      mu = mu_of_r_for_ints(ipoint,1)
      call fit_erf_mu_squared(mu, expo_fit, coef_fit)
      r(1) = final_grid_points(1,ipoint)
      r(2) = final_grid_points(2,ipoint)
      r(3) = final_grid_points(3,ipoint)
-     erf_mu_squared_ij_rk(j,i,ipoint) = 0.d0
      do ifit = 1, n_max_fit_slat
       delta = expo_fit(ifit)
-      int_mu = overlap_gauss_r12_ao(r,delta,i,j)
-      erf_mu_squared_ij_rk(j,i,ipoint) += coef_fit(ifit) * int_mu 
+      int_mu = overlap_gauss_r12_ao(r,delta,l,j)
+      erf_mu_squared_ij_rk(ipoint,j,l) += coef_fit(ifit) * int_mu 
      enddo
     enddo
    enddo
@@ -57,10 +59,10 @@ BEGIN_PROVIDER [double precision, erf_mu_squared_ij_rk,( ao_num, ao_num,n_points
   !$OMP END PARALLEL
 
 
- do ipoint = 1, n_points_final_grid
-  do i = 1, ao_num
-   do j = 1, i-1
-    erf_mu_squared_ij_rk(j,i,ipoint)= erf_mu_squared_ij_rk(i,j,ipoint)
+ do l = 1, ao_num
+  do j = 1, l-1
+   do ipoint = 1, n_points_final_grid
+    erf_mu_squared_ij_rk(ipoint,j,l)= erf_mu_squared_ij_rk(ipoint,l,j)
    enddo
   enddo
  enddo
