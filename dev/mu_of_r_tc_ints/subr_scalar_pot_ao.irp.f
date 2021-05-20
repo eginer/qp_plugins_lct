@@ -18,12 +18,12 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_chemist_ao, (ao_num, ao_num, 
 
  scalar_mu_r_pot_chemist_ao = 0.d0
 
-! call all_erf_mu_r1_lr_int_big_mat_bis(scalar_mu_r_pot_chemist_ao)
-! call all_erf_mu_r1_lr_int_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_gauss_r12_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_erf_r12_sq_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_nabla_mu_r1_sq_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_nabla_mu_r1_cdot_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_erf_mu_r1_lr_int_big_mat_bis(scalar_mu_r_pot_chemist_ao)! 1/r12 analytically, erfc(mu(r1)r12)/r12 semi analytic
+! call all_erf_mu_r1_lr_int_big_mat(scalar_mu_r_pot_chemist_ao) 
+ call all_gauss_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_erf_r12_sq_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_sq_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_cdot_r12_big_mat(scalar_mu_r_pot_chemist_ao)
  call all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(scalar_mu_r_pot_chemist_ao)
  call wall_time(wall1)
  print*,''
