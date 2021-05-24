@@ -1,8 +1,10 @@
 program test_stufff
  implicit none
 ! call test_erf_mu_gauss_xyz
- call test_phi_j_erf_mu_r_dxyz_phi_bis
+! call test_phi_j_erf_mu_r_dxyz_phi_bis
 ! provide power_ord_grad_transp
+ call test_ints_semi_bis
+! call test_pol_xyz
 end
 
 subroutine test_erf_mu_gauss_xyz
@@ -130,3 +132,5 @@ subroutine test_phi_j_erf_mu_r_dxyz_phi_bis
  print*,'accu = ',accu/dble(3*ao_num*ao_num)
 
 end
+
+

@@ -75,8 +75,8 @@ END_PROVIDER
      power_ord_xyz_grad_transp(3,m,j)   = power_ao(m) + 1
      power_ord_xyz_grad_transp(4,m,j)   = power_ao(m) + 2
      do kk = 1, 4
-      if(power_ord_grad_transp(kk,m,j).lt.0)then
-       power_ord_grad_transp(kk,m,j) = -1
+      if(power_ord_xyz_grad_transp(kk,m,j).lt.0)then
+       power_ord_xyz_grad_transp(kk,m,j) = -1
       endif
      enddo
    enddo
@@ -87,7 +87,7 @@ END_PROVIDER
      ao_coef_ord_xyz_grad_transp(3,m,i,j) = -2.d0 * ao_coef_normalized_ordered(j,i) * ao_expo_ordered_transp(i,j) * center_ao(m)
      ao_coef_ord_xyz_grad_transp(4,m,i,j) = -2.d0 * ao_coef_normalized_ordered(j,i) * ao_expo_ordered_transp(i,j) 
      do kk = 1, 4
-      if(power_ord_grad_transp(kk,m,j).lt.0)then
+      if(power_ord_xyz_grad_transp(kk,m,j).lt.0)then
        ao_coef_ord_xyz_grad_transp(kk,m,i,j) = 0.d0
       endif
      enddo
@@ -129,9 +129,9 @@ subroutine xyz_grad_phi_ao(r,i_ao,xyz_grad_phi)
  enddo
  ! computes the polynom part
  pol_usual = 0.d0
- pol_usual(1) = dr(1)**dble(power_ao(2)) * dr(3)**dble(power_ao(3)) 
- pol_usual(2) = dr(2)**dble(power_ao(1)) * dr(3)**dble(power_ao(3)) 
- pol_usual(3) = dr(3)**dble(power_ao(1)) * dr(3)**dble(power_ao(2)) 
+ pol_usual(1) = dr(2)**dble(power_ao(2)) * dr(3)**dble(power_ao(3)) 
+ pol_usual(2) = dr(1)**dble(power_ao(1)) * dr(3)**dble(power_ao(3)) 
+ pol_usual(3) = dr(1)**dble(power_ao(1)) * dr(2)**dble(power_ao(2)) 
 
  xyz_grad_phi = 0.d0
  do m = 1, 3
@@ -260,8 +260,8 @@ subroutine test_pol_xyz
   print*,'i,',i
   print*,''
   do m = 1, 3
-    print*, 'm, accu_xyz_phi(m)  ' ,m, accu_xyz_phi(m)  
-    print*, 'm, accu_grad_phi(m) ' ,m, accu_grad_phi(m)         
+!    print*, 'm, accu_xyz_phi(m)  ' ,m, accu_xyz_phi(m)  
+!    print*, 'm, accu_grad_phi(m) ' ,m, accu_grad_phi(m)         
     print*, 'm, accu_xyz_grad_phi' ,m, accu_xyz_grad_phi(m)
   enddo
   do m = 1, 3
@@ -271,11 +271,73 @@ subroutine test_pol_xyz
   enddo
  enddo
   do m = 1, 3
-    print*, 'm, meta_accu_xyz_phi(m)  ' ,m, meta_accu_xyz_phi(m)  
-    print*, 'm, meta_accu_grad_phi(m) ' ,m, meta_accu_grad_phi(m)         
+!    print*, 'm, meta_accu_xyz_phi(m)  ' ,m, meta_accu_xyz_phi(m)  
+!    print*, 'm, meta_accu_grad_phi(m) ' ,m, meta_accu_grad_phi(m)         
     print*, 'm, meta_accu_xyz_grad_phi' ,m, meta_accu_xyz_grad_phi(m)
   enddo
 
 
 
 end
+
+subroutine test_ints_semi_bis
+ implicit none
+ integer :: ipoint,i,j,m
+ double precision :: r1(3), aos_grad_array_r1(3, ao_num), aos_array_r1(ao_num)
+ double precision :: C_center(3), weight1,mu_in,r12,derf_mu_x,dxyz_ints(3),NAI_pol_mult_erf_ao
+ double precision :: ao_mat(ao_num,ao_num),ao_xmat(3,ao_num,ao_num),accu1, accu2(3)
+ mu_in = 0.5d0
+ C_center = 0.d0
+ C_center(1) = 0.25d0
+ C_center(3) = 1.12d0
+ C_center(2) = -1.d0
+ ao_mat = 0.d0
+ ao_xmat = 0.d0
+ do ipoint = 1, n_points_final_grid
+  r1(1) = final_grid_points(1,ipoint)
+  r1(2) = final_grid_points(2,ipoint)
+  r1(3) = final_grid_points(3,ipoint)
+  call give_all_aos_and_grad_at_r(r1,aos_array_r1,aos_grad_array_r1)
+  weight1 = final_weight_at_r_vector(ipoint)
+  r12 = (r1(1) - C_center(1))**2.d0 + (r1(2) - C_center(2))**2.d0 + (r1(3) - C_center(3))**2.d0 
+  r12 = dsqrt(r12)
+  do i = 1, ao_num
+   do j = 1, ao_num
+    ao_mat(j,i)  += aos_array_r1(i) * aos_array_r1(j) * weight1 * derf_mu_x(mu_in,r12)
+    do m = 1, 3
+     ao_xmat(m,j,i) += r1(m) * aos_array_r1(j) * aos_grad_array_r1(m,i) * weight1 * derf_mu_x(mu_in,r12)
+    enddo
+   enddo
+  enddo
+ enddo
+
+ accu1 = 0.d0
+ accu2 = 0.d0
+ accu1relat = 0.d0
+ accu2relat = 0.d0
+ double precision :: accu1relat, accu2relat(3)
+ double precision :: contrib(3)
+ do i = 1, ao_num
+  do j = 1, ao_num
+   call phi_j_erf_mu_r_xyz_dxyz_phi(i,j,mu_in, C_center, dxyz_ints)
+   print*,''
+   print*,'i,j',i,j
+   print*,dxyz_ints(:)
+   print*,ao_xmat(:,j,i)
+   do m = 1, 3
+    contrib(m) = dabs(ao_xmat(m,j,i) - dxyz_ints(m))
+    accu2(m) += contrib(m)
+    if(dabs(ao_xmat(m,j,i)).gt.1.d-10)then
+     accu2relat(m) += dabs(ao_xmat(m,j,i) - dxyz_ints(m))/dabs(ao_xmat(m,j,i))
+    endif
+   enddo
+    print*,contrib
+  enddo
+   print*,''
+ enddo
+ print*,'accu2relat = '
+ print*, accu2relat /dble(ao_num * ao_num)
+
+end
+
+
