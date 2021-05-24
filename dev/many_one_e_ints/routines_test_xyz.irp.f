@@ -1,6 +1,8 @@
 program test_stufff
  implicit none
- call test_erf_mu_gauss_xyz
+! call test_erf_mu_gauss_xyz
+ call test_phi_j_erf_mu_r_dxyz_phi_bis
+! provide power_ord_grad_transp
 end
 
 subroutine test_erf_mu_gauss_xyz
@@ -89,5 +91,42 @@ subroutine test_erf_mu_gauss_xyz
 
  enddo
 
+
+end
+
+subroutine test_phi_j_erf_mu_r_dxyz_phi_bis
+ implicit none
+ integer :: ipoint,i,j,m
+ double precision :: mu,r(3),dxyz_ints(3),dxyz_ints_bis(3),weight1
+ double precision, allocatable :: integral_tmp(:,:,:)
+ allocate(integral_tmp(3,ao_num, ao_num))
+ integral_tmp = 0.d0
+ do ipoint = 1, n_points_final_grid
+  mu = mu_of_r_prov(ipoint,1)
+  r(:) = final_grid_points(:,ipoint)
+  weight1 = final_weight_at_r_vector(ipoint)
+  do i = 1, ao_num
+   do j = 1, ao_num
+    call phi_j_erf_mu_r_dxyz_phi(i,j,mu, r, dxyz_ints)
+    call phi_j_erf_mu_r_dxyz_phi_bis(i,j,mu, r, dxyz_ints_bis)
+    do m = 1, 3
+     integral_tmp(m,j,i) += dabs(dxyz_ints_bis(m) - dxyz_ints(m)) * weight1
+    enddo
+   enddo
+  enddo
+ enddo
+ double precision :: accu
+ accu = 0.d0
+ print*,''
+ do i = 1, ao_num
+  do j = 1, ao_num
+   print*,'i,j',i,j
+   print*,integral_tmp(:,j,i)
+   do m = 1, 3
+    accu += integral_tmp(m,j,i)
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu/dble(3*ao_num*ao_num)
 
 end

@@ -147,7 +147,7 @@ END_PROVIDER
 BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk,  (n_points_final_grid,ao_num, ao_num,4)]
  implicit none
  BEGIN_DOC
-! gauss_erfc_mu_r12_inv_r12_rk(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2)
+! gauss_erfc_mu_r12_inv_r12_rk(j,i,R,m) = int dr x/y/z phi_i(r) phi_j(r) exp(-(\mu(R) |r - R|)^2) * (1 - erf(mu(R) |r-R|))/|r-R|
 !
 ! with m == 1 ==> x, m == 2 ==> y, m == 3 ==> z
  END_DOC
