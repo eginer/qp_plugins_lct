@@ -389,7 +389,7 @@ subroutine NAI_pol_x_mult_erf_ao(i_ao,j_ao,mu_in,C_center,ints)
  double precision               :: NAI_pol_mult_erf
  integer                        :: i,j,num_A,num_B, power_A(3), power_B(3), n_pt_in, power_xA(3),m
  ints = 0.d0
- if(ao_overlap_abs(j,i).lt.1.d-12)then
+ if(ao_overlap_abs(j_ao,i_ao).lt.1.d-12)then
   return
  endif
  num_A = ao_nucl(i_ao)
@@ -434,7 +434,7 @@ subroutine NAI_pol_x_specify_mult_erf_ao(i_ao,j_ao,mu_in,C_center,m,ints)
  double precision               :: NAI_pol_mult_erf
  integer                        :: i,j,num_A,num_B, power_A(3), power_B(3), n_pt_in, power_xA(3)
  ints = 0.d0
- if(ao_overlap_abs(j,i).lt.1.d-12)then
+ if(ao_overlap_abs(j_ao,i_ao).lt.1.d-12)then
   return
  endif
  num_A = ao_nucl(i_ao)

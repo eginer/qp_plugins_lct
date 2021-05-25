@@ -26,9 +26,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
   do m = 1, 3
    do ipoint = 1, n_points_final_grid
     do j = 1, ao_num ! 2
-! !   if(dabs(aos_grad_in_r_array(j,ipoint,m)).lt.thr)cycle
      do l = 1, ao_num ! 2
-! !    if(dabs(b_mat(l,j,ipoint,m)).lt.thr)cycle
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                [k*i](1)     * [l * x * grad_x j](2)
@@ -39,14 +37,12 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
     enddo
    enddo
   enddo
-
+!
   do m = 1, 3
    do ipoint = 1, n_points_final_grid
     do j = 1, ao_num ! 2
      do l = 1, ao_num ! 2
-! !    if(dabs(v_ij_erf_rk(l,j,ipoint)).lt.thr) cycle
       do i = 1, ao_num ! 1
-! !     if(dabs(aos_grad_in_r_array(i,ipoint,m)*v_ij_erf_rk(l,j,ipoint)).lt.thr)cycle
        do k = 1, ao_num ! 1
         !                               1 1 2 2                [l*j](2)     * [k * x * grad_x i](1)
         ao_two_e_eff_dr12_pot_array_new(k,i,l,j) += v_ij_erf_rk(l,j,ipoint) * b_mat(k,i,ipoint,m) 
@@ -56,7 +52,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
     enddo
    enddo
   enddo
-
+!
  do m = 1, 3
   do ipoint = 1, n_points_final_grid
    r(1) = final_grid_points(1,ipoint)
@@ -74,9 +70,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
   do m = 1, 3
    do ipoint = 1, n_points_final_grid
     do j = 1, ao_num ! 2
-! !   if(dabs(aos_grad_in_r_array(j,ipoint,m)).lt.thr)cycle
      do l = 1, ao_num ! 2
-! !    if(dabs(b_mat(l,j,ipoint,m)).lt.thr)cycle
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                        [k*x*i](1)       * [l *  grad_x j](2)
@@ -87,7 +81,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
     enddo
    enddo
   enddo
-
+!
   do m = 1, 3
    do ipoint = 1, n_points_final_grid
     do j = 1, ao_num ! 2
