@@ -29,7 +29,7 @@ BEGIN_PROVIDER [double precision, erf_mu_squared_ij_rk,(n_points_final_grid, ao_
  double precision :: mu,r(3),int_mu,delta,wall0,wall1,thr
  integer :: l,j,ipoint,ifit
   provide mu_of_r_for_ints
-  thr = 1.d-12
+  thr = 0.d0
   call fit_erf_mu_squared(1.d0, expo_fit, coef_fit)
  call wall_time(wall0)
   !$OMP PARALLEL                  &

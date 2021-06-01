@@ -1,45 +1,4 @@
 
- BEGIN_PROVIDER[double precision, aos_in_r_extra_grid_array, (ao_num,n_points_extra_final_grid)]
- implicit none
- BEGIN_DOC
- ! aos_in_r_extra_grid_array(i,j)        = value of the ith ao on the jth grid point
- END_DOC
- integer :: i,j
- double precision :: aos_array(ao_num), r(3)
- !$OMP PARALLEL DO &
- !$OMP DEFAULT (NONE)  &
- !$OMP PRIVATE (i,r,aos_array,j) & 
- !$OMP SHARED(aos_in_r_extra_grid_array,n_points_extra_final_grid,ao_num,final_grid_points_extra)
- do i = 1, n_points_extra_final_grid
-  r(1) = final_grid_points_extra(1,i)
-  r(2) = final_grid_points_extra(2,i)
-  r(3) = final_grid_points_extra(3,i)
-  call give_all_aos_at_r(r,aos_array)
-  do j = 1, ao_num
-   aos_in_r_extra_grid_array(j,i) = aos_array(j)
-  enddo
- enddo
- !$OMP END PARALLEL DO
-
- END_PROVIDER
-
-
- BEGIN_PROVIDER[double precision, aos_in_r_extra_grid_array_transp, (n_points_extra_final_grid,ao_num)]
- implicit none
- BEGIN_DOC
- ! aos_in_r_extra_grid_array_transp(i,j) = value of the jth ao on the ith grid point
- END_DOC
- integer :: i,j
- double precision :: aos_array(ao_num), r(3)
- do i = 1, n_points_extra_final_grid
-  do j = 1, ao_num
-   aos_in_r_extra_grid_array_transp(i,j) = aos_in_r_extra_grid_array(j,i) 
-  enddo
- enddo
-
- END_PROVIDER
-
-
 
 subroutine all_erf_mu_r1_lr_int_big_mat(big_mat)
  implicit none

@@ -8,7 +8,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_rk,  (n_points_final_grid ,ao_num, a
  double precision :: int_mu, delta,thr
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1
- thr = 1.d-12
+ thr = 0.d0
  call wall_time(wall0)
   provide mu_of_r_for_ints
  !$OMP PARALLEL                  &
@@ -56,7 +56,7 @@ BEGIN_PROVIDER [ double precision, gauss_2_ij_rk,  (n_points_final_grid ,ao_num,
  integer :: l,j,ipoint
  double precision :: mu,r(3),overlap_gauss_r12_ao
  double precision :: int_mu, delta,thr
- thr = 1.d-12
+ thr = 0.d0
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1
  call wall_time(wall0)
@@ -112,7 +112,7 @@ BEGIN_PROVIDER [ double precision, gauss_ij_xyz_rk_tmp,  (3,n_points_final_grid,
  double precision :: int_mu(3), delta
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1,thr
- thr = 1.d-12
+ thr = 0.d0
  call wall_time(wall0)
   provide mu_of_r_for_ints
  !$OMP PARALLEL                  &

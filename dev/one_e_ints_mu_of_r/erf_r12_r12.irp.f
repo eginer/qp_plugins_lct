@@ -99,7 +99,7 @@ BEGIN_PROVIDER [ double precision, gauss_erfc_mu_r12_inv_r12_rk_tmp,  (4,n_point
  double precision :: int_mu(3), delta, thr
  provide mu_erf final_grid_points 
  double precision :: wall0, wall1
- thr = 1.d-12
+ thr = 0.d0
  call wall_time(wall0)
   provide mu_of_r_for_ints
   print*,'Providing gauss_erfc_mu_r12_inv_r12_rk_tmp ...'

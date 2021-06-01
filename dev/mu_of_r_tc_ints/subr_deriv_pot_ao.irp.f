@@ -2,7 +2,7 @@
 BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_ao, (ao_num, ao_num, ao_num, ao_num)]
  implicit none
  BEGIN_DOC
-! deriv_mu_r_pot_chemist_ao(i,k,j,l) = \int dr1 \int dr2 \phi_i(r1) \phi_k(r1) deriv_op \phi_j(r2) \phi_l(r2)
+! deriv_mu_r_pot_chemist_ao(i,k,j,l) = \int dr1 \int dr2  \phi_l(r2) \phi_k(r1) deriv_op [\phi_j(r2) \phi_i(r1)]
 !
 ! ALSO :: it is non hermitian !! BY convention the differential operators are applied to i(r1) ,j(r2)  
 !
@@ -22,8 +22,8 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_ao, (ao_num, ao_num, a
 
  deriv_mu_r_pot_chemist_ao = 0.d0
 
-! call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
-! call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
+ call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
+ call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
  call non_hermit_r1(deriv_mu_r_pot_chemist_ao)
  call wall_time(wall1)
  print*,''
@@ -145,7 +145,7 @@ subroutine non_hermit_r1(big_mat)
  double precision, allocatable :: a_mat(:,:,:)
  double precision :: cst,r1(3)
 
- print*,'computing gamma_nabla_r1 ...'
+ print*,'computing non_hermit_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
  cst = 0.5d0
@@ -208,12 +208,12 @@ subroutine non_hermit_r1(big_mat)
                      ,x_v_ij_erf_rk_transp_bis(1,1,1,m),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
  enddo
   call wall_time(wall1)
-  print*,'wall time for gamma_nabla_r1 ',wall1 - wall0   
+  print*,'wall time for non_hermit_r1 ',wall1 - wall0   
 end
 
 
 
-subroutine test_lapl_gamm_r1
+subroutine test_num_deriv_pot 
  implicit none
  include 'constants.include.F'
  integer :: ipoint,i,j,k,l,m,jpoint
@@ -231,7 +231,7 @@ subroutine test_lapl_gamm_r1
 
  do jpoint = 1, n_points_final_grid ! r2
   weight2 = final_weight_at_r_vector(jpoint)
-  do l = 1, 1
+  do l = 1, ao_num
    do j = l, l
     ao_prod_r2 = aos_in_r_array(j,jpoint) * aos_in_r_array(l,jpoint) * weight2
     if(dabs(ao_prod_r2).lt.sq_thr)cycle
@@ -243,9 +243,9 @@ subroutine test_lapl_gamm_r1
       do i = 1, 2
        ao_prod_r1 = aos_in_r_array(i,ipoint) * aos_in_r_array(k,ipoint) * weight1
        if(dabs(ao_prod_r1).lt.sq_thr)cycle
-!        accu(i,k,j,l) += lapl_gamma(ipoint,jpoint,i,k,cst_lapl_gamma) * weight1 * ao_prod_r2
-!        accu(i,k,j,l) += func_gamma_nabla_r1(ipoint,jpoint,i,k,cst_gamma_nabla_r1) * weight1 * ao_prod_r2
-         accu(i,k,j,l) += func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l,cst_non_hermit) * weight1 * weight2
+        accu(i,k,j,l) += lapl_gamma(ipoint,jpoint,i,k,cst_lapl_gamma) * weight1 * ao_prod_r2
+        accu(i,k,j,l) += func_gamma_nabla_r1(ipoint,jpoint,i,k,cst_gamma_nabla_r1) * weight1 * ao_prod_r2
+        accu(i,k,j,l) += func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l,cst_non_hermit) * weight1 * weight2
                          
       enddo
      enddo
@@ -258,7 +258,7 @@ subroutine test_lapl_gamm_r1
 
  double precision :: num_int,contrib,accu_naive,exact
  accu_naive = 0.d0
- do l = 1, 1
+ do l = 1, ao_num
   do j = l, l
    do k = l, l
     do i = 1, 2
@@ -282,7 +282,7 @@ subroutine test_lapl_gamm_r1
 
 end
 
-subroutine test_big_array_3
+subroutine test_big_array_ao_deriv
  implicit none
  integer :: i,j,k,l
  double precision :: num_int,contrib,accu_naive,exact
@@ -291,8 +291,6 @@ subroutine test_big_array_3
   do j = 1, ao_num
    do k = 1, ao_num
     do i = 1, ao_num
-!     num_int = ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j)
-!     num_int = ao_two_e_eff_dr12_pot_array_new_bis(k,i,l,j)
      num_int = ao_two_e_eff_dr12_pot_array_new(k,i,l,j)
      exact = deriv_mu_r_pot_chemist_ao(i,k,j,l)
      contrib = dabs(num_int - exact )
@@ -417,4 +415,16 @@ double precision function func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l,cst)
    func_non_hermit_at_r1 += cst * ao_grad_prod(m,kk) * func
   enddo
  enddo
+end
+
+double precision function gamma_r1(ipoint,jpoint,cst)
+ implicit none
+ integer, intent(in) :: ipoint, jpoint
+ double precision, intent(in) :: cst
+
+ double precision :: mu
+ mu = mu_of_r_for_ints(ipoint,1)
+ ! TODO : that function requires to evaluate mu(r1) and its gradient at any points ...
+
+
 end
