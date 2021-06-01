@@ -4,11 +4,11 @@ program transcorr_h
  touch read_wf
  my_grid_becke = .True. 
  my_n_pt_r_grid = 30
- my_n_pt_a_grid = 50
+ my_n_pt_a_grid = 170
  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
  print*,'Warning : the Becke grid parameters are automatically set to '
- print*,'my_n_pt_a_grid = 50'
- print*,'my_n_pt_r_grid = 30'
+ print*,'my_n_pt_a_grid = ',my_n_pt_a_grid
+ print*,'my_n_pt_r_grid = ',my_n_pt_r_grid
  print*,'If you want to modify them, you have to modify the following file '
  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
  print*,'and recompile doing ninja'
