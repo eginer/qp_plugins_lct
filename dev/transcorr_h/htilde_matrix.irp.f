@@ -1,5 +1,4 @@
  BEGIN_PROVIDER [double precision, htilde_matrix_elmt, (N_det,N_det)]
-&BEGIN_PROVIDER [double precision, htilde_matrix_elmt_erf, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_eff, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_deriv, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_hcore, (N_det,N_det)]
@@ -11,13 +10,12 @@
 ! WARNING !!!!!!!!! IT IS NOT HERMITIAN !!!!!!!!!
  END_DOC
  integer :: i,j
- double precision :: hmono,herf,heff,hderiv,hthree,htot
+ double precision :: hmono,heff,hderiv,hthree,htot
  do i = 1, N_det
   do j = 1, N_det
   ! < J | Htilde | I >
-   call htilde_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,htot)
+   call htilde_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,heff,hderiv,hthree,htot)
    htilde_matrix_elmt(j,i) = htot
-   htilde_matrix_elmt_erf(j,i) = herf
    htilde_matrix_elmt_eff(j,i) = heff
    htilde_matrix_elmt_deriv(j,i) = hderiv
    htilde_matrix_elmt_hcore(j,i) = hmono

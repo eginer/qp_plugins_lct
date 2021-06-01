@@ -12,13 +12,12 @@ end
 
 subroutine routine
  implicit none
- double precision :: hmono,herf,heff,hderiv,hthree,htot
- call direct_diag_htilde_mu_mat(ref_bitmask,hmono,herf,heff,hderiv,hthree,htot)
+ double precision :: hmono,heff,hderiv,hthree,htot
+ call direct_diag_htilde_mu_mat(ref_bitmask,hmono,heff,hderiv,hthree,htot)
  print*,'hmono       = ',hmono
- print*,'herf        = ',herf
  print*,'heff        = ',heff
  print*,'hderiv      = ',hderiv
- print*,'twobody     = ',herf+heff+hderiv
+ print*,'twobody     = ',heff+hderiv
  print*,'hthree      = ',hthree
  print*,'htot        = ',htot
  print*,'core_energy = ',core_energy
@@ -28,11 +27,11 @@ end
 subroutine test_diag
  implicit none
  integer :: i
- double precision :: hmono,herf,heff,hderiv,hthree,htot
- double precision :: hbis_mono,hbis_erf,hbis_eff,hbis_deriv,hbis_three,hbis_tot
+ double precision :: hmono,heff,hderiv,hthree,htot
+ double precision :: hbis_mono,hbis_eff,hbis_deriv,hbis_three,hbis_tot
  do i = 1, N_det
-  call diag_htilde_mu_mat_3_index(psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,htot)
-  call direct_diag_htilde_mu_mat(psi_det(1,1,i),hbis_mono,hbis_erf,hbis_eff,hbis_deriv,hbis_three,hbis_tot)
+  call diag_htilde_mu_mat_3_index(psi_det(1,1,i),hmono,heff,hderiv,hthree,htot)
+  call direct_diag_htilde_mu_mat(psi_det(1,1,i),hbis_mono,hbis_eff,hbis_deriv,hbis_three,hbis_tot)
   print*,'htot, hbis_tot',htot, hbis_tot
   if(dabs(hthree - hbis_three).gt.1.d-12)then
    print*,'Error !'
