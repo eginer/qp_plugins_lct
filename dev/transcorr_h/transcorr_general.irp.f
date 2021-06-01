@@ -6,6 +6,10 @@ program transcorr_h
  my_n_pt_r_grid = 30
  my_n_pt_a_grid = 170
  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
+ extra_grid_type_sgn = 1 
+ touch extra_grid_type_sgn 
+ my_extra_grid_becke = .False.
+ touch my_extra_grid_becke 
  print*,'Warning : the Becke grid parameters are automatically set to '
  print*,'my_n_pt_a_grid = ',my_n_pt_a_grid
  print*,'my_n_pt_r_grid = ',my_n_pt_r_grid

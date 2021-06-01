@@ -73,6 +73,7 @@
  call wall_time(wall0)
 
  if(.not.constant_mu)then
+
   do istate = 1, N_states
    do ipoint = 1, n_points_extra_final_grid
     if(mu_of_r_tc_ints.EQ."basis")then

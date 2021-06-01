@@ -99,7 +99,7 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_physicist_mo, (mo_num, mo_num
     do k = 1, mo_num 
      do l = 1, mo_num 
       !                          2 1 2 1 
-      scalar_mu_r_pot_chemist_mo(l,k,j,i) = scalar_mu_r_pot_chemist_mo(i,k,j,l)
+      scalar_mu_r_pot_physicist_mo(l,k,j,i) = scalar_mu_r_pot_chemist_mo(i,k,j,l)
      enddo
     enddo
    enddo
