@@ -22,8 +22,8 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_ao, (ao_num, ao_num, a
 
  deriv_mu_r_pot_chemist_ao = 0.d0
 
-! call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
-! call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
+ call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
+ call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
  call non_hermit_r1(deriv_mu_r_pot_chemist_ao)
  call wall_time(wall1)
  print*,''
@@ -102,7 +102,7 @@ subroutine gamma_nabla_r1(big_mat)
  print*,'computing gamma_nabla_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
- cst = -1.d0 
+ cst = -0.5d0 * inv_sq_pi 
 
  allocate(a_mat(ao_num,ao_num,n_points_final_grid))
 
@@ -133,8 +133,6 @@ subroutine non_hermit_r1(big_mat)
 ! enters with the array big_mat and add the following integrals 
 !
 !  big_mat(i,k,j,l) += \int dr1 \int dr2 \phi_k(r1) \phi_l(r2) (erf (mu * r12) - 1) d/ dr12 \phi_i(r1) \phi_j(r2)
-!
-! with gamma_r1(r1,r2) = 1/(2 \sqpi (\mu(r1))^2) e^{-(\mu(r1) r12)^2} \nabla_1 \mu(r1)
 !
 ! WARNING : this is not hermitian and the nabla_1 acts on \phi_i(r1) 
  END_DOC

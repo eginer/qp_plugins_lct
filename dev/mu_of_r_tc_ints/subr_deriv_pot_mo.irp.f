@@ -102,6 +102,7 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_physicist_mo, (mo_num, mo_num,
     do k = 1, mo_num 
      do l = 1, mo_num 
       !                         2 1 2 1 
+!      deriv_mu_r_pot_physicist_mo(l,k,j,i) = 0.5d0 * (deriv_mu_r_pot_chemist_mo(i,k,j,l) + deriv_mu_r_pot_chemist_mo(j,l,i,k))
       deriv_mu_r_pot_physicist_mo(l,k,j,i) = deriv_mu_r_pot_chemist_mo(i,k,j,l)
      enddo
     enddo

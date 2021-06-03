@@ -8,16 +8,18 @@
  double precision :: g0_UEG_mu_inf
  double precision :: cst_rs,alpha_rs
  double precision :: elec_a,elec_b
- double precision :: mu_plus, mu_minus, r(3),dx,mu_lda
- dx = 1.d-4
- average_mu_lda     = 0.d0
+ double precision :: mu_plus, mu_minus, r(3),dx,mu_lda_erf,mu_min
+ mu_min = mu_erf
+ dx = 1.d-7
+ average_mu_lda = 0.d0
  elec_a = 0.d0
  elec_b = 0.d0
  do ipoint = 1, n_points_final_grid
   weight = final_weight_at_r_vector(ipoint)
   rho_a_hf = one_e_dm_and_grad_alpha_in_r(4,ipoint,1)
   rho_b_hf = one_e_dm_and_grad_beta_in_r(4,ipoint,1)
-  mu_of_r_lda(ipoint,1) = mu_lda(rho_a_hf,rho_b_hf)
+  rho_hf = rho_a_hf + rho_b_hf
+  mu_of_r_lda(ipoint,1) = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
 
   average_mu_lda    +=  mu_of_r_lda(ipoint,1) * weight * rho_hf
   elec_a += rho_a_hf * weight
@@ -27,11 +29,11 @@
    r(:) = final_grid_points(:,ipoint) 
    r(m) += dx 
    call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-   mu_plus = mu_lda(rho_a_hf,rho_b_hf)
+   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
    r(:) = final_grid_points(:,ipoint) 
    r(m) -= dx 
    call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-   mu_minus = mu_lda(rho_a_hf,rho_b_hf)
+   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
    grad_mu_of_r_lda(m,ipoint,1) = (mu_plus - mu_minus)/(2.d0 * dx)
   enddo
 
@@ -48,7 +50,13 @@ double precision function mu_lda(rho_a,rho_b)
  double precision :: g0,g0_UEG_mu_inf
  g0 = g0_UEG_mu_inf(rho_a,rho_b)
  mu_lda = - 1.d0 / (dlog(2.d0 * g0) * sqpi) 
+end
 
+double precision function mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+ double precision, intent(in) :: rho_b_hf,rho_a_hf,mu_min
+ double precision :: mu_lda,mu
+ mu = mu_lda(rho_a_hf,rho_b_hf)
+ mu_lda_erf = mu_min * (1.d0 - derf(mu)) + derf(mu)*mu
 end
 
  BEGIN_PROVIDER [double precision, average_mu_rs_c     ]
@@ -61,7 +69,7 @@ end
  average_mu_rs_c    = 0.d0
  double precision :: elec_a,elec_b
  double precision :: mu_plus, mu_minus, r(3),dx,mu_lda
- dx = 1.d-4
+ dx = 1.d-7
  elec_a = 0.d0
  elec_b = 0.d0
  do ipoint = 1, n_points_final_grid
@@ -94,6 +102,53 @@ end
 
 END_PROVIDER 
 
+BEGIN_PROVIDER [ double precision, average_mu_rs_c_lda]
+ implicit none
+ average_mu_rs_c_lda = 0.5d0 * (average_mu_rs_c + average_mu_lda)
+END_PROVIDER 
+
+ BEGIN_PROVIDER [double precision, average_mu_grad_n   ]
+ implicit none
+ integer :: ipoint,i,m
+ double precision :: sqpi
+ double precision :: weight, rho_a_hf, rho_b_hf, g0,rho_hf
+ double precision :: rs,grad_n
+ double precision :: g0_UEG_mu_inf
+ double precision :: cst_rs,alpha_rs
+ sqpi = dsqrt(dacos(-1.d0))
+ cst_rs   = (4.d0 * dacos(-1.d0)/3.d0)**(-1.d0/3.d0)
+ alpha_rs = 2.d0 * dsqrt((9.d0 * dacos(-1.d0)/4.d0)**(-1.d0/3.d0)) / sqpi
+ average_mu_grad_n  = 0.d0 
+ double precision :: elec_a,elec_b
+ elec_a = 0.d0
+ elec_b = 0.d0
+ do ipoint = 1, n_points_final_grid
+  weight = final_weight_at_r_vector(ipoint)
+  rho_a_hf = 0.d0
+  grad_n   = 0.d0
+  rho_a_hf = one_e_dm_and_grad_alpha_in_r(4,ipoint,1)
+  rho_b_hf = one_e_dm_and_grad_beta_in_r(4,ipoint,1)
+  grad_n = one_e_grad_2_dm_alpha_at_r(ipoint,1) + one_e_grad_2_dm_beta_at_r(ipoint,1)
+  grad_n += 2.d0 * scal_prod_grad_one_e_dm_ab(ipoint,1)
+  rho_hf = rho_a_hf + rho_b_hf
+  grad_n = dsqrt(grad_n)
+  if(dabs(rho_hf).gt.1.d-20)then
+   grad_n = grad_n/(4.d0 * rho_hf)
+  else
+   grad_n = 0.d0
+  endif
+  rs = cst_rs * rho_hf**(-1.d0/3.d0)
+  g0 = g0_UEG_mu_inf(rho_a_hf,rho_b_hf)
+
+  average_mu_grad_n += grad_n * rho_hf * weight
+  elec_a += rho_a_hf * weight
+  elec_b += rho_b_hf * weight
+ enddo 
+ print*,'elec_a,elec_b',elec_a,elec_b
+ average_mu_grad_n = average_mu_grad_n/ dble(elec_a+ elec_b)
+
+
+END_PROVIDER 
 
 double precision function mu_rs_c(rho)
  implicit none
@@ -116,7 +171,7 @@ end
  average_mu_rs_c    = 0.d0
  double precision :: elec_a,elec_b,r(3)
  double precision :: mu_plus, mu_minus, dx,mu_lda
- dx = 1.d-4
+ dx = 1.d-7
  elec_a = 0.d0
  elec_b = 0.d0
  do ipoint = 1, n_points_extra_final_grid
@@ -140,16 +195,16 @@ END_PROVIDER
  double precision :: g0_UEG_mu_inf
  double precision :: cst_rs,alpha_rs
  double precision :: elec_a,elec_b
- double precision :: mu_plus, mu_minus, r(3),dx,mu_lda
- dx = 1.d-4
- average_mu_lda     = 0.d0
+ double precision :: mu_plus, mu_minus, r(3),dx,mu_lda_erf,mu_min
+ dx = 1.d-7
  elec_a = 0.d0
  elec_b = 0.d0
+ mu_min = mu_erf
  do ipoint = 1, n_points_extra_final_grid
   weight = final_weight_at_r_vector_extra(ipoint)
   r(:) = final_grid_points_extra(:,ipoint)
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu_of_r_extra_grid_lda(ipoint,1) = mu_lda(rho_a_hf,rho_b_hf)
+  mu_of_r_extra_grid_lda(ipoint,1) = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
 
   elec_a += rho_a_hf * weight
   elec_b += rho_b_hf * weight

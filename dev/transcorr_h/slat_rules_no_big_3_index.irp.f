@@ -45,12 +45,16 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
    ! alpha/beta two-body
    ispin = 1
    jspin = 2 
-   do i = 1, Ne(ispin) 
+   do i = 1, Ne(ispin) ! electron 1 (so it can be associated to mu(r1))
     ii = occ(i,ispin) 
-    do j = 1, Ne(jspin)
+    do j = 1, Ne(jspin) ! electron 2 
      jj = occ(j,jspin) 
-     heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) 
-     hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) 
+!     heff   += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) 
+!     hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj)  
+     heff   += scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii) 
+!     print*,jj,ii,jj,ii
+!     print*,scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii),deriv_mu_r_pot_physicist_mo(jj,ii,jj,ii)
+     hderiv += deriv_mu_r_pot_physicist_mo(jj,ii,jj,ii) 
     enddo
    enddo
  
@@ -61,7 +65,8 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
      jj = occ(j,ispin) 
      heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii)
      hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) & 
-     - 0.5d0 * deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) - 0.5d0 * deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) 
+     - 0.5d0 * deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) &
+     - 0.5d0 * deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) 
     enddo
    enddo
  
@@ -245,8 +250,8 @@ subroutine double_htilde_mu_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,hto
 
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
    ! opposite spin two-body 
-   heff   += scalar_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
-   hderiv  = deriv_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
+   heff   += scalar_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+   hderiv  = deriv_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
    ! same spin two-body 
    if(s1.eq.s2)then
     heff   -= scalar_mu_r_pot_physicist_mo(p1,p2,h2,h1) 
@@ -392,20 +397,30 @@ subroutine single_htilde_mu_mat_4_index(key_j,key_i,hmono,heff,hderiv,hthree,hto
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
    ! alpha/beta two-body 
    ispin = other_spin(s1)
-   do i = 1, Ne(ispin)
-    ii = occ(i,ispin) 
-    heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) 
-    hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) 
-   enddo
+   if(s1==1)then
+    ! single alpha 
+    do i = 1, Ne(ispin) ! electron 2 
+     ii = occ(i,ispin) 
+     heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) 
+     hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) 
+    enddo
+   else
+    ! single beta 
+    do i = 1, Ne(ispin) ! electron 1 
+     ii = occ(i,ispin) 
+     heff   += scalar_mu_r_pot_physicist_mo(p1,ii,h1,ii) 
+     hderiv += deriv_mu_r_pot_physicist_mo(p1,ii,h1,ii) 
+    enddo
+   endif
    ! same spin two-body 
-   do i = 1, Ne(s1)
-    ii = occ(i,s1) 
-    ! (h1p1|ii ii) - (h1 ii| p1 ii)
-    heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) - scalar_mu_r_pot_physicist_mo(ii,p1,h1,ii)
-    hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) & 
-           -0.5d0 * deriv_mu_r_pot_physicist_mo(ii,p1,h1,ii) & 
-           -0.5d0 * deriv_mu_r_pot_physicist_mo(p1,ii,ii,h1)
-   enddo
+!   do i = 1, Ne(s1)
+!    ii = occ(i,s1) 
+!    ! (h1p1|ii ii) - (h1 ii| p1 ii)
+!    heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) - scalar_mu_r_pot_physicist_mo(ii,p1,h1,ii)
+!    hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) & 
+!           -0.5d0 * deriv_mu_r_pot_physicist_mo(ii,p1,h1,ii) & 
+!           -0.5d0 * deriv_mu_r_pot_physicist_mo(p1,ii,ii,h1)
+!   enddo
    
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!

@@ -22,6 +22,9 @@
    htilde_matrix_elmt_hthree(j,i) = hthree
   enddo
  enddo
+ do i = 1, N_det
+  write(*,'(1000(F10.5,X))')htilde_matrix_elmt(i,:)
+ enddo
 ! htilde_matrix_elmt = H_matrix_all_dets
 END_PROVIDER 
 

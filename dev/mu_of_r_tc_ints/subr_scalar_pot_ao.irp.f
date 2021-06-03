@@ -22,9 +22,9 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_chemist_ao, (ao_num, ao_num, 
 ! call all_erf_mu_r1_lr_int_big_mat(scalar_mu_r_pot_chemist_ao) 
  call all_gauss_r12_big_mat(scalar_mu_r_pot_chemist_ao)
  call all_erf_r12_sq_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_nabla_mu_r1_sq_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_nabla_mu_r1_cdot_r12_big_mat(scalar_mu_r_pot_chemist_ao)
-! call all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_sq_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_cdot_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+ call all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(scalar_mu_r_pot_chemist_ao)
  call wall_time(wall1)
  print*,''
  print*,''
@@ -152,7 +152,7 @@ subroutine all_nabla_mu_r1_cdot_r12_big_mat(big_mat)
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
 !
-! big_mat(i,k,j,l) += 1/(2 * sqpi) \int dr1 \int dr2 \phi_i(r1) \phi_k(r1) \nabla_1 . cdot  (r1 - r2) exp[-2 (\mu(r1) r12)^2] \phi_j(r2) \phi_l(r2)
+! big_mat(i,k,j,l) += 1/(2 * sqpi) \int dr1 \int dr2 \phi_i(r1) \phi_k(r1) \nabla_1 \mu(r1). cdot  (r1 - r2) exp[- (\mu(r1) r12)^2] \phi_j(r2) \phi_l(r2)
  END_DOC
  include 'constants.include.F'
  integer :: i,k,ipoint,m
@@ -167,7 +167,7 @@ subroutine all_nabla_mu_r1_cdot_r12_big_mat(big_mat)
 
 ! ! + 1/(2 * sqrt(pi)) e^{-(\mu(r1)r12)^2} (r_1 - r_2) . \nabla_1 \mu(r1)
   double precision :: inv_2_sqpi,r1(3)
-  inv_2_sqpi = 0.5d0 * inv_sq_pi
+  inv_2_sqpi = -0.5d0 * inv_sq_pi
   do m = 1, 3 
    ! first part : 1/(2 * sqrt(pi)) e^{-(\mu(r1)r12)^2} * x1 \deriv{x1} \mu(r1) 
    do ipoint = 1, n_points_final_grid
@@ -299,7 +299,7 @@ subroutine test_num_scal_pot
         accu(i,k,j,l) += erf_mur1(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
         accu(i,k,j,l) += gauss_r12_mu_r1(ipoint,jpoint,cst_gauss_r12) * ao_prod_r1 * ao_prod_r2
         accu(i,k,j,l) += erf_mu_sq(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
-        accu(i,k,j,l) += nabla_sq_term(ipoint,jpoint,cst_nabla) * ao_prod_r1 * ao_prod_r2
+        accu(i,k,j,l) += nabla_sq_term(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
         accu(i,k,j,l) += nabla_r12_1(ipoint,jpoint,cst_nabla_r12_1) * ao_prod_r1 * ao_prod_r2
         accu(i,k,j,l) += nabla_r12_2(ipoint,jpoint,cst_nabla_r12_2) * ao_prod_r1 * ao_prod_r2
       enddo
@@ -318,7 +318,7 @@ subroutine test_num_scal_pot
 !  do j = 1, ao_num
   do j = l, l
    do k = l, l
-    do i = j, j
+    do i = 1, ao_num
      num_int = accu(i,k,j,l)
      contrib = dabs(num_int - scalar_mu_r_pot_chemist_ao(i,k,j,l) )
      accu_naive += contrib
@@ -333,18 +333,22 @@ subroutine test_num_scal_pot
   enddo
  enddo
 
- print*,'accu naive  = ',accu_naive/dble(ao_num**1)
+ print*,'accu naive  = ',accu_naive/dble(ao_num**2)
 ! print*,'accu dgemm  = ',accu2/dble(ao_num**4)
 end
 
 
-double precision function nabla_sq_term(ipoint,jpoint,cst)
+double precision function nabla_sq_term(ipoint,jpoint)
  implicit none
+ BEGIN_DOC
+! -1/(8 pi * mu(r1)^4) (\nabla_1 \mu(r1))^2 exp(-2 (\mu(r1)r12)^2)
+ END_DOC
  integer, intent(in) :: ipoint ! r1 
  integer, intent(in) :: jpoint ! r1 
- double precision, intent(in) :: cst
+ double precision:: cst
  include 'constants.include.F'
  double precision :: r12,r1(3),r2(3),mu
+ cst = -0.125d0 * inv_pi
  r1(:) = final_grid_points(:,ipoint)
 
  r2(:) = final_grid_points(:,jpoint)
@@ -354,6 +358,31 @@ double precision function nabla_sq_term(ipoint,jpoint,cst)
  r12 += (r1(3) - r2(3))*(r1(3) - r2(3))
  mu = mu_of_r_for_ints(ipoint,1)
  nabla_sq_term = cst * inv_4_mu_of_r_for_ints(ipoint,1) * dexp(-2.d0 * mu * mu * r12) * grad_sq_mu_of_r_for_ints(ipoint,1)
+
+end
+
+double precision function erf_mu_sq(ipoint,jpoint)
+ implicit none
+ BEGIN_DOC
+! -1/4 (erf(mu(r1) r12) - 1)^2
+ END_DOC
+ integer, intent(in) :: ipoint ! r1 
+ integer, intent(in) :: jpoint ! r1 
+ double precision :: cst
+ include 'constants.include.F'
+ double precision :: r12,r1(3),r2(3),mu,contrib
+ cst = -0.25d0
+ r1(:) = final_grid_points(:,ipoint)
+
+ r2(:) = final_grid_points(:,jpoint)
+
+ r12  = (r1(1) - r2(1))*(r1(1) - r2(1))
+ r12 += (r1(2) - r2(2))*(r1(2) - r2(2))
+ r12 += (r1(3) - r2(3))*(r1(3) - r2(3))
+ r12 = dsqrt(r12)
+ mu = mu_of_r_for_ints(ipoint,1)
+ contrib = ( 1.d0 - derf(mu * r12)) 
+ erf_mu_sq = cst * contrib * contrib 
 
 end
 
@@ -381,11 +410,15 @@ end
 
 double precision function nabla_r12_2(ipoint,jpoint,cst)
  implicit none 
+ BEGIN_DOC
+! - 1/(4 sqrt(pi) (\mu(r1))^2) \nabla_1 \mu(r1) . r_12  e^{(-\mu(r1)r12)^2} (1 - erf(\mu(r1)r12))/r12
+ END_DOC
  integer, intent(in) :: ipoint
  integer, intent(in) :: jpoint
- double precision, intent(in) :: cst
+ double precision :: cst
  include 'constants.include.F'
  double precision :: r12,r12_sq,r12_vec(3),r1(3),r2(3),mu
+ cst = -0.25 * inv_sq_pi
 
  nabla_r12_2 = 0.d0
  r1(:) = final_grid_points(:,ipoint)
@@ -442,26 +475,6 @@ double precision function erf_mur1(ipoint,jpoint)
  r12 = dsqrt(r12)
  mu = mu_of_r_for_ints(ipoint,1)
  erf_mur1 = derf_mu_x(mu,r12)
-
-end
-
-double precision function erf_mu_sq(ipoint,jpoint)
- implicit none 
- integer, intent(in) :: ipoint
- integer, intent(in) :: jpoint
- include 'constants.include.F'
- double precision :: r12,r1(3),r2(3),mu
- double precision :: derf_mu_x
- r1(:) = final_grid_points(:,ipoint)
-
- r2(:) = final_grid_points(:,jpoint)
-
- r12  = (r1(1) - r2(1))*(r1(1) - r2(1))
- r12 += (r1(2) - r2(2))*(r1(2) - r2(2))
- r12 += (r1(3) - r2(3))*(r1(3) - r2(3))
- r12 = dsqrt(r12)
- mu = mu_of_r_for_ints(ipoint,1)
- erf_mu_sq = -0.25d0 * (1.d0 - derf(mu*r12))**2.d0
 
 end
 

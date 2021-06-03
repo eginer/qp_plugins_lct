@@ -99,7 +99,8 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_physicist_mo, (mo_num, mo_num
     do k = 1, mo_num 
      do l = 1, mo_num 
       !                          2 1 2 1 
-      scalar_mu_r_pot_physicist_mo(l,k,j,i) = scalar_mu_r_pot_chemist_mo(i,k,j,l)
+!      scalar_mu_r_pot_physicist_mo(l,k,j,i) = 0.5d0 * (scalar_mu_r_pot_chemist_mo(i,k,j,l) + scalar_mu_r_pot_chemist_mo(j,l,i,k))
+      scalar_mu_r_pot_physicist_mo(l,k,j,i) = scalar_mu_r_pot_chemist_mo(i,k,j,l) 
      enddo
     enddo
    enddo
@@ -142,14 +143,14 @@ subroutine test_num_scal_pot_mo
 !     do i = 1, mo_num
 !      do k = 1, mo_num
      do k = l, l
-      do i = j, j
+      do i = 1, ao_num
        ao_prod_r1 = mos_in_r_array(i,ipoint) * mos_in_r_array(k,ipoint) * weight1
        if(dabs(ao_prod_r1).lt.sq_thr)cycle
-        accu(i,k,j,l) += erf_mur1(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
-        accu(i,k,j,l) += gauss_r12_mu_r1(ipoint,jpoint,cst_gauss_r12) * ao_prod_r1 * ao_prod_r2
-        accu(i,k,j,l) += erf_mu_sq(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
-        accu(i,k,j,l) += nabla_sq_term(ipoint,jpoint,cst_nabla) * ao_prod_r1 * ao_prod_r2
-        accu(i,k,j,l) += nabla_r12_1(ipoint,jpoint,cst_nabla_r12_1) * ao_prod_r1 * ao_prod_r2
+!        accu(i,k,j,l) += erf_mur1(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
+!        accu(i,k,j,l) += gauss_r12_mu_r1(ipoint,jpoint,cst_gauss_r12) * ao_prod_r1 * ao_prod_r2
+!        accu(i,k,j,l) += erf_mu_sq(ipoint,jpoint) * ao_prod_r1 * ao_prod_r2
+!        accu(i,k,j,l) += nabla_sq_term(ipoint,jpoint,cst_nabla) * ao_prod_r1 * ao_prod_r2
+!        accu(i,k,j,l) += nabla_r12_1(ipoint,jpoint,cst_nabla_r12_1) * ao_prod_r1 * ao_prod_r2
         accu(i,k,j,l) += nabla_r12_2(ipoint,jpoint,cst_nabla_r12_2) * ao_prod_r1 * ao_prod_r2
       enddo
      enddo
@@ -167,7 +168,7 @@ subroutine test_num_scal_pot_mo
 !  do j = 1, mo_num
   do j = l, l
    do k = l, l
-    do i = j, j
+    do i = 1, ao_num
      num_int = accu(i,k,j,l)
      contrib = dabs(num_int - scalar_mu_r_pot_chemist_mo(i,k,j,l) )
      accu_naive += contrib
@@ -175,6 +176,7 @@ subroutine test_num_scal_pot_mo
       print*,''
       print*,'i,k,j,l',i,k,j,l
       print*,contrib,num_int, scalar_mu_r_pot_chemist_mo(i,k,j,l)
+      print*,contrib/dabs(num_int)
      endif
      
     enddo
@@ -205,7 +207,7 @@ subroutine test_big_array_mo_scal
 !     num_int = mo_two_e_eff_dr12_pot_array_new_3(k,i,l,j)
 !     num_int = mo_two_e_eff_dr12_pot_array_new_bis(k,i,l,j)
      exact = get_mo_two_e_integral_erf(i,j,k,l,mo_integrals_erf_map)
-     exact += mo_two_e_integral_eff_pot(i,j,k,l)
+!     exact += mo_two_e_integral_eff_pot(i,j,k,l)
      num_int = scalar_mu_r_pot_chemist_mo(i,k,j,l)
      contrib = dabs(num_int - exact )
      if(dabs(exact).gt.1.d-15)then
