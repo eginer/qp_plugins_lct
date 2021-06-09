@@ -7,7 +7,7 @@
  double precision :: rs,grad_n
  double precision :: g0_UEG_mu_inf
  double precision :: cst_rs,alpha_rs
- double precision :: elec_a,elec_b
+ double precision :: elec_a,elec_b,grad_mu(3)
  double precision :: mu_plus, mu_minus, r(3),dx,mu_lda_erf,mu_min
  mu_min = mu_erf
  dx = 1.d-7
@@ -25,17 +25,9 @@
   elec_a += rho_a_hf * weight
   elec_b += rho_b_hf * weight
 
-  do m = 1, 3
-   r(:) = final_grid_points(:,ipoint) 
-   r(m) += dx 
-   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   r(:) = final_grid_points(:,ipoint) 
-   r(m) -= dx 
-   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   grad_mu_of_r_lda(m,ipoint,1) = (mu_plus - mu_minus)/(2.d0 * dx)
-  enddo
+  r(:) = final_grid_points(:,ipoint) 
+  call get_grad_mu_lda(r,dx,mu_min,grad_mu)
+  grad_mu_of_r_lda(:,ipoint,1) = grad_mu(:)
 
  enddo 
  average_mu_lda    = average_mu_lda   / dble(elec_a+ elec_b)

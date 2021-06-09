@@ -18,13 +18,17 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_chemist_ao, (ao_num, ao_num, 
 
  scalar_mu_r_pot_chemist_ao = 0.d0
 
- call all_erf_mu_r1_lr_int_big_mat_bis(scalar_mu_r_pot_chemist_ao)! 1/r12 analytically, erfc(mu(r1)r12)/r12 semi analytic
-! call all_erf_mu_r1_lr_int_big_mat(scalar_mu_r_pot_chemist_ao) 
- call all_gauss_r12_big_mat(scalar_mu_r_pot_chemist_ao)
- call all_erf_r12_sq_big_mat(scalar_mu_r_pot_chemist_ao)
- call all_nabla_mu_r1_sq_big_mat(scalar_mu_r_pot_chemist_ao)
- call all_nabla_mu_r1_cdot_r12_big_mat(scalar_mu_r_pot_chemist_ao)
- call all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(scalar_mu_r_pot_chemist_ao)
+!!! Laplacian of Jastrow: 
+!! !call lr_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! other approch for erf(mu(r1) r12)/r12 
+ call lr_int_mu_r1_bis(scalar_mu_r_pot_chemist_ao)! Long range interaction erf(mu(r1) r12)/r12
+ call gauss_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! Gaussian e^{(-mu(r1) r12)^2}
+! call gauss_grad_scal_r12_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{(-mu(r1) r12)^2} r12 . \grad mu(r1)
+
+!!! (Nabla of Jastrow)^2
+! call erf_sq_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! erf(mu(r1) r12)^2
+! call gauss_sq_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{-2(mu(r1)r12)^2}
+! call erfc_gauss_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! erfc(mu(r1)r12)/r12 * e^{(-mu(r1) r12)^2}
+!!! 
  call wall_time(wall1)
  print*,''
  print*,''
@@ -36,7 +40,7 @@ END_PROVIDER
 
 
 
-subroutine all_gauss_r12_big_mat(big_mat)
+subroutine gauss_int_mu_r1(big_mat)
  implicit none
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -49,7 +53,7 @@ subroutine all_gauss_r12_big_mat(big_mat)
  double precision, allocatable :: a_mat(:,:,:)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
 
- print*,'computing all_gauss_r12_big_mat ...'
+ print*,'computing gauss_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
 
@@ -69,10 +73,10 @@ subroutine all_gauss_r12_big_mat(big_mat)
                    ,gauss_ij_rk(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
 
   call wall_time(wall1)
-  print*,'wall time for all_gauss_r12_big_mat ',wall1 - wall0   
+  print*,'wall time for gauss_int_mu_r1 ',wall1 - wall0   
 end
 
-subroutine all_erf_r12_sq_big_mat(big_mat)
+subroutine erf_sq_int_mu_r1(big_mat)
  implicit none
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -85,7 +89,7 @@ subroutine all_erf_r12_sq_big_mat(big_mat)
  double precision, allocatable :: a_mat(:,:,:)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
 
- print*,'computing all_erf_r12_sq_big_mat ...'
+ print*,'computing erf_sq_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
 
@@ -105,10 +109,10 @@ subroutine all_erf_r12_sq_big_mat(big_mat)
                    ,erf_mu_squared_ij_rk(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
 
   call wall_time(wall1)
-  print*,'wall time for all_erf_r12_sq_big_mat ',wall1 - wall0   
+  print*,'wall time for erf_sq_int_mu_r1 ',wall1 - wall0   
 end
 
-subroutine all_nabla_mu_r1_sq_big_mat(big_mat)
+subroutine gauss_sq_int_mu_r1(big_mat)
  implicit none
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -121,7 +125,7 @@ subroutine all_nabla_mu_r1_sq_big_mat(big_mat)
  double precision, allocatable :: a_mat(:,:,:)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
 
- print*,'computing all_nabla_mu_r1_sq_big_mat ...'
+ print*,'computing gauss_sq_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
 
@@ -144,10 +148,10 @@ subroutine all_nabla_mu_r1_sq_big_mat(big_mat)
                     ,gauss_2_ij_rk(1,1,1),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
 
   call wall_time(wall1)
-  print*,'wall time for all_nabla_mu_r1_sq_big_mat ',wall1 - wall0   
+  print*,'wall time for gauss_sq_int_mu_r1 ',wall1 - wall0   
 end
 
-subroutine all_nabla_mu_r1_cdot_r12_big_mat(big_mat)
+subroutine gauss_grad_scal_r12_int_mu_r1(big_mat)
  implicit none
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -159,7 +163,7 @@ subroutine all_nabla_mu_r1_cdot_r12_big_mat(big_mat)
  double precision :: weight,mu
  double precision, allocatable :: a_mat(:,:,:)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
- print*,'computing all_nabla_mu_r1_cdot_r12_big_mat ...'
+ print*,'computing gauss_grad_scal_r12_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
 
@@ -201,10 +205,10 @@ subroutine all_nabla_mu_r1_cdot_r12_big_mat(big_mat)
   enddo
 
   call wall_time(wall1)
-  print*,'wall time for all_nabla_mu_r1_cdot_r12_big_mat ',wall1 - wall0   
+  print*,'wall time for gauss_grad_scal_r12_int_mu_r1 ',wall1 - wall0   
 end
 
-subroutine all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(big_mat)
+subroutine erfc_gauss_int_mu_r1(big_mat)
  implicit none
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -216,7 +220,7 @@ subroutine all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(big_mat)
  double precision :: weight,mu
  double precision, allocatable :: a_mat(:,:,:)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
- print*,'computing all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat ...'
+ print*,'computing erfc_gauss_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
  allocate(a_mat(ao_num,ao_num,n_points_final_grid))
@@ -256,7 +260,7 @@ subroutine all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat(big_mat)
                      ,gauss_erfc_mu_r12_inv_r12_rk(1,1,1,m),n_points_final_grid,1.d0,big_mat,ao_num*ao_num)
   enddo
   call wall_time(wall1)
-  print*,'wall time for all_nabla_mu_r1_cdot_r12_erfc_r12_big_mat ',wall1 - wall0   
+  print*,'wall time for erfc_gauss_int_mu_r1 ',wall1 - wall0   
 
 end
 

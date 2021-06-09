@@ -22,7 +22,7 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_ao, (ao_num, ao_num, a
 
  deriv_mu_r_pot_chemist_ao = 0.d0
 
- call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
+! call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
  call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
  call non_hermit_r1(deriv_mu_r_pot_chemist_ao)
  call wall_time(wall1)
@@ -217,14 +217,13 @@ subroutine test_num_deriv_pot
  integer :: ipoint,i,j,k,l,m,jpoint
  double precision :: r1(3),r2(3),weight1,weight2,weight_tot,ao_prod_r2,ao_prod_r1
  double precision :: lapl_gamma,cst_lapl_gamma,func_gamma_nabla_r1
- double precision :: thr, sq_thr,gauss_r12_mu_r1,erf_mur1, cst_gamma_nabla_r1 , func_non_hermit_at_r1, cst_non_hermit
+ double precision :: thr, sq_thr,gauss_r12_mu_r1,erf_mur1, cst_gamma_nabla_r1 , func_non_hermit_at_r1
  double precision, allocatable :: accu(:,:,:,:)
  allocate(accu(ao_num, ao_num, ao_num, ao_num))
  thr = 1.d-15
  sq_thr = dsqrt(thr)
  cst_lapl_gamma = 0.25d0 * inv_sq_pi 
  cst_gamma_nabla_r1 = -1.d0 
- cst_non_hermit = 0.5d0
  accu = 0.d0
 
  do jpoint = 1, n_points_final_grid ! r2
@@ -243,7 +242,7 @@ subroutine test_num_deriv_pot
        if(dabs(ao_prod_r1).lt.sq_thr)cycle
         accu(i,k,j,l) += lapl_gamma(ipoint,jpoint,i,k,cst_lapl_gamma) * weight1 * ao_prod_r2
         accu(i,k,j,l) += func_gamma_nabla_r1(ipoint,jpoint,i,k,cst_gamma_nabla_r1) * weight1 * ao_prod_r2
-        accu(i,k,j,l) += func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l,cst_non_hermit) * weight1 * weight2
+        accu(i,k,j,l) += func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l) * weight1 * weight2
                          
       enddo
      enddo
@@ -372,16 +371,19 @@ double precision function func_gamma_nabla_r1(ipoint,jpoint,i,k,cst)
                + grad_mu_of_r_for_ints(3,ipoint,1) * ao_grad_prod(3) )   
 end
 
-double precision function func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l,cst)
+double precision function func_non_hermit_at_r1(ipoint,jpoint,i,k,j,l)
+ BEGIN_DOC
+! (erf(mu(r1)) - 1) d/dr12
+ END_DOC
  implicit none 
  integer, intent(in) :: ipoint
  integer, intent(in) :: jpoint
  integer, intent(in) :: i,k,j,l
- double precision, intent(in) :: cst
+ double precision :: cst
  include 'constants.include.F'
  double precision :: r12,r12_sq,r12_vec(3),r1(3),r2(3),mu,ao_grad_prod(3,4)
  integer :: m,kk
-
+ cst = 0.5d0
  func_non_hermit_at_r1 = 0.d0
  r1(:) = final_grid_points(:,ipoint)
 
@@ -426,3 +428,50 @@ double precision function gamma_r1(ipoint,jpoint,cst)
 
 
 end
+
+double precision function func_non_hermit_at_r1_bis(ipoint,jpoint,i,k,j,l,mu)
+ BEGIN_DOC
+! (erf(mu(r1)) - 1) d/dr12
+ END_DOC
+ implicit none 
+ integer, intent(in) :: ipoint
+ integer, intent(in) :: jpoint
+ integer, intent(in) :: i,k,j,l
+ double precision, intent(in) :: mu
+ double precision :: cst
+ include 'constants.include.F'
+ double precision :: r12,r12_sq,r12_vec(3),r1(3),r2(3),ao_grad_prod(3,4)
+ integer :: m,kk
+ cst = 0.5d0
+ func_non_hermit_at_r1_bis = 0.d0
+ r1(:) = final_grid_points(:,ipoint)
+
+ r2(:) = final_grid_points(:,jpoint)
+
+ r12_vec(1) = (r1(1) - r2(1))
+ r12_vec(2) = (r1(2) - r2(2))
+ r12_vec(3) = (r1(3) - r2(3))
+ r12_sq = r12_vec(1)*r12_vec(1) + r12_vec(2)*r12_vec(2) + r12_vec(3)*r12_vec(3)
+ r12 = dsqrt(r12_sq)
+ if(dabs(r12).lt.1.d-10)return
+ ao_grad_prod = 0.d0
+ do m = 1, 3
+  ao_grad_prod(m,1) = r1(m) * aos_grad_in_r_array_transp_bis(ipoint,i,m) * aos_in_r_array_transp(ipoint,k) & 
+                    * aos_in_r_array_transp(jpoint,j) * aos_in_r_array_transp(jpoint,l)
+  ao_grad_prod(m,2) = r2(m) * aos_grad_in_r_array_transp_bis(jpoint,j,m) * aos_in_r_array_transp(jpoint,l) & 
+                    * aos_in_r_array_transp(ipoint,i) * aos_in_r_array_transp(ipoint,k)
+  ao_grad_prod(m,3) = -r1(m) * aos_in_r_array_transp(ipoint,i) * aos_in_r_array_transp(ipoint,k) & 
+                    * aos_grad_in_r_array_transp_bis(jpoint,j,m) * aos_in_r_array_transp(jpoint,l)
+  ao_grad_prod(m,4) = -r2(m) * aos_in_r_array_transp(jpoint,j) * aos_in_r_array_transp(jpoint,l) & 
+                    * aos_grad_in_r_array_transp_bis(ipoint,i,m) * aos_in_r_array_transp(ipoint,k)
+ enddo
+
+ double precision :: func
+ func = (derf(mu*r12) - 1.d0)/r12
+ do kk = 1, 4
+  do m = 1, 3
+   func_non_hermit_at_r1_bis += cst * ao_grad_prod(m,kk) * func
+  enddo
+ enddo
+end
+

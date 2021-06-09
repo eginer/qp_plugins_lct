@@ -18,9 +18,9 @@ subroutine routine
  double precision :: accu_ao
  allocate(ints_erf(ao_num), big_array_1(ao_num,ao_num,ao_num,ao_num),big_array_2(ao_num,ao_num,ao_num,ao_num) )
  big_array_1 = 0.d0
-! call all_erf_mu_r1_lr_int_big_mat(big_array_1) ! erf(mu(r1)r12)/r12 mixed analytical/numerical
+! call lr_int_mu_r1(big_array_1) ! erf(mu(r1)r12)/r12 mixed analytical/numerical
  big_array_2 = 0.d0
- call all_erf_mu_r1_lr_int_big_mat_bis(big_array_2)  ! exact 1/r12 + erfc(mu(r1)r12)/r12 mixed analytical/numerical
+ call lr_int_mu_r1_bis(big_array_2)  ! exact 1/r12 + erfc(mu(r1)r12)/r12 mixed analytical/numerical
  accu_ao = 0.d0
  do l = 1, ao_num
   do j = 1, ao_num

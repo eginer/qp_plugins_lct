@@ -1,6 +1,6 @@
 
 
-subroutine all_erf_mu_r1_lr_int_big_mat(big_mat)
+subroutine lr_int_mu_r1(big_mat)
  implicit none
 ! BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -14,7 +14,7 @@ subroutine all_erf_mu_r1_lr_int_big_mat(big_mat)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
  
 
- print*,'computing all_erf_mu_r1_lr_int_big_mat ...'
+ print*,'computing lr_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
 
@@ -34,11 +34,11 @@ subroutine all_erf_mu_r1_lr_int_big_mat(big_mat)
                    ,erf_mu_r12_inv_r12_rk_extra(1,1,1),n_points_extra_final_grid,1.d0,big_mat,ao_num*ao_num)
 
  call wall_time(wall1)
- print*,'wall time for all_erf_mu_r1_lr_int_big_mat ',wall1 - wall0   
+ print*,'wall time for lr_int_mu_r1 ',wall1 - wall0   
 
 end
 
-subroutine all_erf_mu_r1_lr_int_big_mat_bis(big_mat)
+subroutine lr_int_mu_r1_bis(big_mat)
  implicit none
  BEGIN_DOC
 ! enters with the array big_mat and add the following integrals 
@@ -51,7 +51,7 @@ subroutine all_erf_mu_r1_lr_int_big_mat_bis(big_mat)
  double precision, allocatable :: a_mat(:,:,:)
  double precision, intent(inout) :: big_mat(ao_num,ao_num,ao_num,ao_num)
 
- print*,'computing all_erf_mu_r1_lr_int_big_mat ...'
+ print*,'computing lr_int_mu_r1 ...'
  call wall_time(wall0)
  double precision :: wall0,wall1
  double precision:: ints_coulomb(ao_num)
@@ -83,6 +83,6 @@ subroutine all_erf_mu_r1_lr_int_big_mat_bis(big_mat)
                    ,erfc_extra_grid_rk(1,1,1),n_points_extra_final_grid,1.d0,big_mat,ao_num*ao_num)
 
  call wall_time(wall1)
- print*,'wall time for all_erf_mu_r1_lr_int_big_mat ',wall1 - wall0   
+ print*,'wall time for lr_int_mu_r1 ',wall1 - wall0   
 
 end

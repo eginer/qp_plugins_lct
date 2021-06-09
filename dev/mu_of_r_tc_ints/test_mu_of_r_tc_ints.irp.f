@@ -18,5 +18,8 @@ program test_mu_of_r_tc_ints
 ! call test_num_scal_pot_mo
 ! call test_num_deriv_pot_mo
 ! call test_grad_jastrow
- call test_grad_jastrow_sq
+! call test_grad_jastrow_sq
+! call test_nabla_1_sq_ao
+! call test_non_hermit_ao
+ call test_lapl_j_ao
 end
