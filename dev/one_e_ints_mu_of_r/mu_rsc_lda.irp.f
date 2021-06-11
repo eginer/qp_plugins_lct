@@ -243,3 +243,64 @@ END_PROVIDER
  print*,'Time to provide mu_of_r_extra_grid_hf = ',wall1-wall0
  END_PROVIDER 
 
+
+
+subroutine get_grad_mu_lda(r,dx,mu_min,grad_mu)
+  implicit none
+  double precision, intent(in) :: r(3),dx,mu_min
+  double precision, intent(out):: grad_mu(3)
+  double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_erf
+  integer :: m
+  do m = 1, 3 ! compute grad mu
+   r1 = r
+   r1(m) += dx 
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   r1 = r 
+   r1(m) -= dx 
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   grad_mu(m) = (mu_plus - mu_minus)/(2.d0 * dx)
+  enddo
+end
+
+double precision function grad_mu_lda_comp(r,dx,mu_min,m,grad_mu)
+  implicit none
+  double precision, intent(in) :: r(3),dx,mu_min
+  integer, intent(in)          :: m
+  double precision, intent(out):: grad_mu
+  double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_erf
+   r1 = r
+   r1(m) += dx 
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   r1 = r 
+   r1(m) -= dx 
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   grad_mu = (mu_plus - mu_minus)/(2.d0 * dx)
+end
+
+subroutine get_lapl_mu_lda(r,dx,mu_min,lapl_mu)
+ implicit none
+  double precision, intent(in) :: r(3),dx,mu_min
+  double precision, intent(out):: lapl_mu(3)
+  double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_erf,mu
+  integer :: m
+  do m = 1, 3
+   r1 = r
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   r1(m) += 2.d0 * dx 
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   r1 = r 
+   r1(m) -= 2.d0 * dx 
+   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
+   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   lapl_mu(m) = (mu_plus + mu_minus - 2.d0 * mu)/(4.d0 * dx * dx)
+  enddo
+  lapl_mu = 0.d0
+end
+
+

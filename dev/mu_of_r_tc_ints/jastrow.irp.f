@@ -37,20 +37,6 @@ subroutine grad_r1_jastrow_mu(r1,r2,mu,grad_mu,jastrow,grad_jastrow)
  enddo
 end
 
-!subroutine lapl_r1_jastrow_bis(r1,r2,mu_in, dx, lapl)
-! implicit none
-! double precision, intent(in) :: r1(3),r2(3),mu_min,dx, grad_mu(3)
-! double precision, intent(out):: lapl(3)
-! double precision :: r(3), jastrow, jastrow_plus, jastrow_minus,jastrow_mu,rho_a_hf,rho_b_hf,mu_lda_erf ,mu
-! double precision :: grad_jastrow(3)
-! integer :: m
-! do m = 1, 3
-!  call grad_r1_jastrow_mu(r,r2,mu,grad_mu,jastrow,grad_jastrow)
-! enddo
-! 
-!end
-
-
 subroutine lapl_r1_jastrow(r1,r2,mu_min,dx,lapl)
  implicit none
  double precision, intent(in) :: r1(3),r2(3),mu_min,dx
@@ -59,23 +45,23 @@ subroutine lapl_r1_jastrow(r1,r2,mu_min,dx,lapl)
  integer :: m
  do m = 1, 3 
   r = r1 
-  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-!   mu = mu_erf 
+!  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
+!  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_erf 
   jastrow = jastrow_mu(r,r2,mu)
 
   r = r1
   r(m) += 2.d0 * dx
-  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-!   mu = mu_erf 
+!  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
+!  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_erf 
   jastrow_plus = jastrow_mu(r,r2,mu)
 
   r = r1
   r(m) -= 2.d0 * dx
-  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-!   mu = mu_erf 
+!  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
+!  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_erf 
   jastrow_minus= jastrow_mu(r,r2,mu)
   
   lapl(m) = (jastrow_plus  + jastrow_minus  - 2.d0 * jastrow)/(4.d0 * dx * dx)
@@ -91,9 +77,9 @@ subroutine lapl_r2_jastrow(r1,r2,mu_min,dx,lapl)
  integer :: m
  do m = 1, 3 
   r = r2 
-  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-!   mu = mu_erf 
+!  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
+!  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_erf 
   jastrow = jastrow_mu(r1,r,mu)
 
   r = r2
@@ -404,10 +390,14 @@ subroutine test_lapl_j_ao
  double precision :: accu,get_ao_two_e_integral_eff_pot,get_ao_two_e_integral_erf
  provide scalar_mu_r_pot_chemist_ao 
  accu = 0.d0
- do i = 1, ao_num
-  do j = 1, ao_num
-   do k = 1, ao_num
-    do l = 1, ao_num
+! do i = 1, ao_num
+!  do j = 1, ao_num
+!   do k = 1, ao_num
+!    do l = 1, ao_num
+ do i = 1, 1
+  do j = 1, 1
+   do k = 1, 1
+    do l = 1, 2
      call get_num_ints_lapl_j(i,k,j,l,pure_num, comp_num, delta)
      tot = comp_num(1) + comp_num(2)  + comp_num(3) + comp_num(4)
       analy = scalar_mu_r_pot_chemist_ao(i,k,j,l)
@@ -445,7 +435,7 @@ subroutine get_num_ints_lapl_j(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, delta)
  double precision :: jastrow,grad_jastrow(3),jastrow_plus,jastrow_minus, lapl_jastrow_sq_anal
  double precision :: accu,jastrow_mu, lapl_r1_jast, lapl_r2_jast,lapl_tot_jast
  double precision :: nabla_r12_bis,nabla_sq_term_general,erf_mu_sq_general,lapl_j(3)
- double precision :: contrib(4),gauss_mu_r12,derf_mu_x
+ double precision :: contrib(4),gauss_mu_r12,derf_mu_x,gauss_grad_mu_r1,grad_gamma_r1
  do l = 7, 7
   dx = 10.d0**(-l)
   mu_min = mu_erf
@@ -480,85 +470,32 @@ subroutine get_num_ints_lapl_j(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, delta)
      do m = 1, 3
       lapl_r2_jast -= 0.5d0 * lapl_j(m)
      enddo
-!     print*,lapl_r1_jast, lapl_r2_jast, dabs(lapl_r1_jast - lapl_r2_jast)
 
      lapl_tot_jast = lapl_r1_jast + lapl_r2_jast +1.d0/r12 
      pure_num += lapl_tot_jast * ao_prod_r1 * ao_prod_r2
      contrib = 0.d0
      contrib(1) = derf_mu_x(mu,r12)
      contrib(2) = gauss_mu_r12(r12,mu)
-!     contrib(3) = 
-!     contrib(4) = 
+!     contrib(3) = gauss_grad_mu_r1(r1,r2,mu,grad_mu)
+!     contrib(4) = -0.5d0 * grad_gamma_r1(r1,r2,mu,grad_mu, dx,mu_min)
      comp_num(1) += contrib(1) * ao_prod_r1 * ao_prod_r2 
      comp_num(2) += contrib(2) * ao_prod_r1 * ao_prod_r2 
      comp_num(3) += contrib(3) * ao_prod_r1 * ao_prod_r2  
      comp_num(4) += contrib(4) * ao_prod_r1 * ao_prod_r2  
 
      lapl_jastrow_sq_anal = contrib(1) + contrib(2) + contrib(3) + contrib(4)
+!     if(dabs(lapl_tot_jast - lapl_jastrow_sq_anal)/dabs(lapl_tot_jast).gt.1.d-3)then
+!      print*,'r1,r2'
+!      print*,r1
+!      print*,r2
+!      print*,ipoint,jpoint
+!      print*,lapl_tot_jast,lapl_jastrow_sq_anal,dabs(lapl_tot_jast - lapl_jastrow_sq_anal)
+!     endif
      delta    += dabs(lapl_tot_jast - lapl_jastrow_sq_anal) * ao_prod_r1 * ao_prod_r2
    enddo
   enddo
  enddo
 end
-
-subroutine get_lapl_mu_lda(r,dx,mu_min,lapl_mu)
- implicit none
-  double precision, intent(in) :: r(3),dx,mu_min
-  double precision, intent(out):: lapl_mu(3)
-  double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_erf,mu
-  integer :: m
-  do m = 1, 3
-   r1 = r
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   r1(m) += 2.d0 * dx 
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   r1 = r 
-   r1(m) -= 2.d0 * dx 
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   lapl_mu(m) = (mu_plus + mu_minus - 2.d0 * mu)/(4.d0 * dx * dx)
-  enddo
-end
-
-
-subroutine get_grad_mu_lda(r,dx,mu_min,grad_mu)
-  implicit none
-  double precision, intent(in) :: r(3),dx,mu_min
-  double precision, intent(out):: grad_mu(3)
-  double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_erf
-  integer :: m
-  do m = 1, 3 ! compute grad mu
-   r1 = r
-   r1(m) += dx 
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   r1 = r 
-   r1(m) -= dx 
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   grad_mu(m) = (mu_plus - mu_minus)/(2.d0 * dx)
-  enddo
-end
-
-double precision function grad_mu_lda_comp(r,dx,mu_min,m,grad_mu)
-  implicit none
-  double precision, intent(in) :: r(3),dx,mu_min
-  integer, intent(in)          :: m
-  double precision, intent(out):: grad_mu
-  double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_erf
-   r1 = r
-   r1(m) += dx 
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   r1 = r 
-   r1(m) -= dx 
-   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-   mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
-   grad_mu = (mu_plus - mu_minus)/(2.d0 * dx)
-end
-
 
 double precision function nabla_sq_term_general(r1,r2,mu,grad_mu)
  implicit none
@@ -643,6 +580,67 @@ subroutine gamma_at_r1(r1,r2,mu,grad_mu,vec)
  vec = grad_mu * cst 
 end
 
+double precision function gamma_scal_at_r1(r1,r2,mu)
+ implicit none
+ double precision, intent(in) :: r1(3), r2(3), mu
+ double precision :: r12
+ integer :: m
+ r12 = 0.d0
+ do m = 1, 3
+  r12 += (r1(m) - r2(m))*(r1(m) - r2(m))
+ enddo
+ include 'constants.include.F'
+ gamma_scal_at_r1 = 0.5d0 * inv_sq_pi /(mu*mu) * dexp(-mu*mu*r12)
+end
+
+double precision function gauss_grad_mu_r1(r1,r2,mu,grad_mu)
+ implicit none
+ double precision, intent(in) :: r1(3), r2(3), mu, grad_mu(3)
+ include 'constants.include.F'
+ double precision :: cst,r12,r12_vec(3)
+ integer :: m
+ r12 = 0.d0
+ do m = 1, 3
+  r12_vec(m) = r1(m) - r2(m)
+  r12 += r12_vec(m) * r12_vec(m) 
+ enddo
+ cst = 0.5d0 * inv_sq_pi * dexp(-mu*mu*r12)
+ gauss_grad_mu_r1 = 0.d0
+ do m = 1, 3
+  gauss_grad_mu_r1 += r12_vec(m) * grad_mu(m)
+ enddo
+ gauss_grad_mu_r1 *= cst 
+end
+
+
+double precision function grad_gamma_r1(r1,r2,mu, grad_mu, dx,mu_min)
+ implicit none
+ double precision, intent(in) :: r1(3), r2(3), mu, grad_mu(3), dx, mu_min
+ double precision :: r(3), gamma_scal_at_r1, mu_lda_erf, rho_a_hf,rho_b_hf
+ double precision :: deriv_f(3), lapl_mu(3), f_p, f_m, mu_p, mu_m,f
+ integer :: m
+ f = gamma_scal_at_r1(r1,r2,mu)
+ do m = 1, 3
+  r = r1
+  r(m) += dx
+  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
+  mu_p = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  f_p = gamma_scal_at_r1(r,r2,mu_p)
+
+  r = r1
+  r(m) -= dx
+  call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
+  mu_m = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  f_m = gamma_scal_at_r1(r,r2,mu_m)
+
+  deriv_f(m) = (f_p - f_m)/(2.d0 *dx)
+ enddo
+ call get_lapl_mu_lda(r1,dx,mu_min,lapl_mu)
+ grad_gamma_r1 = 0.d0
+ do m = 1, 3
+  grad_gamma_r1 += deriv_f(m) * grad_mu(m) + f * lapl_mu(m)
+ enddo
+end
 
 double precision function gauss_mu_r12(r12,mu)
  implicit none

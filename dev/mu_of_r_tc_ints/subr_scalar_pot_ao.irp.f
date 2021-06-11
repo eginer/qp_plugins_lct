@@ -22,7 +22,9 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_chemist_ao, (ao_num, ao_num, 
 !! !call lr_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! other approch for erf(mu(r1) r12)/r12 
  call lr_int_mu_r1_bis(scalar_mu_r_pot_chemist_ao)! Long range interaction erf(mu(r1) r12)/r12
  call gauss_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! Gaussian e^{(-mu(r1) r12)^2}
-! call gauss_grad_scal_r12_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{(-mu(r1) r12)^2} r12 . \grad mu(r1)
+ call gauss_grad_scal_r12_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{(-mu(r1) r12)^2} r12 . \grad mu(r1)
+
+ call lapl_gamm_r1(scalar_mu_r_pot_chemist_ao)
 
 !!! (Nabla of Jastrow)^2
 ! call erf_sq_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! erf(mu(r1) r12)^2
@@ -171,7 +173,7 @@ subroutine gauss_grad_scal_r12_int_mu_r1(big_mat)
 
 ! ! + 1/(2 * sqrt(pi)) e^{-(\mu(r1)r12)^2} (r_1 - r_2) . \nabla_1 \mu(r1)
   double precision :: inv_2_sqpi,r1(3)
-  inv_2_sqpi = -0.5d0 * inv_sq_pi
+  inv_2_sqpi = 0.5d0 * inv_sq_pi
   do m = 1, 3 
    ! first part : 1/(2 * sqrt(pi)) e^{-(\mu(r1)r12)^2} * x1 \deriv{x1} \mu(r1) 
    do ipoint = 1, n_points_final_grid
