@@ -20,7 +20,7 @@
   if(damped_mu_of_r)then
    mu = damped_mu(mu_tmp,mu_min)
   else
-   mu = mu_tmp
+   mu = max(mu_tmp,mu_of_r_min)
   endif
   mu_of_r_extra_grid_lda(ipoint,1) = mu
 
@@ -59,7 +59,7 @@ END_PROVIDER
   if(damped_mu_of_r)then
    mu = damped_mu(mu_tmp,mu_min)
   else
-   mu = mu_tmp
+   mu = max(mu_tmp,mu_of_r_min)
   endif
 
   mu_of_r_lda(ipoint,1) = mu
@@ -73,6 +73,9 @@ END_PROVIDER
    call get_grad_damped_mu_lda(r,dx,mu_min,grad_mu)
   else
    call get_grad_mu_lda(r,dx,grad_mu)
+   if(mu_tmp.lt.mu)then
+    grad_mu = 0.d0
+   endif
   endif
   grad_mu_of_r_lda(:,ipoint,1) = grad_mu(:)
 

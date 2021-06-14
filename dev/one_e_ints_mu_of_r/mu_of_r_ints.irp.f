@@ -11,7 +11,8 @@
  ! mu(r) and its gradient for evaluation f integrals for the TC hamiltonian
  END_DOC
  integer :: ipoint,istate,mm
- double precision :: wall0,wall1
+ double precision :: wall0,wall1,mu_max
+ mu_max = 1.d-4
  print*,'providing mu_of_r ...'
  call wall_time(wall0)
 
@@ -32,7 +33,7 @@
      print*,'which does not correspond to any of the options for such keyword'
      stop
     endif
-
+    mu_of_r_for_ints(ipoint,istate) = max(mu_of_r_for_ints(ipoint,istate),mu_max)
     inv_2_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**2
     inv_4_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**4
     do mm = 1, 3
@@ -67,8 +68,9 @@
  !
  ! mu(r) and its gradient for evaluation f integrals for the TC hamiltonian
  END_DOC
- integer :: ipoint,istate,mm
- double precision :: wall0,wall1
+ integer :: ipoint,istate,mm,mu_tmp
+ double precision :: wall0,wall1,mu_max
+ mu_max = 1.d-4
  print*,'providing mu_of_r_extra_grid ...'
  call wall_time(wall0)
 
@@ -83,11 +85,12 @@
     else if(mu_of_r_tc_ints.EQ."lda")then
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_lda(ipoint,istate)
     else 
-     print*,'you requested the following mu_of_r_extra_grid_tc_ints'
+     print*,'you requested the following mu_of_r_extra_grid_for_ints'
      print*,mu_of_r_tc_ints
      print*,'which does not correspond to any of the options for such keyword'
      stop
     endif
+    mu_of_r_extra_grid_for_ints(ipoint,istate) = max(mu_of_r_extra_grid_for_ints(ipoint,istate),mu_max)
    enddo
   enddo
  else
