@@ -35,17 +35,17 @@
     endif
 
  !!!!!!!!!!!!!!!!!!!!!!!!!!!
-    mu_of_r_for_ints(ipoint,istate) = mu_erf
+!    mu_of_r_for_ints(ipoint,istate) = mu_erf
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!
     inv_2_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**2
     inv_4_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**4
 !
-    do mm = 1, 3
-     grad_mu_of_r_transp_for_ints(ipoint,istate,mm) = 0.d0
-    enddo
 !    do mm = 1, 3
-!     grad_mu_of_r_transp_for_ints(ipoint,istate,mm) = grad_mu_of_r_for_ints(mm,ipoint,istate)
+!     grad_mu_of_r_transp_for_ints(ipoint,istate,mm) = 0.d0
 !    enddo
+    do mm = 1, 3
+     grad_mu_of_r_transp_for_ints(ipoint,istate,mm) = grad_mu_of_r_for_ints(mm,ipoint,istate)
+    enddo
 
     grad_sq_mu_of_r_for_ints(ipoint,istate) = 0.d0
     do mm = 1, 3
@@ -97,7 +97,7 @@
      print*,'which does not correspond to any of the options for such keyword'
      stop
     endif
-    mu_of_r_extra_grid_for_ints(ipoint,istate) = mu_erf
+!    mu_of_r_extra_grid_for_ints(ipoint,istate) = mu_erf
    enddo
   enddo
  else

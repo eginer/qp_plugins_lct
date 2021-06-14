@@ -22,4 +22,5 @@ program test_mu_of_r_tc_ints
 ! call test_nabla_1_sq_ao
 ! call test_non_hermit_ao
  call test_lapl_j_ao
+! call test_grad_gamma_r1
 end

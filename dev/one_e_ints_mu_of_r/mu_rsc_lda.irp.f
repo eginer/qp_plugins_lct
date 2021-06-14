@@ -10,7 +10,7 @@
  double precision :: elec_a,elec_b,grad_mu(3)
  double precision :: mu_plus, mu_minus, r(3),dx,mu_lda_erf,mu_min
  mu_min = mu_erf
- dx = 1.d-7
+ dx = 1.d-5
  average_mu_lda = 0.d0
  elec_a = 0.d0
  elec_b = 0.d0
@@ -61,7 +61,7 @@ end
  average_mu_rs_c    = 0.d0
  double precision :: elec_a,elec_b
  double precision :: mu_plus, mu_minus, r(3),dx,mu_lda
- dx = 1.d-7
+ dx = 1.d-5
  elec_a = 0.d0
  elec_b = 0.d0
  do ipoint = 1, n_points_final_grid
@@ -163,7 +163,7 @@ end
  average_mu_rs_c    = 0.d0
  double precision :: elec_a,elec_b,r(3)
  double precision :: mu_plus, mu_minus, dx,mu_lda
- dx = 1.d-7
+ dx = 1.d-5
  elec_a = 0.d0
  elec_b = 0.d0
  do ipoint = 1, n_points_extra_final_grid
@@ -188,7 +188,7 @@ END_PROVIDER
  double precision :: cst_rs,alpha_rs
  double precision :: elec_a,elec_b
  double precision :: mu_plus, mu_minus, r(3),dx,mu_lda_erf,mu_min
- dx = 1.d-7
+ dx = 1.d-5
  elec_a = 0.d0
  elec_b = 0.d0
  mu_min = mu_erf
@@ -291,13 +291,17 @@ subroutine get_lapl_mu_lda(r,dx,mu_min,lapl_mu)
    r1 = r
    call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
    mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+
+   r1 = r
    r1(m) += 2.d0 * dx 
    call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
    mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+
    r1 = r 
    r1(m) -= 2.d0 * dx 
    call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
    mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+
    lapl_mu(m) = (mu_plus + mu_minus - 2.d0 * mu)/(4.d0 * dx * dx)
   enddo
   lapl_mu = 0.d0

@@ -22,7 +22,7 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_ao, (ao_num, ao_num, a
 
  deriv_mu_r_pot_chemist_ao = 0.d0
 
-! call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
+ call lapl_gamm_r1(deriv_mu_r_pot_chemist_ao)
  call gamma_nabla_r1(deriv_mu_r_pot_chemist_ao)
  call non_hermit_r1(deriv_mu_r_pot_chemist_ao)
  call wall_time(wall1)
