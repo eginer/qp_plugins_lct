@@ -42,10 +42,10 @@ subroutine lapl_r1_jastrow_bis(r1,r2,mu_min,dx,lapl)
  double precision, intent(in) :: r1(3),r2(3),mu_min,dx
  double precision, intent(out):: lapl(3)
  double precision :: r(3), grad_mu(3), jastrow, grad_jastrow_p(3), grad_jastrow_m(3)
- double precision :: mu,rho_a_hf,rho_b_hf,mu_lda_erf, grad_mu_r1(3)
+ double precision :: mu,rho_a_hf,rho_b_hf,mu_lda_damped, grad_mu_r1(3)
  integer :: m
  lapl = 0.d0
- call get_grad_mu_lda(r1,dx,mu_min,grad_mu_r1)
+ call get_grad_damped_mu_lda(r1,dx,mu_min,grad_mu_r1)
  do m = 1, 3
   r = r1
   r(m) += dx
@@ -53,10 +53,10 @@ subroutine lapl_r1_jastrow_bis(r1,r2,mu_min,dx,lapl)
    grad_mu = 0.d0
    mu = mu_erf 
   else
-   call get_grad_mu_lda(r,dx,mu_min,grad_mu)
+   call get_grad_damped_mu_lda(r,dx,mu_min,grad_mu)
 !   grad_mu = grad_mu_r1
    call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   endif
   call grad_r1_jastrow_mu(r,r2,mu,grad_mu,jastrow,grad_jastrow_p)
 
@@ -66,10 +66,10 @@ subroutine lapl_r1_jastrow_bis(r1,r2,mu_min,dx,lapl)
    grad_mu = 0.d0
    mu = mu_erf 
   else
-   call get_grad_mu_lda(r,dx,mu_min,grad_mu)
+   call get_grad_damped_mu_lda(r,dx,mu_min,grad_mu)
 !   grad_mu = grad_mu_r1
    call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   endif
   call grad_r1_jastrow_mu(r,r2,mu,grad_mu,jastrow,grad_jastrow_m)
   lapl(m) = (grad_jastrow_p(m) - grad_jastrow_m(m)) / (2.d0 * dx)
@@ -81,16 +81,16 @@ subroutine lapl_r2_jastrow_bis(r1,r2,mu_min,dx,lapl)
  double precision, intent(in) :: r1(3),r2(3),mu_min,dx
  double precision, intent(out):: lapl(3)
  double precision :: r(3), grad_mu(3), jastrow, grad_jastrow_p(3), grad_jastrow_m(3)
- double precision :: mu,rho_a_hf,rho_b_hf,mu_lda_erf
+ double precision :: mu,rho_a_hf,rho_b_hf,mu_lda_damped
  integer :: m
  lapl = 0.d0
  if(constant_mu)then
   mu = mu_erf
   grad_mu = 0.d0
  else
-  call get_grad_mu_lda(r1,dx,mu_min,grad_mu)
+  call get_grad_damped_mu_lda(r1,dx,mu_min,grad_mu)
   call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
  endif
  do m = 1, 3
   r = r2
@@ -108,7 +108,7 @@ subroutine lapl_r1_jastrow(r1,r2,mu_min,dx,lapl)
  implicit none
  double precision, intent(in) :: r1(3),r2(3),mu_min,dx
  double precision, intent(out):: lapl(3)
- double precision :: r(3), jastrow, jastrow_plus, jastrow_minus,jastrow_mu,rho_a_hf,rho_b_hf,mu_lda_erf ,mu
+ double precision :: r(3), jastrow, jastrow_plus, jastrow_minus,jastrow_mu,rho_a_hf,rho_b_hf,mu_lda_damped ,mu
  integer :: m
  do m = 1, 3 
   r = r1 
@@ -116,7 +116,7 @@ subroutine lapl_r1_jastrow(r1,r2,mu_min,dx,lapl)
   if(constant_mu)then
    mu = mu_erf
   else
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   endif
   jastrow = jastrow_mu(r,r2,mu)
 
@@ -126,7 +126,7 @@ subroutine lapl_r1_jastrow(r1,r2,mu_min,dx,lapl)
   if(constant_mu)then
    mu = mu_erf
   else
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   endif
   jastrow_plus = jastrow_mu(r,r2,mu)
 
@@ -136,7 +136,7 @@ subroutine lapl_r1_jastrow(r1,r2,mu_min,dx,lapl)
   if(constant_mu)then
    mu = mu_erf
   else
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   endif
   jastrow_minus= jastrow_mu(r,r2,mu)
   
@@ -149,7 +149,7 @@ subroutine lapl_r2_jastrow(r1,r2,mu_min,dx,lapl)
  implicit none
  double precision, intent(in) :: r1(3),r2(3),mu_min,dx
  double precision, intent(out):: lapl(3)
- double precision :: r(3), jastrow, jastrow_plus, jastrow_minus,jastrow_mu,rho_a_hf,rho_b_hf,mu_lda_erf ,mu
+ double precision :: r(3), jastrow, jastrow_plus, jastrow_minus,jastrow_mu,rho_a_hf,rho_b_hf,mu_lda_damped ,mu
  integer :: m
  do m = 1, 3 
   r = r2 
@@ -157,7 +157,7 @@ subroutine lapl_r2_jastrow(r1,r2,mu_min,dx,lapl)
   if(constant_mu)then
    mu = mu_erf
   else
-   mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+   mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   endif
   jastrow = jastrow_mu(r1,r,mu)
 
@@ -202,7 +202,7 @@ subroutine test_grad_jastrow
  include 'constants.include.F'
  integer :: ipoint,i,j,k,l,m,jpoint
  double precision :: r1(3),r2(3),weight1,weight2,weight_tot,ao_prod_r2,ao_prod_r1,mu_min,r12
- double precision :: mu_lda_erf,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
+ double precision :: mu_lda_damped,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
  double precision :: jastrow,grad_jastrow(3),jastrow_plus,jastrow_minus, grad_jastrow_num(3)
  double precision :: accu(3),jastrow_mu,r1_scal,r2_scal
  do l = 7, 7
@@ -222,28 +222,28 @@ subroutine test_grad_jastrow
      r1(:) = final_grid_points(:,ipoint) 
      r1(m) += dx 
      call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+     mu_plus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
      r1(:) = final_grid_points(:,ipoint) 
      r1(m) -= dx 
      call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+     mu_minus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
      grad_mu(m) = (mu_plus - mu_minus)/(2.d0 * dx)
     enddo
     r1(:) = final_grid_points(:,ipoint) 
     call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-    mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+    mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
     call grad_r1_jastrow_mu(r1,r2,mu,grad_mu,jastrow,grad_jastrow)
     do m = 1, 3
      r1(:) = final_grid_points(:,ipoint) 
      r1(m) += dx 
      call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_plus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+     mu_plus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
      jastrow_plus = jastrow_mu(r1,r2,mu_plus)
  
      r1(:) = final_grid_points(:,ipoint) 
      r1(m) -= dx 
      call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_minus = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+     mu_minus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
      jastrow_minus = jastrow_mu(r1,r2,mu_minus)
      grad_jastrow_num(m) = (jastrow_plus - jastrow_minus) / (2.d0 * dx)
     enddo
@@ -306,7 +306,7 @@ subroutine get_num_ints_j_sq(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, delta)
  double precision, intent(out):: pure_num, comp_num(3),delta
  integer :: ipoint,i,j,k,l,m,jpoint
  double precision :: r1(3),r2(3),weight1,weight2,weight_tot,ao_prod_r2,ao_prod_r1,mu_min,r12
- double precision :: mu_lda_erf,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
+ double precision :: mu_lda_damped,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
  double precision :: jastrow,grad_jastrow(3),jastrow_plus,jastrow_minus, grad_jastrow_sq_anal
  double precision :: accu,jastrow_mu, grad_r1_jastrow_sq
  double precision :: nabla_r12_bis,nabla_sq_term_general,erf_mu_sq_general
@@ -401,7 +401,7 @@ subroutine get_num_ints_j_non_hermit(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, del
  integer :: ipoint,i,j,k,l,m,jpoint
  double precision :: r1(3),r2(3),weight1,weight2,weight_tot,mu_min,r12
  double precision :: ao_prod_r2,ao_prod_r1,ao_grad_r1(3), ao_grad_r2(3)
- double precision :: mu_lda_erf,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
+ double precision :: mu_lda_damped,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
  double precision :: jastrow,grad_jastrow_r1(3),grad_jastrow_r2(3),jastrow_plus,jastrow_minus
  double precision :: accu,jastrow_mu, grad_r1_jastrow_sq
  double precision :: nabla_r12_bis,nabla_sq_term_general,erf_mu_sq_general, non_hermit_anal,non_hermit_num
@@ -513,7 +513,7 @@ subroutine get_num_ints_lapl_j(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, delta)
  double precision, intent(out):: pure_num, comp_num(4),delta
  integer :: ipoint,i,j,k,l,m,jpoint
  double precision :: r1(3),r2(3),weight1,weight2,weight_tot,ao_prod_r2,ao_prod_r1,mu_min,r12
- double precision :: mu_lda_erf,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
+ double precision :: mu_lda_damped,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
  double precision :: jastrow,grad_jastrow(3),jastrow_plus,jastrow_minus, lapl_jastrow_sq_anal
  double precision :: accu,jastrow_mu, lapl_r1_jast, lapl_r2_jast,lapl_tot_jast
  double precision :: nabla_r12_bis,nabla_sq_term_general,erf_mu_sq_general,lapl_j(3)
@@ -777,7 +777,7 @@ end
 double precision function grad_gamma_r1(r1,r2,mu, grad_mu, dx,mu_min)
  implicit none
  double precision, intent(in) :: r1(3), r2(3), mu, grad_mu(3), dx, mu_min
- double precision :: r(3), gamma_scal_at_r1, mu_lda_erf, rho_a_hf,rho_b_hf
+ double precision :: r(3), gamma_scal_at_r1, mu_lda_damped, rho_a_hf,rho_b_hf
  double precision :: deriv_f(3), lapl_mu(3), f_p, f_m, mu_p, mu_m,f
  integer :: m
  f = gamma_scal_at_r1(r1,r2,mu)
@@ -785,13 +785,13 @@ double precision function grad_gamma_r1(r1,r2,mu, grad_mu, dx,mu_min)
   r = r1
   r(m) += dx
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu_p = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  mu_p = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   f_p = gamma_scal_at_r1(r,r2,mu_p)
 
   r = r1
   r(m) -= dx
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu_m = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  mu_m = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   f_m = gamma_scal_at_r1(r,r2,mu_m)
 
   deriv_f(m) = (f_p - f_m)/(2.d0 *dx)
@@ -808,7 +808,7 @@ double precision function gamma_r1_comp(r1,r2,mu,mu_min,dx,m)
  double precision, intent(in) :: r1(3), r2(3), mu, mu_min,dx
  integer, intent(in) :: m
  double precision :: grad_mu_r1(3),gamma_scal_at_r1
- call get_grad_mu_lda(r1,dx,mu_min,grad_mu_r1)
+ call get_grad_damped_mu_lda(r1,dx,mu_min,grad_mu_r1)
  gamma_r1_comp = gamma_scal_at_r1(r1,r2,mu) * grad_mu_r1(m)
 
 end
@@ -817,19 +817,19 @@ double precision function grad_gamma_r1_bis(r1,r2, dx,mu_min)
  implicit none
  double precision, intent(in) :: r1(3), r2(3), dx, mu_min
  integer :: m
- double precision :: r(3),gamma_r1_comp, gamma_m, gamma_p,mu,rho_a_hf,rho_b_hf,mu_lda_erf
+ double precision :: r(3),gamma_r1_comp, gamma_m, gamma_p,mu,rho_a_hf,rho_b_hf,mu_lda_damped
  grad_gamma_r1_bis = 0.d0
  do m = 1, 3
   r = r1
   r(m) += dx
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   gamma_p = gamma_r1_comp(r,r2,mu,mu_min,dx,m)
 
   r = r1
   r(m) -= dx
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  mu = mu_lda_erf(rho_a_hf,rho_b_hf,mu_min)
+  mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
   gamma_m = gamma_r1_comp(r,r2,mu,mu_min,dx,m)
 
   grad_gamma_r1_bis += (gamma_p - gamma_m)/(2.d0 * dx)
