@@ -124,6 +124,30 @@ Similarly, as by definition $\deriv{\mur{1}}{x_2}{} = 0$, one obtains that
  \label{eq_grad_mur_r2}
  \deriv{}{x_2}{} u(r_{12};\mur{1}) = -\big(x_1 - x_2 \big)\frac{1 - \text{erf}(\mur{1} r_{12})}{2 r_{12}} .
 \end{equation}
+One can summarize the gradients of ${u}(r_{12},\mur{1})$ by the following formulas 
+\begin{equation}
+ \label{eq:nabla_1}
+ \nabla_1 u(r_{12};\mur{1})  = {\bf u_0}(r_{12},\mur{1}) + {\bf \gamma}(\br_1, r_{12}), 
+\end{equation}
+with 
+\begin{equation}
+ \label{eq:dev_u0}
+ {\bf u_0}(r_{12},\mur{1}) = u_0^x(r_{12},\mur{1}) {\bf e}_{x_1} + u_0^y(r_{12},\mur{1}) {\bf e}_{y_1} + u_0^z(r_{12},\mur{1}) {\bf e}_{z_1}, 
+\end{equation}
+\begin{equation}
+ \label{eq:dev_u0_x}
+ u_0^x(r_{12},\mur{1}) = \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2),
+\end{equation}
+and
+\begin{equation}
+ \label{eq:dev_gamma_1}
+ {\bf {\gamma}}(\br_1, r_{12}) = \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \nabla_1{\mur{1}},
+\end{equation}
+and equivalently for $\nabla_2 u(r_{12};\mur{1})$  
+\begin{equation}
+ \label{eq:nabla_2}
+ \nabla_2 u(r_{12};\mur{1}) = - {\bf u_0}(r_{12},\mur{1}).
+\end{equation}
 
 \subsection{Computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2 + \bigg( \nabla_2  u(r_{12};\mur{1})\bigg)^2$ }
 According to Eq. \eqref{eq:grad_mur_1} one has 
@@ -144,8 +168,8 @@ Therefore, the computation of $\big( \deriv{}{x_1}{} u(r_{12};\mur{1}) \big)^2$ 
 Therefore, the computation of $\bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2$ yields 
 \begin{equation}
  \begin{aligned}
-  \bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2  = &\frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4} 
-   +   \frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2 \\ 
+ & \bigg( \nabla_1  u(r_{12};\mur{1})\bigg)^2  = \frac{\bigg(1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)\bigg)^2}{4} \\
+ & +   \frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2 \\ 
    + & \nabla_1  \mur{1} \, \cdot \, \big( \br{}_1 - \br{}_2\big) \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{r_{12}} \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi}\mu(\bri{1})^2} 
  \end{aligned}
 \end{equation}
@@ -167,25 +191,28 @@ We need to compute the following quantity
 \begin{equation}
  \nabla_1 \cdot \nabla_1 u(r_{12};\mur{1}) + \nabla_2 \cdot \nabla_2 u(r_{12};\mur{1}).
 \end{equation}
-But one can notice that one can write 
+where $\nabla_1 u(r_{12};\mur{1}) $ and $\nabla_2 u(r_{12};\mur{1})$ are given by the formulas \eqref{eq:nabla_1} and \eqref{eq:nabla_2}, respectively. 
+Therefore one needs to compute 
 \begin{equation}
- \nabla_1 u(r_{12};\mur{1})  = {\bf u_0}(r_{12},\mur{1}) + {\bf \gamma}(\br_1, r_{12}), 
+ \begin{aligned}
+& \nabla_1 \cdot \nabla_1 u(r_{12};\mur{1}) + \nabla_2 \cdot \nabla_2 u(r_{12};\mur{1}) \\
+=& \nabla_1 \cdot \big( {\bf u_0}(r_{12},\mur{1}) + {\bf \gamma}(\br_1, r_{12}) \big) - \nabla_2 \cdot  {\bf u_0}(r_{12},\mur{1}). 
+ \end{aligned}
 \end{equation}
-with 
+The term in $\nabla_1 $ yields 
 \begin{equation}
- {\bf u_0}(r_{12},\mur{1}) = u_0^x(r_{12},\mur{1}) {\bf e}_{x_1} + u_0^y(r_{12},\mur{1}) {\bf e}_{y_1} + u_0^z(r_{12},\mur{1}) {\bf e}_{z_1}, 
+ \nabla_1 \cdot \big( {\bf u_0}(r_{12},\mur{1}) + {\bf \gamma}(\br_1, r_{12}) \big) = \nabla_1 \cdot  {\bf u_0}(r_{12},\mur{1}) + \nabla_1 \cdot {\bf \gamma}(\br_1, r_{12}),  
 \end{equation}
+
+Therefore, when adding  the two derivatives on has that 
 \begin{equation}
- u_0^x(r_{12},\mur{1}) = \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}}\big( x_1 - x_2),
+ \label{eq:lapl_tot}
+ \begin{aligned}
+& \nabla_1 \cdot \nabla_1 u(r_{12};\mur{1}) + \nabla_2 \cdot \nabla_2 u(r_{12};\mur{1})   \\
+&= \nabla_1 \cdot  {\bf u_0}(r_{12},\mur{1}) - \nabla_2 \cdot {\bf u_0}(r_{12},\mur{1}) + \nabla_1 \cdot {\bf \gamma}(\br_1, r_{12}), 
+ \end{aligned}
 \end{equation}
-and
-\begin{equation}
- {\bf {\gamma}}(\br_1, r_{12}) = \frac{e^{-(\mu(\bri{1}) r_{12})^2}}{2 \sqrt{\pi} \mu(\bri{1})^2} \nabla_1{\mur{1}}.
-\end{equation}
-Similarly one has 
-\begin{equation}
- \nabla_2 u(r_{12};\mur{1}) = - {\bf u_0}(r_{12},\mur{1}).
-\end{equation}
+
 The derivative of $u_0^x(r_{12},\mur{1})$ with respect to $x_1$ yields 
 \begin{equation}
  \begin{aligned}
@@ -195,25 +222,16 @@ The derivative of $u_0^x(r_{12},\mur{1})$ with respect to $x_1$ yields
 \end{equation}
 and correspondingly for $x_2$ 
 \begin{equation}
- \deriv{}{x_2}{} u_0^x(r_{12},\mur{1}) = \deriv{}{x_2}{}\bigg|_{\mur{1}=cst} \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2          r_{12}}\big( x_1 - x_2).
+ \deriv{}{x_2}{} u_0^x(r_{12},\mur{1}) = \deriv{}{x_2}{}\bigg( \frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2          r_{12}}\big( x_1 - x_2)\bigg).
 \end{equation}
-Therefore, when adding  the two derivatives on has that 
-\begin{equation}
- \label{eq:lapl_tot}
- \begin{aligned}
-& \nabla_1 \cdot \nabla_1 u(r_{12};\mur{1}) + \nabla_2 \cdot \nabla_2 u(r_{12};\mur{1})   \\
-= &\nabla_1 \cdot \nabla_1 u(r_{12};\mur{1})\bigg|_{\mur{1}=cst} + \nabla_2 \cdot \nabla_2 u(r_{12};\mur{1}) \\
-+ &\deriv{}{\mur{1}}{}\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} (\br_1 - \br_2) \cdot \nabla_1 \mur{1} \\
-+& \nabla_1 \cdot {\bf \gamma}(\br_1, r_{12}). 
- \end{aligned}
-\end{equation}
-The first two terms of Eq. \eqref{eq:lapl_tot} yields exactly the same term potentials previously derived in Ref. \cite{Gin-JCP-21} but with $\mur{1}$ instead of $\mu$
+One can notice that 
 \begin{equation}
  \begin{aligned}
- & \nabla_1 \cdot \nabla_1 u(r_{12};\mur{1})\bigg|_{\mur{1}=cst} + \nabla_2 \cdot \nabla_2 u(r_{12};\mur{1})  \\ 
- =& 2 \times \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{r_{12}} - \frac{\mur{1}}{\sqrt{\pi}} e^{-\big(\mur{1} r_{12} \big)^2}  \bigg).
+& \nabla_1\bigg|_{\mur{1}=cst} {\bf u_0}(r_{12},\mur{1})  - \nabla_2 \cdot {\bf u_0}(r_{12},\mur{1}) \\
+ =& 2 \times \bigg( \frac{1 - \text{erf}(\mur{1} r_{12})}{r_{12}} - \frac{\mur{1}}{\sqrt{\pi}} e^{-\big(\mur{1} r_{12} \big)^2}  \bigg),
  \end{aligned}
 \end{equation}
+as it is the scalar potential obtained with the previously derived Jastrow factor but with $\mur{1}$ instead of $\mu$. 
 Then, as 
 \begin{equation}
  \deriv{}{\mu}{} \bigg(1 - \text{erf}\big(\mu r_{12} \big) \bigg) = - 2 \frac{r_{12}}{\sqrt{\pi}} e^{-\big( \mu r_{12}\big)^2},
@@ -224,10 +242,6 @@ the second term yields
  & \deriv{}{\mur{1}}{}\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 r_{12}} (\br_1 - \br_2) \cdot \nabla_1 \mur{1} \\
 =& -\frac{e^{-\big( \mur{1} r_{12}\big)^2}}{\sqrt{\pi}}(\br_1 - \br_2) \cdot \nabla_1 \mur{1}. 
  \end{aligned}
-\end{equation}
-The last term is then simply
-\begin{equation}
- \nabla_1 \cdot {\bf \gamma}(\br_1, r_{12}). 
 \end{equation}
 
 Eventually the computation of the Laplacian leads to 
@@ -281,28 +295,203 @@ Summing $\frac{1}{r_{12}} - \hat{K}(\bri{i},\bri{j})$ leads to
 with 
 \begin{equation}
  \begin{aligned}
- \tilde{\mathcal{W}}_{ee}(r_{ij},\mur{1})  =  \frac{\text{erf}(\mur{1} r_{ij})}{r_{ij}} + \frac{\mur{1}}{\sqrt{\pi}} e^{-\big(\mur{1} r_{ij} \big)^2} -      \frac{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{4}, 
+ \tilde{\mathcal{W}}_{ee}(r_{ij},\mur{1})  =  & \frac{\text{erf}(\mur{1} r_{ij})}{r_{ij}} 
+  + \frac{\mur{1}}{\sqrt{\pi}} e^{-\big(\mur{1} r_{ij} \big)^2} \\
+ & - \frac{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{4}, 
  \end{aligned}
 \end{equation}
 \begin{equation}
- \begin{aligned}                                                                                                                             
- \tilde{t}(r_{12},\mur{1}) =  \bigg( \text{erf}(\mur{1} r_{ij}) - 1\bigg) \deriv{}{r_{ij}}{}.
+ \begin{aligned}
+ \tilde{t}(r_{12},\mur{1}) =  \bigg( \text{erf}(\mur{1} r_{ij}) - 1\bigg) \deriv{}{r_{ij}}{},
+ \end{aligned}
+\end{equation}
+\begin{equation} 
+\begin{aligned}
+ \tilde{\mathcal{U}}(r_{ij},\mur{1}) = & -\frac{1}{2\sqrt{\pi}}\nabla_1 \mur{1} \cdot \big(\br_1 - \br_2 \big) 
+  e^{-\big( \mur{1} r_{12}\big)^2}\\ & \bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 \mu(\bri{1})^2 r_{12}} -1\bigg)
  \end{aligned}
 \end{equation}
 \begin{equation}
- \begin{aligned}                                                                                                                             
- \tilde{\mathcal{U}}(r_{ij},\mur{1}) = \frac{1}{2\sqrt{\pi}}\nabla_1 \mur{1} \cdot \big(\br_1 - \br_2 \big) 
-  e^{-\big( \mur{1} r_{12}\big)^2}\bigg(\frac{1 - \text{erf}\big(\mu(\bri{1}) r_{12} \big)}{2 \mu(\bri{1})^2 r_{12}} -1\bigg)
- \end{aligned}
-\end{equation}
-\begin{equation}
- \begin{aligned}                                                                                                                             
- \tilde{\mathcal{V}}(r_{ij},\mur{1}) = & \frac{1}{2}\bigg( \nabla_1 \cdot \gamma(\br_1, r_{12}) \bigg) + \gamma(\br_1, r_{12}) \cdot \nabla_1 
+ \begin{aligned}
+ \tilde{\mathcal{V}}(r_{ij},\mur{1}) = & -\frac{1}{2}\bigg( \nabla_1 \cdot \gamma(\br_1, r_{12}) \bigg) - \gamma(\br_1, r_{12}) \cdot \nabla_1 
 \\ 
-&+ \frac{1}{2}\frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2
+&- \frac{1}{2}\frac{e^{-2(\mu(\bri{1}) r_{12})^2}}{4 \pi \mu(\bri{1})^4} \bigg( \nabla_1  \mur{1}\bigg)^2
  \end{aligned}
 \end{equation}
 
+\section{Integrals computations}
+\subsection{Integrals of $\tilde{\mathcal{W}}_{ee}(r_{ij},\mur{1})$ }
+One needs to compute the integrals of that type
+\begin{equation}
+ \label{w_ee_ijkl}
+ \begin{aligned}
+ &\matelem{kl}{\tilde{\mathcal{W}}_{ee}(r_{ij},\mur{1})}{ij} \\ & = \int \text{d}\br_{1} \text{d}\br_{2} \phi_i(\br_1) \phi_k(\br_1) \tilde{\mathcal{W}}_{ee}(r_{ij},\mur{1}) \phi_i(\br_2) \phi_l(\br_2) \\
+ &\matelem{kl}{\frac{\text{erf}(\mur{1} r_{ij})}{r_{ij}}}{ij} 
+ + \matelem{kl}{\frac{\mur{1}}{\sqrt{\pi}} e^{-\big(\mur{1} r_{ij} \big)^2}}{ij} \\ 
+& - \frac{1}{4}\matelem{kl}{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{ij}.
+ \end{aligned}
+\end{equation}
+By defining the following integrals
+\begin{equation}
+ w_{jl}(\br,\mu) = \int \text{d}\br' \phi_j(\br') \phi_l(\br') \frac{\text{erf}(\mu |\br - \br' | )}{ |\br - \br' |},
+\end{equation}
+\begin{equation}
+ G_{jl}(\br,\alpha) = \int \text{d}\br' \phi_j(\br') \phi_l(\br') e^{-\big(\alpha |\br - \br' |\big)^2 } ,
+\end{equation}
+one can compute the two first integrals in Eq. \eqref{w_ee_ijkl} as 
+\begin{equation}
+ \matelem{kl}{\frac{\text{erf}(\mur{1} r_{ij})}{r_{ij}}}{ij} = \int \text{d}\br \phi_i(\br) \phi_k(\br) w_{jl}(\br,\mur{}), 
+\end{equation}
+\begin{equation}
+ \matelem{kl}{\frac{\mur{1}}{\sqrt{\pi}} e^{-\big(\mur{1} r_{ij} \big)^2}}{ij} = \int \text{d}\br \phi_i(\br) \phi_k(\br)\frac{\mur{}}{\sqrt{\pi}} G_{jl}(\br,(\mur{})^2). 
+\end{equation}
+
+The last term $\matelem{kl}{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{ij}$ can be computed as
+\begin{equation}
+ \label{eq:k_ijkl}
+ \begin{aligned}
+& \matelem{kl}{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{ij} \\ & = \int \dr{1} \dr{2} \phi_i(\bri{1}) \phi_j(\bri{2}) \big( g(r_{12},\mur{1}) \big)^2  \phi_k(\bri{1}) \phi_l(\bri{2}),  
+ \end{aligned}
+\end{equation}
+with 
+\begin{equation}
+ g(x, \mu)= 1 - \text{erf}( \mu x).
+\end{equation}
+To make integrals analytical, we first fit the function $\text{erfc}(x)$ with a simple Slater-Gaussian function 
+\begin{equation}
+ \text{erfc}(x) \approx h(x,\alpha,\beta,c)
+\end{equation}
+with 
+\begin{equation}
+ h(x,\alpha,\beta,c) = e^{-\alpha x - \beta x^2}
+\end{equation}
+and $\alpha=1.09529$ and $\beta = 0.756023$. 
+Then, by posing $y=\mu x$, one obtains 
+\begin{equation}
+ \label{fit_erf}
+ \begin{aligned}
+  g(x,\mu)  \approx & e^{-\alpha \mu x - \beta (\mu x)^2}\\ 
+        =& h(x,\alpha \mu, \beta \mu^2).
+ \end{aligned}
+\end{equation}
+Therefore, one can fit $g(x)^2$ as 
+\begin{equation}
+ \begin{aligned}
+ g(x,\mu)^2&= \bigg( 1 - \text{erf}(\mu x) \bigg)^2\\
+           &= \bigg( e^{-\alpha \mu x } e^{-\beta \mu^2 x^2}\bigg)^2 \\
+           &= e^{-2\alpha  \mu x } e^{-2 \beta \mu^2 x^2} \\
+           &= h(x,2 \alpha \mu, 2 \beta \mu^2).
+ \end{aligned}
+\end{equation}
+Then we fit the Slater function as a linear combination of Gaussians 
+\begin{equation}
+ e^{-X} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m X^2}. 
+\end{equation}
+In the present work, we use $N_s=20$ and the $\{c_m,\zeta_m\}$ parameters are reported in Table \ref{gauss_fit}.
+\begin{table}
+\label{gauss_fit}
+\caption{Set of coefficients $c_m$ and exponents $\zeta_m$ for the fit of $e^{-X}$}
+\begin{ruledtabular}
+\begin{tabular}{ll}
+ $\zeta_m$ & $c_m$ \\
+\hline                 
+   30573.77073         & 0.00338925525  \\
+   5608.452381         & 0.00536433869  \\
+   1570.956734         & 0.00818702846  \\
+   541.3978511         & 0.01202047655  \\
+   212.4346963         & 0.01711289568  \\
+   91.31444574         & 0.02376001022  \\
+   42.04087246         & 0.03229121736  \\
+   20.43200443         & 0.04303646818  \\
+   10.37775161         & 0.05624657578  \\
+   5.468807545         & 0.07192311571  \\
+   2.973735292         & 0.08949389001  \\
+   1.661441902         & 0.10727599240  \\
+   0.9505256082        & 0.12178961750  \\
+   0.5552868397        & 0.12740141870  \\
+   0.3304336002        & 0.11759168160  \\
+   0.1998230323        & 0.08953504394  \\
+   0.1224684076        & 0.05066721317  \\
+   0.07575825322       & 0.01806363869  \\
+   0.04690146243       & 0.00305632563  \\
+   0.02834749861       & 0.00013317513  \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+By posing $X=\gamma x$ one can fit any Slater function as
+\begin{equation}
+ e^{-\gamma x} = \sum_{m=1}^{N_s} c_m e^{-\zeta_m \gamma^2 x^2}. 
+\end{equation}
+Eventually, the function $g(x,\mu)^2$ is obtained as a linear combination of Gaussian
+\begin{equation}
+ g(x,\mu)^2 \approx \sum_{m=1}^{N_s} c_m e^{-2\mu^2\big(2 \alpha \zeta_m + \beta\big) x^2},
+\end{equation}
+which makes then the integrals analytical
+\begin{equation}
+ \begin{aligned}
+ \matelem{kl}{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{ij}  \approx \sum_{m=1}^{N_s} c_m &\int \dr{1} \dr{2}  \phi_i(\bri{1}) \phi_j(\bri{2}) \\ & \phi_k(\bri{1}) \phi_l(\bri{2}) e^{-2\mur{}^2\big(2 \alpha \zeta_m + \beta\big) (r_{12})^2} ,
+ \end{aligned}
+\end{equation}
+which then can be computed as
+\begin{equation}
+ \begin{aligned}
+&  \matelem{kl}{\bigg(1 -  \text{erf}(\mur{1} r_{ij}) \bigg)^2}{ij}  \\ & \approx \int \dr{} \phi_i(\br{}) \phi_k(\br{}) \sum_{m=1}^{N_s} c_m G_{jl}(\br,2\mur{}^2\big(2 \alpha \zeta_m + \beta\big)).
+ \end{aligned}
+\end{equation}
+All numerical tests performed for $\mu > 0.1$ show that this fit is highly accurate. 
+
+\subsection{Integrals of $\tilde{t}(r_{12},\mur{1})$}
+A more practical point of view for the computation of the non hermitian term is the following 
+\begin{equation}
+ \begin{aligned}
+ \tilde{t}(r_{12},\mur{1}) =& \frac{\text{erf}(\mur{} r_{12})-1}{2 r_{12}} \\ 
+                           &\bigg( (x_1 - x_2) \deriv{}{x_1}{} + (y_1 - y_2) \deriv{}{y_1}{} + (z_1 - z_2) \deriv{}{z_1}{}\bigg),
+ \end{aligned}
+\end{equation}
+\begin{equation}
+ \begin{aligned}
+ \label{def_non_hermit}
+& \tilde{t}(r_{12},\mur{1})  = \frac{\text{erf}(\mur{} r_{12})-1}{2 r_{12}} \\
+& \bigg( (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) +
+         (y_1 - y_2) \big( \deriv{}{y_1}{} - \deriv{}{y_2}{} \big)  \\
+&  +      (z_1 - z_2) \big( \deriv{}{z_1}{} - \deriv{}{z_2}{} \big)\bigg).                                                
+ \end{aligned}
+\end{equation}
+We define the following integrals
+\begin{equation}
+ {w}_{jl}^{x}(\br,\mu) = \int \dr{}' \phi_l(\br') x' \frac{\text{erf}(\mu |\br' - \br| )-1}{|\br' - \br|} \phi_j(\br'),
+\end{equation}
+\begin{equation}
+ {w'}_{jl}^{x}(\br,\mu) = \int \dr{}' \phi_l(\br') \frac{\text{erf}(\mu |\br' - \br| )-1}{|\br' - \br|}\deriv{}{x'}{} \phi_j(\br'),
+\end{equation}
+\begin{equation}
+ {w'}_{jl}^{xx}(\br,\mu) = \int \dr{}' x' \, \,\phi_l(\br') \frac{\text{erf}(\mu |\br' - \br| )-1}{|\br' - \br|}\deriv{}{x'}{} \phi_j(\br'),
+\end{equation}
+and we decompose the integral $\matelem{kl}{\tilde{t}(r_{12},\mur{1})}{ij}$ in $x,y,z$ components 
+\begin{equation}
+ \begin{aligned}
+  \matelem{kl}{\tilde{t}(r_{12},\mur{1})}{ij} =& \matelem{kl}{\tilde{t}_x(r_{12},\mur{1})}{ij} 
+                                              + \matelem{kl}{\tilde{t}_y(r_{12},\mur{1})}{ij} \\
+                                              +& \matelem{kl}{\tilde{t}_z(r_{12},\mur{1})}{ij},
+ \end{aligned}
+\end{equation}
+with 
+\begin{equation}
+ \begin{aligned}
+  \matelem{kl}{\tilde{t}_x(r_{12},\mur{1})}{ij} = & \int \dr{1} \dr{2} \phi_l(\br_2) \phi_k(\br_1) \frac{\text{erf}(\mur{} r_{12}) - 1}{2 r_{12}} \\
+& (x_1 - x_2) \big( \deriv{}{x_1}{} - \deriv{}{x_2}{} \big) \phi_i(\br_1) \phi_j(\br_2).
+ \end{aligned}
+\end{equation}
+The integral $\matelem{kl}{\tilde{t}_x(r_{12},\mur{1})}{ij}$ can then be computed as 
+\begin{equation}
+ \begin{aligned}
+ \matelem{kl}{\tilde{t}_x(r_{12},\mur{1})}{ij} \\
+  =& \int \dr{} \phi_k(\br) x \deriv{}{x}{} \phi_i(\br) \frac{1}{2}\big(w_{jl}(\br,\infty) - w_{jl}(\br,\mur{})\big) \\
+  +& \int \dr{} \phi_k(\br) \phi_i(\br) \frac{1}{2}\big({w'}_{jl}^{xx}(\br,\infty) - {w'}_{jl}^{xx}(\br,\mur{})\big) \\
+  -& \int \dr{} \phi_k(\br) x \phi_i(x) \frac{1}{2} \big( {w'}_{jl}^x(\br,\infty) - {w'}_{jl}^x(\br,\mur{}) \big) \\
+  -& \int \dr{} \phi_k(\br) \deriv{}{x}{} \phi_i(\br) \frac{1}{2} \big( {w}_{jl}^x(\br,\infty) - {w}_{jl}^x(\br,\mur{}) \big)
+ \end{aligned}
+\end{equation}
 
 \bibliography{srDFT_SC}
 

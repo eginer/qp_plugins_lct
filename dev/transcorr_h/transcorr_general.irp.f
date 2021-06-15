@@ -4,11 +4,15 @@ program transcorr_h
  touch read_wf
  my_grid_becke = .True. 
  my_n_pt_r_grid = 30
- my_n_pt_a_grid = 50
+ my_n_pt_a_grid = 170
  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
+ extra_grid_type_sgn = 1 
+ touch extra_grid_type_sgn 
+ my_extra_grid_becke = .False.
+ touch my_extra_grid_becke 
  print*,'Warning : the Becke grid parameters are automatically set to '
- print*,'my_n_pt_a_grid = 50'
- print*,'my_n_pt_r_grid = 30'
+ print*,'my_n_pt_a_grid = ',my_n_pt_a_grid
+ print*,'my_n_pt_r_grid = ',my_n_pt_r_grid
  print*,'If you want to modify them, you have to modify the following file '
  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
  print*,'and recompile doing ninja'
@@ -31,11 +35,11 @@ subroutine provide_all
  use bitmasks
  integer(bit_kind) :: key_i(N_int,2), key_j(N_int,2)
  integer :: i,j,degree
- double precision :: hij,s2,hmono,herf,heff,hderiv,htot,hthree
+ double precision :: hij,s2,hmono,heff,hderiv,htot,hthree
  double precision :: accu
  accu = 0.d0
  key_i(:,:) = psi_det(:,:,1)
- call htilde_mat(key_i,key_i,hmono,herf,heff,hderiv,hthree,htot)
+ call htilde_mat(key_i,key_i,hmono,heff,hderiv,hthree,htot)
  provide eigval_trans
 end
 

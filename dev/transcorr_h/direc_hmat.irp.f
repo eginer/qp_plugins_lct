@@ -1,14 +1,14 @@
 
 ! For a derivation of the transcorrelated Hamiltonian matrix elements, see Luo-JCP-10 
 ! http://dx.doi.org/10.1063/1.3505037
-subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
+subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 !  diagonal element of htilde 
   END_DOC
   implicit none
   integer(bit_kind), intent(in)  :: key_i(N_int,2)
-  double precision, intent(out)  :: hmono,herf,heff,hderiv,htot,hthree
+  double precision, intent(out)  :: hmono,heff,hderiv,htot,hthree
   integer                        :: occ(N_int*bit_kind_size,2)
   integer                        :: Ne(2),i,j,ii,jj,ispin,jspin,k,kk
   double precision :: get_mo_two_e_integral_erf,mo_two_e_integral_eff_pot
@@ -27,7 +27,6 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
    call bitstring_to_list_ab(key_i,occ,Ne,N_int)
    hmono = 0.d0
   endif
-  herf  = 0.d0
   heff  = 0.d0
   hderiv= 0.d0
   hthree = 0.d0
@@ -52,7 +51,7 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = 1, Ne(jspin)
      jj = occ(j,jspin) 
-     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map)
+     heff += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) 
      hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) 
     enddo
@@ -63,7 +62,7 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = i+1, Ne(ispin)
      jj = occ(j,ispin) 
-     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
+     heff += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
      hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
      - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
@@ -75,7 +74,7 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     ii = occ(i,jspin) 
     do j = i+1, Ne(jspin)
      jj = occ(j,jspin) 
-     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
+     heff += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
      hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
      - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) & 
@@ -93,8 +92,8 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = 1, Ne(jspin)
      jj = occ(j,jspin) 
-     herf += 2.d0 * get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) ! 2 / r12
-     herf -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) ! - erf(mu r12)/r12
+     heff += 2.d0 * get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) ! 2 / r12
+     heff -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) ! - erf(mu r12)/r12
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) ! thanks to "adjoint_tc_h" keyword, proper eff two e pot
      hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj)  !MARK THE MINUS SIGN HERE 
     enddo
@@ -105,8 +104,8 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = i+1, Ne(ispin)
      jj = occ(j,ispin) 
-     herf += 2.d0 * (get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) - get_two_e_integral(ii,jj,jj,ii,mo_integrals_map))
-     herf -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
+     heff += 2.d0 * (get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) - get_two_e_integral(ii,jj,jj,ii,mo_integrals_map))
+     heff -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
      hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
      - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
@@ -118,8 +117,8 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     ii = occ(i,jspin) 
     do j = i+1, Ne(jspin)
      jj = occ(j,jspin) 
-     herf -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
-     herf += 2.d0 * (get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) - get_two_e_integral(ii,jj,jj,ii,mo_integrals_map))
+     heff -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
+     heff += 2.d0 * (get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) - get_two_e_integral(ii,jj,jj,ii,mo_integrals_map))
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
      hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
      - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
@@ -201,6 +200,6 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
 
    endif
   endif
-  htot = hmono + herf + heff + hderiv + hthree
+  htot = hmono + heff + hderiv + hthree
 
 end
