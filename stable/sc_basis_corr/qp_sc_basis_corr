@@ -19,7 +19,7 @@ Usage:
 
 
 Options:
-  -m, --mu=<lower case string>          Type of mu(r) function can be either "hf" or "cas_ful" (default=cas_ful)
+  -m, --mu=<lower case string>          Type of mu(r) function can be either "hf", "cas_ful" or "read" (default=cas_ful)
   -f, --func=<lower case string>        Complementary functional, can be either "pbe_ueg", "lda", "su_pbe_ot" or "su_pbe_ot_no_extrap" (default=su_pbe_ot)
   -p, --pt2max=<positive real>          Max value of the PT2 correction (default=1.e-3)
   -n, --ndetmax=<positive integer>      Max number of determinants in the CIPSI wf (default=1.e6)
@@ -187,7 +187,12 @@ qp  set  density_for_dft    density_for_dft         "WFT"
   echo "#" iter evar old     evar new    deltae      threshold  > ${file_final}
   
   file_int=basis_corr-${mu}-${functional}-0
-  qp set mu_of_r io_mu_of_r Write
+  if [ "$mu" == "read" ]; then
+   qp set mu_of_r io_mu_of_r Read
+   echo "Reading the mu(r) .."
+  else  
+   qp set mu_of_r io_mu_of_r Write
+  fi
   # Write the effective Hamiltonian with the WAVE FUNCTION ALREADY IN THE EZFIO FOLDER 
   qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int} 
   qp set mu_of_r io_mu_of_r Read
