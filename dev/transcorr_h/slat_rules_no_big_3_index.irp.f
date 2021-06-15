@@ -49,11 +49,7 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = 1, Ne(jspin) ! electron 2 
      jj = occ(j,jspin) 
-!     heff   += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) 
-!     hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj)  
      heff   += scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii) 
-!     print*,jj,ii,jj,ii
-!     print*,scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii),deriv_mu_r_pot_physicist_mo(jj,ii,jj,ii)
      hderiv += deriv_mu_r_pot_physicist_mo(jj,ii,jj,ii) 
     enddo
    enddo
