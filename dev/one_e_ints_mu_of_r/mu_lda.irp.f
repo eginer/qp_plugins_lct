@@ -187,3 +187,7 @@ subroutine get_lapl_mu_lda(r,dx,mu_min,lapl_mu)
   lapl_mu = 0.d0
 end
 
+BEGIN_PROVIDER [ double precision, average_mu_rs_c_lda]
+ implicit none
+ average_mu_rs_c_lda = 0.5d0 * (average_mu_rs_c + average_mu_lda)
+END_PROVIDER 

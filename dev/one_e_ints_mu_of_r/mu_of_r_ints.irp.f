@@ -28,6 +28,9 @@
     else if(mu_of_r_tc_ints.EQ."lda")then
      mu_of_r_for_ints(ipoint,istate) =  mu_of_r_lda(ipoint,istate)
      grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_lda(:,ipoint,istate)
+    else if(mu_of_r_tc_ints.EQ."grad_n")then
+     mu_of_r_for_ints(ipoint,istate) =  mu_of_r_grad_n(ipoint,istate)
+     grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_grad_n(:,ipoint,istate)
     else 
      print*,'you requested the following mu_of_r_tc_ints'
      print*,mu_of_r_tc_ints
@@ -85,6 +88,8 @@
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_rs_c(ipoint,istate)
     else if(mu_of_r_tc_ints.EQ."lda")then
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_lda(ipoint,istate)
+    else if(mu_of_r_tc_ints.EQ."grad_n")then
+     mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_grad_n(ipoint,istate)
     else 
      print*,'you requested the following mu_of_r_extra_grid_for_ints'
      print*,mu_of_r_tc_ints
