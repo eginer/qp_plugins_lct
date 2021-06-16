@@ -16,6 +16,12 @@ program transcorr_h
  print*,'If you want to modify them, you have to modify the following file '
  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
  print*,'and recompile doing ninja'
+ if(linear_tc)then
+  three_body_h_tc = .False. 
+  touch three_body_h_tc
+  grad_squared = .False. 
+  touch grad_squared 
+ endif
 
  call provide_all
  call print_energy_tc
