@@ -12,7 +12,10 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_mo, (mo_num, mo_num, m
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
-
+ double precision :: wall0, wall1
+ call wall_time(wall0)
+ provide deriv_mu_r_pot_chemist_ao
+ print*,'providing deriv_mu_r_pot_chemist_mo ...'
  allocate(mo_tmp_1(mo_num,ao_num,ao_num,ao_num))
  mo_tmp_1 = 0.d0
  do m = 1, ao_num
@@ -70,7 +73,8 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_chemist_mo, (mo_num, mo_num, m
    enddo
   enddo
  enddo
-
+ print*,'Time to perform 4 indx transformation = ',wall1 - wall0
+ call wall_time(wall1)
 END_PROVIDER 
 
 
@@ -145,7 +149,7 @@ subroutine test_num_deriv_pot_mo
        if(dabs(mo_prod_r1).lt.sq_thr)cycle
         accu(i,k,j,l) += lapl_gamma_mo(ipoint,jpoint,i,k,cst_lapl_gamma) * weight1 * mo_prod_r2
         accu(i,k,j,l) += func_gamma_nabla_r1_mo(ipoint,jpoint,i,k,cst_gamma_nabla_r1) * weight1 * mo_prod_r2
-        accu(i,k,j,l) += func_non_hermit_at_r1_mo(ipoint,jpoint,i,k,j,l,cst_non_hermit) * weight1 * weight2
+        accu(i,k,j,l) += func_non_hermit_at_r1_mo(ipoint,jpoint,i,k,j,l) * weight1 * weight2
                          
       enddo
      enddo
@@ -287,46 +291,46 @@ double precision function func_gamma_nabla_r1_mo(ipoint,jpoint,i,k,cst)
                + grad_mu_of_r_for_ints(3,ipoint,1) * mo_grad_prod(3) )   
 end
 
-double precision function func_non_hermit_at_r1_mo(ipoint,jpoint,i,k,j,l,cst)
- implicit none 
- integer, intent(in) :: ipoint
- integer, intent(in) :: jpoint
- integer, intent(in) :: i,k,j,l
- double precision, intent(in) :: cst
- include 'constants.include.F'
- double precision :: r12,r12_sq,r12_vec(3),r1(3),r2(3),mu,mo_grad_prod(3,4)
- integer :: m,kk
-
- func_non_hermit_at_r1_mo = 0.d0
- r1(:) = final_grid_points(:,ipoint)
-
- r2(:) = final_grid_points(:,jpoint)
-
- r12_vec(1) = (r1(1) - r2(1))
- r12_vec(2) = (r1(2) - r2(2))
- r12_vec(3) = (r1(3) - r2(3))
- r12_sq = r12_vec(1)*r12_vec(1) + r12_vec(2)*r12_vec(2) + r12_vec(3)*r12_vec(3)
- r12 = dsqrt(r12_sq)
- if(dabs(r12).lt.1.d-10)return
- mo_grad_prod = 0.d0
- do m = 1, 3
-  mo_grad_prod(m,1) = r1(m) * mos_grad_in_r_array_transp_bis(ipoint,i,m) * mos_in_r_array_transp(ipoint,k) & 
-                    * mos_in_r_array_transp(jpoint,j) * mos_in_r_array_transp(jpoint,l)
-  mo_grad_prod(m,2) = r2(m) * mos_grad_in_r_array_transp_bis(jpoint,j,m) * mos_in_r_array_transp(jpoint,l) & 
-                    * mos_in_r_array_transp(ipoint,i) * mos_in_r_array_transp(ipoint,k)
-  mo_grad_prod(m,3) = -r1(m) * mos_in_r_array_transp(ipoint,i) * mos_in_r_array_transp(ipoint,k) & 
-                    * mos_grad_in_r_array_transp_bis(jpoint,j,m) * mos_in_r_array_transp(jpoint,l)
-  mo_grad_prod(m,4) = -r2(m) * mos_in_r_array_transp(jpoint,j) * mos_in_r_array_transp(jpoint,l) & 
-                    * mos_grad_in_r_array_transp_bis(ipoint,i,m) * mos_in_r_array_transp(ipoint,k)
- enddo
-
- mu = mu_of_r_for_ints(ipoint,1)
- double precision :: func
- func = (derf(mu*r12) - 1.d0)/r12
- do kk = 1, 4
-  do m = 1, 3
-   func_non_hermit_at_r1_mo += cst * mo_grad_prod(m,kk) * func
-  enddo
- enddo
-end
-
+!double precision function func_non_hermit_at_r1_mo(ipoint,jpoint,i,k,j,l,cst)
+! implicit none 
+! integer, intent(in) :: ipoint
+! integer, intent(in) :: jpoint
+! integer, intent(in) :: i,k,j,l
+! double precision, intent(in) :: cst
+! include 'constants.include.F'
+! double precision :: r12,r12_sq,r12_vec(3),r1(3),r2(3),mu,mo_grad_prod(3,4)
+! integer :: m,kk
+!
+! func_non_hermit_at_r1_mo = 0.d0
+! r1(:) = final_grid_points(:,ipoint)
+!
+! r2(:) = final_grid_points(:,jpoint)
+!
+! r12_vec(1) = (r1(1) - r2(1))
+! r12_vec(2) = (r1(2) - r2(2))
+! r12_vec(3) = (r1(3) - r2(3))
+! r12_sq = r12_vec(1)*r12_vec(1) + r12_vec(2)*r12_vec(2) + r12_vec(3)*r12_vec(3)
+! r12 = dsqrt(r12_sq)
+! if(dabs(r12).lt.1.d-10)return
+! mo_grad_prod = 0.d0
+! do m = 1, 3
+!  mo_grad_prod(m,1) = r1(m) * mos_grad_in_r_array_transp_bis(ipoint,i,m) * mos_in_r_array_transp(ipoint,k) & 
+!                    * mos_in_r_array_transp(jpoint,j) * mos_in_r_array_transp(jpoint,l)
+!  mo_grad_prod(m,2) = r2(m) * mos_grad_in_r_array_transp_bis(jpoint,j,m) * mos_in_r_array_transp(jpoint,l) & 
+!                    * mos_in_r_array_transp(ipoint,i) * mos_in_r_array_transp(ipoint,k)
+!  mo_grad_prod(m,3) = -r1(m) * mos_in_r_array_transp(ipoint,i) * mos_in_r_array_transp(ipoint,k) & 
+!                    * mos_grad_in_r_array_transp_bis(jpoint,j,m) * mos_in_r_array_transp(jpoint,l)
+!  mo_grad_prod(m,4) = -r2(m) * mos_in_r_array_transp(jpoint,j) * mos_in_r_array_transp(jpoint,l) & 
+!                    * mos_grad_in_r_array_transp_bis(ipoint,i,m) * mos_in_r_array_transp(ipoint,k)
+! enddo
+!
+! mu = mu_of_r_for_ints(ipoint,1)
+! double precision :: func
+! func = (derf(mu*r12) - 1.d0)/r12
+! do kk = 1, 4
+!  do m = 1, 3
+!   func_non_hermit_at_r1_mo += cst * mo_grad_prod(m,kk) * func
+!  enddo
+! enddo
+!end
+!

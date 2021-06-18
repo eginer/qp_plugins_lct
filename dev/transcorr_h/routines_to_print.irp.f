@@ -7,7 +7,16 @@ subroutine print_energy_tc
  
  if(.not.ten_no_jastrow)then
   print*,'Using a mu-based Jastrow'
-  print*,'mu_erf = ',mu_erf
+  if(constant_mu)then
+   print*,'Using a constant mu Jastrow '
+   print*,'mu_erf = ',mu_erf
+  else
+   print*,'Using a mu(r) Jastrow' 
+   print*,'mu_of_r_tc_ints = ',mu_of_r_tc_ints
+   print*,'average value of mu(r) = ', average_mu_of_r_for_ints
+   print*,'average_grad_mu_of_r   = ', average_grad_mu_of_r
+   print*,'av grad_mu(r) / mu(r)^2= ', av_grad_inv_mu_mu_of_r
+  endif
  else
   print*,'Using Ten-No Jastrow'
  endif

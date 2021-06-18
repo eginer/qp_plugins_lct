@@ -23,12 +23,11 @@ BEGIN_PROVIDER [ double precision, scalar_mu_r_pot_chemist_ao, (ao_num, ao_num, 
  call lr_int_mu_r1_bis(scalar_mu_r_pot_chemist_ao)! Long range interaction erf(mu(r1) r12)/r12
  call gauss_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! Gaussian e^{(-mu(r1) r12)^2}
  call gauss_grad_scal_r12_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{(-mu(r1) r12)^2} r12 . \grad mu(r1)
-
-! call lapl_gamm_r1(scalar_mu_r_pot_chemist_ao)
+ call lapl_gamm_r1(scalar_mu_r_pot_chemist_ao) ! \grad . gamma(r1) 
 
 !!! (Nabla of Jastrow)^2
  call erf_sq_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! erf(mu(r1) r12)^2
- call gauss_sq_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{-2(mu(r1)r12)^2}
+ call gauss_sq_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! e^{-2(mu(r1)r12)^2} \grad mu(r1)^2
  call erfc_gauss_int_mu_r1(scalar_mu_r_pot_chemist_ao) ! erfc(mu(r1)r12)/r12 * e^{(-mu(r1) r12)^2}
 !!! 
  call wall_time(wall1)

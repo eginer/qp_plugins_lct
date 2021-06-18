@@ -204,8 +204,8 @@ subroutine test_grad_jastrow
  double precision :: r1(3),r2(3),weight1,weight2,weight_tot,ao_prod_r2,ao_prod_r1,mu_min,r12
  double precision :: mu_lda_damped,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
  double precision :: jastrow,grad_jastrow(3),jastrow_plus,jastrow_minus, grad_jastrow_num(3)
- double precision :: accu(3),jastrow_mu,r1_scal,r2_scal
- do l = 7, 7
+ double precision :: accu(3),jastrow_mu,r1_scal,r2_scal,mu_test_func
+ do l = 5, 5
   dx = 10.d0**(-l)
   mu_min = mu_erf
   accu = 0.d0
@@ -218,39 +218,26 @@ subroutine test_grad_jastrow
 !   do ipoint = 43,43
     weight1 = final_weight_at_r_vector(ipoint)
     r1_scal = dsqrt(r1(1)**2+r1(2)**2+r1(3)**2)
-    do m = 1, 3
-     r1(:) = final_grid_points(:,ipoint) 
-     r1(m) += dx 
-     call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_plus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
-     r1(:) = final_grid_points(:,ipoint) 
-     r1(m) -= dx 
-     call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_minus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
-     grad_mu(m) = (mu_plus - mu_minus)/(2.d0 * dx)
-    enddo
+    grad_mu(:) = grad_mu_of_r_for_ints(:,ipoint,1)
     r1(:) = final_grid_points(:,ipoint) 
-    call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-    mu = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
+    mu = mu_of_r_for_ints(ipoint,1)
     call grad_r1_jastrow_mu(r1,r2,mu,grad_mu,jastrow,grad_jastrow)
     do m = 1, 3
      r1(:) = final_grid_points(:,ipoint) 
      r1(m) += dx 
-     call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_plus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
+     mu_plus = mu_test_func(r1)
      jastrow_plus = jastrow_mu(r1,r2,mu_plus)
  
      r1(:) = final_grid_points(:,ipoint) 
      r1(m) -= dx 
-     call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
-     mu_minus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
+     mu_minus = mu_test_func(r1)
      jastrow_minus = jastrow_mu(r1,r2,mu_minus)
      grad_jastrow_num(m) = (jastrow_plus - jastrow_minus) / (2.d0 * dx)
     enddo
     do m = 1, 3
      accu(m) += dabs(grad_jastrow_num(m) - grad_jastrow(m)) * weight2 * weight1 * dexp(-r1_scal*r1_scal) * dexp(-r2_scal*r2_scal)
      if(dabs(grad_jastrow(m)).gt.1.d-7)then
-      if(dabs(grad_jastrow_num(m) - grad_jastrow(m))/dabs(grad_jastrow(m)).gt.1.d-1)then
+      if(dabs(grad_jastrow_num(m) - grad_jastrow(m))/dabs(grad_jastrow(m)).gt.1.d-3)then
        print*,'' 
        print*,dx,m
        print*,ipoint,jpoint
@@ -435,7 +422,6 @@ subroutine get_num_ints_j_non_hermit(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, del
      if(r12.lt.1.d-8)cycle
      grad_mu(:) = grad_mu_of_r_for_ints(:,ipoint,1)
      mu = mu_of_r_for_ints(ipoint,1)
-!     mu = mu_erf 
 
      call grad_r1_jastrow_mu(r1,r2,mu,grad_mu,jastrow,grad_jastrow_r1)
      non_hermit_num = 0.d0
@@ -452,6 +438,109 @@ subroutine get_num_ints_j_non_hermit(i_ao,k_ao,j_ao,l_ao,pure_num, comp_num, del
      contrib(2) = 0.d0
      do m = 1, 3
       contrib(2) -= vec(m) * ao_prod_r2 * ao_grad_r1(m)
+     enddo
+     non_hermit_anal = contrib(1) + contrib(2)
+     pure_num += non_hermit_num
+     comp_num(1) += contrib(1) + contrib(2) 
+     delta    += dabs(non_hermit_anal - non_hermit_num) 
+   enddo
+  enddo
+ enddo
+end
+
+subroutine test_non_hermit_mo
+ implicit none
+ integer :: i,j,k,l
+ double precision :: pure_num, comp_num(2),delta,tot, analy
+ double precision :: accu
+ provide scalar_mu_r_pot_chemist_mo 
+ accu = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do k = 1, mo_num
+    do l = 1, mo_num
+     call get_num_ints_j_non_hermit_mo(i,k,j,l,pure_num, comp_num, delta)
+     tot = comp_num(1) + comp_num(2) 
+     analy = deriv_mu_r_pot_chemist_mo(i,k,j,l)
+     print*,'i,k,j,l',i,k,j,l
+     print*,pure_num, tot, delta
+     print*,analy,dabs(pure_num - analy), dabs(tot - analy)
+     accu += dabs(tot - analy)
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu/dble(mo_num**4)
+ 
+end
+
+subroutine get_num_ints_j_non_hermit_mo(i_mo,k_mo,j_mo,l_mo,pure_num, comp_num, delta)
+ implicit none
+ BEGIN_DOC
+! you enter with (i,k|j,l) in the mo basis for chemist notation 
+!
+! you get out with pure_num = \int dr1 dr2 mo_l(r2) mo_k(r1) (\nabla_1 u(r1,r2) + \naba_2 u(r1,r2))  mo_j(r2) mo_i(r1) 
+! 
+! and the various components of (\nabla_1 u(r1,r2) + \naba_2 u(r1,r2))
+!
+! and delta = difference between both
+ END_DOC
+ include 'constants.include.F'
+ integer, intent(in) :: i_mo,k_mo,j_mo,l_mo
+ double precision, intent(out):: pure_num, comp_num(2),delta
+ integer :: ipoint,i,j,k,l,m,jpoint
+ double precision :: r1(3),r2(3),weight1,weight2,weight_tot,mu_min,r12
+ double precision :: mo_prod_r2,mo_prod_r1,mo_grad_r1(3), mo_grad_r2(3)
+ double precision :: mu_lda_damped,rho_a_hf,rho_b_hf, mu, mu_plus, mu_minus, grad_mu(3),dx
+ double precision :: jastrow,grad_jastrow_r1(3),grad_jastrow_r2(3),jastrow_plus,jastrow_minus
+ double precision :: accu,jastrow_mu, grad_r1_jastrow_sq
+ double precision :: nabla_r12_bis,nabla_sq_term_general,erf_mu_sq_general, non_hermit_anal,non_hermit_num
+ double precision :: contrib(2),func_non_hermit_at_r1_bis,vec(3),func_non_hermit_at_r1_mo
+ do l = 7, 7
+  dx = 10.d0**(-l)
+  mu_min = mu_erf
+  pure_num = 0.d0
+  comp_num = 0.d0
+  delta    = 0.d0
+  pure_num = 0.d0
+  do jpoint = 1, n_points_final_grid ! r2
+   weight2 = final_weight_at_r_vector(jpoint)
+   r2(:) = final_grid_points(:,jpoint)
+   mo_prod_r2 = mos_in_r_array_transp(jpoint,j_mo) * mos_in_r_array_transp(jpoint,l_mo) * weight2
+   do m = 1, 3
+    mo_grad_r2(m) = mos_in_r_array_transp(jpoint,l_mo) * weight2 * mos_grad_in_r_array_transp_3(m,jpoint,j_mo)
+   enddo
+   do ipoint = 1, n_points_final_grid ! r1
+     weight1 = final_weight_at_r_vector(ipoint)
+     mo_prod_r1 = mos_in_r_array_transp(ipoint,i_mo) * mos_in_r_array_transp(ipoint,k_mo) * weight1
+     do m = 1, 3
+      mo_grad_r1(m) = mos_in_r_array_transp(ipoint,k_mo) * weight1 * mos_grad_in_r_array_transp_3(m,ipoint,i_mo)
+     enddo
+     r1(:) = final_grid_points(:,ipoint) 
+     r12 = 0.d0
+     do m = 1, 3 ! compute r12 
+      r12 += (r1(m) - r2(m))*(r1(m) - r2(m))
+     enddo
+     r12 = dsqrt(r12)
+     if(r12.lt.1.d-8)cycle
+     grad_mu(:) = grad_mu_of_r_for_ints(:,ipoint,1)
+     mu = mu_of_r_for_ints(ipoint,1)
+
+     call grad_r1_jastrow_mu(r1,r2,mu,grad_mu,jastrow,grad_jastrow_r1)
+     non_hermit_num = 0.d0
+     do m = 1, 3
+      non_hermit_num -= grad_jastrow_r1(m) * mo_prod_r2 * mo_grad_r1(m)
+     enddo
+     call grad_r2_jastrow_mu(r1,r2,mu,jastrow,grad_jastrow_r2)
+     do m = 1, 3
+      non_hermit_num -= grad_jastrow_r2(m) * mo_prod_r1 * mo_grad_r2(m)
+     enddo
+!     contrib(1) = func_non_hermit_at_r1_bis(ipoint,jpoint,i_mo,k_mo,j_mo,l_mo,mu) * weight1 * weight2
+     contrib(1) = func_non_hermit_at_r1_mo(ipoint,jpoint,i_mo,k_mo,j_mo,l_mo) * weight1 * weight2
+     call gamma_at_r1(r1,r2,mu,grad_mu,vec)
+     contrib(2) = 0.d0
+     do m = 1, 3
+      contrib(2) -= vec(m) * mo_prod_r2 * mo_grad_r1(m)
      enddo
      non_hermit_anal = contrib(1) + contrib(2)
      pure_num += non_hermit_num

@@ -1,6 +1,9 @@
 
- BEGIN_PROVIDER [double precision, mu_of_r_for_ints, (n_points_final_grid,N_states) ]
+ BEGIN_PROVIDER [double precision, average_mu_of_r_for_ints, (N_states) ]
+&BEGIN_PROVIDER [double precision, average_grad_mu_of_r, (N_states) ]
+&BEGIN_PROVIDER [double precision, av_grad_inv_mu_mu_of_r, (N_states) ]
 &BEGIN_PROVIDER [double precision, inv_2_mu_of_r_for_ints, (n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, mu_of_r_for_ints, (n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, inv_4_mu_of_r_for_ints, (n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, grad_mu_of_r_for_ints, (3,n_points_final_grid,N_states) ]
 &BEGIN_PROVIDER [double precision, grad_mu_of_r_transp_for_ints, (n_points_final_grid,N_states,3) ]
@@ -31,6 +34,9 @@
     else if(mu_of_r_tc_ints.EQ."grad_n")then
      mu_of_r_for_ints(ipoint,istate) =  mu_of_r_grad_n(ipoint,istate)
      grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_grad_n(:,ipoint,istate)
+    else if(mu_of_r_tc_ints.EQ."mu_test")then
+     mu_of_r_for_ints(ipoint,istate) =  mu_of_r_test_func(ipoint,istate)
+     grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_test_func(:,ipoint,istate)
     else 
      print*,'you requested the following mu_of_r_tc_ints'
      print*,mu_of_r_tc_ints
@@ -60,6 +66,24 @@
   enddo
  endif
 
+ double precision :: elec_tot,dm,weight,grad_mu_sq
+ average_grad_mu_of_r = 0.d0
+ average_mu_of_r_for_ints = 0.d0
+ av_grad_inv_mu_mu_of_r = 0.d0
+ do istate = 1, N_states
+  elec_tot = 0.d0
+  do ipoint = 1, n_points_final_grid
+   dm = one_e_dm_and_grad_alpha_in_r(4,ipoint,istate) + one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+   weight = final_weight_at_r_vector_extra(ipoint)
+   average_grad_mu_of_r(istate) += dsqrt(grad_sq_mu_of_r_for_ints(ipoint,istate)) * dm * weight
+   average_mu_of_r_for_ints(istate) += mu_of_r_for_ints(ipoint,istate) * dm * weight
+   av_grad_inv_mu_mu_of_r(istate) += mu_of_r_for_ints(ipoint,istate)**(-2) * dsqrt(grad_sq_mu_of_r_for_ints(ipoint,istate)) * dm * weight
+   elec_tot += dm * weight
+  enddo
+  average_mu_of_r_for_ints(istate) = average_mu_of_r_for_ints(istate) / elec_tot
+  average_grad_mu_of_r(istate) = average_grad_mu_of_r(istate) / elec_tot
+  av_grad_inv_mu_mu_of_r(istate) = av_grad_inv_mu_mu_of_r(istate)/elec_tot
+ enddo
 
  call wall_time(wall1)
  print*,'Time to provide mu_of_r_for_ints = ',wall1-wall0
@@ -90,6 +114,8 @@
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_lda(ipoint,istate)
     else if(mu_of_r_tc_ints.EQ."grad_n")then
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_grad_n(ipoint,istate)
+    else if(mu_of_r_tc_ints.EQ."mu_test")then
+     mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_test_func(ipoint,istate)
     else 
      print*,'you requested the following mu_of_r_extra_grid_for_ints'
      print*,mu_of_r_tc_ints

@@ -246,8 +246,13 @@ subroutine double_htilde_mu_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,hto
 
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
    ! opposite spin two-body 
-   heff   += scalar_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
-   hderiv  = deriv_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+   if(s1==1)then
+    heff   += scalar_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+    hderiv  = deriv_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+   else
+    heff   += scalar_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
+    hderiv  = deriv_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
+   endif
    ! same spin two-body 
    if(s1.eq.s2)then
     heff   -= scalar_mu_r_pot_physicist_mo(p1,p2,h2,h1) 
