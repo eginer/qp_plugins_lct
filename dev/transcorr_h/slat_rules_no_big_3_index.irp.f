@@ -59,10 +59,10 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = i+1, Ne(ispin)
      jj = occ(j,ispin) 
-     heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii)
-     hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) & 
-     - 0.5d0 * deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) &
-     - 0.5d0 * deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) 
+     heff += 0.5d0 * (scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj)  + scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii) & 
+                     -scalar_mu_r_pot_physicist_mo(jj,ii,ii,jj)  - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii) )
+     hderiv += 0.5d0 * ( deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) + deriv_mu_r_pot_physicist_mo(jj,ii,jj,ii) & 
+                        -deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) - deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) )
     enddo
    enddo
  
@@ -71,16 +71,22 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
     ii = occ(i,jspin) 
     do j = i+1, Ne(jspin)
      jj = occ(j,jspin) 
-     heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii)
-     hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) & 
-     - 0.5d0 * deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) & 
-     - 0.5d0 * deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) 
+     heff += 0.5d0 * (scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj)  + scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii) & 
+                     -scalar_mu_r_pot_physicist_mo(jj,ii,ii,jj)  - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii) )
+     hderiv += 0.5d0 * ( deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) + deriv_mu_r_pot_physicist_mo(jj,ii,jj,ii) & 
+                        -deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) - deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) )
     enddo
    enddo
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   else 
+   if(.not.constant_mu)then
+    print*,'You requested for the adjoint of the operator and a mu(r)'
+    print*,'This is not yet implemented ...'
+    print*,'stopping ..'
+    stop
+   endif
    ! alpha/beta two-body
    ispin = 1
    jspin = 2 
@@ -245,24 +251,34 @@ subroutine double_htilde_mu_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,hto
   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
 
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
-   ! opposite spin two-body 
-   if(s1==1)then
-    heff   += scalar_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
-    hderiv  = deriv_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+   if(s1.ne.s2)then
+    ! opposite spin two-body 
+    if(s1==1)then
+     heff    = scalar_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+     hderiv  = deriv_mu_r_pot_physicist_mo(p2,p1,h2,h1) 
+    else
+     heff    = scalar_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
+     hderiv  = deriv_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
+    endif
    else
-    heff   += scalar_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
-    hderiv  = deriv_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
-   endif
-   ! same spin two-body 
-   if(s1.eq.s2)then
-    heff   -= scalar_mu_r_pot_physicist_mo(p1,p2,h2,h1) 
-    hderiv -= 0.5d0 * deriv_mu_r_pot_physicist_mo(p1,p2,h2,h1) & 
-             +0.5d0 * deriv_mu_r_pot_physicist_mo(p2,p1,h1,h2)
+    ! same spin two-body 
+    ! direct terms 
+    heff    = 0.5d0 * (scalar_mu_r_pot_physicist_mo(p2,p1,h2,h1) + scalar_mu_r_pot_physicist_mo(p1,p2,h1,h2))
+    hderiv  = 0.5d0 * (deriv_mu_r_pot_physicist_mo(p2,p1,h2,h1)  + deriv_mu_r_pot_physicist_mo(p1,p2,h1,h2) )
+    ! exchange terms 
+    heff   -= 0.5d0 * (scalar_mu_r_pot_physicist_mo(p1,p2,h2,h1) + scalar_mu_r_pot_physicist_mo(p2,p1,h1,h2))
+    hderiv -= 0.5d0 * (deriv_mu_r_pot_physicist_mo(p1,p2,h2,h1) + deriv_mu_r_pot_physicist_mo(p2,p1,h1,h2))
    endif
 !  !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
 !  !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
 !  !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   else 
+   if(.not.constant_mu)then
+    print*,'You requested for the adjoint of the operator and a mu(r)'
+    print*,'This is not yet implemented ...'
+    print*,'stopping ..'
+    stop
+   endif
    ! opposite spin two-body 
    heff    = 2.d0 * get_two_e_integral(p1,p2,h1,h2,mo_integrals_map)   
    heff   += -get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
@@ -413,20 +429,26 @@ subroutine single_htilde_mu_mat_4_index(key_j,key_i,hmono,heff,hderiv,hthree,hto
      hderiv += deriv_mu_r_pot_physicist_mo(p1,ii,h1,ii) 
     enddo
    endif
-   ! same spin two-body 
-!   do i = 1, Ne(s1)
-!    ii = occ(i,s1) 
-!    ! (h1p1|ii ii) - (h1 ii| p1 ii)
-!    heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) - scalar_mu_r_pot_physicist_mo(ii,p1,h1,ii)
-!    hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) & 
-!           -0.5d0 * deriv_mu_r_pot_physicist_mo(ii,p1,h1,ii) & 
-!           -0.5d0 * deriv_mu_r_pot_physicist_mo(p1,ii,ii,h1)
-!   enddo
+!   ! same spin two-body 
+   do i = 1, Ne(s1)
+    ii = occ(i,s1) 
+    ! (h1p1|ii ii) - (h1 ii| p1 ii)
+    heff   += 0.5d0 * (scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) + scalar_mu_r_pot_physicist_mo(p1,ii,h1,ii) &
+                      -scalar_mu_r_pot_physicist_mo(p1,ii,ii,h1) - scalar_mu_r_pot_physicist_mo(ii,p1,h1,ii))
+    hderiv += 0.5d0 * (deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) + deriv_mu_r_pot_physicist_mo(p1,ii,h1,ii) &
+                      -deriv_mu_r_pot_physicist_mo(p1,ii,ii,h1) - deriv_mu_r_pot_physicist_mo(ii,p1,h1,ii))
+   enddo
    
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
   else 
+   if(.not.constant_mu)then
+    print*,'You requested for the adjoint of the operator and a mu(r)'
+    print*,'This is not yet implemented ...'
+    print*,'stopping ..'
+    stop
+   endif
    ! alpha/beta two-body 
    ispin = other_spin(s1)
    do i = 1, Ne(ispin)

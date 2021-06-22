@@ -46,6 +46,19 @@
      print*,'which does not correspond to any of the options for such keyword'
      stop
     endif
+   enddo
+  enddo
+ else
+  do istate = 1, N_states
+   do ipoint = 1, n_points_final_grid
+    mu_of_r_for_ints(ipoint,istate) =  mu_erf 
+    grad_mu_of_r_for_ints(:,ipoint,istate) = 0.d0
+    grad_sq_mu_of_r_for_ints(ipoint,istate) = 0.d0
+   enddo
+  enddo
+ endif
+  do istate = 1, N_states
+   do ipoint = 1, n_points_final_grid
     mu_of_r_for_ints(ipoint,istate) = max(mu_of_r_for_ints(ipoint,istate),mu_max)
     inv_2_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**2
     inv_4_mu_of_r_for_ints(ipoint,istate) = 1.d0/(mu_of_r_for_ints(ipoint,istate))**4
@@ -59,15 +72,6 @@
     enddo
    enddo
   enddo
- else
-  do istate = 1, N_states
-   do ipoint = 1, n_points_final_grid
-    mu_of_r_for_ints(ipoint,istate) =  mu_erf 
-    grad_mu_of_r_for_ints(:,ipoint,istate) = 0.d0
-    grad_sq_mu_of_r_for_ints(ipoint,istate) = 0.d0
-   enddo
-  enddo
- endif
 
  double precision :: elec_tot,dm,weight,grad_mu_sq
  average_grad_mu_of_r = 0.d0

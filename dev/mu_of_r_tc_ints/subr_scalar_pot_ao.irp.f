@@ -234,9 +234,9 @@ subroutine erfc_gauss_int_mu_r1(big_mat)
    do ipoint = 1, n_points_final_grid
     r1(:) = final_grid_points(:,ipoint)
     weight = final_weight_at_r_vector(ipoint)
-    do i = 1, ao_num
-     do k = 1, ao_num
-      a_mat(k,i,ipoint) = aos_in_r_array(k,ipoint) * aos_in_r_array(i,ipoint) * weight & 
+    do k = 1, ao_num
+     do i = 1, ao_num
+      a_mat(i,k,ipoint) = aos_in_r_array(k,ipoint) * aos_in_r_array(i,ipoint) * weight & 
                         * inv_2_sqpi * inv_2_mu_of_r_for_ints(ipoint,1) *  r1(m) * grad_mu_of_r_for_ints(m,ipoint,1) 
      enddo
     enddo
@@ -249,9 +249,9 @@ subroutine erfc_gauss_int_mu_r1(big_mat)
    do ipoint = 1, n_points_final_grid
     r1(:) = final_grid_points(:,ipoint)
     weight = final_weight_at_r_vector(ipoint)
-    do i = 1, ao_num
-     do k = 1, ao_num
-      a_mat(k,i,ipoint) = aos_in_r_array(k,ipoint) * aos_in_r_array(i,ipoint) * weight & 
+    do k = 1, ao_num
+     do i = 1, ao_num
+      a_mat(i,k,ipoint) = aos_in_r_array(k,ipoint) * aos_in_r_array(i,ipoint) * weight & 
                         * (-1.d0) * inv_2_sqpi * inv_2_mu_of_r_for_ints(ipoint,1) * grad_mu_of_r_for_ints(m,ipoint,1) 
      enddo
     enddo
