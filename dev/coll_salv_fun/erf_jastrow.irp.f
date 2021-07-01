@@ -86,12 +86,13 @@ double precision function f_tilde_fit(mu,x)
 ! f_tilde_fit =  -dexp(-gama * x -delta *x*x)
 end
 
-double precision function ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor)
+double precision function ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,exponent_exp)
  implicit none
  include 'constants.include.F'
  double precision, intent(in)    :: r1(3), mu        ! where the Jastrow factor is centered and its shape 
  integer, intent(in)             :: n_taylor         ! order of the Taylor expansion of the exponential
  double precision, intent(in)    :: A_center(3),B_center(3),alpha,beta ! gaussian/polynoms "A" and "B"
+ double precision, intent(in)    :: exponent_exp
  integer, intent(in)             :: power_A(3),power_B(3)
  BEGIN_DOC
 ! integral of J(r1,r2)^2 phi_i(r2) phi_j(r2) erf(mu r_12)/r12
@@ -103,11 +104,11 @@ double precision function ovlp_exp_f_phi_ij(mu,r1,A_center,B_center,power_A,powe
  integer :: i
  a0 = 1.d0/(dsqrt(pi)*mu)
  call give_param_fit_f_h(mu,gama,delta)
- call exp_dl_ovlp_stg_phi_ij(a0,r1,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints,integral_taylor)
+ call exp_dl_ovlp_stg_phi_ij(a0,r1,gama,delta,A_center,B_center,power_A,power_B,alpha,beta,n_taylor,array_ints,integral_taylor,exponent_exp)
  sum(0) = array_ints(0) 
  do i = 1, n_taylor
   ai = a0**dble(i)
-  sum(i) = sum(i-1) + array_ints(i) * (-1.d0)**dble(i) * fact_inv(i) * ai
+  sum(i) = sum(i-1) + array_ints(i) * (-1.d0*exponent_exp)**dble(i) * fact_inv(i) * ai
  enddo
  ovlp_exp_f_phi_ij = shank_general(sum,n_taylor,n_taylor) 
 

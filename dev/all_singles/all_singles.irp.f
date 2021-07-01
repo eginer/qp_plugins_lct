@@ -64,7 +64,7 @@ subroutine routine_selection
   enddo
   
   threshold_davidson = 1.d-10
-  soft_touch threshold_davidson davidson_criterion
+  soft_touch threshold_davidson threshold_davidson
   call diagonalize_CI
   if(N_states_diag.gt.1)then
    print*,'Variational Energy difference'

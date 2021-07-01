@@ -3,7 +3,11 @@ BEGIN_PROVIDER [integer, n_gauss_eff_pot]
  BEGIN_DOC
 ! number of gaussians to represent the effective potential 
  END_DOC
- n_gauss_eff_pot = n_max_fit_slat + 1
+ if(grad_squared)then
+  n_gauss_eff_pot = n_max_fit_slat + 1
+ else
+  n_gauss_eff_pot = 2
+ endif
 END_PROVIDER 
 
 BEGIN_PROVIDER [integer, n_gauss_eff_pot_deriv]
@@ -11,7 +15,11 @@ BEGIN_PROVIDER [integer, n_gauss_eff_pot_deriv]
  BEGIN_DOC
 ! number of gaussians to represent the diferential part of the effective potential 
  END_DOC
- n_gauss_eff_pot = n_max_fit_slat 
+ if(grad_squared)then
+  n_gauss_eff_pot = n_max_fit_slat 
+ else 
+  n_gauss_eff_pot = 1
+ endif
 END_PROVIDER 
 
  BEGIN_PROVIDER [double precision, expo_gauss_eff_pot_deriv, (n_gauss_eff_pot_deriv)]
@@ -20,11 +28,16 @@ END_PROVIDER
  include 'constants.include.F'
 
  integer :: i
- ! fit of the -(1 - erf(mu*x)) with n_max_fit_slat gaussians 
- do i = 1, n_max_fit_slat
-  expo_gauss_eff_pot_deriv(i) = expo_gauss_1_erf_x(i) 
-  coef_gauss_eff_pot_deriv(i) = -1.d0 * coef_gauss_1_erf_x(i) ! -(1 - erf(mu*x))
- enddo
+ if(grad_squared)then
+  ! fit of the -(1 - erf(mu*x)) with n_max_fit_slat gaussians 
+  do i = 1, n_max_fit_slat
+   expo_gauss_eff_pot_deriv(i) = expo_gauss_1_erf_x(i) 
+   coef_gauss_eff_pot_deriv(i) = -1.d0 * coef_gauss_1_erf_x(i) ! -(1 - erf(mu*x))
+  enddo
+ else
+  expo_gauss_eff_pot_deriv(i) = 1000.d0
+  coef_gauss_eff_pot_deriv(i) = 0.d0
+ endif
 
 END_PROVIDER
 
@@ -35,16 +48,33 @@ END_PROVIDER
  include 'constants.include.F'
 
  integer :: i
- ! fit of the (1 - erf(mu*x))^2 with n_max_fit_slat gaussians 
- do i = 1, n_max_fit_slat
-  expo_gauss_eff_pot(i) = expo_gauss_1_erf_x_2(i) 
-  coef_gauss_eff_pot(i) = -0.25d0 * coef_gauss_1_erf_x_2(i) ! -1/4 * (1 - erf(mu*x))^2
-!  coef_gauss_eff_pot(i) = 0.d0
- enddo
-
- ! then you have the \mu/sqrt(pi) * exp(-mu^2*x^2)
- expo_gauss_eff_pot(n_max_fit_slat+1) = mu_erf * mu_erf
- coef_gauss_eff_pot(n_max_fit_slat+1) = mu_erf * inv_sq_pi
+ if(grad_squared)then
+  ! fit of the (1 - erf(mu*x))^2 with n_max_fit_slat gaussians 
+  do i = 1, n_max_fit_slat
+   expo_gauss_eff_pot(i) = expo_gauss_1_erf_x_2(i) 
+   coef_gauss_eff_pot(i) = -0.25d0 * coef_gauss_1_erf_x_2(i) ! -1/4 * (1 - erf(mu*x))^2
+  enddo
+  ! Analytical Gaussian part of the potential 
+  expo_gauss_eff_pot(n_max_fit_slat+1) = mu_erf * mu_erf
+  if(adjoint_tc_h)then
+   ! then you have the " - \mu/sqrt(pi) * exp(-mu^2*x^2) " for the adjoint 
+   coef_gauss_eff_pot(n_max_fit_slat+1) = -1.d0 * mu_erf * inv_sq_pi
+  else
+!!  ! then you have the " + \mu/sqrt(pi) * exp(-mu^2*x^2) " for the adjoint 
+   coef_gauss_eff_pot(n_max_fit_slat+1) =  1.d0 * mu_erf * inv_sq_pi
+  endif
+ else
+  expo_gauss_eff_pot(1) = 1000.d0
+  coef_gauss_eff_pot(1) = 0.d0
+  expo_gauss_eff_pot(2) = mu_erf * mu_erf
+  if(adjoint_tc_h)then
+   ! then you have the " - \mu/sqrt(pi) * exp(-mu^2*x^2) " for the adjoint 
+   coef_gauss_eff_pot(2) = -1.d0 * mu_erf * inv_sq_pi
+  else
+!!  ! then you have the " + \mu/sqrt(pi) * exp(-mu^2*x^2) " for the adjoint 
+   coef_gauss_eff_pot(2) =  1.d0 * mu_erf * inv_sq_pi
+  endif
+ endif
 
 END_PROVIDER 
 
@@ -102,10 +132,16 @@ END_PROVIDER
  alpha = expos_slat_gauss_1_erf_x(1) * mu_erf
  call expo_fit_slater_gam(alpha,expos)
  beta = expos_slat_gauss_1_erf_x(2) * mu_erf**2.d0
- do i = 1, n_max_fit_slat
-  expo_gauss_1_erf_x(i) = expos(i) + beta
-  coef_gauss_1_erf_x(i) = coef_fit_slat_gauss(i)
- enddo
+ 
+ if(grad_squared)then
+  do i = 1, n_max_fit_slat
+   expo_gauss_1_erf_x(i) = expos(i) + beta
+   coef_gauss_1_erf_x(i) = coef_fit_slat_gauss(i)
+  enddo
+ else
+  expo_gauss_1_erf_x(1) = 1000.d0
+  coef_gauss_1_erf_x(1) = 0.d0
+ endif
 END_PROVIDER 
 
 double precision function fit_1_erf_x(x)
@@ -137,10 +173,15 @@ end
  alpha = 2.d0 * expos_slat_gauss_1_erf_x(1) * mu_erf
  call expo_fit_slater_gam(alpha,expos)
  beta = 2.d0 * expos_slat_gauss_1_erf_x(2) * mu_erf**2.d0
- do i = 1, n_max_fit_slat
-  expo_gauss_1_erf_x_2(i) = expos(i) + beta
-  coef_gauss_1_erf_x_2(i) = coef_fit_slat_gauss(i)
- enddo
+ if(grad_squared)then
+  do i = 1, n_max_fit_slat
+   expo_gauss_1_erf_x_2(i) = expos(i) + beta
+   coef_gauss_1_erf_x_2(i) = coef_fit_slat_gauss(i)
+  enddo
+ else
+  expo_gauss_1_erf_x_2(1) = 1000.d0
+  coef_gauss_1_erf_x_2(1) = 0.d0
+ endif
 END_PROVIDER 
 
 double precision function fit_1_erf_x_2(x)

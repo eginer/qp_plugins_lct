@@ -19,9 +19,9 @@
 ! z_min = -5.d0
 ! z_max = 8.d0
 !BH
- z_min = -4.d0
- z_max = 7.d0
- delta_z = 0.005d0
+z_min = -10.d0
+z_max = 10.d0
+ delta_z = 0.0005d0
 END_PROVIDER
 
 BEGIN_PROVIDER [integer, N_z_pts]
@@ -45,7 +45,7 @@ BEGIN_PROVIDER [double precision, integrated_delta_rho_all_points, (N_z_pts)]
  !$OMP PARALLEL DO DEFAULT(none) &
  !$OMP PRIVATE(i,h,j,k,c_j,c_k,n_i_h,i_z) &
  !$OMP SHARED(mo_num,ao_num,mo_coef, &
- !$OMP   ao_integrated_delta_rho_all_points,one_e_spin_density_mo,integrated_delta_rho_all_points,N_z_pts)          
+ !$OMP   ao_integrated_x_y_all_points,one_e_spin_density_mo,integrated_delta_rho_all_points,N_z_pts)          
  do i_z = 1, N_z_pts
   do i = 1, mo_num
     do h = 1, mo_num
@@ -55,7 +55,7 @@ BEGIN_PROVIDER [double precision, integrated_delta_rho_all_points, (N_z_pts)]
       c_j = mo_coef(j,i)   ! coefficient of the ith MO on the jth AO
       do k = 1, ao_num
        c_k = mo_coef(k,h)   ! coefficient of the hth MO on the kth AO
-       integrated_delta_rho_all_points(i_z) += c_k * c_j * n_i_h *  ao_integrated_delta_rho_all_points(j,k,i_z)
+       integrated_delta_rho_all_points(i_z) += c_k * c_j * n_i_h *  ao_integrated_x_y_all_points(j,k,i_z)
       enddo
      enddo
     enddo
@@ -95,7 +95,7 @@ BEGIN_PROVIDER [double precision, integrated_rho_tot_all_points, (N_z_pts)]
       c_j = mo_coef(j,i)   ! coefficient of the ith MO on the jth AO
       do k = 1, ao_num
        c_k = mo_coef(k,h)   ! coefficient of the hth MO on the kth AO
-       integrated_rho_tot_all_points(i_z) += c_k * c_j * n_i_h *  ao_integrated_delta_rho_all_points(j,k,i_z)
+       integrated_rho_tot_all_points(i_z) += c_k * c_j * n_i_h *  ao_integrated_x_y_all_points(j,k,i_z)
       enddo
      enddo
     enddo
@@ -120,7 +120,7 @@ END_PROVIDER
 
 
 
-BEGIN_PROVIDER [ double precision, ao_integrated_delta_rho_all_points, (ao_num, ao_num, N_z_pts)]
+BEGIN_PROVIDER [ double precision, ao_integrated_x_y_all_points, (ao_num, ao_num, N_z_pts)]
  BEGIN_DOC
 !  array of the overlap in x,y between the AO function and integrated between [z,z+dz] in the z axis
 !  for all the z points that are given (N_z_pts)
@@ -142,7 +142,7 @@ BEGIN_PROVIDER [ double precision, ao_integrated_delta_rho_all_points, (ao_num, 
  !$OMP PRIVATE(i,j,n,l,A_center,power_A,B_center,power_B,accu_z, &
  !$OMP  overlap_x,overlap_y,overlap_z,overlap,c,alpha,beta) &
  !$OMP SHARED(ao_num,nucl_coord,ao_nucl,ao_power,ao_prim_num,ao_expo_ordered_transp,ao_coef_normalized_ordered_transp, &
- !$OMP   ao_integrated_delta_rho_all_points,N_z_pts,dim1,i_z,z,delta_z,spin_dens_coord)           
+ !$OMP   ao_integrated_x_y_all_points,N_z_pts,dim1,i_z,z,delta_z,spin_dens_coord)           
   do j=1,ao_num
    A_center(1) = nucl_coord( ao_nucl(j), 1 )
    A_center(2) = nucl_coord( ao_nucl(j), 2 )
@@ -175,7 +175,7 @@ BEGIN_PROVIDER [ double precision, ao_integrated_delta_rho_all_points, (ao_num, 
        endif
       enddo
      enddo
-     ao_integrated_delta_rho_all_points(i,j,i_z) = accu_z
+     ao_integrated_x_y_all_points(i,j,i_z) = accu_z
    enddo
   enddo
  !$OMP END PARALLEL DO
@@ -195,19 +195,6 @@ BEGIN_PROVIDER [integer, i_unit_integrated_delta_rho]
 
 END_PROVIDER
 
-
-
-BEGIN_PROVIDER [integer, i_unit_integrated_rho_tot]
- implicit none
- BEGIN_DOC
-! fortran unit for the writing of the integrated delta_rho
- END_DOC
- integer :: getUnitAndOpen
- character*(128) :: output_i_unit_integrated_rho_tot
- output_i_unit_integrated_rho_tot=trim(ezfio_filename)//'/rho_tot'
- i_unit_integrated_rho_tot= getUnitAndOpen(output_i_unit_integrated_rho_tot,'w')
-
-END_PROVIDER
 
 
  BEGIN_PROVIDER [ double precision, exp_value_x_spread]

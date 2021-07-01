@@ -17,12 +17,25 @@
  do istate = 1, N_states
   do j = 1, mo_num
    do i = 1, mo_num
-
-    mo_tot_eff_pot_basis(i,j,istate) =  mo_integrals_n_e(i,j) + mo_kinetic_integrals(i,j)   & 
-    + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
-
-    mo_tot_eff_pot_basis_no_kin(i,j,istate) = mo_integrals_n_e(i,j) &
-    + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
+    if(no_core_density)then
+     if(  trim(mo_class(i)) == "Core" .or. trim(mo_class(j)) == "Core" )then
+      mo_tot_eff_pot_basis(i,j,istate) =  mo_integrals_n_e(i,j) + mo_kinetic_integrals(i,j)  
+      
+      mo_tot_eff_pot_basis_no_kin(i,j,istate) = mo_integrals_n_e(i,j) 
+     else
+      mo_tot_eff_pot_basis(i,j,istate) =  mo_integrals_n_e(i,j) + mo_kinetic_integrals(i,j)   & 
+      + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
+      
+      mo_tot_eff_pot_basis_no_kin(i,j,istate) = mo_integrals_n_e(i,j) &
+      + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
+     endif
+    else
+     mo_tot_eff_pot_basis(i,j,istate) =  mo_integrals_n_e(i,j) + mo_kinetic_integrals(i,j)   & 
+     + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
+     
+     mo_tot_eff_pot_basis_no_kin(i,j,istate) = mo_integrals_n_e(i,j) &
+     + 0.5d0 * ( pot_basis_alpha_mo(i,j,istate) + pot_basis_beta_mo(i,j,istate) )
+    endif
    enddo
   enddo
  enddo
