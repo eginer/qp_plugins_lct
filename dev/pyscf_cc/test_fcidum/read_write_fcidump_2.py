@@ -15,13 +15,6 @@ from pyscf import symm
 from pyscf.tools import fcidump
 
 mol = gto.M(atom='H 0 0 0; H 0 0 0.7', basis='cc-pvtz')
-#myhf = scf.RHF(mol)
-#myhf.kernel()
-#
-#
-# Example 1: Convert an SCF object to FCIDUMP
-#
-#fcidump.from_scf(myhf, 'fcidump.example1')
 
 #
 # Hamiltonians of FCIDUMP file can be load

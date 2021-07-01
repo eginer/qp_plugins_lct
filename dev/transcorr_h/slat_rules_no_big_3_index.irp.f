@@ -58,6 +58,7 @@ subroutine diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
    do i = 1, Ne(ispin)
     ii = occ(i,ispin) 
     do j = i+1, Ne(ispin)
+!    do j = 1, Ne(ispin)
      jj = occ(j,ispin) 
      heff += 0.5d0 * (scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj)  + scalar_mu_r_pot_physicist_mo(jj,ii,jj,ii) & 
                      -scalar_mu_r_pot_physicist_mo(jj,ii,ii,jj)  - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii) )
