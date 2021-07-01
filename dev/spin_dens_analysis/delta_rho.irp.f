@@ -16,11 +16,11 @@
 &BEGIN_PROVIDER [double precision, z_max]
  implicit none
 !cucl2
- z_min = -5.d0
- z_max = 8.d0
+! z_min = -5.d0
+! z_max = 8.d0
 !BH
-!z_min = -4.d0
-!z_max = 7.d0
+ z_min = -4.d0
+ z_max = 7.d0
  delta_z = 0.005d0
 END_PROVIDER
 
@@ -34,7 +34,7 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, integrated_delta_rho_all_points, (N_z_pts)]
  BEGIN_DOC
 ! 
-! integrated_rho(alpha,z) - integrated_rho(beta,z) for all the z points 
+! integrated_rho(alpha,z) + integrated_rho(beta,z) for all the z points 
 ! chosen
 !
  END_DOC
@@ -78,13 +78,13 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, integrated_rho_tot_all_points, (N_z_pts)]
  BEGIN_DOC
 ! 
-! integrated_rho(alpha,z) - integrated_rho(beta,z) for all the z points 
+! integrated_rho(alpha,z) + integrated_rho(beta,z) for all the z points 
 ! chosen
 !
  END_DOC
  implicit none
  integer :: i,j,k,l,i_z,h
- double precision :: z,function_integrated_delta_rho,c_k,c_j,n_i_h,accu
+ double precision :: z,function_integrated_delta_rho,c_k,c_j,n_i_h,accu, accu_2
  integrated_rho_tot_all_points = 0.d0
  do i_z = 1, N_z_pts
   do i = 1, mo_num
@@ -105,12 +105,14 @@ BEGIN_PROVIDER [double precision, integrated_rho_tot_all_points, (N_z_pts)]
 
  z = z_min
  accu = 0.d0
+ accu_2 = 0.d0
  do i = 1, N_z_pts
   accu += integrated_rho_tot_all_points(i)
-  write(i_unit_integrated_rho_tot,*)z,integrated_rho_tot_all_points(i),accu
+  accu_2 +=  integrated_rho_tot_all_points(i)*z
+  write(i_unit_integrated_rho_tot,*)z,integrated_rho_tot_all_points(i),accu, accu_2
   z += delta_z
  enddo
- print*,'sum of integrated_delta_rho = ',accu
+ print*,'sum of integrated_rho = ',accu
 
 END_PROVIDER
 

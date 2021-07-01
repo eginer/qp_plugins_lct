@@ -26,7 +26,7 @@
    enddo
   enddo
  enddo
-END_PROVIDER
+ END_PROVIDER
 
 
  BEGIN_PROVIDER [double precision, ao_tot_eff_pot_basis, (ao_num, ao_num,N_states)]
