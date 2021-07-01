@@ -3,21 +3,32 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      integer, intent(in) :: n_orb_for_loc,index_orb_for_loc(n_orb_for_loc)
      double precision, intent(in) :: mo_guess_for_loc(ao_num,n_orb_for_loc)
      integer id1,i_atom,shift,shift_h
-     parameter (id1=700)
      character*1 jobz,uplo
      character*64 file1,file2
-     character*72 string(id1,8),cdum
-     double precision               :: cmo(id1,id1,1),cmoref(id1,id1,1),newcmo(id1,id1,1)
-     double precision               :: s(id1,id1,1),dum,ddum(id1,id1),ovl(id1,id1)
-     double precision               :: w(id1),work(3*id1),t(id1,id1),wi(id1,id1)
-     integer n,i,j,k,l,nmo(8),isym,nsym,idum,nrot(8),irot(id1,8),m
-     integer ipiv(id1),info,lwork
+     character*72 cdum
+     integer n,i,j,k,l,nmo(8),isym,nsym,idum,nrot(8),m
+     integer info,lwork
      logical *1 z54
+     integer                        :: index_rot(1000,1)
+     double precision               :: accu_norm
+
+     double precision, allocatable  :: cmo(:,:,:),cmoref(:,:,:),newcmo(:,:,:)
+     double precision, allocatable  :: s(:,:,:),dum,ddum(:,:),ovl(:,:)
+     double precision, allocatable  :: w(:),work(:),t(:,:),wi(:,:)
+     integer, allocatable           :: irot(:,:),ipiv(:)
+     character*72, allocatable      :: string(:,:)
+     id1 = 700
+
+     allocate( cmo(id1,id1,1),cmoref(id1,id1,1),newcmo(id1,id1,1))
+     allocate( s(id1,id1,1),dum,ddum(id1,id1),ovl(id1,id1))
+     allocate( w(id1),work(3*id1),t(id1,id1),wi(id1,id1), irot(id1,8),string(id1,8),ipiv(id1))
+     print*,'coucou'
      z54=.false.
      accu_norm = 0.d0
      do i =1,mo_num
        accu_norm += dabs(mo_overlap(i,i))
      enddo
+     print*,'accu_norm = ',accu_norm
      nsym = 1
      nmo(1) = mo_num
      cmo = 0.d0
@@ -38,7 +49,6 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      nrot(1) = n_orb_for_loc ! number of orbitals to be localized
      
      
-     integer                        :: index_rot(1000,1)
      
      
      cmoref = 0.d0
@@ -69,7 +79,7 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      
      
      do isym=1,nsym
-       
+       print*,'isym = ',isym 
        if (nrot(isym).eq.0) cycle
        do i=1,nrot(isym) ! mos
          do j=1,nrot(isym)! ref vector 
@@ -84,7 +94,6 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
        enddo
        print*,'OVL === '
        do i = 1, nrot(isym)
-!       write(*,'(100(F16.5,X))')ovl(1:nrot(isym),i)
         write(*,*)ovl(1:nrot(isym),i)
        enddo
        call maxovl(nrot(isym),nrot(isym),ovl,t,wi)
@@ -118,15 +127,11 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      
      ! we say that it hase been touched, and valid and that everything that
      ! depends on mo_coef must not be reprovided
-     double precision               :: accu_norm
-!    touch mo_coef
-!    print*,'after  = '
      accu_norm = 0.d0
      do i =1,mo_num
        accu_norm += dabs(mo_overlap(i,i))
      enddo
      print*, 'accu_norm = ',accu_norm
-!    print*,'accu_norm = ',accu_norm
      ! We call the routine that saves mo_coef in the ezfio format
      call save_mos
      

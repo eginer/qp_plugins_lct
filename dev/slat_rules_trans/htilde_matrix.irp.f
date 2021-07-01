@@ -3,6 +3,7 @@
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_eff, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_deriv, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_hcore, (N_det,N_det)]
+&BEGIN_PROVIDER [double precision, htilde_matrix_elmt_hthree, (N_det,N_det)]
  implicit none
  BEGIN_DOC
 ! htilde_matrix_elmt(j,i) = <J| H^tilde |I> 
@@ -10,16 +11,17 @@
 ! WARNING !!!!!!!!! IT IS NOT HERMITIAN !!!!!!!!!
  END_DOC
  integer :: i,j
- double precision :: hmono,herf,heff,hderiv,htot
+ double precision :: hmono,herf,heff,hderiv,hthree,htot
  do i = 1, N_det
   do j = 1, N_det
   ! < J | Htilde | I >
-   call htilde_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,herf,heff,hderiv,htot)
+   call htilde_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,htot)
    htilde_matrix_elmt(j,i) = htot
    htilde_matrix_elmt_erf(j,i) = herf
    htilde_matrix_elmt_eff(j,i) = heff
    htilde_matrix_elmt_deriv(j,i) = hderiv
    htilde_matrix_elmt_hcore(j,i) = hmono
+   htilde_matrix_elmt_hthree(j,i) = hthree
   enddo
  enddo
 ! htilde_matrix_elmt = H_matrix_all_dets
@@ -33,6 +35,7 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, reigvec_trans_norm, (N_det)]
 &BEGIN_PROVIDER [double precision, leigvec_trans_norm, (N_det)]
  implicit none
+ integer :: i,j
  BEGIN_DOC
 ! n_good_trans_eigval = number of PURE REAL eigenvalues for H^tilde (should be all if everything is fine)
 !
@@ -68,85 +71,53 @@ END_PROVIDER
      leigvec_trans(j,i) = leigvec_trans_tmp(j,i)
      reigvec_trans_norm(i) += reigvec_trans_tmp(j,i) * reigvec_trans_tmp(j,i)
      leigvec_trans_norm(i) += leigvec_trans_tmp(j,i) * leigvec_trans_tmp(j,i)
-!     print*,j,reigvec_trans(j,i),leigvec_trans(j,i)
     enddo
    enddo
  else
-  print*,'Computing the left/right eigenvectors ...'
-  character*1 :: JOBVL,JOBVR
-  JOBVL = "V" ! computes the left  eigenvectors 
-  JOBVR = "V" ! computes the right eigenvectors 
-  integer     :: n,lda,ldvl,ldvr,LWORK,INFO
-  double precision, allocatable :: A(:,:),WR(:),WI(:),Vl(:,:),VR(:,:)
-  double precision, allocatable :: WORK(:)
-  integer :: i,j,k
-  integer :: n_good
-  integer, allocatable :: list_good(:), iorder(:)
-  double precision, allocatable :: ei(:)
-  ! Eigvalue(n) = WR(n) + i * WI(n)
-  n = n_det
-  allocate(A(n,n),WR(n),WI(n),VL(n,n),VR(n,n))
-  lda  = n
-  ldvl = n
-  ldvr = n
-  A = htilde_matrix_elmt
-  allocate(WORK(1))
-  LWORK = -1 ! to ask for the optimal size of WORK
-  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
-  if(INFO.gt.0)then
-   print*,'dgeev failed !!',INFO
-   stop
-  endif
-  LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
-  deallocate(WORK)
-  allocate(WORK(LWORK))
-  ! Actual diagonalization 
-  A = htilde_matrix_elmt
-  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
-  if(INFO.ne.0)then
-   print*,'dgeev failed !!',INFO
-   stop
-  endif
- 
-  ! You track the real eigenvalues 
-  n_good = 0
-  do i = 1, n
-   if(dabs(WI(i)).lt.1.d-12)then
-    n_good += 1
-   endif
-  enddo
-  allocate(list_good(n_good),iorder(n_good),ei(n_good))
-  n_good = 0
-  do i = 1, n
-   if(dabs(WI(i)).lt.1.d-12)then
-    n_good += 1
-    list_good(n_good) = i
-    ei(n_good) = WR(i)
-   endif
-  enddo
-  n_good_trans_eigval = n_good 
-  do i = 1, n_good
-   iorder(i) = i
-  enddo
-  ! You sort the real eigenvalues 
-  call dsort(ei,iorder,n_good)
-  double precision :: accu1, accu2
+  call non_hrmt_real_diag(N_det,htilde_matrix_elmt,reigvec_trans,leigvec_trans,n_good_trans_eigval,eigval_trans)
   do i = 1, n_good_trans_eigval
-   eigval_trans(i) = ei(i)
-   print*,'e(i) = ',ei(i) + nuclear_repulsion
-   accu1 = 0.d0
-   accu2 = 0.d0
-   do j = 1, n_det
-    reigvec_trans(j,i) = VR(j,list_good(iorder(i)))
-    leigvec_trans(j,i) = Vl(j,list_good(iorder(i)))
-    accu1 += reigvec_trans(j,i) * reigvec_trans(j,i)
-    accu2 += leigvec_trans(j,i) * leigvec_trans(j,i)
+   reigvec_trans_norm(i) = 0.d0
+   leigvec_trans_norm(i) = 0.d0
+   do j = 1, N_det
+    reigvec_trans_norm(i) += reigvec_trans(j,i) * reigvec_trans(j,i)
+    leigvec_trans_norm(i) += leigvec_trans(j,i) * leigvec_trans(j,i)
    enddo
-   reigvec_trans_norm(i) = accu1
-   leigvec_trans_norm(i) = accu2
   enddo
  endif
 
+END_PROVIDER 
+
+BEGIN_PROVIDER [ integer, n_tc_ovlp_print]
+ implicit none
+ n_tc_ovlp_print = min(n_good_trans_eigval,10)
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, left_right_overlap, (n_tc_ovlp_print, n_tc_ovlp_print)]
+&BEGIN_PROVIDER [ double precision, left_left_overlap, (n_tc_ovlp_print, n_tc_ovlp_print)]
+&BEGIN_PROVIDER [ double precision, right_right_overlap, (n_tc_ovlp_print, n_tc_ovlp_print)]
+ implicit none
+ double precision :: accu_lr, accu_ll, accu_rr
+ integer :: i,j,k,l
+ print*,''
+ print*,''
+ print*,'Computing overlap between states'
+ print*,''
+ print*,''
+ do i = 1, n_tc_ovlp_print
+  do j = 1, n_tc_ovlp_print
+   accu_rr = 0.d0
+   accu_lr = 0.d0
+   accu_ll = 0.d0
+   do l = 1, N_det
+    accu_rr += reigvec_trans(l,j) * reigvec_trans(l,i) 
+    accu_lr += leigvec_trans(l,j) * reigvec_trans(l,i) 
+    accu_ll += leigvec_trans(l,j) * leigvec_trans(l,i) 
+   enddo
+   right_right_overlap(j,i) = accu_rr
+   left_right_overlap(j,i) = accu_lr
+   left_left_overlap(j,i) = accu_ll
+  enddo
+ enddo
 END_PROVIDER 
 
 

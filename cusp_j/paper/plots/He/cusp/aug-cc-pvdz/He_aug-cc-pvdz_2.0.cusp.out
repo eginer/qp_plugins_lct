@@ -1,0 +1,325 @@
+Date: 01/10/2020 18:13:46
+===============
+Quantum Package
+===============
+
+Git Commit: minor modifs
+Git Date  : Mon Sep 21 15:38:26 2020 +0200
+Git SHA1  : ee267e27e9b6027ea76a05e2b43271cc8906fd55
+EZFIO Dir : He_aug-cc-pvdz_2.0
+
+
+Task server running : tcp://127.0.1.1:41279
+.. >>>>> [ IO READ: read_rl_eigv ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.000353  s ] [ CPU  TIME:       0.004860  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_ao_two_e_integrals ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.000952  s ] [ CPU  TIME:       0.005256  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_mo_two_e_integrals ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.001522  s ] [ CPU  TIME:       0.005630  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_ao_integrals_kinetic ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.002041  s ] [ CPU  TIME:       0.005990  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_ao_integrals_n_e ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.002389  s ] [ CPU  TIME:       0.006276  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_mo_integrals_kinetic ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.002997  s ] [ CPU  TIME:       0.006683  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_mo_integrals_n_e ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.003331  s ] [ CPU  TIME:       0.006955  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_mo_one_e_integrals ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.003587  s ] [ CPU  TIME:       0.007150  s ] <<<<< ..
+
+.. >>>>> [ IO READ: read_wf ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004047 GB ] [ VIRT MEM :       0.041355 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.004172  s ] [ CPU  TIME:       0.007540  s ] <<<<< ..
+
+.. >>>>> [ IO READ: n_states ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004688 GB ] [ VIRT MEM :       0.041492 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.004706  s ] [ CPU  TIME:       0.008008  s ] <<<<< ..
+
+ * mo_label          Canonical
+* Number of determinants                                        81
+.. >>>>> [ IO READ: n_det_max_full ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.004688 GB ] [ VIRT MEM :       0.064941 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.010870  s ] [ CPU  TIME:       0.023743  s ] <<<<< ..
+
+
+.. >>>>> [ RES  MEM :       0.004688 GB ] [ VIRT MEM :       0.064941 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.011179  s ] [ CPU  TIME:       0.024417  s ] <<<<< ..
+
+ Read  n_states_diag
+* Dimension of the psi arrays                               100000
+ Read psi_coef          81           1
+.. >>>>> [ IO READ: threshold_davidson ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.005806 GB ] [ VIRT MEM :       0.253189 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.012565  s ] [ CPU  TIME:       0.028100  s ] <<<<< ..
+
+* mo_num                                                         9
+* N_int                                                          1
+.. >>>>> [ IO READ: elec_beta_num ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.005806 GB ] [ VIRT MEM :       0.253189 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.013237  s ] [ CPU  TIME:       0.031960  s ] <<<<< ..
+
+.. >>>>> [ IO READ: elec_alpha_num ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.005806 GB ] [ VIRT MEM :       0.253189 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.013523  s ] [ CPU  TIME:       0.032570  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_num ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.005806 GB ] [ VIRT MEM :       0.253189 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.014129  s ] [ CPU  TIME:       0.034829  s ] <<<<< ..
+
+ Read  mo_coef
+ Read psi_det
+ MO map initialized:                  1035
+.. >>>>> [ IO READ: no_vvvv_integrals ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.007668 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.016784  s ] [ CPU  TIME:       0.042445  s ] <<<<< ..
+
+.. >>>>> [ IO READ: mo_class ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.007668 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.017174  s ] [ CPU  TIME:       0.043355  s ] <<<<< ..
+
+ AO map initialized :                  1035
+ Providing the AO integrals
+.. >>>>> [ IO READ: ao_prim_num ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.007668 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.020680  s ] [ CPU  TIME:       0.056277  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_normalized ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.007668 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.023748  s ] [ CPU  TIME:       0.063224  s ] <<<<< ..
+
+.. >>>>> [ IO READ: primitives_normalized ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.007668 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.024904  s ] [ CPU  TIME:       0.065570  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_coef ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.007668 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.027079  s ] [ CPU  TIME:       0.071348  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_power ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008255 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.027969  s ] [ CPU  TIME:       0.073354  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_expo ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008255 GB ] [ VIRT MEM :       0.254681 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.028295  s ] [ CPU  TIME:       0.074121  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_nucl ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.254784 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.028736  s ] [ CPU  TIME:       0.075229  s ] <<<<< ..
+
+.. >>>>> [ IO READ: ao_integrals_threshold ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.403233 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.039181  s ] [ CPU  TIME:       0.107178  s ] <<<<< ..
+
+.. >>>>> [ IO READ: is_periodic ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.403233 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.039575  s ] [ CPU  TIME:       0.107432  s ] <<<<< ..
+
+.. >>>>> [ IO READ: nucl_num ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.403233 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.039882  s ] [ CPU  TIME:       0.107744  s ] <<<<< ..
+
+.. >>>>> [ IO READ: nucl_label ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.403233 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.040130  s ] [ CPU  TIME:       0.107933  s ] <<<<< ..
+
+.. >>>>> [ IO READ: nucl_charge ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.403233 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.040344  s ] [ CPU  TIME:       0.108085  s ] <<<<< ..
+
+
+.. >>>>> [ RES  MEM :       0.008503 GB ] [ VIRT MEM :       0.403233 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.040557  s ] [ CPU  TIME:       0.108238  s ] <<<<< ..
+
+
+Nuclear Coordinates (Angstroms)
+===============================
+
+================ ============ ============ ============ ============
+      Atom          Charge          X            Y            Z 
+================ ============ ============ ============ ============
+He                   2.000000     0.000000     0.000000     0.000000
+================ ============ ============ ============ ============
+
+ Sorting the map
+ AO integrals provided:
+  Size of AO map :            3.0746459960937500E-003 MB
+  Number of AO integrals :                  213
+  cpu  time :   7.9651999999999987E-002 s
+  wall time :   3.3822224999312311E-002 s  ( x    2.3550195175397097       )
+ 
+ AO -> MO integrals transformation
+ ---------------------------------
+ 
+.. >>>>> [ IO READ: mo_integrals_threshold ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008724 GB ] [ VIRT MEM :       0.465733 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.052485  s ] [ CPU  TIME:       0.128985  s ] <<<<< ..
+
+ Buffers :    2.36206055E-02 MB / core
+.. >>>>> [ IO READ: io_ao_integrals_overlap ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.008724 GB ] [ VIRT MEM :       0.465733 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.060202  s ] [ CPU  TIME:       0.150644  s ] <<<<< ..
+
+ Molecular integrals provided:
+  Size of MO map              9.8266601562500000E-003 MB
+  Number of MO integrals:                   512
+  cpu  time :   2.8075000000000017E-002 s
+  wall time :   1.0274936998030171E-002 s  ( x    2.7323768511069542      )
+.. >>>>> [ IO READ: do_pseudo ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.010647 GB ] [ VIRT MEM :       2.465736 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.063092  s ] [ CPU  TIME:       0.158123  s ] <<<<< ..
+
+ Providing the one-electron integrals
+.. >>>>> [ IO READ: s2_eig ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.010647 GB ] [ VIRT MEM :       2.465736 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.063703  s ] [ CPU  TIME:       0.159115  s ] <<<<< ..
+
+ Diagonalization of H using Lapack
+.. >>>>> [ IO READ: only_expected_s2 ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.010647 GB ] [ VIRT MEM :       2.465736 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.063982  s ] [ CPU  TIME:       0.159473  s ] <<<<< ..
+
+.. >>>>> [ IO READ: io_nuclear_repulsion ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.011772 GB ] [ VIRT MEM :       2.465885 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.067767  s ] [ CPU  TIME:       0.175731  s ] <<<<< ..
+
+
+.. >>>>> [ RES  MEM :       0.011772 GB ] [ VIRT MEM :       2.465885 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.067982  s ] [ CPU  TIME:       0.176016  s ] <<<<< ..
+
+* Nuclear repulsion energy                           0.000000000000000    
+
+.. >>>>> [ RES  MEM :       0.011772 GB ] [ VIRT MEM :       2.465885 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.068199  s ] [ CPU  TIME:       0.176301  s ] <<<<< ..
+
+* Energy of state    1                              -2.889548485366695    
+* S^2 of state    1                                 0.2397818564461773E-29
+.. >>>>> [ IO READ: distributed_davidson ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.011772 GB ] [ VIRT MEM :       2.465885 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.068544  s ] [ CPU  TIME:       0.176736  s ] <<<<< ..
+
+.. >>>>> [ IO READ: weight_one_e_dm ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.011772 GB ] [ VIRT MEM :       2.465885 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.068835  s ] [ CPU  TIME:       0.177131  s ] <<<<< ..
+
+.. >>>>> [ IO READ: no_core_density ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.015911 GB ] [ VIRT MEM :       2.469994 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.073038  s ] [ CPU  TIME:       0.191408  s ] <<<<< ..
+
+* Number of inactive MOs                                         0
+ Inactive MOs:
+
+* Number of unique beta determinants                             9
+* Number of unique alpha determinants                            9
+* Number of active   MOs                                         9
+ Active MOs:
+           1           2           3           4           5           6           7           8           9
+.. >>>>> [ IO READ: io_two_body_rdm_ab ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.015911 GB ] [ VIRT MEM :       2.475224 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.074179  s ] [ CPU  TIME:       0.200938  s ] <<<<< ..
+
+ 
+ Providing act_2_rdm_ab_mo 
+ Wall time to provide act_2_rdm_ab_mo   4.9704500270308927E-004
+* Number of core     MOs                                         0
+ Core MOs:
+
+.. >>>>> [ IO READ: my_grid_becke ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.015911 GB ] [ VIRT MEM :       2.475224 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.075288  s ] [ CPU  TIME:       0.202708  s ] <<<<< ..
+
+.. >>>>> [ IO READ: my_n_pt_a_grid ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.015911 GB ] [ VIRT MEM :       2.475224 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.075559  s ] [ CPU  TIME:       0.203063  s ] <<<<< ..
+
+.. >>>>> [ IO READ: my_n_pt_r_grid ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.015911 GB ] [ VIRT MEM :       2.475224 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.075827  s ] [ CPU  TIME:       0.203406  s ] <<<<< ..
+
+.. >>>>> [ IO READ: thresh_grid ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.015911 GB ] [ VIRT MEM :       2.475372 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.076301  s ] [ CPU  TIME:       0.204167  s ] <<<<< ..
+
+ n_points_final_grid =         2072
+ n max point         =         2146
+.. >>>>> [ IO READ: mu_erf ] <<<<< ..
+
+.. >>>>> [ RES  MEM :       0.016335 GB ] [ VIRT MEM :       2.475513 GB ] <<<<< ..
+.. >>>>> [ WALL TIME:       0.078124  s ] [ CPU  TIME:       0.215482  s ] <<<<< ..
+
+ Reading the right/left eigenvectors in the EZFIO....
+ 
+ Providing act_2_rdm_ab_mo 
+ Wall time to provide act_2_rdm_ab_mo   5.2612199942814186E-004
+ 
+ Providing act_2_rdm_ab_mo 
+ Wall time to provide act_2_rdm_ab_mo   5.4269700194709003E-004
+ 
+ Providing act_2_rdm_ab_mo 
+ Wall time to provide act_2_rdm_ab_mo   5.1693299974431284E-004
+ <Phi | e^{2 j(r12,mu)} | Phi> =   0.99441930866754324     
+ output = He_aug-cc-pvdz_2.0.cusp_wf_1
+ output = He_aug-cc-pvdz_2.0.cusp_wf_2
+ output = He_aug-cc-pvdz_2.0.cusp_wf_3
+ output = He_aug-cc-pvdz_2.0.cusp_wf_4
+ output = He_aug-cc-pvdz_2.0.cusp_wf_5
+Wall time: 0:00:03
+

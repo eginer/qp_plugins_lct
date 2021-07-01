@@ -30,7 +30,15 @@ subroutine comp_mo_int_mu_of_r_jl(j,l,n_integrals,buffer_i,buffer_value)
     do i = 1, mo_num
       i1 += 1
       ! the 1/2 factor comes from different normalization of the on-top pair density
-      integral = integrals_matrix(i,k)  +  eff_int_mat(i,k) ! i,k : r1    j,l : r2
+      if(no_core_density)then
+       if(  trim(mo_class(i)) == "Core" .or. trim(mo_class(j)) == "Core" .or. trim(mo_class(k)) == "Core" .or. trim(mo_class(l)) == "Core")then
+        integral = integrals_matrix(i,k)                      ! i,k : r1    j,l : r2
+       else
+        integral = integrals_matrix(i,k)  +  eff_int_mat(i,k) ! i,k : r1    j,l : r2
+       endif
+      else
+        integral = integrals_matrix(i,k)  +  eff_int_mat(i,k) ! i,k : r1    j,l : r2
+      endif
       if (dabs(integral) < thr) then
         cycle
       endif

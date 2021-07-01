@@ -4,7 +4,13 @@ subroutine print_energy
  use bitmasks
  integer :: i
  print*,'***************************************'
- print*,'mu_erf = ',mu_erf
+ 
+ if(.not.ten_no_jastrow)then
+  print*,'Using a mu-based Jastrow'
+  print*,'mu_erf = ',mu_erf
+ else
+  print*,'Using Ten-No Jastrow'
+ endif
  print*,'H      eigenvalue'
  i = 1
  print*,'E0       = ',CI_energy(i)
@@ -27,7 +33,7 @@ subroutine print_eigv
  print*,'******************'
  print*,'Right eigenvector             Left eigenvector               psi_coef'
  do i = 1, N_det
-  print*,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
+  write(*,'(I5,X,100(F16.10,X))')i,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
  enddo
  double precision :: accu1,accu2,e
  accu1 = 0.d0
@@ -66,13 +72,42 @@ subroutine print_eigv
  print*,'reigvec_trans_norm ',leigvec_trans_norm(1)
 end
 
+subroutine print_overlap_left_right
+ implicit none
+ integer :: i
+ print*,'***************'
+ print*,'***************'
+ print*,'OVERLAP PRINTING'
+ print*,'***************'
+ print*,'Printing the overlap between the left and right eigenvectors'
+ do i = 1, n_tc_ovlp_print
+  write(*,'(I4,X,100(F9.5,X))')i,left_right_overlap(i,1:min(100,n_tc_ovlp_print))
+ enddo
+
+ print*,'               '
+ print*,'***************'
+ print*,'Printing the overlap between the right and right eigenvectors'
+ do i = 1, n_tc_ovlp_print
+  write(*,'(I4,X,100(F9.5,X))')i,right_right_overlap(i,1:min(100,n_tc_ovlp_print))
+ enddo
+
+ print*,'               '
+ print*,'***************'
+ print*,'Printing the overlap between the left and left eigenvectors'
+ do i = 1, n_tc_ovlp_print
+  write(*,'(I4,X,100(F9.5,X))')i,left_left_overlap(i,1:min(100,n_tc_ovlp_print))
+ enddo
+
+
+end
+
 subroutine print_pert
  implicit none
  integer :: i,j
  double precision :: accu,hmono,herf,heff,hderiv,htot
  double precision :: accu_mono,accu_double,accu2
  double precision :: pert_mono,pert_double
- double precision :: h00,hii,htotbis,phase,h0i,hi0
+ double precision :: h00,hii,htotbis,phase,h0i,hi0,hthree
  integer          :: degree,exc(0:2,2,2)
  integer          :: h1, p1, h2, p2, s1, s2
  double precision :: norm_t1,norm_t2
@@ -85,7 +120,7 @@ subroutine print_pert
  pert_double = 0.d0
  norm_t1 = 0.d0
  norm_t2 = 0.d0
- call htilde_mat(psi_det(1,1,1),psi_det(1,1,1),hmono,herf,heff,hderiv,h00)
+ call htilde_mat(psi_det(1,1,1),psi_det(1,1,1),hmono,herf,heff,hderiv,hthree,h00)
  print*,''
  print*,'*************************************'
  print*,'*************************************'
@@ -99,15 +134,16 @@ subroutine print_pert
    ! <0|H|i>
    print*,'******************'
    print*,'i = ',i
-   call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,h0i)
+   call htilde_mat(psi_det(1,1,1),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,h0i)
  
    ! <i|H|i>
-   call htilde_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,herf,heff,hderiv,hii)
+   call htilde_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,herf,heff,hderiv,hthree,hii)
  
    ! <i|H|0>
-   call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hi0)
+   call htilde_mat(psi_det(1,1,i),psi_det(1,1,1),hmono,herf,heff,hderiv,hthree,hi0)
  
    call get_excitation_degree(psi_det(1,1,i),psi_det(1,1,1),degree,N_int)
+   print*,'degree = ',degree
    if(degree==1)then
     call get_single_excitation(psi_det(1,1,i),psi_det(1,1,1),exc,phase,N_int)
     call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)

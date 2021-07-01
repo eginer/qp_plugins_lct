@@ -6,8 +6,6 @@ program write_effective_electric_field_hamiltonian
  !
  ! have the one- and two-body integrals loaded from the EZFIO data. 
  END_DOC
- read_wf = .true.
- touch read_wf
  ! total one-e integrals 
  io_mo_one_e_integrals = "None"
  touch io_mo_one_e_integrals  
@@ -24,32 +22,7 @@ program write_effective_electric_field_hamiltonian
  io_ao_integrals_kinetic = "None"
  touch io_ao_integrals_kinetic 
 
- ! regular 1/r12 integrals  on the MO basis
- io_mo_two_e_integrals = "None"
- touch io_mo_two_e_integrals
- ! regular 1/r12 integrals  on the AO basis
- io_ao_two_e_integrals = "None"
- touch io_ao_two_e_integrals
  ! integral of the effective potential 
- io_mo_int_mu_of_r = "None" 
- touch io_mo_int_mu_of_r
- call write_all_ints_basis_electric_field
- call routines_compute_energy
+ call save_v_ne_and_electric_filed_ao_ints
 end
-
-subroutine routines_compute_energy
- implicit none
- BEGIN_DOC
-! routine that computes the variational energy of the current wave function 
-!
-! and saves the current one-body density matrix into the aux_quantities folder the EZFIO folder
- END_DOC
-! density_for_dft = "WFT" 
-! touch density_for_dft 
- call print_variational_energy
- call ezfio_set_aux_quantities_data_one_e_dm_alpha_mo(one_e_dm_mo_alpha)
- call ezfio_set_aux_quantities_data_one_e_dm_beta_mo(one_e_dm_mo_beta)
-
-end
-
 
