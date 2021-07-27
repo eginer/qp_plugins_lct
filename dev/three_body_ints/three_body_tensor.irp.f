@@ -8,65 +8,69 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
  integer :: i,j,k,l,m,n
  double precision :: integral, wall1, wall0
  character*(128) :: name_file 
- name_file = 'six_index_tensor'
  three_body_ints = 0.d0
- provide x_W_ij_erf_rk
  print*,'Providing the three_body_ints ...'
  call wall_time(wall0)
- if(read_six_index_tensor)then
-  print*,'Reading three_body_ints from disk ...'
-  call read_array_6_index_tensor(mo_num,three_body_ints,name_file)
+ if(read_3_body_tc_ints)then
+  call read_fcidump_3_tc(three_body_ints)
  else
- !$OMP PARALLEL                  &
- !$OMP DEFAULT (NONE)            &
- !$OMP PRIVATE (i,j,k,l,m,n,integral) & 
- !$OMP SHARED (mo_num,three_body_ints)
- !$OMP DO SCHEDULE (dynamic)
-  do n = 1, mo_num
-   do l = 1, mo_num
-    do k = 1, mo_num
-     do m = n, mo_num
-      do j = l, mo_num
-       do i = k, mo_num
-!         if(i>=j)then
-          integral = 0.d0
-          call give_integrals_3_body(i,j,m,k,l,n,integral)
-
-          three_body_ints(i,j,m,k,l,n) = -1.d0 * integral 
-  
-          ! permutation with k,i
-          three_body_ints(k,j,m,i,l,n) = -1.d0 * integral ! i,k
-          ! two permutations with k,i
-          three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
-          three_body_ints(k,j,n,i,l,m) = -1.d0 * integral 
-          ! three permutations with k,i
-          three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
-  
-          ! permutation with l,j
-          three_body_ints(i,l,m,k,j,n) = -1.d0 * integral ! j,l
-          ! two permutations with l,j
-          three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
-          three_body_ints(i,l,n,k,j,m) = -1.d0 * integral 
-          ! two permutations with l,j
-!!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
-  
-          ! permutation with m,n
-          three_body_ints(i,j,n,k,l,m) = -1.d0 * integral ! m,n
-          ! two permutations with m,n
-          three_body_ints(k,j,n,i,l,m) = -1.d0 * integral ! m,n
-          three_body_ints(i,l,n,k,j,m) = -1.d0 * integral ! m,n
-          ! three permutations with k,i
-!!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral ! m,n
-
-!         endif
+  if(read_six_index_tensor)then
+   print*,'Reading three_body_ints from disk ...'
+   name_file = 'six_index_tensor'
+   call read_array_6_index_tensor(mo_num,three_body_ints,name_file)
+  else
+  provide x_W_ij_erf_rk
+  !$OMP PARALLEL                  &
+  !$OMP DEFAULT (NONE)            &
+  !$OMP PRIVATE (i,j,k,l,m,n,integral) & 
+  !$OMP SHARED (mo_num,three_body_ints)
+  !$OMP DO SCHEDULE (dynamic)
+   do n = 1, mo_num
+    do l = 1, mo_num
+     do k = 1, mo_num
+      do m = n, mo_num
+       do j = l, mo_num
+        do i = k, mo_num
+!!         if(i>=j)then
+           integral = 0.d0
+           call give_integrals_3_body(i,j,m,k,l,n,integral)
+ 
+           three_body_ints(i,j,m,k,l,n) = -1.d0 * integral 
+   
+           ! permutation with k,i
+           three_body_ints(k,j,m,i,l,n) = -1.d0 * integral ! i,k
+           ! two permutations with k,i
+           three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
+           three_body_ints(k,j,n,i,l,m) = -1.d0 * integral 
+           ! three permutations with k,i
+           three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
+   
+           ! permutation with l,j
+           three_body_ints(i,l,m,k,j,n) = -1.d0 * integral ! j,l
+           ! two permutations with l,j
+           three_body_ints(k,l,m,i,j,n) = -1.d0 * integral 
+           three_body_ints(i,l,n,k,j,m) = -1.d0 * integral 
+           ! two permutations with l,j
+!!!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral 
+   
+           ! permutation with m,n
+           three_body_ints(i,j,n,k,l,m) = -1.d0 * integral ! m,n
+           ! two permutations with m,n
+           three_body_ints(k,j,n,i,l,m) = -1.d0 * integral ! m,n
+           three_body_ints(i,l,n,k,j,m) = -1.d0 * integral ! m,n
+           ! three permutations with k,i
+!!!!        three_body_ints(k,l,n,i,j,m) = -1.d0 * integral ! m,n
+ 
+!!         endif
+        enddo
        enddo
       enddo
      enddo
     enddo
    enddo
-  enddo
- !$OMP END DO
- !$OMP END PARALLEL
+  !$OMP END DO
+  !$OMP END PARALLEL
+  endif
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_ints',wall1 - wall0

@@ -22,6 +22,9 @@ program transcorr_h
   grad_squared = .False. 
   touch grad_squared 
  endif
+ if(read_tc_ints)then
+  call read_fcidump_1_tc
+ endif
 
  call provide_all
  call print_energy_tc

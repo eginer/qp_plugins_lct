@@ -56,6 +56,7 @@ subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
    enddo
  
    ! alpha/alpha two-body
+   double precision :: contrib
    do i = 1, Ne(ispin)
     ii = occ(i,ispin) 
     do j = i+1, Ne(ispin)
@@ -607,21 +608,34 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
    hderiv = 0.d0
    hthree = 0.d0
    htot = 0.d0
-   if(degree.gt.3)then
-    return
-   else if(degree == 3.and.three_body_h_tc)then
-    if(pure_three_body_h_tc)then
-     call triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+   if(read_tc_ints)then
+    if(degree.gt.3)then
+     return
+    else if(degree == 3.and.three_body_h_tc)then
+     if(pure_three_body_h_tc)then
+      call triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+     endif
+    else if(degree == 2)then
+     call double_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+    else if(degree == 1)then
+     call single_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+    else if(degree == 0)then
+     call diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
     endif
-   else if(degree == 2)then
-!    call double_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-    call double_htilde_mu_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-   else if(degree == 1)then
-!    call single_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-    call single_htilde_mu_mat_4_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-   else if(degree == 0)then
-!    call diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
-    call diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
+   else
+    if(degree.gt.3)then
+     return
+    else if(degree == 3.and.three_body_h_tc)then
+     if(pure_three_body_h_tc)then
+      call triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+     endif
+    else if(degree == 2)then
+     call double_htilde_mu_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+    else if(degree == 1)then
+     call single_htilde_mu_mat_4_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+    else if(degree == 0)then
+     call diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
+    endif
    endif
    
 end

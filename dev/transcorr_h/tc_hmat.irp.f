@@ -1,4 +1,5 @@
  BEGIN_PROVIDER [double precision, htilde_matrix_elmt, (N_det,N_det)]
+&BEGIN_PROVIDER [double precision, htilde_matrix_elmt_tranp, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_eff, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_deriv, (N_det,N_det)]
 &BEGIN_PROVIDER [double precision, htilde_matrix_elmt_hcore, (N_det,N_det)]
@@ -23,8 +24,13 @@
   enddo
  enddo
  do i = 1, N_det
-  write(*,'(1000(F10.5,X))')htilde_matrix_elmt(i,:)
+  do j = 1, N_det
+   htilde_matrix_elmt_tranp(j,i) = htilde_matrix_elmt(i,j)
+  enddo
  enddo
+! do i = 1, N_det
+!  write(*,'(1000(F10.5,X))')htilde_matrix_elmt(i,:)
+! enddo
 ! htilde_matrix_elmt = H_matrix_all_dets
 END_PROVIDER 
 
@@ -74,8 +80,38 @@ END_PROVIDER
      leigvec_trans_norm(i) += leigvec_trans_tmp(j,i) * leigvec_trans_tmp(j,i)
     enddo
    enddo
- else
+ else if(full_tc_h_solver)then
   call non_hrmt_real_diag(N_det,htilde_matrix_elmt,reigvec_trans,leigvec_trans,n_good_trans_eigval,eigval_trans)
+  do i = 1, n_good_trans_eigval
+   reigvec_trans_norm(i) = 0.d0
+   leigvec_trans_norm(i) = 0.d0
+   do j = 1, N_det
+    reigvec_trans_norm(i) += reigvec_trans(j,i) * reigvec_trans(j,i)
+    leigvec_trans_norm(i) += leigvec_trans(j,i) * leigvec_trans(j,i)
+   enddo
+  enddo
+ else
+  eigval_trans = 0.d0
+  reigvec_trans = 0.d0
+  leigvec_trans = 0.d0
+  n_good_trans_eigval = 1
+  double precision :: e0
+  double precision, allocatable :: u(:), v(:)
+  allocate(u(N_det), v(N_det))
+  u = 0.d0
+  u(1) = 1.d0
+  call project_ground(u,v,htilde_matrix_elmt,e0,1,N_det)
+  do j = 1, N_det
+   reigvec_trans(j,1) = v(j)  
+  enddo
+  print*,'e0 from right eigenvector = ',e0
+  eigval_trans(1) = e0
+
+  call project_ground(u,v,htilde_matrix_elmt_tranp,e0,1,N_det)
+  do j = 1, N_det
+   leigvec_trans(j,1) = v(j)  
+  enddo
+  print*,'e0 from left  eigenvector = ',e0
   do i = 1, n_good_trans_eigval
    reigvec_trans_norm(i) = 0.d0
    leigvec_trans_norm(i) = 0.d0
