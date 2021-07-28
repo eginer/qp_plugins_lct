@@ -58,6 +58,7 @@ subroutine project_ground(u,v,hmat,e0,N_st,sze)
  double precision, intent(inout):: u(sze)
  double precision, intent(out)  :: v(sze), e0
  double precision :: et, e_expect, u_dot_v , project_phi0, a , tau, delta_e_min 
+ double precision :: wall0, wall1
  double precision, allocatable :: vtmp(:),Hmat0(:),delta_e(:)
  integer :: j,i
  integer, allocatable :: iorder(:)
@@ -82,6 +83,7 @@ subroutine project_ground(u,v,hmat,e0,N_st,sze)
  e_expect = 0.d0
  et = Hmat(1,1) 
  a = 1.d0
+ call wall_time(wall0)
  do while(dabs(e_expect-et).gt.threshold_davidson)
   j += 1
   call exp_tau_H(u,v,hmat,tau,et,N_st,sze)
@@ -96,5 +98,7 @@ subroutine project_ground(u,v,hmat,e0,N_st,sze)
   u = v
  enddo
  e0 = e_expect
+ call wall_time(wall1)
  print*,'Convergend in iteration ',j
+ print*,'Time to project on the ground state ', wall1 - wall0
 end
