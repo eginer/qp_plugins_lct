@@ -74,7 +74,7 @@ subroutine project_ground(u,v,hmat,e0,N_st,sze)
  else
   delta_e_min = delta_e(1)
  endif
- tau = 0.5d0 * delta_e_min
+ tau = 0.5d0 / delta_e_min
  print*,'tau = ',tau
  do j = 1, sze
   Hmat0(j) = Hmat(1,j)
