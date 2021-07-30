@@ -5,7 +5,7 @@ QP=$QP_ROOT
 . ${QP}/quantum_package.rc
 
 
-TEMP=$(getopt -o m:f:p:n:t:h -l mu:,func:pt2max:ndetmax:readints:damp:thresh,help -n $0 -- "$@") || exit 1 # get the input / options 
+TEMP=$(getopt -o m:f:p:n:t:r:i:h -l mu:,func:pt2max:ndetmax:readints:damp:thresh:read:itmax,help -n $0 -- "$@") || exit 1 # get the input / options 
 eval set -- "$TEMP" # set "--" in the string 
 
 echo $TEMP
@@ -15,19 +15,21 @@ function help()
 Range Separated CIPSI program: 
 
 Usage:
-  $(basename $0) -m <string> -f <string>  -p <real> -n <integer> [-t <real>] [--] EZFIO
+  $(basename $0) -m <string> -f <string>  -p <real> -n <integer> [-t <real> -r <logical> -i <integer>] [--] EZFIO
 
 
 Options:
-  -m, --mu=<lower case string>          type of mu(r) function can be either "hf" or "cas_ful" (default=cas_ful)
-  -f, --func=<lower case string>        complementary functional, can be either "pbe_ueg", "lda", "su_pbe_ot" or "su_pbe_ot_no_extrap" (default=su_pbe_ot)
-  -p, --pt2max=<positive real>          max value of the PT2 correction (default=1.e-3)
-  -n, --ndetmax=<positive integer>      max number of determinants in the CIPSI wf (default=1.e6)
-  -t, --thresh=<positive real>          threshold on the convergence of the variational energy (default=1.e-10)
-  -h, --help                            Print the HELP message
+  -m, --mu=<lower case string>          Type of mu(r) function can be either "hf", "cas_ful" or "read" (default=cas_ful)
+  -f, --func=<lower case string>        Complementary functional, can be either "pbe_ueg", "lda", "su_pbe_ot" or "su_pbe_ot_no_extrap" (default=su_pbe_ot)
+  -p, --pt2max=<positive real>          Max value of the PT2 correction (default=1.e-3)
+  -n, --ndetmax=<positive integer>      Max number of determinants in the CIPSI wf (default=1.e6)
+  -t, --thresh=<positive real>          Threshold on the convergence of the variational energy (default=1.e-10)
+  -r, --read=<logical True/False>       If True, it minimizes within the set of determinants alread in the EZFIO folder (default=False)
+  -i, --itmax=<positive integer>        Max number of CIPSI macro iterations. WARNING: if read=True then itmax does not matter (default=1)
+  -h, --help                            Prints the HELP message
 
 Example:
-  qp_sc_basis_corr -m cas_ful -f su_pbe_ot -p 0.0001 -n 100000 ezfio_folder
+  qp_sc_basis_corr -m cas_ful -f su_pbe_ot -p 0.0001 -n 100000 -r False -i 1 ezfio_folder
 
 EOF
     exit
@@ -68,6 +70,20 @@ while true ; do
             case "$2" in
                 "") help ; break;;
                 *) thresh="$2"
+            esac 
+            shift 2
+	    ;;
+        -r|--read) 
+            case "$2" in
+                "") help ; break;;
+                *) read="$2"
+            esac 
+            shift 2
+	    ;;
+        -i|--itmax) 
+            case "$2" in
+                "") help ; break;;
+                *) itmax="$2"
             esac 
             shift 2
 	    ;;
@@ -128,18 +144,38 @@ if [[  -z $ndetmax ]]; then
 fi
 echo "NDETMAX for RS-DFT   :  "$ndetmax
 
+# itmax  : maximum number of CIPSI iterations to select determinants 
+if [[  -z $itmax ]]; then
+ echo "you did not specify the \$itmax   parameter, it will be set to 1 by default (run --help for explanations)"
+ itmax=1
+fi
+echo "NDETMAX for RS-DFT   :  "$ndetmax
+
+
 # value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
 if [[ -z $thresh ]]; then
  echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
- thresh=$pt2_max
+ thresh=$pt2max
 fi
 echo "thresh of convergence:  "$thresh
+
+# 
+if [[ -z $read ]]; then
+ echo "you did not specify the \$read parameter, it will be set to False by default (run --help for explanations)"
+ read="False"
+fi
+echo "read parameter :  "$read
+
+if [ "$read" = "True" ]; then
+ itmax=1
+fi
+
 threshmicro=1.e-6
 
 qp set_file $ezfio
 
-qp  set  sc_basis_corr      basis_cor_func           ${functional}
-qp set   mu_of_r mu_of_r_potential                  $mu
+qp  set  sc_basis_corr      basis_cor_func          ${functional}
+qp  set  mu_of_r            mu_of_r_potential       $mu
 qp  set  perturbation       pt2_max                 $pt2max
 qp  set  determinants       n_det_max               $ndetmax
 # Use the wave function stored in the EZFIO to build effective RS-DFT potential
@@ -151,23 +187,29 @@ qp  set  density_for_dft    density_for_dft         "WFT"
   echo "#" iter evar old     evar new    deltae      threshold  > ${file_final}
   
   file_int=basis_corr-${mu}-${functional}-0
-  qp set mu_of_r io_mu_of_r Write
-  qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int}
+  if [ "$mu" == "read" ]; then
+   qp set mu_of_r io_mu_of_r Read
+   echo "Reading the mu(r) .."
+  else  
+   qp set mu_of_r io_mu_of_r Write
+  fi
+  # Write the effective Hamiltonian with the WAVE FUNCTION ALREADY IN THE EZFIO FOLDER 
+  qp run write_eff_basis_ints | tee ${ezfio}/work/${file_int} 
   qp set mu_of_r io_mu_of_r Read
   EV_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_int} | cut -d "=" -f 2`
 
-# save the RS-KS one-e density for the damping on the density 
-#  qp run save_one_e_dm 
-#  qp  set  density_for_dft    density_for_dft         "damping_rs_dft"
 # damping_for_rs_dft : 0 == no update of the density, 1 == full update of the density 
 
-
-  for i in {1..100}
-   do
+# Macro iterations: selection of the determinants with the EFFECTIVE HAMILTONIAN OBTAINED PREVIOUSLY
+ for i in `seq $itmax`
+  do
 #  run the CIPSI calculation with the effective Hamiltonian already stored in the EZFIO folder 
-     qp set determinants read_wf "False"
-     file_fci=fci-${mu}-${functional}-$i
-     qp run fci  | tee ${ezfio}/work/${file_fci}
+     if [ "$read" = "False" ]; then
+      qp set determinants read_wf "False"
+      file_fci=fci-${mu}-${functional}-$i
+      # Use the CIPSI algorithm to select the determinants with the EFFECTIVE HAMILTONIAN 
+      qp run fci  | tee ${ezfio}/work/${file_fci}
+     fi
      EV=0
 
      file_conv=data_conv_${i}-${mu}-${functional}
@@ -192,18 +234,20 @@ qp  set  density_for_dft    density_for_dft         "WFT"
           break
         fi
         EV=$EV_new
-      done
-      file_conv_final=basis_corr-${mu}-${functional}-${i}-final
-      qp run  write_eff_basis_ints | tee ${ezfio}/work/${file_conv_final}
-      EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_conv_final} | cut -d "=" -f 2`
-      # checking the convergence
-      DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
-      DEabs=`echo "print(abs(${DE}))" | python `
-      CONV=`echo "print(${DEabs} < ${thresh})" | python`
-      echo $i $EV_macro $EV_new_macro $DE $thresh >> ${file_final}
-      if [ "$CONV" = "True" ]; then
-        break
-      fi
-      EV_macro=$EV_new_macro
-     
+     done
+     file_conv_final=basis_corr-${mu}-${functional}-${i}-final
+     qp run  write_eff_basis_ints | tee ${ezfio}/work/${file_conv_final}
+     EV_new_macro=`grep "TOTAL ENERGY        =" ${ezfio}/work/${file_conv_final} | cut -d "=" -f 2`
+     # checking the convergence
+     DE=`echo "${EV_new_macro} - ${EV_macro}" | bc`
+     DEabs=`echo "print(abs(${DE}))" | python `
+     CONV=`echo "print(${DEabs} < ${thresh})" | python`
+     echo $i $EV_macro $EV_new_macro $DE $thresh >> ${file_final}
+     if [[ $i -eq $itmax ]]; then
+      CONV="True"
+     fi
+     if [ "$CONV" = "True" ]; then
+       break
+     fi
+     EV_macro=$EV_new_macro
   done

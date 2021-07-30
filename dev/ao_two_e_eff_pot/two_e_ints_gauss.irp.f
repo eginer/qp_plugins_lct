@@ -122,24 +122,27 @@ subroutine compute_ao_two_e_integrals_gauss(j,k,l,sze,buffer_value)
   double precision               :: ao_two_e_integral_eff_pot
 
   integer                        :: i
-  logical, external              :: ao_one_e_integral_zero
   logical, external              :: ao_two_e_integral_zero
+  double precision :: thr
+  thr = ao_integrals_threshold
 
-  if (ao_one_e_integral_zero(j,l)) then
+! if (ao_one_e_integral_zero(j,l)) then
+  if (.False.) then
     buffer_value = 0._integral_kind
     return
   endif
-  if (ao_two_e_integral_erf_schwartz(j,l) < thresh ) then
+  if (ao_two_e_integral_erf_schwartz(j,l) < thr ) then
     buffer_value = 0._integral_kind
     return
   endif
 
   do i = 1, ao_num
-    if (ao_two_e_integral_zero(i,j,k,l)) then
+!   if (ao_two_e_integral_zero(i,j,k,l)) then
+    if (.False.) then
       buffer_value(i) = 0._integral_kind
       cycle
     endif
-    if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thresh ) then
+    if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) then
       buffer_value(i) = 0._integral_kind
       cycle
     endif
@@ -172,6 +175,9 @@ double precision function general_primitive_integral_gauss(dim,      &
   double precision               :: pq_inv, p10_1, p10_2, p01_1, p01_2,pq_inv_2
   integer                        :: n_pt_tmp,n_pt_out, iorder
   double precision               :: d1(0:max_dim),d_poly(0:max_dim),rint,d1_screened(0:max_dim)
+  double precision :: thr
+
+  thr = ao_integrals_threshold
 
   general_primitive_integral_gauss = 0.d0
 
@@ -197,11 +203,11 @@ double precision function general_primitive_integral_gauss(dim,      &
   enddo
   n_Ix = 0
   do ix = 0, iorder_p(1)
-    if (abs(P_new(ix,1)) < thresh) cycle
+    if (abs(P_new(ix,1)) < thr) cycle
     a = P_new(ix,1)
     do jx = 0, iorder_q(1)
       d = a*Q_new(jx,1)
-      if (abs(d) < thresh) cycle
+      if (abs(d) < thr) cycle
       !DIR$ FORCEINLINE
       call give_polynom_mult_center_x(P_center(1),Q_center(1),ix,jx,p,q,iorder,pq_inv,pq_inv_2,p10_1,p01_1,p10_2,p01_2,dx,nx)
       !DIR$ FORCEINLINE
@@ -217,11 +223,11 @@ double precision function general_primitive_integral_gauss(dim,      &
   enddo
   n_Iy = 0
   do iy = 0, iorder_p(2)
-    if (abs(P_new(iy,2)) > thresh) then
+    if (abs(P_new(iy,2)) > thr) then
       b = P_new(iy,2)
       do jy = 0, iorder_q(2)
         e = b*Q_new(jy,2)
-        if (abs(e) < thresh) cycle
+        if (abs(e) < thr) cycle
         !DIR$ FORCEINLINE
         call   give_polynom_mult_center_x(P_center(2),Q_center(2),iy,jy,p,q,iorder,pq_inv,pq_inv_2,p10_1,p01_1,p10_2,p01_2,dy,ny)
         !DIR$ FORCEINLINE
@@ -239,11 +245,11 @@ double precision function general_primitive_integral_gauss(dim,      &
   enddo
   n_Iz = 0
   do iz = 0, iorder_p(3)
-    if (abs(P_new(iz,3)) > thresh) then
+    if (abs(P_new(iz,3)) > thr) then
       c = P_new(iz,3)
       do jz = 0, iorder_q(3)
         f = c*Q_new(jz,3)
-        if (abs(f) < thresh) cycle
+        if (abs(f) < thr) cycle
         !DIR$ FORCEINLINE
         call   give_polynom_mult_center_x(P_center(3),Q_center(3),iz,jz,p,q,iorder,pq_inv,pq_inv_2,p10_1,p01_1,p10_2,p01_2,dz,nz)
         !DIR$ FORCEINLINE
@@ -338,7 +344,8 @@ subroutine compute_ao_integrals_gauss_jl(j,l,n_integrals,buffer_i,buffer_value)
       if (i1 > j1) then
         exit
       endif
-      if (ao_two_e_integral_zero(i,j,k,l)) then
+!      if (ao_two_e_integral_zero(i,j,k,l)) then
+      if (.False.) then
         cycle
       endif
       if (ao_two_e_integral_eff_pot_schwartz(i,k)*ao_two_e_integral_eff_pot_schwartz(j,l) < thr ) then

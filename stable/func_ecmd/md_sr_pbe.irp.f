@@ -3,11 +3,6 @@
 &BEGIN_PROVIDER[double precision, energy_c_md_sr_pbe, (N_states) ]
  implicit none
  BEGIN_DOC
- ! exchange / correlation energies  with the short-range version Perdew-Burke-Ernzerhof GGA functional 
- !
- ! defined in Chem. Phys.329, 276 (2006)
- END_DOC 
- BEGIN_DOC
 ! exchange/correlation energy with the short range pbe functional
  END_DOC
  integer :: istate,i,j,m
