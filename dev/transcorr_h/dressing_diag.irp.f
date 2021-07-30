@@ -68,54 +68,85 @@ subroutine test_dressing_diag
  double precision :: e0
  double precision, allocatable :: u0(:),u1(:), h_dressed(:,:)
  double precision, allocatable :: eigvalues(:),eigvectors(:,:)
- double precision :: a,res
+ double precision :: a,res,tmp1,tmp2,ebefore
  integer :: i,j,nitermax,idress
 
  !!! You assume that the first determinant is dominant 
  idress = 1
 
-
  a = 1.d0
  allocate(u0(N_det), u1(N_det), h_dressed(N_det, N_det))
  allocate(eigvalues(N_det), eigvectors(N_det,N_det))
  nitermax = 10
+ print*,'Starting with a guess from the usual H'
  !! Create a guess
  do i = 1, N_det
-!  u0(i) = psi_coef(i,1)
-  u0(i) = reigvec_trans(i,1)
+  u0(i) = psi_coef(i,1)
+!  u0(i) = reigvec_trans(i,1)
  enddo
   
   print*,''
- do j = 1, nitermax
+  print*,'********'
+  res = 1.d+10
+  j = 0
+  ebefore = 0.d0
+ do while(res .gt. 1.d-6) 
+  j += 1
   print*,''
   print*,'Iteration j ',j
   call get_dressed_matrix(u0,h_dressed,idress)
   call lapack_diagd(eigvalues,eigvectors,h_dressed,N_det,N_det)
-  print*,'Temporary eigenvalues '
-  do i = 1, N_det 
-   print*,'i,',i,eigvalues(i)
-  enddo
   e0 = eigvalues(1)
-  print*,''
-  print*,'e0 = ',e0
+  if(i.gt.1)then
+   print*,'e0 = ',e0,dabs(ebefore-e0)
+  else
+   print*,'e0 = ',e0
+  endif
   u0(:) = eigvectors(:,1) 
-  print*,'New eigenvector '
-  do i = 1, N_det
-   print*,i,u0(i)
-  enddo
-  print*,''
-  print*,''
-  print*,''
   u1 = 0.d0
   call h_non_hermite(u1,u0(1),htilde_matrix_elmt,a,1,N_det)   
   u1 -= e0 * u0
-  print*,'Residual vector'
   res = 0.d0
   do i = 1, N_det
    res += u1(i)*u1(i)
-   print*,u1(i)
   enddo
-  print*,'Norm of the residual vector ', dsqrt(res)
+  res = dsqrt(res)
+  print*,'Norm of the residual vector ', res 
+  ebefore = e0
  enddo
-  print*,''
+ print*,''
+ print*,'End of iterations '
+ print*,''
+ print*,'Comparison between eigenvalues'
+ print*,'*****'
+ i = 1
+ print*,'Ground state '
+ print*,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
+ print*,'*****'
+ print*,'Excited states '
+ do i = 2, N_det
+  write(*,'(I3,X,3(F16.10,X))')i,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
+ enddo
+ print*,''
+
+ double precision :: scal
+ print*,'Comparision between Ground state Eigenvectors '
+ print*,'Det,       Iterative,        Exact'
+ tmp1 = u0(1)/dabs(u0(1))
+ tmp2 = reigvec_trans(1,1)/dabs(reigvec_trans(1,1))
+ scal = 0.d0
+ do i = 1, N_det
+  scal += u0(i) * reigvec_trans(i,1)
+  write(*,'(I4,X,3(F16.10,X))')i,u0(i)/tmp1,reigvec_trans(i,1)/tmp2
+ enddo
+ scal = dsqrt(dabs(scal))
+ print*,''
+ print*,'Scalar product between the two vectors '
+ print*,scal
+ print*,''
+! print*,'Residual vector'
+! do i = 1, N_det
+!  res += u1(i)*u1(i)
+!  print*,u1(i)
+! enddo
 end
