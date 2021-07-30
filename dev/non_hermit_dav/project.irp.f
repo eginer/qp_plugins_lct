@@ -74,7 +74,8 @@ subroutine project_ground(u,v,hmat,e0,N_st,sze)
  else
   delta_e_min = delta_e(1)
  endif
- tau = 0.5d0 / delta_e_min
+ tau = min(0.5d0 / delta_e_min, 0.1d0)
+! tau = 0.01d0
  print*,'tau = ',tau
  do j = 1, sze
   Hmat0(j) = Hmat(1,j)
@@ -92,9 +93,9 @@ subroutine project_ground(u,v,hmat,e0,N_st,sze)
   call h_non_hermite(vtmp,v,Hmat,a,N_st,sze) 
   e_expect = u_dot_v(vtmp,v,sze)
   et = project_phi0(v,Hmat0,N_st,sze)
-!  print*,'iteration j ',j
-!  print*,'et, e_expect, dabs(e_expect-et)'
-!  print*,et, e_expect,dabs(e_expect-et) 
+  print*,'iteration j ',j
+  print*,'et, e_expect, dabs(e_expect-et)'
+  print*,et, e_expect,dabs(e_expect-et) 
   u = v
  enddo
  e0 = e_expect
