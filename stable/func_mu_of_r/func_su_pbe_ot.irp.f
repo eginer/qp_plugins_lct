@@ -7,9 +7,9 @@
 
  END_PROVIDER
 
- BEGIN_PROVIDER[double precision, e_c_md_basis_su_pbe_ot, (N_states) ]
- implicit none
- BEGIN_DOC
+!BEGIN_PROVIDER[double precision, e_c_md_basis_su_pbe_ot, (N_states) ]
+!implicit none
+!BEGIN_DOC
 !
 ! Ecmd functional evaluated with mu(r) and depending on 
 !    +) the EXTRAPOLATED on-top pair density 
@@ -19,10 +19,10 @@
 !    +) !!!!! NO SPIN POLAIRIZATION !!!!! 
 !
 !   See the provider of ecmd_pbe_on_top_su_mu_of_r for more details
- END_DOC 
+!END_DOC 
 
- e_c_md_basis_su_pbe_ot = ecmd_pbe_on_top_su_mu_of_r
-END_PROVIDER
+!e_c_md_basis_su_pbe_ot = ecmd_pbe_on_top_su_mu_of_r
+!END_PROVIDER
 
 
  BEGIN_PROVIDER [double precision, pot_basis_alpha_mo_su_pbe_ot,(mo_num,mo_num,N_states)]
@@ -65,12 +65,14 @@ END_PROVIDER
 END_PROVIDER 
 
 !3
- BEGIN_PROVIDER[double precision, aos_vc_alpha_su_pbe_ot_w  , (ao_num,n_points_final_grid,N_states)]
+ BEGIN_PROVIDER[double precision, e_c_md_basis_su_pbe_ot, (N_states) ]
+&BEGIN_PROVIDER[double precision, aos_vc_alpha_su_pbe_ot_w  , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_vc_beta_su_pbe_ot_w   , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_alpha_su_pbe_ot_w  , (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, aos_d_vc_beta_su_pbe_ot_w   ,  (ao_num,n_points_final_grid,N_states)]
 &BEGIN_PROVIDER[double precision, d_dn2_e_cmd_su_pbe_ot, (n_points_final_grid,N_states) ]
  implicit none
+ include 'constants.include.F'
  BEGIN_DOC
 ! Intermediates to compute the su-pbe-ot potentials 
 !
@@ -82,13 +84,14 @@ END_PROVIDER
  END_DOC
  integer :: istate,ipoint,j,m
  double precision :: weight, r(3)
- double precision :: ec_srmuPBE,mu
+ double precision :: ec_srmuOT,mu
  double precision :: rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2
  double precision :: contrib_grad_ca(3),contrib_grad_cb(3)
  double precision :: decdrho_a, decdrho_b, decdrho, decdrho2
  double precision :: decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2
  double precision :: mu_correction_of_on_top,rho_tot
 
+ e_c_md_basis_su_pbe_ot = 0.d0
  aos_d_vc_alpha_su_pbe_ot_w = 0.d0
  aos_d_vc_beta_su_pbe_ot_w = 0.d0
  do istate = 1, N_states
@@ -127,14 +130,17 @@ END_PROVIDER
    rho2 = 2.d0*rho2
    ! mu = mu(r)
    mu = mu_of_r_prov(ipoint,istate)
+  ! mu = mu_of_r_hf(ipoint)
    ! extrapolation toward the exact on-top based on mu(r)
    rho2 = mu_correction_of_on_top(mu,rho2) 
 
-   call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuPBE,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
+   call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuOT,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
 
+   e_c_md_basis_su_pbe_ot(istate) += ec_srmuOT * weight
    ! The factor 1 (and not 2) is because the output is with the correct normalization factor (i.e. N(N-1)) 
    ! for the computation of the effective operator of type 1/2  \sum_{ijkl} <ij|kl> a^k a^l a_j a_i
-   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 1.d0 * decdrho2
+    d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
+   !d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2/((1.d0 + 2.d0/(sqpi*mu))**2)
    
    decdrho_a *= weight
    decdrho_b *= weight

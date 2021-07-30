@@ -47,7 +47,7 @@ for b in $basis
 
   mu=cas_ful
   ndet=1000
-  pt2=0.
+  pt2=0.000001
   readint=False
   fun=pbe_ueg
   threshold=0.000000001

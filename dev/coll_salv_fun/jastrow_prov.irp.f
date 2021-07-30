@@ -6,13 +6,15 @@ BEGIN_PROVIDER [double precision, ovlp_jastrow2_ij_mo, (mo_num,mo_num,n_points_f
  END_DOC
  integer :: i,j,ipoint,n_taylor
  double precision :: r1(3),mu,mo_ints(mo_num,mo_num)
+ double precision :: exponent_exp
+ exponent_exp = 1.d0
  n_taylor = 4
  do ipoint = 1, n_points_final_grid
   r1(1) = final_grid_points(1,ipoint)
   r1(2) = final_grid_points(2,ipoint)
   r1(3) = final_grid_points(3,ipoint)
   mu = mu_of_r_prov(ipoint,1)
-  call give_jastrow2_ovlp_ints_mo(mu,r1,n_taylor,mo_ints)
+  call give_jastrow2_ovlp_ints_mo(mu,r1,n_taylor,mo_ints,exponent_exp)
   do i = 1, mo_num
    do j = 1, mo_num
     ovlp_jastrow2_ij_mo(j,i,ipoint) = mo_ints(j,i)
