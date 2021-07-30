@@ -66,78 +66,129 @@ end
 subroutine test_dressing_diag
  implicit none
  double precision :: e0
- double precision, allocatable :: u0(:),u1(:), h_dressed(:,:)
+ double precision, allocatable :: u0(:,:),u1(:), h_dressed(:,:)
  double precision, allocatable :: eigvalues(:),eigvectors(:,:)
- double precision :: a,res,tmp1,tmp2,ebefore
+ double precision :: a,res,tmp1,tmp2,ebefore,thr
+ integer :: N_st_diag
+ double precision, allocatable :: H_jj(:)
+ logical :: converged
  integer :: i,j,nitermax,idress
+ thr = threshold_davidson
 
  !!! You assume that the first determinant is dominant 
  idress = 1
 
  a = 1.d0
- allocate(u0(N_det), u1(N_det), h_dressed(N_det, N_det))
- allocate(eigvalues(N_det), eigvectors(N_det,N_det))
+
+ allocate(u1(N_det), h_dressed(N_det, N_det) )
  nitermax = 10
  print*,'Starting with a guess from the usual H'
  !! Create a guess
- do i = 1, N_det
-  u0(i) = psi_coef(i,1)
-!  u0(i) = reigvec_trans(i,1)
- enddo
   
   print*,''
   print*,'********'
   res = 1.d+10
   j = 0
   ebefore = 0.d0
- do while(res .gt. 1.d-6) 
-  j += 1
-  print*,''
-  print*,'Iteration j ',j
-  call get_dressed_matrix(u0,h_dressed,idress)
-  call lapack_diagd(eigvalues,eigvectors,h_dressed,N_det,N_det)
-  e0 = eigvalues(1)
-  if(i.gt.1)then
-   print*,'e0 = ',e0,dabs(ebefore-e0)
-  else
-   print*,'e0 = ',e0
-  endif
-  u0(:) = eigvectors(:,1) 
-  u1 = 0.d0
-  call h_non_hermite(u1,u0(1),htilde_matrix_elmt,a,1,N_det)   
-  u1 -= e0 * u0
-  res = 0.d0
+
+ if(full_tc_h_solver)then
+  allocate(u0(N_det,1)) 
   do i = 1, N_det
-   res += u1(i)*u1(i)
+   u0(i,1) = psi_coef(i,1)
+!!  u0(i,1) = reigvec_trans(i,1)
   enddo
-  res = dsqrt(res)
-  print*,'Norm of the residual vector ', res 
-  ebefore = e0
- enddo
+  allocate(eigvalues(N_det), eigvectors(N_det,N_det))
+  do while(res .gt. thr) 
+   j += 1
+   print*,''
+   print*,'Iteration j ',j
+   call get_dressed_matrix(u0,h_dressed,idress)
+   
+   call lapack_diagd(eigvalues,eigvectors,h_dressed,N_det,N_det)
+   e0 = eigvalues(1)
+   if(j.gt.1)then
+    print*,'e0 = ',e0,dabs(ebefore-e0)
+   else
+    print*,'e0 = ',e0
+   endif
+   u0(:,1) = eigvectors(:,1) 
+   u1 = 0.d0
+   call h_non_hermite(u1,u0(1,1),htilde_matrix_elmt,a,1,N_det)   
+   u1(:) -= e0 * u0(:,1)
+   res = 0.d0
+   do i = 1, N_det
+    res += u1(i)*u1(i)
+   enddo
+   res = dsqrt(res)
+   print*,'Norm of the residual vector ', res 
+   ebefore = e0
+  enddo
+  print*,''
+  print*,'Comparison between eigenvalues'
+  print*,'*****'
+  i = 1
+  print*,'Ground state '
+  print*,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
+  print*,'*****'
+  print*,'Excited states '
+  do i = 2, N_det
+   write(*,'(I3,X,3(F16.10,X))')i,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
+  enddo
+  print*,''
+ else
+  allocate(H_jj(N_det))
+  do i = 1, N_det
+   H_jj(i) = h_matrix_all_dets(i,i)
+  enddo
+  N_st_diag = N_states_diag
+  allocate(u0(N_det,N_states_diag)) 
+  u0 = 0.d0
+  do i = 1, N_det
+   u0(i,1) = psi_coef(i,1)
+!!  u0(i,1) = reigvec_trans(i,1)
+  enddo
+  j = 0
+  do while(res .gt. thr) 
+   j += 1
+   print*,''
+   print*,'Iteration j ',j
+   call get_dressed_matrix(u0(1,1),h_dressed,idress)
+   
+   call davidson_general(u0,H_jj,e0,N_det,N_det,1,N_st_diag,converged,h_dressed)
+ 
+   if(j.gt.1)then
+    print*,'e0 = ',e0,dabs(ebefore-e0)
+   else
+    print*,'e0 = ',e0
+   endif
+   u1 = 0.d0
+   call h_non_hermite(u1,u0(1,1),htilde_matrix_elmt,a,1,N_det)   
+   u1(:) -= e0 * u0(:,1)
+   res = 0.d0
+   do i = 1, N_det
+    res += u1(i)*u1(i)
+   enddo
+   res = dsqrt(res)
+   print*,'Norm of the residual vector ', res 
+   ebefore = e0
+  enddo
+  print*,'Comparison between eigenvalues'
+  print*,'*****'
+  print*,'Ground state '
+  print*,e0,eigval_trans(1),dabs(e0-eigval_trans(1))
+ endif
  print*,''
  print*,'End of iterations '
- print*,''
- print*,'Comparison between eigenvalues'
- print*,'*****'
- i = 1
- print*,'Ground state '
- print*,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
- print*,'*****'
- print*,'Excited states '
- do i = 2, N_det
-  write(*,'(I3,X,3(F16.10,X))')i,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
- enddo
- print*,''
 
  double precision :: scal
  print*,'Comparision between Ground state Eigenvectors '
  print*,'Det,       Iterative,        Exact'
- tmp1 = u0(1)/dabs(u0(1))
+ tmp1 = u0(1,1)/dabs(u0(1,1))
  tmp2 = reigvec_trans(1,1)/dabs(reigvec_trans(1,1))
  scal = 0.d0
  do i = 1, N_det
-  scal += u0(i) * reigvec_trans(i,1)
-  write(*,'(I4,X,3(F16.10,X))')i,u0(i)/tmp1,reigvec_trans(i,1)/tmp2
+  scal += u0(i,1) * reigvec_trans(i,1)
+  write(*,'(I4,X,3(F16.10,X))')i,u0(i,1)/tmp1,reigvec_trans(i,1)/tmp2
  enddo
  scal = dsqrt(dabs(scal))
  print*,''
