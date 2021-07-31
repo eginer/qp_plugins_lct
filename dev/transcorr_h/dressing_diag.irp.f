@@ -50,7 +50,7 @@ subroutine get_dressed_matrix(u0,h_dressed,idress)
  !!!!!!!!!!!!! Computing the dressing vector 
  delta_u0 = 0.d0
  call h_non_hermite(delta_u0,u0(idress),delta_mat,a,1,N_det)  ! delta_u0 = Delta |u0> 
- delta_u0 *= 1.d0/u0(1)
+ delta_u0 *= 1.d0/u0(idress)
  !!!!!!!!!!!!! Computing the dressing matrix 
  h_dressed = h_matrix_all_dets
  h_dressed(idress,idress) += delta_u0(idress) 
@@ -94,8 +94,8 @@ subroutine test_dressing_diag
  if(full_tc_h_solver)then
   allocate(u0(N_det,1)) 
   do i = 1, N_det
-   u0(i,1) = psi_coef(i,1)
-!!  u0(i,1) = reigvec_trans(i,1)
+!   u0(i,1) = psi_coef(i,1)
+   u0(i,1) = reigvec_trans(i,1)
   enddo
   allocate(eigvalues(N_det), eigvectors(N_det,N_det))
   do while(res .gt. thr) 
@@ -145,7 +145,7 @@ subroutine test_dressing_diag
   u0 = 0.d0
   do i = 1, N_det
    u0(i,1) = psi_coef(i,1)
-!!  u0(i,1) = reigvec_trans(i,1)
+!   u0(i,1) = reigvec_trans(i,1)
   enddo
   j = 0
   do while(res .gt. thr) 

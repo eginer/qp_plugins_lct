@@ -42,8 +42,8 @@ subroutine compute_mo_integrals_tc_int_jl(j,l,n_integrals,buffer_i,buffer_value)
       if(  trim(mo_class(i)) == "Core" .or. trim(mo_class(j)) == "Core" .or. trim(mo_class(k)) == "Core" .or. trim(mo_class(l)) == "Core")then
        integral = get_two_e_integral(i,j,k,l,mo_integrals_map)
       else
-       integral = scalar_mu_r_pot_physicist_mo(i,j,k,l) & 
-                + 0.5d0 * (deriv_mu_r_pot_physicist_mo(i,j,k,l) + deriv_mu_r_pot_physicist_mo(k,l,i,j))
+       integral = scalar_mu_r_pot_physicist_mo(i,j,k,l) !& 
+!                + 0.5d0 * (deriv_mu_r_pot_physicist_mo(i,j,k,l) + deriv_mu_r_pot_physicist_mo(k,l,i,j))
       endif
       if (abs(integral) < thr) then
         cycle

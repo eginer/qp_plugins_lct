@@ -32,6 +32,7 @@ program transcorr_h
  call print_eigv
  call print_pert
  call write_left_right
+ call routine_save
 end
 
 subroutine provide_all
@@ -46,3 +47,17 @@ subroutine provide_all
  provide eigval_trans
 end
 
+
+subroutine routine_save
+implicit none
+ double precision, allocatable :: coef_tmp(:,:)
+ N_states = 1
+
+ allocate(coef_tmp(N_det, N_states))
+ integer :: i
+ do i = 1, N_det
+  coef_tmp(i,1) = reigvec_trans(i,1)
+!  coef_tmp(i,2) = leigvec_trans(i,1)
+ enddo
+ call save_wavefunction_general(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
+end
