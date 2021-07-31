@@ -36,12 +36,28 @@ subroutine h_psi_tc
  double precision :: a
  a = 1.d0
  allocate(htilde_psi(N_det))
- call h_non_hermite(htilde_psi,psi_coef(1,1),htilde_matrix_elmt,a,1,N_det)   
- print*,'htilde_psi/c0',htilde_psi(1)/psi_coef(1,1)
+ htilde_psi = 0.d0
+ call h_non_hermite(htilde_psi,reigvec_trans(1:N_det,1), &
+ htilde_matrix_elmt(1:N_det,1:N_det) &
+ ,a,1,N_det)   
+ print*,'htilde_psi/c0',htilde_psi(1)/reigvec_trans(1,1)
  print*,'htilde_psi'
  integer :: i
  do i = 1, N_det
-  print*,htilde_psi(i)
+  print*,htilde_psi(i) 
+ enddo
+
+ a = -1.d0
+ call h_non_hermite(htilde_psi,reigvec_trans(1:N_det,1), &
+ h_matrix_all_dets(1:N_det,1:N_det) &
+ ,a,1,N_det)   
+ print*,'delta_psi'
+! do i = 1, N_det
+!   htilde_psi(i) = i
+! enddo
+ call dset_order(htilde_psi,psi_bilinear_matrix_order,N_det)
+ do i = 1, N_det
+  print*,htilde_psi(i) 
  enddo
 end
 
