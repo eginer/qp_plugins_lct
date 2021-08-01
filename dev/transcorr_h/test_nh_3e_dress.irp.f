@@ -42,20 +42,20 @@ subroutine test_dressing_diag
  u0(1:N_det) = psi_coef(1:N_det,1)
  call get_dressed_matrix_nh_3e(u0,h_dressed,idress)
 
-!   call lapack_diagd(eigvalues,eigvectors,h_dressed,N_det,N_det)
-!   do i = 1, N_det
-!    print*,i,eigvalues(i)
-!   enddo
-!   e0 = eigvalues(1)
+   call lapack_diagd(eigvalues,eigvectors,h_dressed,N_det,N_det)
+   do i = 1, N_det
+    print*,i,eigvalues(i)
+   enddo
+   e0 = eigvalues(1)
 !   if(j.gt.1)then
 !    print*,'e0 = ',e0,dabs(ebefore-e0)
 !   else
-!    print*,'e0 = ',e0
+    print*,'e0 = ',e0
 !   endif
-!  i = 1
-!  print*,'Ground state '
-!  print*,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
-!  print*,'*****'
+  i = 1
+  print*,'Ground state '
+  print*,eigvalues(i),eigval_trans(i),dabs(eigvalues(i)-eigval_trans(i))
+  print*,'*****'
 
 end
 
@@ -76,6 +76,7 @@ subroutine get_dressed_matrix_nh_3e(u0,h_dressed,idress)
  a = 1.d0
  allocate(delta_u0(N_det),delta_mat(N_det,N_det))
  delta_mat = nh_3e_matrix_elmt! Delta = Htilde - H
+! delta_mat = htilde_matrix_elmt - h_matrix_all_dets ! Delta = Htilde - H
  !!!!!!!!!!!!! Computing the dressing vector 
  delta_u0 = 0.d0
  call h_non_hermite(delta_u0,u0(idress),delta_mat,a,1,N_det)  ! delta_u0 = Delta |u0> 
@@ -86,6 +87,10 @@ subroutine get_dressed_matrix_nh_3e(u0,h_dressed,idress)
  delta_u0 *= 1.d0/u0(idress)
  !!!!!!!!!!!!! Computing the dressing matrix 
  h_dressed =  htilde_matrix_elmt - nh_3e_matrix_elmt
+! print*,'Htilde(i,i) = ',htilde_matrix_elmt(N_det,N_det)
+! print*,'K+L   (i,i) = ',nh_3e_matrix_elmt(N_det,N_det)
+! h_dressed = h_matrix_all_dets
+
  h_dressed(idress,idress) += delta_u0(idress) 
  
  do i = 2, N_det
@@ -93,5 +98,9 @@ subroutine get_dressed_matrix_nh_3e(u0,h_dressed,idress)
   h_dressed(idress,i) += delta_u0(i)
   h_dressed(i,idress) += delta_u0(i)
  enddo
+! print*,'Matrix'
+! do i = 1, N_det
+!  write(*,'(100(F10.6,X))'),h_dressed(i,:)
+! enddo
 end
 

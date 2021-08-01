@@ -608,7 +608,7 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
    hderiv = 0.d0
    hthree = 0.d0
    htot = 0.d0
-   if(read_tc_ints)then
+   if(read_tc_ints.or.read_six_index_tensor.or.write_six_index_tensor)then
     if(degree.gt.3)then
      return
     else if(degree == 3.and.three_body_h_tc)then

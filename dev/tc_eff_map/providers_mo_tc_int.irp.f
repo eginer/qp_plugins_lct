@@ -21,8 +21,8 @@ BEGIN_PROVIDER [ logical, mo_two_e_integrals_tc_int_in_map ]
   integer                        :: n_integrals, rc
   integer                        :: kk, m, j1, i1, lmax
   character*(64)                 :: fmt
-
-  PROVIDE scalar_mu_r_pot_physicist_mo mo_two_e_integrals_in_map deriv_mu_r_pot_physicist_mo
+  !!deriv_mu_r_pot_physicist_mo
+  PROVIDE scalar_mu_r_pot_physicist_mo mo_two_e_integrals_in_map 
   PROVIDE mo_integrals_tc_int_map
 
   double precision               :: map_mb
