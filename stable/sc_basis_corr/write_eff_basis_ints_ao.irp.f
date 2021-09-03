@@ -34,17 +34,13 @@ program write_effective_RSDFT_hamiltonian
  io_mo_int_mu_of_r = "None" 
  touch io_mo_int_mu_of_r
 
- no_core_density = .True.
- touch no_core_density
-
-
  call routine
 end
 
 subroutine routine
  implicit none
  PROVIDE ao_two_e_integrals_in_map  mo_two_e_integrals_in_map
- call write_all_ints_basis
+ call write_all_ints_basis_ao
  call routines_compute_energy
 
 end

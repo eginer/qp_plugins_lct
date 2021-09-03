@@ -28,7 +28,7 @@ double precision function get_ao_two_e_int_mu_of_r(i,j,k,l,map) result(result)
   integer                        :: ii
   real(integral_kind)            :: tmp
   logical, external              :: ao_two_e_integral_zero
-  PROVIDE ao_two_e_integrals_in_map 
+  PROVIDE ao_int_mu_of_r_in_map
   !DIR$ FORCEINLINE
   if (ao_two_e_integral_zero(i,j,k,l)) then
     tmp = 0.d0
@@ -55,7 +55,7 @@ subroutine get_ao_two_e_int_mu_of_rs(j,k,l,sze,out_val)
   integer                        :: i
   integer(key_kind)              :: hash
   logical, external              :: ao_one_e_integral_zero
-  PROVIDE ao_two_e_integrals_in_map ao_int_mu_of_r_map
+  PROVIDE ao_int_mu_of_r_map
 
   if (ao_one_e_integral_zero(j,l)) then
     out_val = 0.d0
@@ -86,7 +86,7 @@ subroutine get_ao_two_e_int_mu_of_rs_non_zero(j,k,l,sze,out_val,out_val_index,no
   double precision               :: tmp
   logical, external              :: ao_one_e_integral_zero
   logical, external              :: ao_two_e_integral_zero
-  PROVIDE ao_two_e_integrals_in_map
+  PROVIDE ao_int_mu_of_r_in_map
 
   non_zero_int = 0
   if (ao_one_e_integral_zero(j,l)) then
@@ -131,7 +131,7 @@ subroutine get_ao_two_e_int_mu_of_rs_non_zero_jl(j,l,thresh,sze_max,sze,out_val,
   logical, external              :: ao_one_e_integral_zero
   logical, external              :: ao_two_e_integral_zero
 
-  PROVIDE ao_two_e_integrals_in_map
+  PROVIDE ao_int_mu_of_r_in_map
   non_zero_int = 0
   if (ao_one_e_integral_zero(j,l)) then
     out_val = 0.d0
@@ -179,7 +179,7 @@ subroutine get_ao_two_e_int_mu_of_rs_non_zero_jl_from_list(j,l,thresh,list,n_lis
   logical, external              :: ao_one_e_integral_zero
   logical, external              :: ao_two_e_integral_zero
 
-  PROVIDE ao_two_e_integrals_in_map
+  PROVIDE ao_int_mu_of_r_in_map
   non_zero_int = 0
   if (ao_one_e_integral_zero(j,l)) then
     out_val = 0.d0
@@ -269,7 +269,7 @@ BEGIN_PROVIDER [ logical, ao_int_mu_of_r_in_map ]
   character*(64)                 :: fmt
 
   double precision               :: map_mb
-  PROVIDE read_ao_two_e_integrals io_ao_two_e_integrals
+!  PROVIDE read_ao_two_e_integrals io_ao_two_e_integrals
 !  if (read_ao_two_e_integrals) then
 !    print*,'Reading the AO integrals'
 !    call map_load_from_disk(trim(ezfio_filename)//'/work/ao_ints',ao_integrals_map)

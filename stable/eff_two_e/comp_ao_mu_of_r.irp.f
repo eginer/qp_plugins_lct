@@ -1,5 +1,5 @@
 
-subroutine compute_all_ijkl_for_jl_mu_of_r_int(j,l,ao_integrals)
+subroutine compute_all_ijkl_ao_for_jl_mu_of_r_int(j,l,ao_integrals)
  implicit none
  integer, intent(in) :: j,l
  double precision, intent(out) :: ao_integrals(ao_num,ao_num)
@@ -11,7 +11,7 @@ subroutine compute_all_ijkl_for_jl_mu_of_r_int(j,l,ao_integrals)
  istate = 1
  do ipoint = 1, n_points_final_grid
   do k = 1, ao_num
-   ao_tmp(k,ipoint) = phi_ij_eff_pot_in_r(ipoint,j,l) * aos_in_r_array(k,ipoint)
+   ao_tmp(k,ipoint) = phi_ao_ij_eff_pot_in_r(ipoint,j,l) * aos_in_r_array(k,ipoint)
   enddo
  enddo
  
@@ -50,7 +50,7 @@ subroutine compute_ao_mu_of_r_integrals_jl(j,l,n_integrals,buffer_i,buffer_value
   double precision, allocatable :: ao_integrals(:,:)
   allocate( ao_integrals(ao_num,ao_num) )
 
-  call compute_all_ijkl_for_jl_mu_of_r_int(j,l,ao_integrals)
+  call compute_all_ijkl_ao_for_jl_mu_of_r_int(j,l,ao_integrals)
   thr = ao_integrals_threshold
 
   n_integrals = 0

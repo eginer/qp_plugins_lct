@@ -66,7 +66,7 @@ subroutine ao_int_mu_of_r_integrals_in_map_slave(thread,iproc)
     if (task_id == 0) exit
     call sscanf_dd(task, j, l)
     integer, external :: task_done_to_taskserver
-    call compute_ao_integrals_jl(j,l,n_integrals,buffer_i,buffer_value)
+    call compute_ao_mu_of_r_integrals_jl(j,l,n_integrals,buffer_i,buffer_value)
     if (task_done_to_taskserver(zmq_to_qp_run_socket,worker_id,task_id) == -1) then
         stop 'Unable to send task_done'
     endif

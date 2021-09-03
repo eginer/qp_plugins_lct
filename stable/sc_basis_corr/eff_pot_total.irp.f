@@ -53,9 +53,9 @@ END_PROVIDER
  integer :: istate
 
  do istate = 1, N_states
-  call mo_to_ao_no_overlap(mo_tot_eff_pot_basis(1,1,istate),size(mo_tot_eff_pot_basis,1),ao_tot_eff_pot_basis(1,1,istate),size(ao_tot_eff_pot_basis,1))
+  call mo_to_ao(mo_tot_eff_pot_basis(1,1,istate),size(mo_tot_eff_pot_basis,1),ao_tot_eff_pot_basis(1,1,istate),size(ao_tot_eff_pot_basis,1))
 
-  call mo_to_ao_no_overlap(mo_tot_eff_pot_basis_no_kin(1,1,istate),size(mo_tot_eff_pot_basis_no_kin,1),ao_tot_eff_pot_basis_no_kin(1,1,istate),size(ao_tot_eff_pot_basis_no_kin,1))
+  call mo_to_ao(mo_tot_eff_pot_basis_no_kin(1,1,istate),size(mo_tot_eff_pot_basis_no_kin,1),ao_tot_eff_pot_basis_no_kin(1,1,istate),size(ao_tot_eff_pot_basis_no_kin,1))
  enddo
 
 END_PROVIDER 
