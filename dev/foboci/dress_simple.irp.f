@@ -351,100 +351,100 @@ subroutine dress_H_matrix_from_psi_det_input(psi_det_generators_input,Ndet_gener
 
 end
 
-subroutine fill_H_apply_buffer_no_selection_first_order_coef(n_selected,det_buffer,Nint,iproc)
-  use bitmasks
-  implicit none
-  BEGIN_DOC
-  !  Fill the H_apply buffer with determiants for CISD
-  END_DOC
-  
-  integer, intent(in)            :: n_selected, Nint, iproc
-  integer(bit_kind), intent(in)  :: det_buffer(Nint,2,n_selected)
-  integer                        :: i,j,k
-  integer                        :: new_size
-  PROVIDE H_apply_buffer_allocated
-  call omp_set_lock(H_apply_buffer_lock(1,iproc))
-  new_size = H_apply_buffer(iproc)%N_det + n_selected
-  if (new_size > H_apply_buffer(iproc)%sze) then
-    call resize_h_apply_buffer(max(2*H_apply_buffer(iproc)%sze,new_size),iproc)
-  endif
-  do i=1,H_apply_buffer(iproc)%N_det
-    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,1,i)) )== elec_alpha_num)
-    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,2,i))) == elec_beta_num)
-  enddo
-  do i=1,n_selected
-    do j=1,N_int
-      H_apply_buffer(iproc)%det(j,1,i+H_apply_buffer(iproc)%N_det) = det_buffer(j,1,i)
-      H_apply_buffer(iproc)%det(j,2,i+H_apply_buffer(iproc)%N_det) = det_buffer(j,2,i)
-    enddo
-    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,1,i+H_apply_buffer(iproc)%N_det)) )== elec_alpha_num)
-    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,2,i+H_apply_buffer(iproc)%N_det))) == elec_beta_num)
-  enddo
-  double precision               :: i_H_psi_array(N_states),h,diag_H_mat_elem_fock,delta_e
-  do i=1,N_selected
-   call i_H_psi(det_buffer(1,1,i),psi_selectors,psi_selectors_coef,N_int,N_det_selectors,psi_selectors_size,N_states,i_H_psi_array)
-   call i_H_j(det_buffer(1,1,i),det_buffer(1,1,i),N_int,h)
-   do j=1,N_states
-      delta_e = -1.d0 /(h - psi_energy(j))
-      H_apply_buffer(iproc)%coef(i+H_apply_buffer(iproc)%N_det,j) = i_H_psi_array(j) * delta_e
-    enddo
-  enddo
-  H_apply_buffer(iproc)%N_det = new_size
-  do i=1,H_apply_buffer(iproc)%N_det
-    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,1,i)) )== elec_alpha_num)
-    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,2,i))) == elec_beta_num)
-  enddo
-  call omp_unset_lock(H_apply_buffer_lock(1,iproc))
-end
+!subroutine fill_H_apply_buffer_no_selection_first_order_coef(n_selected,det_buffer,Nint,iproc)
+!  use bitmasks
+!  implicit none
+!  BEGIN_DOC
+!  !  Fill the H_apply buffer with determiants for CISD
+!  END_DOC
+!  
+!  integer, intent(in)            :: n_selected, Nint, iproc
+!  integer(bit_kind), intent(in)  :: det_buffer(Nint,2,n_selected)
+!  integer                        :: i,j,k
+!  integer                        :: new_size
+!  PROVIDE H_apply_buffer_allocated
+!  call omp_set_lock(H_apply_buffer_lock(1,iproc))
+!  new_size = H_apply_buffer(iproc)%N_det + n_selected
+!  if (new_size > H_apply_buffer(iproc)%sze) then
+!    call resize_h_apply_buffer(max(2*H_apply_buffer(iproc)%sze,new_size),iproc)
+!  endif
+!  do i=1,H_apply_buffer(iproc)%N_det
+!    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,1,i)) )== elec_alpha_num)
+!    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,2,i))) == elec_beta_num)
+!  enddo
+!  do i=1,n_selected
+!    do j=1,N_int
+!      H_apply_buffer(iproc)%det(j,1,i+H_apply_buffer(iproc)%N_det) = det_buffer(j,1,i)
+!      H_apply_buffer(iproc)%det(j,2,i+H_apply_buffer(iproc)%N_det) = det_buffer(j,2,i)
+!    enddo
+!    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,1,i+H_apply_buffer(iproc)%N_det)) )== elec_alpha_num)
+!    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,2,i+H_apply_buffer(iproc)%N_det))) == elec_beta_num)
+!  enddo
+!  double precision               :: i_H_psi_array(N_states),h,diag_H_mat_elem_fock,delta_e
+!  do i=1,N_selected
+!   call i_H_psi(det_buffer(1,1,i),psi_selectors,psi_selectors_coef,N_int,N_det_selectors,psi_selectors_size,N_states,i_H_psi_array)
+!   call i_H_j(det_buffer(1,1,i),det_buffer(1,1,i),N_int,h)
+!   do j=1,N_states
+!      delta_e = -1.d0 /(h - psi_energy(j))
+!      H_apply_buffer(iproc)%coef(i+H_apply_buffer(iproc)%N_det,j) = i_H_psi_array(j) * delta_e
+!    enddo
+!  enddo
+!  H_apply_buffer(iproc)%N_det = new_size
+!  do i=1,H_apply_buffer(iproc)%N_det
+!    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,1,i)) )== elec_alpha_num)
+!    ASSERT (sum(popcnt(H_apply_buffer(iproc)%det(:,2,i))) == elec_beta_num)
+!  enddo
+!  call omp_unset_lock(H_apply_buffer_lock(1,iproc))
+!end
+!
+!
 
-
-
-subroutine make_s2_eigenfunction_first_order
-  implicit none
-  integer                        :: i,j,k
-  integer                        :: smax, s
-  integer(bit_kind), allocatable :: d(:,:,:), det_buffer(:,:,:)
-  integer                        :: N_det_new
-  integer, parameter             :: bufsze = 1000
-  logical, external              :: is_in_wavefunction
-
-  allocate (d(N_int,2,1), det_buffer(N_int,2,bufsze) )
-  smax = 1
-  N_det_new = 0
-
-  do i=1,N_occ_pattern
-    call occ_pattern_to_dets_size(psi_occ_pattern(1,1,i),s,elec_alpha_num,N_int)
-    s += 1
-    if (s > smax) then
-      deallocate(d)
-      allocate ( d(N_int,2,s) )
-      smax = s
-    endif
-    call occ_pattern_to_dets(psi_occ_pattern(1,1,i),d,s,elec_alpha_num,N_int)
-    do j=1,s
-      if (.not. is_in_wavefunction(d(1,1,j), N_int) ) then
-        N_det_new += 1
-        do k=1,N_int
-          det_buffer(k,1,N_det_new) = d(k,1,j)
-          det_buffer(k,2,N_det_new) = d(k,2,j)
-        enddo
-        if (N_det_new == bufsze) then
-          call fill_H_apply_buffer_no_selection(bufsze,det_buffer,N_int,0)
-          N_det_new = 0
-        endif
-      endif
-    enddo
-  enddo
-
-  if (N_det_new > 0) then
-    call fill_H_apply_buffer_no_selection_first_order_coef(N_det_new,det_buffer,N_int,0)
-    call copy_H_apply_buffer_to_wf
-    SOFT_TOUCH N_det psi_coef psi_det
-  endif
-
-  deallocate(d,det_buffer)
-
+!subroutine make_s2_eigenfunction_first_order
+!  implicit none
+!  integer                        :: i,j,k
+!  integer                        :: smax, s
+!  integer(bit_kind), allocatable :: d(:,:,:), det_buffer(:,:,:)
+!  integer                        :: N_det_new
+!  integer, parameter             :: bufsze = 1000
+!  logical, external              :: is_in_wavefunction
+!
+!  allocate (d(N_int,2,1), det_buffer(N_int,2,bufsze) )
+!  smax = 1
+!  N_det_new = 0
+!
+!  do i=1,N_occ_pattern
+!    call occ_pattern_to_dets_size(psi_occ_pattern(1,1,i),s,elec_alpha_num,N_int)
+!    s += 1
+!    if (s > smax) then
+!      deallocate(d)
+!      allocate ( d(N_int,2,s) )
+!      smax = s
+!    endif
+!    call occ_pattern_to_dets(psi_occ_pattern(1,1,i),d,s,elec_alpha_num,N_int)
+!    do j=1,s
+!      if (.not. is_in_wavefunction(d(1,1,j), N_int) ) then
+!        N_det_new += 1
+!        do k=1,N_int
+!          det_buffer(k,1,N_det_new) = d(k,1,j)
+!          det_buffer(k,2,N_det_new) = d(k,2,j)
+!        enddo
+!        if (N_det_new == bufsze) then
+!          call fill_H_apply_buffer_no_selection(bufsze,det_buffer,N_int,0)
+!          N_det_new = 0
+!        endif
+!      endif
+!    enddo
+!  enddo
+!
+!  if (N_det_new > 0) then
+!    call fill_H_apply_buffer_no_selection_first_order_coef(N_det_new,det_buffer,N_int,0)
+!    call copy_H_apply_buffer_to_wf
+!    SOFT_TOUCH N_det psi_coef psi_det
+!  endif
+!
+!  deallocate(d,det_buffer)
+!
 !  call write_int(output_determinants,N_det_new, 'Added deteminants for S^2')
 
-end
+!end
 
