@@ -463,17 +463,6 @@ double precision function func_non_hermit_at_r1_mo(ipoint,jpoint,i,k,j,l)
  enddo
 end
 
-double precision function gamma_r1(ipoint,jpoint,cst)
- implicit none
- integer, intent(in) :: ipoint, jpoint
- double precision, intent(in) :: cst
-
- double precision :: mu
- mu = mu_of_r_for_ints(ipoint,1)
- ! TODO : that function requires to evaluate mu(r1) and its gradient at any points ...
-
-
-end
 
 double precision function func_non_hermit_at_r1_bis(ipoint,jpoint,i,k,j,l,mu)
  BEGIN_DOC
