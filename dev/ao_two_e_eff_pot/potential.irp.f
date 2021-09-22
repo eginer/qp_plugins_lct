@@ -16,9 +16,9 @@ BEGIN_PROVIDER [integer, n_gauss_eff_pot_deriv]
 ! number of gaussians to represent the diferential part of the effective potential 
  END_DOC
  if(grad_squared)then
-  n_gauss_eff_pot = n_max_fit_slat 
+  n_gauss_eff_pot_deriv = n_max_fit_slat 
  else 
-  n_gauss_eff_pot = 1
+  n_gauss_eff_pot_deriv = 1
  endif
 END_PROVIDER 
 
@@ -35,8 +35,8 @@ END_PROVIDER
    coef_gauss_eff_pot_deriv(i) = -1.d0 * coef_gauss_1_erf_x(i) ! -(1 - erf(mu*x))
   enddo
  else
-  expo_gauss_eff_pot_deriv(i) = 1000.d0
-  coef_gauss_eff_pot_deriv(i) = 0.d0
+  expo_gauss_eff_pot_deriv(1) = 1000.d0
+  coef_gauss_eff_pot_deriv(1) = 0.d0
  endif
 
 END_PROVIDER
