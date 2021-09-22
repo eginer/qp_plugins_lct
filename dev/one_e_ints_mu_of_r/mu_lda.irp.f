@@ -146,11 +146,10 @@ subroutine get_grad_damped_mu_lda(r,dx,mu_min,grad_mu)
   enddo
 end
 
-double precision function grad_mu_lda_comp(r,dx,mu_min,m,grad_mu)
+double precision function grad_mu_lda_comp(r,dx,mu_min,m)
   implicit none
   double precision, intent(in) :: r(3),dx,mu_min
   integer, intent(in)          :: m
-  double precision, intent(out):: grad_mu
   double precision :: r1(3),rho_a_hf,rho_b_hf,mu_plus,mu_minus,mu_lda_damped
    r1 = r
    r1(m) += dx 
@@ -160,7 +159,7 @@ double precision function grad_mu_lda_comp(r,dx,mu_min,m,grad_mu)
    r1(m) -= dx 
    call dm_dft_alpha_beta_at_r(r1,rho_a_hf,rho_b_hf)
    mu_minus = mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
-   grad_mu = (mu_plus - mu_minus)/(2.d0 * dx)
+   grad_mu_lda_comp = (mu_plus - mu_minus)/(2.d0 * dx)
 end
 
 subroutine get_lapl_mu_lda(r,dx,mu_min,lapl_mu)

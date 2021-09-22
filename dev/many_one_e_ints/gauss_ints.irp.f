@@ -271,11 +271,9 @@ subroutine overlap_gauss_r12_all_ao(D_center,delta,aos_ints)
  integer :: num_a,num_b,power_A(3), power_B(3),l,k,i,j
  double precision :: A_center(3), B_center(3),overlap_gauss_r12,alpha,beta,analytical_j
  aos_ints = 0.d0
- if(ao_overlap_abs(j,i).lt.1.d-12)then
-  return
- endif
  do i = 1, ao_num
   do j = 1, ao_num
+   if(ao_overlap_abs(j,i).lt.1.d-12)cycle
    num_A = ao_nucl(i)
    power_A(1:3)= ao_power(i,1:3)
    A_center(1:3) = nucl_coord(num_A,1:3)
