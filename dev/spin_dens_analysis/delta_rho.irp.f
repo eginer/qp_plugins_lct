@@ -19,9 +19,9 @@
 ! z_min = -5.d0
 ! z_max = 8.d0
 !BH
-z_min = -10.d0
-z_max = 10.d0
- delta_z = 0.0005d0
+z_min = -5.d0
+z_max = 5.d0
+ delta_z = 0.05d0
 END_PROVIDER
 
 BEGIN_PROVIDER [integer, N_z_pts]

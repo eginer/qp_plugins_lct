@@ -1,4 +1,4 @@
-program transcorr_h
+program print_delta
  implicit none
  read_wf = .True.
  touch read_wf
@@ -26,38 +26,30 @@ program transcorr_h
   call read_fcidump_1_tc
  endif
 
- call provide_all
- call print_energy_tc
- call print_e_comp_transcorr
- call print_eigv
- call print_pert
- call write_left_right
- call routine_save
+ call routine
 end
 
-subroutine provide_all
- use bitmasks
- integer(bit_kind) :: key_i(N_int,2), key_j(N_int,2)
- integer :: i,j,degree
- double precision :: hij,s2,hmono,heff,hderiv,htot,hthree
- double precision :: accu
- accu = 0.d0
- key_i(:,:) = psi_det(:,:,1)
- call htilde_mat(key_i,key_i,hmono,heff,hderiv,hthree,htot)
- provide eigval_trans
-end
-
-
-subroutine routine_save
-implicit none
- double precision, allocatable :: coef_tmp(:,:)
- N_states = 1
-
- allocate(coef_tmp(N_det, N_states))
+subroutine routine
+ implicit none
  integer :: i
+ double precision, allocatable :: delta_u0(:), h_u0(:), delta_mat(:,:)
+ allocate(delta_u0(N_det),h_u0(N_det))
+ delta_mat = htilde_matrix_elmt - h_matrix_all_dets ! Delta = Htilde - H
+ delta_u0 = 0.d0
+ double precision :: a
+ a = 1.d0
+ call h_non_hermite(delta_u0,psi_coef,delta_mat,a,1,N_det)  ! delta_u0 = Delta |u0> 
+ print*,''
+ print*,'printing Delta'
+ print*,''
  do i = 1, N_det
-  coef_tmp(i,1) = reigvec_trans(i,1)
-!  coef_tmp(i,2) = leigvec_trans(i,1)
+  print*,delta_u0(i)
  enddo
- call save_wavefunction_general(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
+
+ h_u0 = 0.d0
+ call h_non_hermite(h_u0,psi_coef,h_matrix_all_dets,a,1,N_det)  ! delta_u0 = Delta |u0> 
+ do i = 1, N_det
+  print*,'delta_u0(i) + h_u0(i) / c_0(i) = ',(delta_u0(i) + h_u0(i))/psi_coef(i,1)
+ enddo
 end
+

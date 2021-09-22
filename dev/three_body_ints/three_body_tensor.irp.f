@@ -11,12 +11,12 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
  three_body_ints = 0.d0
  print*,'Providing the three_body_ints ...'
  call wall_time(wall0)
+ name_file = 'six_index_tensor'
  if(read_3_body_tc_ints)then
   call read_fcidump_3_tc(three_body_ints)
  else
   if(read_six_index_tensor)then
    print*,'Reading three_body_ints from disk ...'
-   name_file = 'six_index_tensor'
    call read_array_6_index_tensor(mo_num,three_body_ints,name_file)
   else
   provide x_W_ij_erf_rk

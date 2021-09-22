@@ -95,11 +95,13 @@ double precision function mu_lda(rho_a,rho_b)
 end
 
 double precision function damped_mu(mu,mu_min)
+ implicit none
  double precision, intent(in) :: mu, mu_min
  damped_mu = mu_min * (1.d0 - derf(mu)) + derf(mu)*mu
 end
 
 double precision function mu_lda_damped(rho_a_hf,rho_b_hf,mu_min)
+ implicit none
  double precision, intent(in) :: rho_b_hf,rho_a_hf,mu_min
  double precision :: mu_lda,mu,damped_mu
  mu = mu_lda(rho_a_hf,rho_b_hf)

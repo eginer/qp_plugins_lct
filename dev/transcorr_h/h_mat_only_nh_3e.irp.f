@@ -1,6 +1,6 @@
 ! For a derivation of the transcorrelated Hamiltonian matrix elements, see Luo-JCP-10 
 ! http://dx.doi.org/10.1063/1.3505037
-subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
+subroutine diag_htilde_mu_nh_3e_mat(key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 !  diagonal element of htilde 
@@ -31,17 +31,6 @@ subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
   hthree = 0.d0
   htot = 0.d0
 
-  do ispin = 1, 2 
-   do i = 1, Ne(ispin) ! 
-    ii = occ(i,ispin) 
-    hmono += mo_one_e_integrals(ii,ii)
-    if(core_tc_op)then
-     hmono += core_fock_operator(ii,ii) ! add the usual Coulomb - Exchange from the core 
-    endif
-   enddo
-  enddo
-
-
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
    ! alpha/beta two-body
    ispin = 1
@@ -50,7 +39,6 @@ subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = 1, Ne(jspin)
      jj = occ(j,jspin) 
-     heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) 
      hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) 
     enddo
    enddo
@@ -61,7 +49,6 @@ subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
     ii = occ(i,ispin) 
     do j = i+1, Ne(ispin)
      jj = occ(j,ispin) 
-     heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii)
      hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) & 
      - 0.5d0 * deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) - 0.5d0 * deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) 
     enddo
@@ -72,7 +59,6 @@ subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
     ii = occ(i,jspin) 
     do j = i+1, Ne(jspin)
      jj = occ(j,jspin) 
-     heff += scalar_mu_r_pot_physicist_mo(ii,jj,ii,jj) - scalar_mu_r_pot_physicist_mo(ii,jj,jj,ii)
      hderiv += deriv_mu_r_pot_physicist_mo(ii,jj,ii,jj) & 
      - 0.5d0 * deriv_mu_r_pot_physicist_mo(ii,jj,jj,ii) & 
      - 0.5d0 * deriv_mu_r_pot_physicist_mo(jj,ii,ii,jj) 
@@ -191,7 +177,7 @@ subroutine diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
 
 end
 
-subroutine single_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+subroutine single_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for single excitation  
@@ -242,24 +228,17 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   call get_single_excitation(key_i,key_j,exc,phase,N_int)
   call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
 
-  hmono = mo_one_e_integrals(h1,p1) * phase
-  if(core_tc_op)then
-   hmono += phase * core_fock_operator(h1,p1)
-  endif
-  
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
    ! alpha/beta two-body 
    ispin = other_spin(s1)
    do i = 1, Ne(ispin)
     ii = occ(i,ispin) 
-    heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) 
     hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) 
    enddo
    ! same spin two-body 
    do i = 1, Ne(s1)
     ii = occ(i,s1) 
     ! (h1p1|ii ii) - (h1 ii| p1 ii)
-    heff   += scalar_mu_r_pot_physicist_mo(ii,p1,ii,h1) - scalar_mu_r_pot_physicist_mo(ii,p1,h1,ii)
     hderiv += deriv_mu_r_pot_physicist_mo(ii,p1,ii,h1) & 
            -0.5d0 * deriv_mu_r_pot_physicist_mo(ii,p1,h1,ii) & 
            -0.5d0 * deriv_mu_r_pot_physicist_mo(p1,ii,ii,h1)
@@ -373,7 +352,7 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   htot = hmono + heff + hderiv + hthree
 end
 
-subroutine double_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+subroutine double_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for double excitation  
@@ -426,11 +405,9 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
 
   if(.not.adjoint_tc_h)then ! Usual transcorrelated Hamiltonian 
    ! opposite spin two-body 
-   heff   += scalar_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
    hderiv  = deriv_mu_r_pot_physicist_mo(p1,p2,h1,h2) 
    ! same spin two-body 
    if(s1.eq.s2)then
-    heff   -= scalar_mu_r_pot_physicist_mo(p1,p2,h2,h1) 
     hderiv -= 0.5d0 * deriv_mu_r_pot_physicist_mo(p1,p2,h2,h1) & 
              +0.5d0 * deriv_mu_r_pot_physicist_mo(p2,p1,h1,h2)
    endif
@@ -513,7 +490,7 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
 
 
 
-subroutine triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+subroutine triple_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> for triple excitation  
@@ -588,7 +565,7 @@ subroutine triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   htot =  heff + hderiv + hthree
  end
 
-subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+subroutine htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC
 ! <key_j | H_tilde | key_i> 
@@ -608,56 +585,47 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
    hderiv = 0.d0
    hthree = 0.d0
    htot = 0.d0
-   if(read_tc_ints.or.read_six_index_tensor.or.write_six_index_tensor)then
+!   if(read_tc_ints)then
     if(degree.gt.3)then
      return
     else if(degree == 3.and.three_body_h_tc)then
      if(pure_three_body_h_tc)then
-      call triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+      call triple_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
      endif
     else if(degree == 2)then
-     call double_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+     call double_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
     else if(degree == 1)then
-     call single_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+     call single_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
     else if(degree == 0)then
-     call diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
+     call diag_htilde_mu_nh_3e_mat(key_i,hmono,heff,hderiv,hthree,htot)
     endif
-   else
-    if(degree.gt.3)then
-     return
-    else if(degree == 3.and.three_body_h_tc)then
-     if(pure_three_body_h_tc)then
-      call triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-     endif
-    else if(degree == 2)then
-     call double_htilde_mu_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-    else if(degree == 1)then
-     call single_htilde_mu_mat_4_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-    else if(degree == 0)then
-     call diag_htilde_mu_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
-    endif
-   endif
+!   else
+!    if(degree.gt.3)then
+!     return
+!    else if(degree == 3.and.three_body_h_tc)then
+!     if(pure_three_body_h_tc)then
+!      call triple_htilde_mu_nh_3e_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+!     endif
+!    else if(degree == 2)then
+!     call double_htilde_mu_nh_3e_mat_5_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+!    else if(degree == 1)then
+!     call single_htilde_mu_nh_3e_mat_4_index(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+!    else if(degree == 0)then
+!     call diag_htilde_mu_nh_3e_mat_3_index(key_i,hmono,heff,hderiv,hthree,htot)
+!    endif
+!   endif
    
 end
 
-
-subroutine htilde_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-  use bitmasks
-  BEGIN_DOC
-! <key_j | H_tilde | key_i> 
-!!
-!! WARNING !!
-! 
-! Non hermitian !!
-  END_DOC
-  implicit none
-  integer(bit_kind), intent(in)  :: key_j(N_int,2),key_i(N_int,2)
-  double precision, intent(out)  :: hmono,heff,hderiv,hthree,htot
-  integer                        :: degree
-  if(.not.ten_no_jastrow)then
-   call htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-  else 
-   call htilde_ten_no_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-  endif
-end
-
+ BEGIN_PROVIDER [double precision, nh_3e_matrix_elmt, (N_det,N_det)]
+ implicit none
+ double precision :: mono,heff,hderiv,hthree,htot,hmono
+ integer :: i,j
+ do i = 1, N_det
+  do j = 1, N_det
+  ! < J | -K(1,2) -L(1,2,3) | I >
+   call htilde_mu_nh_3e_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,heff,hderiv,hthree,htot)
+   nh_3e_matrix_elmt(j,i) = htot
+  enddo
+ enddo
+ END_PROVIDER 
