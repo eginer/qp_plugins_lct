@@ -11,7 +11,7 @@ echo $TEMP
 function help()
 {
     cat <<EOF
-SCF procedure with an electric field 
+#SCF procedure with an electric field 
 
 Usage:
   $(basename $0) [-eps <real> -t <real>] EZFIO
@@ -79,7 +79,6 @@ if [[ ! -d $ezfio ]]; then
    exit
 fi
 
-# value of the convergence of the energy for the self-consistent CIPSI calculation at a given number of determinant
 if [[ -z $thresh_elec ]]; then
  echo "you did not specify the \$thresh parameter, it will be set to 0.0000000001 by default (run --help for explanations)"
  thresh_elec=1.e-14
@@ -91,10 +90,10 @@ qp set_file $ezfio
 
 echo "I'm here #2"
 # write the effective Hamiltonian
-  file_int=scf-${eps}-${t}
+  file_int=scf_${field_strenght}
   qp run write_eff_basis_ints_electric_field | tee ${ezfio}/work/${file_int}
 
-  file_scf=scf_${eps}_{t}_process
+  file_scf=scf_run_${field_strenght}
   qp run scf_electric_field | tee ${ezfio}/work/${file_scf}
 
-  echo "Done"
+echo "Done"
