@@ -32,8 +32,8 @@ end
 subroutine routine
  implicit none
  integer :: i
- double precision, allocatable :: delta_u0(:), h_u0(:), delta_mat(:,:)
- allocate(delta_u0(N_det),h_u0(N_det))
+ double precision, allocatable :: delta_u0(:), h_u0(:), delta_mat(:,:), delta_u0_bis(:)
+ allocate(delta_u0(N_det),h_u0(N_det), delta_u0_bis(N_det))
  delta_mat = htilde_matrix_elmt - h_matrix_all_dets ! Delta = Htilde - H
  delta_u0 = 0.d0
  double precision :: a
@@ -45,6 +45,16 @@ subroutine routine
  do i = 1, N_det
   print*,delta_u0(i)
  enddo
+ 
+ call get_delta_no_store(psi_det,psi_coef,n_det,delta_u0_bis)
+ double precision :: accu
+ accu = 0.d0
+ do i = 1, N_det
+  print*,delta_u0(i),delta_u0_bis(i),dabs(delta_u0_bis(i) - delta_u0(i))
+  accu += dabs(delta_u0_bis(i) - delta_u0(i))
+ enddo
+ print*,'accu = ',accu
+ stop
 
  h_u0 = 0.d0
  call h_non_hermite(h_u0,psi_coef,h_matrix_all_dets,a,1,N_det)  ! delta_u0 = Delta |u0> 
