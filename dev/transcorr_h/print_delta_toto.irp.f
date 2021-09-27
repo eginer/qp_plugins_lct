@@ -46,7 +46,7 @@ subroutine routine
 !  print*,delta_u0(i)
 ! enddo
 
- call ezfio_set_dmc_dress_dmc_delta_h(delta_u0_new)
+! call ezfio_set_dmc_dress_dmc_delta_h(delta_u0_new)
 
 end
 
