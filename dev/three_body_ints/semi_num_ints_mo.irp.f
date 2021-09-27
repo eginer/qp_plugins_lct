@@ -155,6 +155,8 @@ BEGIN_PROVIDER [ double precision, x_W_ij_erf_rk, ( n_points_final_grid,3,mo_num
 
 END_PROVIDER 
 
+!BEGIN_PROVIDER [ double precision, mos_in_r_array_transp_sq_weight, (n_points_final_grid,mo_num)]
+
 
 BEGIN_PROVIDER [ double precision, gauss_ij_rk_transp, (ao_num, ao_num, n_points_final_grid) ]
  implicit none
