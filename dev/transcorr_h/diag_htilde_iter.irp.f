@@ -60,8 +60,11 @@ subroutine routine_diagonalize_htilde
   print*,'**************'
   print*,'Iteration j ',j
   H_jj_tmp = H_jj
+  ! delta(i) = <I|(H_t - H)|u0>
   call get_delta_no_store_no_provide(psi_det,u0(1,1),n_det,delta)
+  ! dressing_vec(i) = dressing vector for the davidson dress
   call delta_to_dressing_vector(u0(1,1),delta,n_det,dressing_vec,idress)
+  ! get the ground state energy with Davidson including a dressing 
   call davidson_general_ext_rout_dressed(u0,H_jj_tmp,energies,N_det,N_states,N_states_diag,dressing_state,dressing_vec,idress,converged,hcalc_template)
   print*,'**************'
   if(j.gt.1)then
@@ -83,6 +86,21 @@ subroutine routine_diagonalize_htilde
   print*,'Norm of the residual vector ', res 
   ebefore = energies(1)
  enddo
+ call routine_save(u0)
+end
+
+subroutine routine_save(u0)
+implicit none
+ double precision, intent(in)  :: u0(N_det)
+ double precision, allocatable :: coef_tmp(:,:)
+ N_states = 1
+
+ allocate(coef_tmp(N_det, N_states))
+ integer :: i
+ do i = 1, N_det
+  coef_tmp(i,1) = u0(i)
+ enddo
+ call save_wavefunction_general(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
 end
 
 subroutine provide_integrals_for_tc
