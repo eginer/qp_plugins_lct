@@ -19,7 +19,7 @@ subroutine get_delta_no_store(psidet,psicoef,ndet,delta)
  j=1
  call htilde_mat(psi_det(1,1,i),psi_det(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
  call  i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
- !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(dynamic) &
+ !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(dynamic,8) &
  !$OMP PRIVATE(i,j,delta_mat,hmono,heff,hderiv,hthree,htilde_ij,hij)
   do i = 1, N_det
    do j = 1, N_det
