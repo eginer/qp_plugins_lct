@@ -127,7 +127,7 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (j,k,l,m,n,integral) & 
  !$OMP SHARED (mo_num,three_body_5_index)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
   do n = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
@@ -201,7 +201,7 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (j,k,l,m,n,integral) & 
  !$OMP SHARED (mo_num,three_body_5_index_exch_13)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
   do n = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
@@ -276,7 +276,7 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (j,k,l,m,n,integral) & 
  !$OMP SHARED (mo_num,three_body_5_index_exch_32)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
   do n = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
@@ -351,7 +351,7 @@ BEGIN_PROVIDER [ double precision, three_body_3_index, (mo_num, mo_num, mo_num)]
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
  !$OMP SHARED (mo_num,three_body_3_index)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(3)
   do n = 1, mo_num ! 3
    do l = 1, mo_num ! 2 
     do k = 1, mo_num ! 1 
@@ -390,7 +390,7 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_12, (mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
  !$OMP SHARED (mo_num,three_body_3_index_exch_12)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(3)
   do n = 1, mo_num ! 3
    do l = 1, mo_num ! 2 
     do k = 1, mo_num ! 1 
@@ -431,7 +431,7 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_23, (mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
  !$OMP SHARED (mo_num,three_body_3_index_exch_23)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(3)
   do n = 1, mo_num ! 3
    do l = 1, mo_num ! 2 
     do k = 1, mo_num ! 1 
@@ -472,7 +472,7 @@ BEGIN_PROVIDER [ double precision, three_body_3_index_exch_13, (mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (k,n,integral) & 
  !$OMP SHARED (mo_num,three_body_3_index_exch_13)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided)
   do n = 1, mo_num ! 3
    do l = 1, mo_num ! 2 
     do k = 1, mo_num ! 1 
@@ -512,7 +512,7 @@ BEGIN_PROVIDER [ double precision, three_body_4_index, (mo_num, mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,m,k,integral) & 
  !$OMP SHARED (mo_num,three_body_4_index)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
   do i = 1, mo_num
    do k = 1, mo_num
     do m = 1, mo_num
@@ -553,7 +553,7 @@ BEGIN_PROVIDER [ double precision, three_body_4_index_exch_12, (mo_num, mo_num, 
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,m,k,integral) & 
  !$OMP SHARED (mo_num,three_body_4_index_exch_12)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(4)
   do i = 1, mo_num
    do k = 1, mo_num
     do m = 1, mo_num
@@ -594,7 +594,7 @@ BEGIN_PROVIDER [ double precision, three_body_4_index_exch_12_part, (mo_num, mo_
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,j,m,k,integral) & 
  !$OMP SHARED (mo_num,three_body_4_index_exch_12_part)
- !$OMP DO SCHEDULE (dynamic)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
   do i = 1, mo_num
    do k = 1, mo_num
     do m = 1, mo_num

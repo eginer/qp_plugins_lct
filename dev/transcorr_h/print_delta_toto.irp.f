@@ -33,44 +33,20 @@ subroutine routine
  implicit none
  integer :: i
  double precision, allocatable ::  delta_u0_new(:)
- double precision, allocatable ::  delta_u0(:),  delta_mat(:,:)
 
- !!!! OLD WAY WITH THE STORING !!!!
- allocate(delta_u0(N_det))
- delta_mat = htilde_matrix_elmt - h_matrix_all_dets ! Delta = Htilde - H
- delta_u0 = 0.d0
- double precision :: a
- a = 1.d0
- call h_non_hermite(delta_u0,psi_coef,delta_mat,a,1,N_det)  ! delta_u0 = Delta |u0> 
- !!!!! END OF OLD WAY 
-
-
- !!!! NEW WAY WITHOUT STORING !!!!!
  allocate(delta_u0_new(N_det))
  call get_delta_no_store(psi_det,psi_coef,n_det,delta_u0_new) ! delta_u0_new = Delta |u0> 
- !!!! END OF NEW WAY 
-
- !!!!! CHECK THAT THE OLD AND THE NEW WAYS GIVE THE SAME THING 
- double precision :: accu
- accu = 0.d0
- print*,''
- print*,' delta_u0(i),delta_u0_new(i),dabs(delta_u0_new(i) - delta_u0(i))'
- print*,''
- do i = 1, N_det
-  print*,delta_u0(i),delta_u0_new(i),dabs(delta_u0_new(i) - delta_u0(i))
-  accu += dabs(delta_u0_new(i) - delta_u0(i))
- enddo
- print*,'accu = ',accu
 
  print*,''
  print*,'printing Delta'
  print*,''
  call dset_order(delta_u0_new,psi_bilinear_matrix_order,N_det)
- do i = 1, N_det
-  print*,delta_u0(i)
- enddo
-!! COMMENTING THE EZFIO ROUTINE IT BECAUSE I DO NOT HAVE IT IN MY PLUGIN 
-! call ezfio_set_dmc_dress_dmc_delta_h(delta_u0)
+
+! do i = 1, N_det
+!  print*,delta_u0(i)
+! enddo
+
+ call ezfio_set_dmc_dress_dmc_delta_h(delta_u0_new)
 
 end
 
