@@ -8,14 +8,19 @@ BEGIN_PROVIDER [integer, n_atoms_per_group, (n_groups)]
  implicit none
  n_atoms_per_group(1) = 2
  n_atoms_per_group(2) = 4
+! n_atoms_per_group(1) = 1
+! n_atoms_per_group(2) = 1
 END_PROVIDER 
 
 BEGIN_PROVIDER [integer, list_atoms, (nucl_num, n_groups)]
  implicit none
  integer :: i,j
+
+!  list_atoms(1,1) = 1
+!  list_atoms(1,2) = 2
+
  list_atoms(1,1) = 2
  list_atoms(2,1) = 3
-
 
  list_atoms(1,2) = 1
  list_atoms(2,2) = 4
