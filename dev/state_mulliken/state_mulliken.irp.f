@@ -7,6 +7,7 @@ program state_mulliken
   read_wf = .True.
   touch read_wf
   call routine
+ call print_non_ad_coupl
 end
 
 
@@ -62,3 +63,15 @@ subroutine get_pop_mull_groups(mull_dens_atoms, pop_mull_groups)
  enddo
 end
 
+
+subroutine print_non_ad_coupl
+ implicit none
+ integer :: i,j
+ print*,'non adiabatic coupling'
+ do i = 1, n_states
+  do j  = i+1, n_states
+   print*,i,j,non_ad_coupling(j,i)
+  enddo
+ enddo
+
+end

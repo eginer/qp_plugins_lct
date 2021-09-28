@@ -32,13 +32,13 @@ end
 subroutine routine_diagonalize_htilde
  implicit none
  integer :: j,i,dressing_state,idress
- double precision :: res,ebefore,thr,hij
+ double precision :: res,ebefore,thr,hij,delta_E
  double precision, allocatable :: u1(:),u0(:,:),H_jj(:),dressing_vec(:),H_jj_tmp(:),delta(:)
  double precision, allocatable :: energies(:)
  logical :: converged 
- external hcalc_template
+ external H_u_0_nstates_openmp
  call provide_integrals_for_tc
- thr = threshold_davidson
+ thr = 1.d-10
  allocate(u1(N_det),u0(N_det,N_states_diag),H_jj(N_det),dressing_vec(N_det),H_jj_tmp(N_det),delta(N_det))
  allocate(energies(N_states_diag))
  do i = 1, N_det
@@ -52,7 +52,8 @@ subroutine routine_diagonalize_htilde
  u0(1:N_det,1) = psi_coef(1:N_det,1)
  idress = 1
  energies = 0.d0
- do while(res .gt. thr) 
+ delta_E = 1.d0
+ do while(delta_E .gt. thr) 
   j += 1
   print*,''
   print*,'**************'
@@ -65,10 +66,11 @@ subroutine routine_diagonalize_htilde
   ! dressing_vec(i) = dressing vector for the davidson dress
   call delta_to_dressing_vector(u0(1,1),delta,n_det,dressing_vec,idress)
   ! get the ground state energy with Davidson including a dressing 
-  call davidson_general_ext_rout_dressed(u0,H_jj_tmp,energies,N_det,N_states,N_states_diag,dressing_state,dressing_vec,idress,converged,hcalc_template)
+  call davidson_general_ext_rout_dressed(u0,H_jj_tmp,energies,N_det,N_states,N_states_diag,dressing_state,dressing_vec,idress,converged,H_u_0_nstates_openmp)
   print*,'**************'
+  delta_E = dabs(ebefore-energies(1))
   if(j.gt.1)then
-   print*,'energies,De = ',energies(1),dabs(ebefore-energies(1))
+   print*,'energies,De = ',energies(1),delta_E
   else
    print*,'energies    = ',energies(1)
   print*,'**************'
@@ -85,8 +87,8 @@ subroutine routine_diagonalize_htilde
   res = dsqrt(res)
   print*,'Norm of the residual vector ', res 
   ebefore = energies(1)
+  call routine_save(u0)
  enddo
- call routine_save(u0)
 end
 
 subroutine routine_save(u0)
