@@ -14,10 +14,11 @@ program write_effective_RSDFT_hamiltonian
  touch io_mo_two_e_integrals
  io_ao_two_e_integrals = "None"
  touch io_ao_two_e_integrals
- io_mo_two_e_integrals_erf = "None" 
- touch io_mo_two_e_integrals_erf
- io_ao_two_e_integrals_erf = "None" 
- touch io_ao_two_e_integrals_erf
+
+! io_mo_two_e_integrals_erf = "None" 
+! touch io_mo_two_e_integrals_erf
+! io_ao_two_e_integrals_erf = "None" 
+! touch io_ao_two_e_integrals_erf
 
  io_mo_integrals_n_e = "None"
  touch io_mo_integrals_n_e
