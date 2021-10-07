@@ -31,8 +31,9 @@
     grad_rho_b_2 += grad_rho_b(m) * grad_rho_b(m)
     grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
    enddo
-
-   call exc_dexc_md_sr_PBE(mu_erf_dft,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
+   double precision :: mu_local
+   mu_local = mu_of_r_dft(i)
+   call exc_dexc_md_sr_PBE(mu_local,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
        ex_srmuPBE,dexdrho_a,dexdrho_b,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, &
        ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
 
@@ -134,7 +135,9 @@ END_PROVIDER
     grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
    enddo
 
-   call exc_dexc_md_sr_PBE(mu_erf_dft,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
+   double precision :: mu_local
+   mu_local = mu_of_r_dft(i)
+   call exc_dexc_md_sr_PBE(mu_local,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
        ex_srmuPBE,dexdrho_a,dexdrho_b,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, &
        ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
 
@@ -293,7 +296,9 @@ END_PROVIDER
     grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
    enddo
 
-   call exc_dexc_md_sr_PBE(mu_erf_dft,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
+   double precision :: mu_local
+   mu_local = mu_of_r_dft(i)
+   call exc_dexc_md_sr_PBE(mu_local,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b, &
        ex_srmuPBE,dexdrho_a,dexdrho_b,dexdgrad_rho_a_2,dexdgrad_rho_b_2,dexdgrad_rho_a_b, &
        ec_srmuPBE,decdrho_a,decdrho_b,decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
  
