@@ -36,6 +36,7 @@ END_PROVIDER
  integer :: i
  print*,'/////////////////////////'
  print*,'mu_erf_dft              = ',mu_erf_dft
+ print*,'mu_of_r_dft_average     = ',mu_of_r_dft_average
  print*,'nuclear_repulsion   = ',nuclear_repulsion
  do i=1,N_states
   print*,  '****************************************'

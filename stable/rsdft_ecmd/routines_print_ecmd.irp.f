@@ -2,6 +2,7 @@ subroutine print_energy_ecmd
  implicit none
  double precision :: var_e
  var_e = psi_energy_with_nucl_rep(1)
+ print*,'< mu(r) > = ',mu_of_r_dft_average
  print*,'<Psi | H | Psi> = ',var_e
  print*,'*******'
  print*,'Energy_c_md_LDA = ',Energy_c_md_LDA
