@@ -6,6 +6,8 @@ program test_ints
  call test_ao_sym
  call save_erf_mu_of_r_ao_into_erf_ints_ao
  call save_erf_mu_of_r_mo_into_erf_ints_mo
+! call save_erf_two_e_integrals_ao
+! call save_erf_two_e_integrals_mo
 end
 
 subroutine test_mo

@@ -15,11 +15,6 @@ program write_effective_RSDFT_hamiltonian
  io_ao_two_e_integrals = "None"
  touch io_ao_two_e_integrals
 
- io_mo_two_e_integrals_erf = "None" 
- touch io_mo_two_e_integrals_erf
- io_ao_two_e_integrals_erf = "None" 
- touch io_ao_two_e_integrals_erf
-
  io_mo_integrals_n_e = "None"
  touch io_mo_integrals_n_e
  io_mo_integrals_kinetic = "None"
@@ -29,7 +24,9 @@ program write_effective_RSDFT_hamiltonian
  io_ao_integrals_kinetic = "None"
  touch io_ao_integrals_kinetic 
 
- call routines_write_int
+ call save_one_e_effective_potential
+ call ezfio_set_mo_two_e_ints_io_mo_two_e_integrals('Read')
+ call ezfio_set_ao_two_e_ints_io_ao_two_e_integrals('Read')
  call routines_compute_energy
 end
 

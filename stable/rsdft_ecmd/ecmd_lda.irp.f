@@ -22,8 +22,10 @@
    r(3) = final_grid_points(3,ipoint)
    call dm_dft_alpha_beta_and_all_aos_at_r(r,rho_a,rho_b,aos_array)
    weight = final_weight_at_r_vector(ipoint)
+   double precision :: mu_local 
+   mu_local = mu_of_r_dft(ipoint)
    do istate = 1, N_states
-    call ESRC_MD_LDAERF (mu_erf_dft,rho_a(istate),rho_b(istate),dospin,ec(istate))
+    call ESRC_MD_LDAERF (mu_local,rho_a(istate),rho_b(istate),dospin,ec(istate))
     Energy_c_md_LDA(istate) += weight * ec(istate)
    enddo
   enddo
