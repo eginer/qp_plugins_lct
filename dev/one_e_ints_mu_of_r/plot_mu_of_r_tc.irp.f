@@ -34,7 +34,8 @@ program plot_mu_of_r_tc
    grad_mu_sq += grad_mu(m)**2.
   enddo
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
-  write(33,'(100(F16.10,X))')x,rho_a_hf + rho_b_hf, mu, mu_damped,mu_rsc,mu_damped_rsc,mu_hf, mu_damped_hf, mu_grad_n_tmp,damped_mu_grad_n_tmp, mu_test, dsqrt(grad_mu_sq)
+!  write(33,'(100(F16.10,X))')x,rho_a_hf + rho_b_hf, mu, mu_damped,mu_rsc,mu_damped_rsc,mu_hf, mu_damped_hf, mu_grad_n_tmp,damped_mu_grad_n_tmp, mu_test, dsqrt(grad_mu_sq)
+  write(33,'(100(F16.10,X))')x,rho_a_hf + rho_b_hf, mu_rsc,mu_hf
   x += dx
  enddo
 
