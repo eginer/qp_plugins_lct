@@ -22,10 +22,10 @@
  if(.not.constant_mu)then
   do istate = 1, N_states
    do ipoint = 1, n_points_final_grid
-    if(mu_of_r_tc_ints.EQ."basis")then
-     mu_of_r_for_ints(ipoint,istate) =  mu_of_r_basis_hf(ipoint)
-     grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_basis_hf(:,ipoint)
-    else if(mu_of_r_tc_ints.EQ."rsc")then
+!    if(mu_of_r_tc_ints.EQ."basis")then
+!     mu_of_r_for_ints(ipoint,istate) =  mu_of_r_basis_hf(ipoint)
+!     grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_basis_hf(:,ipoint)
+    if(mu_of_r_tc_ints.EQ."rsc")then
      mu_of_r_for_ints(ipoint,istate) =  mu_of_r_rs_c(ipoint,istate)
      grad_mu_of_r_for_ints(:,ipoint,istate) = grad_mu_of_r_rs_c(:,ipoint,istate)
     else if(mu_of_r_tc_ints.EQ."lda")then
@@ -113,9 +113,9 @@
 
   do istate = 1, N_states
    do ipoint = 1, n_points_extra_final_grid
-    if(mu_of_r_tc_ints.EQ."basis")then
-     mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_basis_hf(ipoint)
-    else if(mu_of_r_tc_ints.EQ."rsc")then
+!    if(mu_of_r_tc_ints.EQ."basis")then
+!     mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_basis_hf(ipoint)
+    if(mu_of_r_tc_ints.EQ."rsc")then
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_rs_c(ipoint,istate)
     else if(mu_of_r_tc_ints.EQ."lda")then
      mu_of_r_extra_grid_for_ints(ipoint,istate) =  mu_of_r_extra_grid_lda(ipoint,istate)

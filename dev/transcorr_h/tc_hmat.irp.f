@@ -97,17 +97,19 @@ END_PROVIDER
   n_good_trans_eigval = 1
   double precision :: e0
   double precision, allocatable :: u(:), v(:)
+  print*,'Non hermitian Davidson to be plugged in here ...'
+  stop
   allocate(u(N_det), v(N_det))
   u = 0.d0
   u(1) = 1.d0
-  call project_ground(u,v,htilde_matrix_elmt,e0,1,N_det)
+!  call project_ground(u,v,htilde_matrix_elmt,e0,1,N_det)
   do j = 1, N_det
    reigvec_trans(j,1) = v(j)  
   enddo
   print*,'e0 from right eigenvector = ',e0
   eigval_trans(1) = e0
 
-  call project_ground(u,v,htilde_matrix_elmt_tranp,e0,1,N_det)
+!  call project_ground(u,v,htilde_matrix_elmt_tranp,e0,1,N_det)
   do j = 1, N_det
    leigvec_trans(j,1) = v(j)  
   enddo
