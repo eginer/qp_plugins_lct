@@ -1,3 +1,4 @@
+
 program fci
   implicit none
   BEGIN_DOC
@@ -55,23 +56,17 @@ program fci
    grad_squared = .False.
    touch grad_squared
   endif
+ read_wf = .true.
+ touch read_wf
+ call routine
+end
 
 
-  if (.not.is_zmq_slave) then
-    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map
-    double precision :: hmono,heff,hderiv,hthree,htot
-!    call htilde_mat(HF_bitmask,HF_bitmask,hmono,heff,hderiv,hthree,htot)
-    call provide_all_three_body_terms
-    if (do_pt2) then
-      call run_stochastic_cipsi
-    else
-      call run_cipsi
-    endif
+subroutine routine
+ implicit none
+! print*,'ci_energy_dressed = ',ci_energy_dressed
+ call get_e_dressed_scf
+! provide ci_energy_dressed_scf
+! call test_tc
 
-  else
-    PROVIDE mo_two_e_integrals_in_map pt2_min_parallel_tasks
-
-    call run_slave_cipsi
-
-  endif
 end

@@ -88,3 +88,10 @@ subroutine htilde_psi_no_store(psidet,psicoef,ndet,delta)
 
 end
 
+subroutine provide_all_three_body_terms
+ implicit none
+ PROVIDE scalar_mu_r_pot_physicist_mo deriv_mu_r_pot_physicist_mo
+ PROVIDE three_body_3_index three_body_3_index_exch_12 three_body_3_index_exch_13 three_body_3_index_exch_23
+ PROVIDE three_body_5_index three_body_5_index_exch_13 three_body_5_index_exch_32
+ PROVIDE three_body_4_index three_body_4_index_exch_12 three_body_4_index_exch_12_part
+end
