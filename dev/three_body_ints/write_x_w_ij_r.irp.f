@@ -16,9 +16,9 @@ subroutine routine_x_wij_r
  character*(128) :: output
  integer :: i_unit_output
  integer :: getUnitAndOpen
- do ipoint = 1, n_points_final_grid
-  final_weight_at_r_vector(ipoint)
- enddo
+! do ipoint = 1, n_points_final_grid
+!  final_weight_at_r_vector(ipoint)
+! enddo
  output =trim(ezfio_filename)//'/x_w_ij_r'
  i_unit_output = getUnitAndOpen(output,'w')
  call wall_time(wall0)
