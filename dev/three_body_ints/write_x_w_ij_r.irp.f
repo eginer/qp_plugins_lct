@@ -26,6 +26,9 @@ subroutine routine_x_wij_r
   do j = 1, mo_num
    do m = 1, 3
     do ipoint = 1, n_points_final_grid
+!     if(isnan(x_W_ij_erf_rk(ipoint,m,j,i)))then
+!      print*,ipoint,m,j,i,x_W_ij_erf_rk(ipoint,m,j,i)
+!     endif
      write(i_unit_output,*)ipoint,m,j,i,x_W_ij_erf_rk(ipoint,m,j,i)
     enddo
    enddo
@@ -57,10 +60,3 @@ subroutine routine_mos
 end
 
 
-BEGIN_PROVIDER [ double precision, sqrt_weight_at_r, (n_points_final_grid)]
- implicit none
- integer :: ipoint
- do ipoint = 1, n_points_final_grid
-  sqrt_weight_at_r(ipoint) = dsqrt(final_weight_at_r_vector(ipoint))
- enddo
-END_PROVIDER 

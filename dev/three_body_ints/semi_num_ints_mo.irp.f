@@ -128,12 +128,15 @@ BEGIN_PROVIDER [ double precision, x_W_ij_erf_rk, ( n_points_final_grid,3,mo_num
  cst = 0.5d0 * inv_sq_pi
  print*,'providing x_W_ij_erf_rk ...'
  call wall_time(wall0)
- provide mo_gauss_ij_rk_transp grad_mu_of_r_transp_for_ints inv_2_mu_of_r_for_ints
+!! OLD VERSION FOR MU(R)
+! provide mo_gauss_ij_rk_transp grad_mu_of_r_transp_for_ints inv_2_mu_of_r_for_ints
+! !$OMP SHARED (cst,mo_gauss_ij_rk_transp,grad_mu_of_r_transp_for_ints,inv_2_mu_of_r_for_ints)
+!     x_W_ij_erf_rk(ipoint,m,j,i) +=  cst * mo_gauss_ij_rk_transp(ipoint,j,i) * grad_mu_of_r_transp_for_ints(ipoint,1,m) * inv_2_mu_of_r_for_ints(ipoint,1)
+
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (ipoint,m,i,j,xyz) & 
- !$OMP SHARED (x_W_ij_erf_rk,n_points_final_grid,mo_x_v_ij_erf_rk_transp,mo_v_ij_erf_rk_transp,mo_num,final_grid_points)&
- !$OMP SHARED (cst,mo_gauss_ij_rk_transp,grad_mu_of_r_transp_for_ints,inv_2_mu_of_r_for_ints)
+ !$OMP SHARED (x_W_ij_erf_rk,n_points_final_grid,mo_x_v_ij_erf_rk_transp,mo_v_ij_erf_rk_transp,mo_num,final_grid_points) 
  !$OMP DO SCHEDULE (dynamic)
  do i = 1, mo_num
   do j = 1, mo_num
@@ -141,7 +144,6 @@ BEGIN_PROVIDER [ double precision, x_W_ij_erf_rk, ( n_points_final_grid,3,mo_num
     do ipoint = 1, n_points_final_grid
      xyz = final_grid_points(m,ipoint)
      x_W_ij_erf_rk(ipoint,m,j,i)  =  mo_x_v_ij_erf_rk_transp(ipoint,m,j,i) - xyz * mo_v_ij_erf_rk_transp(ipoint,j,i)
-     x_W_ij_erf_rk(ipoint,m,j,i) +=  cst * mo_gauss_ij_rk_transp(ipoint,j,i) * grad_mu_of_r_transp_for_ints(ipoint,1,m) * inv_2_mu_of_r_for_ints(ipoint,1)
     enddo
    enddo
   enddo
@@ -198,4 +200,12 @@ BEGIN_PROVIDER [ double precision, mo_gauss_ij_rk_transp, (n_points_final_grid, 
   enddo
  enddo
 
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, sqrt_weight_at_r, (n_points_final_grid)]
+ implicit none
+ integer :: ipoint
+ do ipoint = 1, n_points_final_grid
+  sqrt_weight_at_r(ipoint) = dsqrt(final_weight_at_r_vector(ipoint))
+ enddo
 END_PROVIDER 
