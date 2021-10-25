@@ -48,7 +48,7 @@ subroutine routine_mos
  call wall_time(wall0)
  do i = 1, mo_num
   do ipoint = 1, n_points_final_grid
-   write(i_unit_output,*)ipoint,i,mos_in_r_array_transp(ipoint,i)
+   write(i_unit_output,*)ipoint,i,mos_in_r_array_transp(ipoint,i) * sqrt_weight_at_r(ipoint)
   enddo
  enddo
  call wall_time(wall1)
@@ -57,3 +57,10 @@ subroutine routine_mos
 end
 
 
+BEGIN_PROVIDER [ double precision, sqrt_weight_at_r, (n_points_final_grid)]
+ implicit none
+ integer :: ipoint
+ do ipoint = 1, n_points_final_grid
+  sqrt_weight_at_r(ipoint) = dsqrt(final_weight_at_r_vector(ipoint))
+ enddo
+END_PROVIDER 
