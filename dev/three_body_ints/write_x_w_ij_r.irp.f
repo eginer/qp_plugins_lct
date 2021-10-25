@@ -4,8 +4,20 @@ program write_x_w_ij_r
  my_n_pt_r_grid = 30
  my_n_pt_a_grid = 50
  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
+ call routine_write_grid_pt_mos
  call routine_x_wij_r
  call routine_mos
+end
+
+subroutine routine_write_grid_pt_mos
+ implicit none
+ character*(128) :: output
+ integer :: i_unit_output
+ integer :: getUnitAndOpen
+ output =trim(ezfio_filename)//'/n_grid_pts_mo_num'
+ i_unit_output = getUnitAndOpen(output,'w')
+ write(i_unit_output,*)n_points_final_grid
+ write(i_unit_output,*)mo_num
 end
 
 subroutine routine_x_wij_r
@@ -26,9 +38,6 @@ subroutine routine_x_wij_r
   do j = 1, mo_num
    do m = 1, 3
     do ipoint = 1, n_points_final_grid
-!     if(isnan(x_W_ij_erf_rk(ipoint,m,j,i)))then
-!      print*,ipoint,m,j,i,x_W_ij_erf_rk(ipoint,m,j,i)
-!     endif
      write(i_unit_output,*)ipoint,m,j,i,x_W_ij_erf_rk(ipoint,m,j,i)
     enddo
    enddo
