@@ -211,7 +211,8 @@ We can therefore write the total transcorrelated Hamiltonian as
 \begin{equation}
  \begin{aligned}
  \Hept  = H& -\frac{1}{2} \sum_{i=1}^N \big(\Delta_{\bri{i}} j(\bri{i},\bri{p}) + \Delta_{\bri{p}} j(\bri{i},\bri{p}) \big) \\
-           & -\sum_{i=1}^N \big(\nabla_{\bri{i}} j(\bri{i},\bri{p}) \cdot \nabla_{\bri{p}} j(\bri{i},\bri{p}) \big) \\
+           & -\sum_{i=1}^N \big(\nabla_{\bri{i}} j(\bri{i},\bri{p}) \cdot\nabla_{\bri{i}} + \nabla_{\bri{p}} j(\bri{i},\bri{p}) \cdot \nabla_{\bri{p}} \big) \\
+           & -\frac{1}{2} \sum_{i=1}^N \big[ \nabla_{\bri{i}} j(\bri{i},\bri{p})\big]^2 + \big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big]^2 \\
            & -\frac{1}{2} \sum_{i=1}^N \sum_{j\ne i} \big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big] \cdot \big[ \nabla_{\bri{p}} j(\bri{j},\bri{p})\big].
  \end{aligned}
 \end{equation}
