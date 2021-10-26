@@ -16,10 +16,11 @@ end
 
 subroutine routine
  implicit none
- double precision, allocatable :: energies_out(:),u_in(:,:)
- logical :: converged
- allocate(energies_out(N_states_diag),u_in(N_det,N_states_diag))
- u_in = 0.d0
- u_in(1:N_det,1:N_states) = reigvec_tc(1:N_det,1:N_states)
- call iterative_davidson_tc(psi_det,u_in,N_det,N_states,N_states_diag,1,energies_out,converged)
+ integer :: i,j
+ print*,'eigval_right_tc = ',eigval_right_tc
+ print*,'eigval_left _tc = ',eigval_left_tc
+ print*,'Left, right and usual eigenvectors '
+ do i = 1, N_det
+  write(*,'(I5,X,(100(F9.5,X)))')i,leigvec_tc(i,1),reigvec_tc(i,1),psi_coef(i,1)
+ enddo
 end
