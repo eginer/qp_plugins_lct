@@ -1,0 +1,221 @@
+\documentclass[aip,jcp,reprint,noshowkeys,superscriptaddress]{revtex4-1}
+\usepackage{graphicx,dcolumn,bm,xcolor,microtype,multirow,amsmath,amssymb,amsfonts,physics,mhchem,xspace,subfigure}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{txfonts}
+
+\usepackage[
+	colorlinks=true,
+    citecolor=blue,
+    breaklinks=true
+	]{hyperref}
+\urlstyle{same}
+
+\definecolor{darkgreen}{HTML}{009900}
+\usepackage[normalem]{ulem}
+\newcommand{\sphi}[1]{\hat{{\bf S}}_{#1}}
+\newcommand{\overlap}[2]{\langle #1 | #2 \rangle}
+\newcommand{\matelem}[3]{\langle #1 | #2 | #3 \rangle}
+\newcommand{\deriv}[3]{\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+\newcommand{\bd}[1]{{\bf {#1}}}
+\newcommand{\br}[0]{{\bf {r}}}
+\newcommand{\bs}[0]{{\bf {s}}}
+\newcommand{\dr}[1]{\text{d}{\bf {#1}}}
+\newcommand{\psiex}[0]{\Psi^{\text{ex}}}
+\newcommand{\energyex}[0]{E^{\text{ex}}}
+\newcommand{\bri}[1]{{\bf r}_{#1}}
+\newcommand{\Hep}[0]{H_{ep}}
+\newcommand{\Hept}[0]{\tilde{H}_{ep}}
+
+\begin{document}	
+
+\title{On the general mapping between effective two-electron interaction and Jastrow factors.}
+
+\author{Emmanuel Giner}
+\email{emmanuel.giner@lct.jussieu.fr}
+
+\begin{abstract}
+This section presents the basics of the transcorrelation for electron-positron wave function
+\end{abstract}
+
+\maketitle
+\section{e-positron Jastrow factor}
+We assume that we have a Jastrow factor $j(\bri{i},\bri{p})$ where $\bri{i}$ is the position of the $i$-th electron and $\bri{p}$ is the position of the positron. 
+We want to compute the similarity transformation of the following Hamiltonian
+\begin{equation}
+ \Hep = -\frac{1}{2} \bigg( \Delta_{\bri{p}} + \sum_{i=1}^{N} \big(\Delta_{\bri{i}} + v_{ne}(\bri{i})\big) \bigg) + \sum_{i>j}\frac{1}{r_{ij}} - \sum_{i} \frac{1}{r_{ip}},
+\end{equation}
+with the $N$-electron Jastrow factor 
+\begin{equation}
+ \begin{aligned}
+ J\big( \bri{1}, \bri{2}, \hdots, \bri{N}, \bri{p}\big) & = \sum_{i=1}^N j(\bri{i},\bri{p}) \\
+                                                        & = J\big(\{\bri{i} \},\bri{p}\big)
+ \end{aligned}
+\end{equation}
+One can then use the usual Baker-Campbell-Hausdorff (BCH) expansion of the similarity transformation 
+\begin{equation}
+ e^{-J}He^{H} = H + [H,J] + \frac{1}{2!} [[H,J],J] + \frac{1}{3!} \big[[[H,J],J],J\big] + \hdots, 
+\end{equation}
+but because there is only a second order derivative operator in $\Hep$, it naturally terminates at second order 
+\begin{equation}
+ \begin{aligned}
+ \Hept[j] &= e^{J(\{\bri{i} \},\bri{p})} \Hep e^{J(\{\bri{i} \},\bri{p})} \\
+          &= \Hep + \big[\Hep,J\big(\{\bri{i} \},\bri{p}\big)\big] + \frac{1}{2} \bigg[\big[\Hep,J\big(\{\bri{i} \},\bri{p}\big)\big], J\big(\{\bri{i} \},\bri{p}\big) \bigg].
+ \end{aligned}
+\end{equation}
+Actually, as $J(\{\bri{i} \},\bri{p})$ is a scalar function, the only part of $\Hep$ that does not commute is the Laplacian. 
+One can then write 
+\begin{equation}
+ \begin{aligned}
+ \Hept[j] &= H + \big[\hat{T},J\big(\{\bri{i} \},\bri{p}\big)\big] + \frac{1}{2} \bigg[\big[\hat{T},J\big(\{\bri{i} \},\bri{p}\big)\big],
+ \end{aligned}
+\end{equation}
+where $\hat{T}$ is the total kinetic energy
+\begin{equation}
+ \begin{aligned}
+ \hat{T}  & =  -\frac{1}{2} \big( \Delta_{\bri{p}} + \sum_{j=1}^{N} \Delta_{\bri{j}} \big)  \\
+          & = \hat{T}_p + \hat{T}_e. 
+ \end{aligned}
+\end{equation}
+
+Let us compute the first-order commutator 
+\begin{equation}
+ \big[\hat{T},J\big(\{\bri{i} \},\bri{p}\big)\big]  = \big[\hat{T}_p,J\big(\{\bri{i} \},\bri{p}\big)\big]  
+                                                    + \big[\hat{T}_e,J\big(\{\bri{i} \},\bri{p}\big)\big].
+\end{equation}
+We begin by the electronic part by applying the commutator to a general electron-positron wave function $\phi(\{ \bri{i} \},\bri{p})$ 
+\begin{equation}
+ \begin{aligned}
+ & -2 \times \big[\hat{T}_e,J\big(\{\bri{i} \},\bri{p}\big)\big] \phi(\{ \bri{i} \},\bri{p}) = \\ 
+& \underbrace{\sum_{j=1}^{N} \Delta_{\bri{j}}  \bigg( \sum_{i=1}^N j(\bri{i},\bri{p}) \phi(\{ \bri{i} \},\bri{p})  \bigg)}_{=A} 
+             - \underbrace{\sum_{i=1}^N j(\bri{i},\bri{p}) \sum_{j=1}^{N} \Delta_{\bri{j}} \phi(\{ \bri{i} \},\bri{p})}_{=B}.
+ \end{aligned}
+\end{equation}
+The term $B$ can be split into three terms according to the $x$, $y$ and $z$ components of the Laplacian 
+\begin{equation}
+ B = B_x + B_y + B_z
+\end{equation}
+where $B_x$ is simply 
+\begin{equation}
+ B_x = \big(\sum_{i=1}^N j(\bri{i},\bri{p})\big) \big[\sum_{j=1}^N\deriv{}{x_j}{2} \phi(\{ \bri{i} \},\bri{p}) \big].
+\end{equation}
+Let us now proceed with the term $A$ which can also be divided into three terms
+\begin{equation}
+ A = A_x + A_y + A_z,
+\end{equation}
+and let us take for example the $A_x$ term 
+\begin{equation}
+ A_x = \sum_{j=1}^{N} \deriv{}{x_j}{2}  \bigg( \sum_{i=1}^N j(\bri{i},\bri{p}) \phi(\{ \bri{i} \},\bri{p})  \bigg).
+\end{equation}
+and therefore the term $\sum_{i=1}^N$ in $A_x$ reduces to $i=j$
+\begin{equation}
+ \begin{aligned}
+ A_x  = \sum_{j=1}^{N} \deriv{}{x_j}{} \bigg( & \big[\deriv{}{x_j}{}\sum_{i=1}^Nj(\bri{i},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p}) \\
+ &+ \big(\sum_{i=1}^Nj(\bri{i},\bri{p})\big) \big[\deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \big]\bigg),
+ \end{aligned}
+\end{equation}
+but one can notice that 
+\begin{equation}
+ \deriv{}{x_j}{} j(\bri{i},\bri{p}) = 0\quad \text{ if }i\ne j, 
+\end{equation}
+and therefore 
+\begin{equation}
+ \big[\deriv{}{x_j}{}\sum_{i=1}^Nj(\bri{i},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p}) = 
+ \big[\deriv{}{x_j}{}j(\bri{j},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p})
+\end{equation}
+and therefore 
+\begin{equation}
+ \begin{aligned}
+ A_x = \sum_{j=1}^{N} \deriv{}{x_j}{} \bigg( & \big[\deriv{}{x_j}{}j(\bri{j},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p}) \\
+                                            + &\big(\sum_{i=1}^Nj(\bri{i},\bri{p})\big) \big[\deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \big]\bigg)
+ \end{aligned}
+\end{equation},
+or again 
+\begin{equation}
+ \begin{aligned}
+ A_x = \sum_{j=1}^{N} \bigg( & \big[\deriv{}{x_j}{2}j(\bri{j},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p}) \\ 
+                                            +& \big[\deriv{}{x_j}{}j(\bri{j},\bri{p})\big] \big[ \deriv{}{x_j}{}\phi(\{ \bri{i} \},\bri{p}) \big]\\
+                                            + &\big[\deriv{}{x_j}{}j(\bri{j},\bri{p})\big] \big[\deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \big] \\
+                                            + & \big(\sum_{i=1}^Nj(\bri{i},\bri{p})\big) \big[\deriv{}{x_j}{2} \phi(\{ \bri{i} \},\bri{p})\big] \bigg)\\
+          = B_x + \sum_{j=1}^{N} \bigg( &\big[\deriv{}{x_j}{2}j(\bri{j},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p}) \\ 
+                                + 2&\big[\deriv{}{x_j}{}j(\bri{j},\bri{p})\big] \big[\deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \big]\bigg) \\ 
+ \end{aligned}
+\end{equation}
+Therefore, by doing $A_x-B_x$, there only remains 
+\begin{equation}
+ \begin{aligned}
+ A_x - B_x = \sum_{j=1}^{N} \bigg( &\big[\deriv{}{x_j}{2}j(\bri{j},\bri{p})\big] \phi(\{ \bri{i} \},\bri{p}) \\ 
+                                + 2&\big[\deriv{}{x_j}{}j(\bri{j},\bri{p})\big] \big[\deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \big]\bigg), \\ 
+ \end{aligned}
+\end{equation}
+and we can then conclude that the commutator can be written as 
+\begin{equation}
+ \begin{aligned}
+ & \big[\hat{T}_e,J\big(\{\bri{i} \},\bri{p}\big)\big] \phi(\{ \bri{i} \},\bri{p}) =  \\ & -\frac{1}{2}
+ \sum_{j=1}^N \bigg(\big(\Delta_{\bri{j}} j(\bri{j},\bri{p})\big)+ 2 \nabla_{\bri{j}} j(\bri{j},\bri{p}) \cdot \nabla_{\bri{j}} \bigg) \phi(\{ \bri{i} \},\bri{p}),
+ \end{aligned}
+\end{equation}
+or that we can write symbolically 
+\begin{equation}
+ \big[\hat{T}_e,J\big(\{\bri{i} \},\bri{p}\big)\big] = -\frac{1}{2}
+ \sum_{j=1}^N \bigg(\big(\Delta_{\bri{j}} j(\bri{j},\bri{p})\big)+ 2 \nabla_{\bri{j}} j(\bri{j},\bri{p}) \cdot \nabla_{\bri{j}} \bigg).
+\end{equation}
+Similarly, if one considers the commutator involvin $\hat{T}_p$ one obtains 
+\begin{equation}
+ \big[\hat{T}_p,J\big(\{\bri{i} \},\bri{p}\big)\big] = -\frac{1}{2} \bigg(\big(\Delta_{\bri{p}} j(\bri{i},\bri{p})\big)+ 2 \big[\sum_{i=1}^N \nabla_{\bri{p}} j(\bri{i},\bri{p})\big] \cdot \nabla_{\bri{p}} \bigg).
+\end{equation}
+In these commutators, there is a purely scalar part which is either $\Delta_{\bri{j}} j(\bri{j},\bri{p})$ or $\Delta_{\bri{p}} j(\bri{i},\bri{p})$ which necessary commutes with the scalar function $J\big(\{\bri{i} \},\bri{p}\big)$. 
+Therefore, to compute the second-order commutator, that we divide into two parts involving the first commutator of $\hat{T}_e$ and that of $\hat{T}_p$, 
+\begin{equation}
+ \begin{aligned}
+  \frac{1}{2}        \bigg[\big[\Hep,J\big(\{\bri{i} \},\bri{p}\big)\big], J\big(\{\bri{i} \},\bri{p}\big) \bigg]  = &
+ \frac{1}{2}\underbrace{\bigg[\big[\hat{T}_e,J\big(\{\bri{i} \},\bri{p}\big)\big], J\big(\{\bri{i} \},\bri{p}\big) \bigg]}_{=C_x + C_y + C_z } \\
+ +&   
+ \frac{1}{2}\underbrace{\bigg[\big[\hat{T}_p,J\big(\{\bri{i} \},\bri{p}\big)\big], J\big(\{\bri{i} \},\bri{p}\big) \bigg]}_{=D_x + D_y + D_z} \\
+ \end{aligned}
+\end{equation}only the terms in either $\nabla_{\bri{j}}$ and r $\nabla_{\bri{p}}$ are not going to commute with $J\big(\{\bri{i} \},\bri{p}\big)$. 
+Let us begin $C_x$
+\begin{equation}
+ \begin{aligned}
+ C_x & = -\frac{1}{2}\bigg[\sum_{j=1}^N \deriv{}{x_j}{} j(\bri{j},\bri{p}) \deriv{}{x_j}{},\sum_{i=1}^Nj(\bri{i},\bri{p})   \bigg] \phi(\{ \bri{i} \},\bri{p}) \\
+     & = -\frac{1}{2}\sum_{j=1}^N \big[\deriv{}{x_j}{} j(\bri{j},\bri{p})\big] \big(\sum_{i=1}^N \big[\deriv{}{x_j}{} j(\bri{i},\bri{p})\big]\big) \phi(\{ \bri{i} \},\bri{p}) \\
+     &  - \frac{1}{2}\sum_{j=1}^N \big[\deriv{}{x_j}{} j(\bri{j},\bri{p})\big] \big( \sum_{i=1}^N j(\bri{i},\bri{p})\big) \deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \\
+     &  + \frac{1}{2}\sum_{j=1}^N \big[\deriv{}{x_j}{} j(\bri{j},\bri{p})\big] \big( \sum_{i=1}^N j(\bri{i},\bri{p})\big) \deriv{}{x_j}{} \phi(\{ \bri{i} \},\bri{p}) \\
+     & = -\frac{1}{2}\sum_{j=1}^N \big[\deriv{}{x_j}{} j(\bri{j},\bri{p})\big]^2 \phi(\{ \bri{i} \},\bri{p}).\\
+ \end{aligned}
+\end{equation}
+Therefore we can conclude that 
+\begin{equation}
+\begin{aligned}
+ \frac{1}{2}\bigg[\big[\hat{T}_e,J\big(\{\bri{i} \},\bri{p}\big)\big], J\big(\{\bri{i} \},\bri{p}\big) \bigg] = -\sum_{j=1}^N \frac{1}{2}\big[\nabla_{\bri{j}}j(\bri{j},\bri{p})\big]^2 .
+\end{aligned}
+\end{equation}
+We then compute the term $D$
+\begin{equation}
+ \begin{aligned}
+  D & = -\frac{1}{2} \bigg[ \big[\sum_{i=1}^N \nabla_{\bri{p}} j(\bri{i},\bri{p})\big] \cdot \nabla_{\bri{p}}, \sum_{j=1}^Nj(\bri{j},\bri{p})\bigg]\phi(\{ \bri{i} \},\bri{p})  \\
+      & = -\frac{1}{2} \sum_{i=1}^N \big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big]^2 -\frac{1}{2} \sum_{i=1}^N \sum_{j \ne j} \nabla_{\bri{p}} j(\bri{i},\bri{p}) \cdot \nabla_{\bri{p}} j(\bri{j},\bri{p}).
+ \end{aligned}
+\end{equation}
+We can therefore write the total second-order commutator as 
+\begin{equation}
+ \begin{aligned}
+ & \frac{1}{2}\bigg[ \big[\hat{T},J\big(\{\bri{i} \},\bri{p}\big) \big],J\big(\{\bri{i} \},\bri{p}\big) \bigg]  = \\ 
+ &-\frac{1}{2} \sum_{i=1}^N \bigg[\big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big]^2 + \big[ \nabla_{\bri{i}} j(\bri{i},\bri{p})\big]^2 \bigg] \\
+ &-\frac{1}{2} \sum_{i=1}^N \sum_{j\ne i}\big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big] \cdot \big[ \nabla_{\bri{p}} j(\bri{j},\bri{p})\big].
+ \end{aligned}
+\end{equation}
+
+We can therefore write the total transcorrelated Hamiltonian as 
+\begin{equation}
+ \begin{aligned}
+ \Hept  = H& -\frac{1}{2} \sum_{i=1}^N \big(\Delta_{\bri{i}} j(\bri{i},\bri{p}) + \Delta_{\bri{p}} j(\bri{i},\bri{p}) \big) \\
+           & -\sum_{i=1}^N \big(\nabla_{\bri{i}} j(\bri{i},\bri{p}) \cdot \nabla_{\bri{p}} j(\bri{i},\bri{p}) \big) \\
+           & -\frac{1}{2} \sum_{i=1}^N \sum_{j\ne i} \big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big] \cdot \big[ \nabla_{\bri{p}} j(\bri{j},\bri{p})\big].
+ \end{aligned}
+\end{equation}
+
+
+\bibliography{srDFT_SC}
+\end{document}
