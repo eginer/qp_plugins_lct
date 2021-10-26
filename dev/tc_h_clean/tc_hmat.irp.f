@@ -126,6 +126,17 @@ END_PROVIDER
 
 END_PROVIDER 
 
+
+ BEGIN_PROVIDER [ double precision, diag_htilde, (N_det)]
+ implicit none
+ integer :: i
+ double precision :: hmono,heff,hderiv,hthree,htot
+ do i = 1, N_det
+  call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,heff,hderiv,hthree,htot)
+  diag_htilde(i) = htot
+ enddo
+ END_PROVIDER 
+
 BEGIN_PROVIDER [ integer, n_tc_ovlp_print]
  implicit none
  n_tc_ovlp_print = min(n_good_trans_eigval,10)
@@ -175,135 +186,3 @@ subroutine write_left_right
  call ezfio_set_transcorr_h_leigvec_trans(leigvec_trans_tmp)
 end
 
-subroutine test_left_right_eigenvalues(ith)
- implicit none
- integer, intent(in) :: ith
- BEGIN_DOC
-! rights the "ith" eigenvalue in many different ways which must all be the same
- END_DOC
- integer :: i,j,k
- ! test for the right eigenvector
- double precision :: accu1
- print*,'Printing out the Right, Left and usual eigenvectors'
- print*,'All have been normalized'
- print*,'Norm = ',reigvec_trans_norm(ith),leigvec_trans_norm(ith)
- print*,''
- print*,'Right      Left      Usual'
- do i = 1, N_det
-  write(*,'(3(F10.7,X))')reigvec_trans(i,ith)/dsqrt(reigvec_trans_norm(ith)) & 
-                        ,leigvec_trans(i,ith)/dsqrt(leigvec_trans_norm(ith)),psi_coef(i,ith)
- enddo
- print*,''
-! print*,'Eigenvalue of the usual Hamiltonian '
-! print*,'',ci_electronic_energy(ith)
- print*,''
- print*,'Checking the eigenvalue as an expectation value'
- print*,'With the RIGHT eigenvector'
-
- ! Expectation value 
- accu1 = 0.d0
- do i = 1, N_det
-  do j = 1, N_det
-   ! \sum_IJ c^R_J <J|H^tilde|I> c^R_I = E * <Psi_ith | Psi_ith>
-   accu1 += reigvec_trans(j,ith) * htilde_matrix_elmt(j,i) * reigvec_trans(i,ith)
-  enddo
- enddo
- print*,'accu1/norm = ',accu1/reigvec_trans_norm(ith) 
- print*,'eigval_trans ',eigval_trans(ith)
-
- print*,'With the LEFT  eigenvector'
- accu1 = 0.d0
- do i = 1, N_det
-  do j = 1, N_det
-   ! \sum_IJ c^L_J <J|H^tilde|I> c^L_I = E * <Psi_ith | Psi_ith>
-   accu1 += leigvec_trans(j,ith) * htilde_matrix_elmt(j,i) * leigvec_trans(i,ith)
-  enddo
- enddo
- print*,'accu1/norm = ',accu1/leigvec_trans_norm(ith) 
- print*,'eigval_trans ',eigval_trans(ith)
-
- print*,''
- print*,'Testing the projection scheme'
- print*,'with the RIGHT eigenvector'
- ! Projection
- accu1 = 0.d0
- do i = 1, N_det 
-  ! \sum_I <1|H^tilde|I> c^R_I = E * c_1^R 
-  accu1 += htilde_matrix_elmt(1,i) * reigvec_trans(i,ith)
- enddo
- print*,'accu1/norm = ',accu1/reigvec_trans(1,1)
- print*,'eigval_trans ',eigval_trans(ith)
- print*,''
- print*,'with the LEFT  eigenvector'
- ! Projection
- accu1 = 0.d0
- do i = 1, N_det 
-  ! \sum_I  <I|H^tilde|1> c^L_I = E * * c_1^L
-  accu1 +=  htilde_matrix_elmt(i,1) * leigvec_trans(i,ith)
- enddo
- print*,'accu1/norm = ',accu1/leigvec_trans(1,1)
- print*,'eigval_trans ',eigval_trans(ith)
- print*,''
-
-end
-
-subroutine test_overlap_matrix
- implicit none
- integer :: i,j,k
- double precision :: accurr,accull,acculr
- double precision, allocatable :: overlap_rr(:,:)
- double precision, allocatable :: overlap_ll(:,:)
- double precision, allocatable :: overlap_lr(:,:)
- allocate(overlap_rr(n_good_trans_eigval,n_good_trans_eigval), &
-          overlap_ll(n_good_trans_eigval,n_good_trans_eigval), & 
-          overlap_lr(n_good_trans_eigval,n_good_trans_eigval))
- do i = 1, n_good_trans_eigval
-  do j = 1, n_good_trans_eigval
-   accurr = 0.d0
-   accull = 0.d0
-   acculr = 0.d0
-   do k = 1, N_det
-    accurr += reigvec_trans(k,i) * reigvec_trans(k,j)
-    accull += leigvec_trans(k,i) * leigvec_trans(k,j)
-    acculr += leigvec_trans(k,i) * reigvec_trans(k,j)
-   enddo
-   overlap_rr(j,i) = accurr
-   overlap_ll(j,i) = accull
-   overlap_lr(j,i) = acculr
-  enddo
- enddo
-
- print*,''
- print*,'Printing the overlap between RIGHT eigenvectors'
- do i = 1, n_good_trans_eigval
-  write(*,'(1000(F16.12,X))')overlap_rr(i,:)
- enddo
-
- print*,''
- print*,'Printing the overlap between LEFT  eigenvectors'
- do i = 1, n_good_trans_eigval
-  write(*,'(1000(F16.12,X))')overlap_ll(i,:)
- enddo
-
- print*,''
- print*,'Printing the overlap between LEFT and RIGHT  eigenvectors'
- do i = 1, n_good_trans_eigval
-  write(*,'(1000(F16.12,X))')overlap_lr(i,:)
- enddo
-end
-
-BEGIN_PROVIDER [double precision, overlap_psi_det_r_eigevec, (N_states)]
- implicit none
- double precision :: accu
- BEGIN_DOC
-! overlap between psi_det and the right eigenvectors of Htilde
- END_DOC
- integer :: i,j
- do i = 1, N_states
-  accu = 0.d0
-  do j = 1, N_det
-   accu += psi_coef(j,i) * reigvec_trans(j,i)
-  enddo
-  overlap_psi_det_r_eigevec(i) = accu
- enddo
-END_PROVIDER 

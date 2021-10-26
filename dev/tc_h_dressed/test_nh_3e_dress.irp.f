@@ -16,16 +16,16 @@ program test_nh_3e_dress
  print*,'If you want to modify them, you have to modify the following file '
  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
  print*,'and recompile doing ninja'
- if(linear_tc)then
-  three_body_h_tc = .False. 
-  touch three_body_h_tc
-  grad_squared = .False. 
-  touch grad_squared 
- endif
- if(read_tc_ints)then
-  call read_fcidump_1_tc
- endif
-
+! if(linear_tc)then
+!  three_body_h_tc = .False. 
+!  touch three_body_h_tc
+!  grad_squared = .False. 
+!  touch grad_squared 
+! endif
+! if(read_tc_ints)then
+!  call read_fcidump_1_tc
+! endif
+!
  call test_dressing_diag
 end
 
@@ -75,7 +75,7 @@ subroutine get_dressed_matrix_nh_3e(u0,h_dressed,idress)
  integer :: i
  a = 1.d0
  allocate(delta_u0(N_det),delta_mat(N_det,N_det))
- delta_mat = nh_3e_matrix_elmt! Delta = Htilde - H
+! delta_mat = nh_3e_matrix_elmt! Delta = Htilde - H
 ! delta_mat = htilde_matrix_elmt - h_matrix_all_dets ! Delta = Htilde - H
  !!!!!!!!!!!!! Computing the dressing vector 
  delta_u0 = 0.d0

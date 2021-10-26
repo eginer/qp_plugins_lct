@@ -75,7 +75,7 @@ subroutine get_dressed_matrix_nh_3e(u0,h_dressed,idress)
  integer :: i
  a = 1.d0
  allocate(delta_u0(N_det),delta_mat(N_det,N_det))
- delta_mat = nh_3e_matrix_elmt! Delta = Htilde - H
+! delta_mat = nh_3e_matrix_elmt! Delta = Htilde - H
 ! delta_mat = htilde_matrix_elmt - h_matrix_all_dets ! Delta = Htilde - H
  !!!!!!!!!!!!! Computing the dressing vector 
  delta_u0 = 0.d0
@@ -86,7 +86,7 @@ subroutine get_dressed_matrix_nh_3e(u0,h_dressed,idress)
 
  delta_u0 *= 1.d0/u0(idress)
  !!!!!!!!!!!!! Computing the dressing matrix 
- h_dressed =  htilde_matrix_elmt - nh_3e_matrix_elmt
+! h_dressed =  htilde_matrix_elmt - nh_3e_matrix_elmt
 ! print*,'Htilde(i,i) = ',htilde_matrix_elmt(N_det,N_det)
 ! print*,'K+L   (i,i) = ',nh_3e_matrix_elmt(N_det,N_det)
 ! h_dressed = h_matrix_all_dets

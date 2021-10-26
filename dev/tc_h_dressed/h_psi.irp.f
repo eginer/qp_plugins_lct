@@ -16,16 +16,16 @@ program transcorr_h
  print*,'If you want to modify them, you have to modify the following file '
  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
  print*,'and recompile doing ninja'
- if(linear_tc)then
-  three_body_h_tc = .False. 
-  touch three_body_h_tc
-  grad_squared = .False. 
-  touch grad_squared 
- endif
- if(read_tc_ints)then
-  call read_fcidump_1_tc
- endif
-
+! if(linear_tc)then
+!  three_body_h_tc = .False. 
+!  touch three_body_h_tc
+!  grad_squared = .False. 
+!  touch grad_squared 
+! endif
+! if(read_tc_ints)then
+!  call read_fcidump_1_tc
+! endif
+!
  call h_psi_tc
 end
 

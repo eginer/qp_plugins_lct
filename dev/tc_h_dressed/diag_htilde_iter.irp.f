@@ -16,15 +16,9 @@ program diag_h_t_iter
  print*,'If you want to modify them, you have to modify the following file '
  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
  print*,'and recompile doing ninja'
- if(linear_tc)then
-  three_body_h_tc = .False. 
-  touch three_body_h_tc
-  grad_squared = .False. 
-  touch grad_squared 
- endif
- if(read_tc_ints)then
-  call read_fcidump_1_tc
- endif
+! if(read_tc_ints)then
+!  call read_fcidump_1_tc
+! endif
 
  call routine_diagonalize_htilde
 end
@@ -107,7 +101,7 @@ end
 
 subroutine provide_integrals_for_tc
  implicit none
- PROVIDE scalar_mu_r_pot_physicist_mo deriv_mu_r_pot_physicist_mo
+! PROVIDE scalar_mu_r_pot_physicist_mo deriv_mu_r_pot_physicist_mo
  PROVIDE three_body_3_index three_body_3_index_exch_12 three_body_3_index_exch_13 three_body_3_index_exch_23
  PROVIDE three_body_5_index three_body_5_index_exch_13 three_body_5_index_exch_32
  PROVIDE three_body_4_index three_body_4_index_exch_12 three_body_4_index_exch_12_part
