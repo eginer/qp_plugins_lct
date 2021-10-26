@@ -17,7 +17,7 @@ subroutine compute_mo_integrals_tc_int_jl(j,l,n_integrals,buffer_i,buffer_value)
   double precision               :: integral, wall_0
   double precision               :: thr
   integer                        :: kk, m, j1, i1
-  double precision               :: get_two_e_integral
+  double precision               :: get_two_e_integral,get_mo_tc_sym_two_e_pot
 
   thr = ao_integrals_threshold
 
@@ -34,16 +34,11 @@ subroutine compute_mo_integrals_tc_int_jl(j,l,n_integrals,buffer_i,buffer_value)
       if (i1 > j1) then
         exit
       endif
-!     if (ao_two_e_integral_zero(i,j,k,l)) then
-      if (.False.) then
-        cycle
-      endif
       !DIR$ FORCEINLINE
       if(  trim(mo_class(i)) == "Core" .or. trim(mo_class(j)) == "Core" .or. trim(mo_class(k)) == "Core" .or. trim(mo_class(l)) == "Core")then
        integral = get_two_e_integral(i,j,k,l,mo_integrals_map)
       else
-       integral = scalar_mu_r_pot_physicist_mo(i,j,k,l) !& 
-!                + 0.5d0 * (deriv_mu_r_pot_physicist_mo(i,j,k,l) + deriv_mu_r_pot_physicist_mo(k,l,i,j))
+       integral = get_mo_tc_sym_two_e_pot(i,j,k,l,mo_tc_sym_two_e_pot_map)
       endif
       if (abs(integral) < thr) then
         cycle

@@ -1,4 +1,4 @@
-BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_chemist, (mo_num, mo_num, mo_num, mo_num)]
+BEGIN_PROVIDER [double precision, mo_non_hermit_term_chemist, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
@@ -11,13 +11,13 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_chemist, (mo_num, 
     do q = 1, ao_num
      do k = 1, mo_num
       !       (k n|p m)    = sum_q c_qk * (q n|p m)
-      mo_tmp_1(k,n,p,m) += mo_coef_transp(k,q) * ao_two_e_eff_dr12_pot_array_new_3(q,n,p,m)
+      mo_tmp_1(k,n,p,m) += mo_coef_transp(k,q) * ao_non_hermit_term_chemist(q,n,p,m)
      enddo
     enddo
    enddo
   enddo
  enddo
- free ao_two_e_eff_dr12_pot_array_new_3 
+ free ao_non_hermit_term_chemist 
  allocate(mo_tmp_2(mo_num,mo_num,ao_num,ao_num))
  mo_tmp_2 = 0.d0
  do m = 1, ao_num
@@ -47,13 +47,13 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_chemist, (mo_num, 
   enddo
  enddo
  deallocate(mo_tmp_2)
- mo_two_e_eff_dr12_pot_array_chemist = 0.d0
+ mo_non_hermit_term_chemist = 0.d0
  do m = 1, ao_num
   do j = 1, mo_num
    do l = 1, mo_num
     do i = 1, mo_num
      do k = 1, mo_num
-      mo_two_e_eff_dr12_pot_array_chemist(k,i,l,j) += mo_coef_transp(j,m)  * mo_tmp_1(k,i,l,m)
+      mo_non_hermit_term_chemist(k,i,l,j) += mo_coef_transp(j,m)  * mo_tmp_1(k,i,l,m)
      enddo
     enddo
    enddo
@@ -62,14 +62,14 @@ BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_chemist, (mo_num, 
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, mo_two_e_eff_dr12_pot_array_physicist, (mo_num, mo_num, mo_num, mo_num)]
+BEGIN_PROVIDER [double precision, mo_non_hermit_term, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  integer :: i,j,k,l
  do j = 1, mo_num
   do i = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
-     mo_two_e_eff_dr12_pot_array_physicist(k,l,i,j) = mo_two_e_eff_dr12_pot_array_chemist(k,i,l,j)
+     mo_non_hermit_term(k,l,i,j) = mo_non_hermit_term_chemist(k,i,l,j)
     enddo
    enddo
   enddo

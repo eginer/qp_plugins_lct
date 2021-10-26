@@ -7,7 +7,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
  thr = 1.d-8
  ao_two_e_eff_dr12_pot_array_new = 0.d0
  double precision, allocatable :: b_mat(:,:,:,:)
- provide v_ij_erf_rk x_v_ij_erf_rk
+ provide v_ij_erf_rk_cst_mu x_v_ij_erf_rk_cst_mu
  call wall_time(wall0)
  allocate(b_mat(ao_num,ao_num,n_points_final_grid,3))
  do m = 1, 3
@@ -30,7 +30,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                [k*i](1)     * [l * x * grad_x j](2)
-        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) += v_ij_erf_rk(k,i,ipoint) * b_mat(l,j,ipoint,m) 
+        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) += v_ij_erf_rk_cst_mu(k,i,ipoint) * b_mat(l,j,ipoint,m) 
        enddo
       enddo
      enddo
@@ -45,7 +45,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                [l*j](2)     * [k * x * grad_x i](1)
-        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) += v_ij_erf_rk(l,j,ipoint) * b_mat(k,i,ipoint,m) 
+        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) += v_ij_erf_rk_cst_mu(l,j,ipoint) * b_mat(k,i,ipoint,m) 
        enddo
       enddo
      enddo
@@ -74,7 +74,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                        [k*x*i](1)       * [l *  grad_x j](2)
-        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
+        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk_cst_mu(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
        enddo
       enddo
      enddo
@@ -86,12 +86,12 @@ BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new, (ao_num, ao_n
    do ipoint = 1, n_points_final_grid
     do j = 1, ao_num ! 2
      do l = 1, ao_num ! 2
-! !    if(dabs(v_ij_erf_rk(l,j,ipoint)).lt.thr) cycle
+! !    if(dabs(v_ij_erf_rk_cst_mu(l,j,ipoint)).lt.thr) cycle
       do i = 1, ao_num ! 1
-! !     if(dabs(aos_grad_in_r_array(i,ipoint,m)*v_ij_erf_rk(l,j,ipoint)).lt.thr)cycle
+! !     if(dabs(aos_grad_in_r_array(i,ipoint,m)*v_ij_erf_rk_cst_mu(l,j,ipoint)).lt.thr)cycle
        do k = 1, ao_num ! 1
         !                               1 1 2 2                [l*x*j](2)     * [k * grad_x i](1)
-        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk(l,j,ipoint,m) * b_mat(k,i,ipoint,m) 
+        ao_two_e_eff_dr12_pot_array_new(k,i,l,j) -= x_v_ij_erf_rk_cst_mu(l,j,ipoint,m) * b_mat(k,i,ipoint,m) 
        enddo
       enddo
      enddo
@@ -138,7 +138,7 @@ END_DOC
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                              1 1 2 2       [k*i](1)     * [l * x * grad_x j](2)
-        ac_mat(k,i,l,j) += v_ij_erf_rk(k,i,ipoint) * b_mat(l,j,ipoint,m) 
+        ac_mat(k,i,l,j) += v_ij_erf_rk_cst_mu(k,i,ipoint) * b_mat(l,j,ipoint,m) 
        enddo
       enddo
      enddo
@@ -167,7 +167,7 @@ END_DOC
       do i = 1, ao_num ! 1
        do k = 1, ao_num ! 1
         !                               1 1 2 2                        [k*x*i](1)       * [l *  grad_x j](2)
-        ac_mat(k,i,l,j) -= x_v_ij_erf_rk(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
+        ac_mat(k,i,l,j) -= x_v_ij_erf_rk_cst_mu(k,i,ipoint,m) * b_mat(l,j,ipoint,m) 
        enddo
       enddo
      enddo
@@ -186,7 +186,7 @@ END_DOC
  enddo
 END_PROVIDER 
 
-BEGIN_PROVIDER [double precision, ao_two_e_eff_dr12_pot_array_new_3, (ao_num, ao_num, ao_num, ao_num)]
+BEGIN_PROVIDER [double precision, ao_non_hermit_term_chemist, (ao_num, ao_num, ao_num, ao_num)]
  implicit none
 BEGIN_DOC
 !                             1 1 2 2      1 2                                1 2 
@@ -197,8 +197,8 @@ END_DOC
  double precision :: weight1,thr,r(3)
  thr = 1.d-8
  double precision, allocatable :: b_mat(:,:,:,:),ac_mat(:,:,:,:)
-! provide v_ij_erf_rk 
- provide v_ij_erf_rk x_v_ij_erf_rk
+! provide v_ij_erf_rk_cst_mu 
+ provide v_ij_erf_rk_cst_mu x_v_ij_erf_rk_cst_mu
   call wall_time(wall0)
  allocate(b_mat(n_points_final_grid,ao_num,ao_num,3),ac_mat(ao_num, ao_num, ao_num, ao_num))
  !$OMP PARALLEL                  &
@@ -226,7 +226,7 @@ END_DOC
   ac_mat = 0.d0
   do m = 1, 3
    !           A   B^T  dim(A,1)       dim(B,2)       dim(A,2)        alpha * A                LDA 
-   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,v_ij_erf_rk(1,1,1),ao_num*ao_num & 
+   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,1.d0,v_ij_erf_rk_cst_mu(1,1,1),ao_num*ao_num & 
                      ,b_mat(1,1,1,m),n_points_final_grid,1.d0,ac_mat,ao_num*ao_num)
   enddo
 
@@ -250,20 +250,20 @@ END_DOC
 
   do m = 1, 3
    !           A   B^T  dim(A,1)       dim(B,2)       dim(A,2)        alpha * A                LDA 
-   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,-1.d0,x_v_ij_erf_rk(1,1,1,m),ao_num*ao_num & 
+   call dgemm("N","N",ao_num*ao_num,ao_num*ao_num,n_points_final_grid,-1.d0,x_v_ij_erf_rk_cst_mu(1,1,1,m),ao_num*ao_num & 
                      ,b_mat(1,1,1,m),n_points_final_grid,1.d0,ac_mat,ao_num*ao_num)
   enddo
 
  !$OMP PARALLEL                  &
  !$OMP DEFAULT (NONE)            &
  !$OMP PRIVATE (i,k,j,l) & 
- !$OMP SHARED (ac_mat,ao_two_e_eff_dr12_pot_array_new_3,ao_num)
+ !$OMP SHARED (ac_mat,ao_non_hermit_term_chemist,ao_num)
  !$OMP DO SCHEDULE (static)
  do j = 1, ao_num
   do l = 1, ao_num
    do i = 1, ao_num
     do k = 1, ao_num
-      ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j) = ac_mat(k,i,l,j) + ac_mat(l,j,k,i)    
+      ao_non_hermit_term_chemist(k,i,l,j) = ac_mat(k,i,l,j) + ac_mat(l,j,k,i)    
     enddo
    enddo
   enddo

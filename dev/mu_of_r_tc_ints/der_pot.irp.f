@@ -605,13 +605,13 @@ BEGIN_PROVIDER [ double precision, deriv_mu_r_pot_physicist_mo, (mo_num, mo_num,
   call read_fcidump_2_tc(deriv_mu_r_pot_physicist_mo )
  else
   if(constant_mu)then
-   PROVIDE mo_two_e_eff_dr12_pot_array_physicist
+   PROVIDE mo_non_hermit_term
    do i = 1, mo_num 
     do j = 1, mo_num 
      do k = 1, mo_num 
       do l = 1, mo_num 
        !                           2 1 2 1 
-       deriv_mu_r_pot_physicist_mo(l,k,j,i) = mo_two_e_eff_dr12_pot_array_physicist(l,k,j,i)
+       deriv_mu_r_pot_physicist_mo(l,k,j,i) = mo_non_hermit_term(l,k,j,i)
       enddo
      enddo
     enddo
@@ -723,7 +723,7 @@ subroutine test_big_array_mo_deriv
 !     num_int = mo_two_e_eff_dr12_pot_array_new_3(k,i,l,j)
 !     num_int = mo_two_e_eff_dr12_pot_array_new_bis(k,i,l,j)
      num_int = deriv_mu_r_pot_chemist_mo(i,k,j,l)
-     exact = mo_two_e_eff_dr12_pot_array_chemist(k,i,l,j)
+     exact = mo_non_hermit_term_chemist(k,i,l,j)
      contrib = dabs(num_int - exact )
      if(dabs(exact).gt.1.d-12)then
       accu_naive += contrib

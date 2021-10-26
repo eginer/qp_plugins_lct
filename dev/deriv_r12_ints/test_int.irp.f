@@ -194,16 +194,16 @@ subroutine test_new_ints
  implicit none
  double precision :: accu,err
  integer :: i,j,k,l
- provide ao_two_e_eff_dr12_pot_array_new_3
+ provide ao_non_hermit_term_chemist
  accu = 0.d0
  do j = 1, ao_num
   do l = 1, ao_num
    do i = 1, ao_num
     do k = 1, ao_num
-     err = dabs(ao_two_e_eff_dr12_pot_array_new(k,i,l,j) - ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j))
+     err = dabs(ao_two_e_eff_dr12_pot_array_new(k,i,l,j) - ao_non_hermit_term_chemist(k,i,l,j))
      if(err.gt.1.d-10)then
       print*,'k,i,l,j',k,i,l,j
-      print*,err,ao_two_e_eff_dr12_pot_array_new(k,i,l,j),ao_two_e_eff_dr12_pot_array_new_3(k,i,l,j)
+      print*,err,ao_two_e_eff_dr12_pot_array_new(k,i,l,j),ao_non_hermit_term_chemist(k,i,l,j)
      endif
      accu += err
     enddo
@@ -223,11 +223,11 @@ subroutine test_new_old_ints
   do i = 1, mo_num
    do l = 1, mo_num
     do k = 1, mo_num
-     err = dabs(mo_two_e_eff_dr12_pot_array_physicist(k,l,i,j) -  &
+     err = dabs(mo_non_hermit_term(k,l,i,j) -  &
                 mo_two_e_eff_dr12_pot_array(k,l,i,j) ) 
      if(err.gt.1.d-10)then
       print*,'k,l,i,j',k,l,i,j
-      print*,err,mo_two_e_eff_dr12_pot_array_physicist(k,l,i,j),mo_two_e_eff_dr12_pot_array(k,l,i,j)
+      print*,err,mo_non_hermit_term(k,l,i,j),mo_two_e_eff_dr12_pot_array(k,l,i,j)
      endif
      accu += err
     enddo
