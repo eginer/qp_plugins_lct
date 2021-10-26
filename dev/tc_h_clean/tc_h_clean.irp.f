@@ -20,5 +20,5 @@ subroutine routine
   print*,''
   print*,''
   print*,''
-  print*,'eigval_trans = ',eigval_trans(1)
+  print*,'eigval_trans = ',eigval_tc(1)
 end
