@@ -98,7 +98,7 @@ subroutine non_hrmt_real_diag(n,A,reigvec,leigvec,n_real_eigv,eigval)
  print*,'n_real_eigv = ',n_real_eigv
  print*,'n           = ',n
  do i = 1, n_real_eigv
-  print*,i,'eigval(i) = ',eigval(i) 
+!  print*,i,'eigval(i) = ',eigval(i) 
   do j = 1, n
    reigvec(j,i) = VR(j,list_good(iorder(i)))
    leigvec(j,i) = Vl(j,list_good(iorder(i)))

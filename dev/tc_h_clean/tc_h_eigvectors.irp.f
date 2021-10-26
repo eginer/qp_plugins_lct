@@ -8,7 +8,7 @@
  BEGIN_DOC
  ! eigenvalues, right and left eigenvectors of the transcorrelated Hamiltonian 
  END_DOC
- if(full_tc_h_solver)then
+ if(full_tc_h_solver.or.N_det.le.N_det_max_full)then
    double precision, allocatable :: reigvec_tc_tmp(:,:),leigvec_tc_tmp(:,:),eigval_right_tmp(:)
    allocate(reigvec_tc_tmp(N_det,N_det),leigvec_tc_tmp(N_det,N_det),eigval_right_tmp(N_det))
    integer :: n_real_tc_eigval_right
@@ -163,12 +163,12 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
   htilde_psi(1:sze) += -energies(1) * psicoef(1:sze,1)
   residual = u_dot_v(psicoef(1,1),htilde_psi,sze)
   residual = dabs(residual)
-  print*, ' energies = ',energies
+  print*, ' energies = ',energies(1)
   if(j>1)then
    print*,'  Delta E = ', delta_e
   endif
   print*, ' residual = ',residual
-  converged = residual.lt.threshold_davidson.or.dabs(delta_e).lt.1.d-6
+  converged = residual.lt.threshold_davidson.or.dabs(delta_e).lt.1.d-5
   if(j>n_iter_max)then
    converged = .False.
    exit

@@ -37,31 +37,13 @@ program fci
   END_DOC
   my_grid_becke = .True.
   my_n_pt_r_grid = 30
-  my_n_pt_a_grid = 170
+  my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  extra_grid_type_sgn = 1
-  touch extra_grid_type_sgn
-  my_extra_grid_becke = .False.
-  touch my_extra_grid_becke
-  print*,'Warning : the Becke grid parameters are automatically set to '
-  print*,'my_n_pt_a_grid = ',my_n_pt_a_grid
-  print*,'my_n_pt_r_grid = ',my_n_pt_r_grid
-  print*,'If you want to modify them, you have to modify the following file '
-  print*,'qp2/plugins/qp_plugins_lct/dev/transcorr_h/transcorr_general.irp.f'
-  print*,'and recompile doing ninja'
-  if(linear_tc)then
-   three_body_h_tc = .False.
-   touch three_body_h_tc
-   grad_squared = .False.
-   touch grad_squared
-  endif
-
+  read_wf = .True.
+  touch read_wf 
 
   if (.not.is_zmq_slave) then
-    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map
-    double precision :: hmono,heff,hderiv,hthree,htot
-!    call htilde_mat(HF_bitmask,HF_bitmask,hmono,heff,hderiv,hthree,htot)
-    call provide_all_three_body_terms
+    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde
     if (do_pt2) then
       call run_stochastic_cipsi
     else
