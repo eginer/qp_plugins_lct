@@ -24,6 +24,7 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
   if(Ne(1)+Ne(2).ge.3)then
    double precision :: direct_int, exchange_int
    double precision :: exchange_int_12, exchange_int_13, exchange_int_23
+   double precision :: exchange_int_231,exchange_int_312
 !!  ! alpha/alpha/beta three-body
    do i = 1, Ne(1)
     ii = occ(i,1) 
@@ -61,10 +62,15 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
       kk = occ(k,1) ! 3 
       !               direct   :       3  2  1  
       direct_int = three_body_3_index(kk,jj,ii)
-      exchange_int_12 = three_body_3_index_exch_12(kk,jj,ii)
-      exchange_int_13 = three_body_3_index_exch_13(kk,jj,ii)
-      exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
-      hthree +=  direct_int - exchange_int_12 - exchange_int_13 - exchange_int_23 
+!      exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
+!      exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
+      exchange_int_231 = 0.d0
+      exchange_int_312 = 0.d0
+      exchange_int_12  = three_body_3_index_exch_12(kk,jj,ii)
+      exchange_int_13  = three_body_3_index_exch_13(kk,jj,ii)
+      exchange_int_23  = three_body_3_index_exch_23(kk,jj,ii)
+      hthree +=  direct_int + exchange_int_231 + exchange_int_312 & 
+               - exchange_int_12 - exchange_int_13 - exchange_int_23  
      enddo
     enddo
    enddo
@@ -78,10 +84,15 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
       kk = occ(k,2) ! 3
       !               direct   :       3  2  1  
       direct_int = three_body_3_index(kk,jj,ii)
+!      exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
+!      exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
+      exchange_int_231 = 0.d0
+      exchange_int_312 = 0.d0
       exchange_int_12 = three_body_3_index_exch_12(kk,jj,ii)
       exchange_int_13 = three_body_3_index_exch_13(kk,jj,ii)
       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
-      hthree +=  direct_int - exchange_int_12 - exchange_int_13 - exchange_int_23 
+      hthree +=  direct_int + exchange_int_231 + exchange_int_312 & 
+               - exchange_int_12 - exchange_int_13 - exchange_int_23  
      enddo
     enddo
    enddo
