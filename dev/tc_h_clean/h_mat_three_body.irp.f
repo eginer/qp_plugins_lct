@@ -62,10 +62,10 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
       kk = occ(k,1) ! 3 
       !               direct   :       3  2  1  
       direct_int = three_body_3_index(kk,jj,ii)
-!      exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
-!      exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
-      exchange_int_231 = 0.d0
-      exchange_int_312 = 0.d0
+      exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
+      exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
+!      exchange_int_231 = 0.d0
+!      exchange_int_312 = 0.d0
       exchange_int_12  = three_body_3_index_exch_12(kk,jj,ii)
       exchange_int_13  = three_body_3_index_exch_13(kk,jj,ii)
       exchange_int_23  = three_body_3_index_exch_23(kk,jj,ii)
@@ -84,10 +84,10 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
       kk = occ(k,2) ! 3
       !               direct   :       3  2  1  
       direct_int = three_body_3_index(kk,jj,ii)
-!      exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
-!      exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
-      exchange_int_231 = 0.d0
-      exchange_int_312 = 0.d0
+      exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
+      exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
+!      exchange_int_231 = 0.d0
+!      exchange_int_312 = 0.d0
       exchange_int_12 = three_body_3_index_exch_12(kk,jj,ii)
       exchange_int_13 = three_body_3_index_exch_13(kk,jj,ii)
       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
@@ -118,6 +118,7 @@ subroutine single_htilde_mu_mat_three_body(key_j,key_i,hthree)
   integer                        :: degree,exc(0:2,2,2)
   integer                        :: h1, p1, h2, p2, s1, s2
   double precision :: direct_int,exchange_int_12,exchange_int_23,exchange_int_13,phase
+  double precision :: exchange_int_231,exchange_int_312
   integer :: other_spin(2)
   other_spin(1) = 2
   other_spin(2) = 1
@@ -179,11 +180,15 @@ subroutine single_htilde_mu_mat_three_body(key_j,key_i,hthree)
       ii = occ(i,2)
       do j = i+1, Ne(2)
        jj = occ(j,2)
-       direct_int = three_body_4_index(jj,ii,h1,p1)                    ! < h1 jj ii | p1 jj ii >
-       exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)       ! < h1 jj ii | p1 ii jj >
-       exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
-       exchange_int_13 = three_body_4_index_exch_12_part(jj,ii,h1,p1)  ! < h1 jj ii | ii p1 jj >
-       hthree += direct_int & 
+       direct_int = three_body_4_index(jj,ii,h1,p1)                        ! < h1 jj ii | p1 jj ii >
+       exchange_int_231 = three_body_4_index_exch_231(jj,ii,h1,p1)
+       exchange_int_312 = three_body_4_index_exch_312(jj,ii,h1,p1)
+!       exchange_int_231 = 0.d0
+!       exchange_int_312 = 0.d0
+       exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)           ! < h1 jj ii | p1 ii jj >
+       exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)      ! < h1 jj ii | ii p1 jj >
+       exchange_int_13 = three_body_4_index_exch_12_part_bis(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       hthree += direct_int + exchange_int_231 + exchange_int_312 & 
               -  exchange_int_23 & ! ii <-> jj
               -  exchange_int_12 & ! p1 <-> jj
               -  exchange_int_13   ! p1 <-> ii
@@ -222,10 +227,14 @@ subroutine single_htilde_mu_mat_three_body(key_j,key_i,hthree)
       do j = i+1, Ne(1)
        jj = occ(j,1)
        direct_int = three_body_4_index(jj,ii,h1,p1)                    ! < h1 jj ii | p1 jj ii >
+       exchange_int_231 = three_body_4_index_exch_231(jj,ii,h1,p1)
+       exchange_int_312 = three_body_4_index_exch_312(jj,ii,h1,p1)
+!       exchange_int_231 = 0.d0
+!       exchange_int_312 = 0.d0
        exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)       ! < h1 jj ii | p1 ii jj >
        exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
-       exchange_int_13 = three_body_4_index_exch_12_part(jj,ii,h1,p1)  ! < h1 jj ii | ii p1 jj >
-       hthree += direct_int & 
+       exchange_int_13 = three_body_4_index_exch_12_part_bis(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       hthree += direct_int + exchange_int_231 + exchange_int_312 & 
               -  exchange_int_23 & ! ii <-> jj
               -  exchange_int_12 & ! p1 <-> jj
               -  exchange_int_13   ! p1 <-> ii
@@ -291,9 +300,11 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
       do k = 1, Ne(1) ! alpha/alpha/alpha
        kk = occ(k,1)
        hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index(kk,h1,h2,p2,p1)       ! p1 <-> p2
-       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)    ! p1 <-> kk 
-       hthree -=  three_body_5_index_exch_13(kk,h2,h1,p2,p1)    ! p2 <-> kk  
+       hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
+       hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
       enddo 
      else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
       do k = 1, Ne(1) ! alpha- beta/beta
@@ -303,11 +314,11 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
       do k = 1, Ne(2) ! beta/beta/beta
        kk = occ(k,2)
        hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index(kk,h1,h2,p2,p1)       ! p1 <-> p2
-       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)    ! p1 <-> kk 
-       !                                     h1 h2 kk kk p2 p1
-       !                                     h1 h2 kk p1 kk p2
-       hthree -=  three_body_5_index_exch_13(kk,h2,h1,p2,p1)    ! p2 <-> kk  
+       hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
+       hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
+       hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
       enddo 
      else ! double alpha/beta 
       if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 

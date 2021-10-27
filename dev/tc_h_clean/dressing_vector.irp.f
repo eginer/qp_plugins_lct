@@ -25,7 +25,7 @@ subroutine get_dressing_tc_for_dav(u_in,dets_in,sze,N_st,dagger,dress_vec)
  dress_vec(:,:) = 0.d0
 
  l = 1
- do j = 1, n_det
+ do j = 1, sze
    if (j == l) cycle
    dress_vec(j,1)  = delta(j) 
    dress_vec(l,1) -= u_in(j) * delta(j) / u_in(l)
@@ -55,10 +55,11 @@ subroutine get_delta_tc_psi(psidet,psicoef,ndet,delta)
  j=1
  call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
  call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
- !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(dynamic,8) &
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(delta,ndet,psidet,psicoef,N_int) &
  !$OMP PRIVATE(i,j,delta_mat,hmono,heff,hderiv,hthree,htilde_ij,hij)
-  do i = 1, N_det
-   do j = 1, N_det
+  do i = 1, ndet
+   do j = 1, ndet
     call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
     call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
     delta_mat = htilde_ij - hij 
@@ -66,6 +67,41 @@ subroutine get_delta_tc_psi(psidet,psicoef,ndet,delta)
    enddo
   enddo
  !$OMP END PARALLEL DO
+
+end
+
+subroutine get_e_components_htilde(psidet,psicoef,ndet,hmono_av,heff_av,hderiv_av,hthree_av,htot_av)
+ use bitmasks
+ implicit none
+ double precision, intent(in)   :: psicoef(ndet)
+ integer(bit_kind), intent(in)  :: psidet(N_int,2,ndet)
+ integer, intent(in)            :: ndet
+ double precision, intent(out)  :: hmono_av,heff_av,hderiv_av,hthree_av,htot_av
+ double precision :: hij,htot,htilde_psi_mat,hmono,heff,hderiv,hthree
+ integer :: i,j
+
+ hmono_av  = 0.d0
+ heff_av   = 0.d0
+ hderiv_av = 0.d0
+ hthree_av = 0.d0
+ i=1
+ j=1
+ call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htot)
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(hmono_av,heff_av,hderiv_av,hthree_av,ndet,psidet,psicoef) &
+ !$OMP PRIVATE(i,j,htilde_psi_mat,hmono,heff,hderiv,hthree,htot)
+  do i = 1, ndet
+   do j = 1, ndet
+    call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htot)
+    hmono_av += psicoef(j) * hmono * psicoef(i)
+    heff_av += psicoef(j) * heff * psicoef(i)
+    hderiv_av += psicoef(j) * hderiv * psicoef(i)
+    hthree_av += psicoef(j) * hthree * psicoef(i)
+   enddo
+  enddo
+ !$OMP END PARALLEL DO
+ htot_av = hmono_av + heff_av + hderiv_av + hthree_av
+
 
 end
 
@@ -89,10 +125,11 @@ subroutine get_htilde_psi(psidet,psicoef,ndet,htilde_psi)
  i=1
  j=1
  call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
- !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(dynamic,8) &
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(htilde_psi,ndet,psidet,psicoef) & 
  !$OMP PRIVATE(i,j,htilde_psi_mat,hmono,heff,hderiv,hthree,htilde_ij)
-  do i = 1, N_det
-   do j = 1, N_det
+  do i = 1, ndet
+   do j = 1, ndet
     call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
     htilde_psi(i) = htilde_psi(i) + psicoef(j) * htilde_ij
    enddo
@@ -123,10 +160,11 @@ subroutine get_delta_tc_dagger_psi(psidet,psicoef,ndet,delta)
  j=1
  call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
  call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
- !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(dynamic,8) &
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(delta,ndet,psidet,psicoef,N_int) & 
  !$OMP PRIVATE(i,j,delta_mat,hmono,heff,hderiv,hthree,htilde_ij,hij)
-  do i = 1, N_det
-   do j = 1, N_det
+  do i = 1, ndet
+   do j = 1, ndet
     ! just changed i<-->j with respect to get_delta_tc_psi 
     call htilde_mu_mat(psidet(1,1,j),psidet(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
     call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
@@ -158,10 +196,11 @@ subroutine get_htilde_dagger_psi(psidet,psicoef,ndet,htilde_psi)
  i=1
  j=1
  call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
- !$OMP PARALLEL DO DEFAULT(SHARED) SCHEDULE(dynamic,8) &
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(htilde_psi,ndet,psidet,psicoef)&
  !$OMP PRIVATE(i,j,htilde_psi_mat,hmono,heff,hderiv,hthree,htilde_ij)
-  do i = 1, N_det
-   do j = 1, N_det
+  do i = 1, ndet
+   do j = 1, ndet
     ! just changed i<-->j with respect to htilde_psi
     call htilde_mu_mat(psidet(1,1,j),psidet(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
     htilde_psi(i) = htilde_psi(i) + psicoef(j) * htilde_ij

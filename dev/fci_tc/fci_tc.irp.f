@@ -39,8 +39,8 @@ program fci
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  read_wf = .True.
-  touch read_wf 
+!  read_wf = .True.
+!  touch read_wf 
 
   if (.not.is_zmq_slave) then
     PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde

@@ -18,7 +18,14 @@ subroutine routine
  implicit none
  integer :: i,j
  print*,'eigval_right_tc = ',eigval_right_tc
- print*,'eigval_left _tc = ',eigval_left_tc
+ print*,'eigval_left_tc  = ',eigval_left_tc
+ print*,'******************'
+ print*,'< h_core >      = ',h_mono_comp_right_tc
+ print*,'< h_eff_2e >    = ',h_eff_comp_right_tc
+ print*,'< h_deriv_2_e > = ',h_deriv_comp_right_tc
+ print*,'< h_eee >       = ',h_three_comp_right_tc
+ print*,'< h_tot >       = ',h_tot_comp_right_tc
+ print*,'******************'
  print*,'Left, right and usual eigenvectors '
  do i = 1, N_det
   write(*,'(I5,X,(100(F9.5,X)))')i,leigvec_tc(i,1),reigvec_tc(i,1),psi_coef(i,1)

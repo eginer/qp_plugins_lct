@@ -182,3 +182,14 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
   energies_out(i) = energies(i)
  enddo
 end
+
+ BEGIN_PROVIDER [ double precision, h_mono_comp_right_tc]
+&BEGIN_PROVIDER [ double precision, h_eff_comp_right_tc]
+&BEGIN_PROVIDER [ double precision, h_deriv_comp_right_tc]
+&BEGIN_PROVIDER [ double precision, h_three_comp_right_tc]
+&BEGIN_PROVIDER [ double precision, h_tot_comp_right_tc]
+ implicit none
+ call get_e_components_htilde(psi_det,psi_coef,n_det,h_mono_comp_right_tc,h_eff_comp_right_tc,& 
+                              h_deriv_comp_right_tc,h_three_comp_right_tc,h_tot_comp_right_tc)
+
+END_PROVIDER 

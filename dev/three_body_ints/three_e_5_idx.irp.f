@@ -1,0 +1,451 @@
+
+BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 5 index matrix element of the -L  three-body operator 
+!
+! three_body_5_index(i,j,m,l,n) = < phi_i phi_j phi_m | phi_i phi_l phi_n >
+!
+! notice the -1 sign: in this way three_body_5_index can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: j,k,l,m,n
+ double precision :: integral, wall1, wall0
+ character*(128) :: name_file 
+ name_file = 'six_index_tensor'
+ provide x_W_ij_erf_rk
+ three_body_5_index = 0.d0
+ print*,'Providing the three_body_5_index ...'
+ call wall_time(wall0)
+!if(read_six_index_tensor)then
+! print*,'Reading three_body_5_index from disk ...'
+! call read_array_6_index_tensor(mo_num,three_body_5_index,name_file)
+!else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_5_index)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = n, mo_num
+      do j = l, mo_num
+        integral = 0.d0
+        
+        call give_integrals_3_body(j,m,k,l,n,k,integral)
+
+        three_body_5_index(k,j,m,l,n) = -1.d0 * integral 
+  
+        ! permutation with k,i
+        three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index(k,j,n,l,m) = -1.d0 * integral 
+        ! three permutations with k,i
+        three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
+  
+        ! permutation with l,j
+        three_body_5_index(k,l,m,j,n) = -1.d0 * integral ! j,l
+        ! two permutations with l,j
+        three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
+        ! two permutations with l,j
+  
+        ! permutation with m,n
+        three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
+        ! two permutations with m,n
+        three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
+        three_body_5_index(k,l,n,j,m) = -1.d0 * integral ! m,n
+        ! three permutations with k,i
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+!endif
+ call wall_time(wall1)
+ print*,'wall time for three_body_5_index',wall1 - wall0
+!if(write_six_index_tensor)then
+! print*,'Writing three_body_5_index on disk ...'
+! call write_array_6_index_tensor(mo_num,three_body_5_index,name_file)
+! call ezfio_set_three_body_5_index_io_six_index_tensor("Read")
+!endif
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 5 index matrix element of the -L  three-body operator 
+!
+! three_body_5_index_exch_13(k,j,m,l,n) = < phi_j phi_m phi_k | phi_k phi_n phi_l >
+!
+! notice the -1 sign: in this way three_body_5_index_exch_13 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: j,k,l,m,n
+ double precision :: integral, wall1, wall0
+ character*(128) :: name_file 
+ provide x_W_ij_erf_rk
+ name_file = 'six_index_tensor'
+ three_body_5_index_exch_13 = 0.d0
+ print*,'Providing the three_body_5_index_exch_13 ...'
+ call wall_time(wall0)
+!if(read_six_index_tensor)then
+! print*,'Reading three_body_5_index_exch_13 from disk ...'
+! call read_array_6_index_tensor(mo_num,three_body_5_index_exch_13,name_file)
+!else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_5_index_exch_13)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = n, mo_num
+      do j = l, mo_num
+        integral = 0.d0
+!                                  j,m,k,l,n,k : direct (case 2)
+        call give_integrals_3_body(j,m,k,k,n,l,integral)
+!                                  j,m,k,k,n,l : exchange 1 3
+
+        three_body_5_index_exch_13(k,j,m,l,n) = -1.d0 * integral 
+  
+        ! permutation with k,i
+        three_body_5_index_exch_13(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_exch_13(k,j,n,l,m) = -1.d0 * integral 
+        ! three permutations with k,i
+        three_body_5_index_exch_13(k,l,n,j,m) = -1.d0 * integral 
+  
+        ! permutation with l,j
+        three_body_5_index_exch_13(k,l,m,j,n) = -1.d0 * integral ! j,l
+        ! two permutations with l,j
+        three_body_5_index_exch_13(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_exch_13(k,l,n,j,m) = -1.d0 * integral 
+        ! two permutations with l,j
+  
+        ! permutation with m,n
+        three_body_5_index_exch_13(k,j,n,l,m) = -1.d0 * integral ! m,n
+        ! two permutations with m,n
+        three_body_5_index_exch_13(k,j,n,l,m) = -1.d0 * integral ! m,n
+        three_body_5_index_exch_13(k,l,n,j,m) = -1.d0 * integral ! m,n
+        ! three permutations with k,i
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+!endif
+ call wall_time(wall1)
+ print*,'wall time for three_body_5_index_exch_13',wall1 - wall0
+!if(write_six_index_tensor)then
+! print*,'Writing three_body_5_index_exch_13 on disk ...'
+! call write_array_6_index_tensor(mo_num,three_body_5_index_exch_13,name_file)
+! call ezfio_set_three_body_5_index_exch_13_io_six_index_tensor("Read")
+!endif
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 5 index matrix element of the -L  three-body operator 
+!
+! three_body_5_index_exch_32(i,j,m,l,n) = < phi_i phi_j phi_m | phi_i phi_l phi_n >
+!
+! notice the -1 sign: in this way three_body_5_index_exch_32 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: i,j,k,l,m,n
+ double precision :: integral, wall1, wall0
+ character*(328) :: name_file 
+ provide x_W_ij_erf_rk
+ name_file = 'six_index_tensor'
+ three_body_5_index_exch_32 = 0.d0
+ print*,'Providing the three_body_5_index_exch_32 ...'
+ call wall_time(wall0)
+!if(read_six_index_tensor)then
+! print*,'Reading three_body_5_index_exch_32 from disk ...'
+! call read_array_6_index_tensor(mo_num,three_body_5_index_exch_32,name_file)
+!else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_5_index_exch_32)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = n, mo_num
+      do j = l, mo_num
+        integral = 0.d0
+!                                  j,m,k,l,n,k : direct (case 3)
+        call give_integrals_3_body(j,m,k,l,k,n,integral)
+!                                  j,m,k,l,k,n : exchange 2 3
+
+        three_body_5_index_exch_32(k,j,m,l,n) = -1.d0 * integral 
+  
+        ! permutation with k,i
+        three_body_5_index_exch_32(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_exch_32(k,j,n,l,m) = -1.d0 * integral 
+        ! three permutations with k,i
+        three_body_5_index_exch_32(k,l,n,j,m) = -1.d0 * integral 
+  
+        ! permutation with l,j
+        three_body_5_index_exch_32(k,l,m,j,n) = -1.d0 * integral ! j,l
+        ! two permutations with l,j
+        three_body_5_index_exch_32(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_exch_32(k,l,n,j,m) = -1.d0 * integral 
+        ! two permutations with l,j
+  
+        ! permutation with m,n
+        three_body_5_index_exch_32(k,j,n,l,m) = -1.d0 * integral ! m,n
+        ! two permutations with m,n
+        three_body_5_index_exch_32(k,j,n,l,m) = -1.d0 * integral ! m,n
+        three_body_5_index_exch_32(k,l,n,j,m) = -1.d0 * integral ! m,n
+        ! three permutations with k,i
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+!endif
+ call wall_time(wall1)
+ print*,'wall time for three_body_5_index_exch_32',wall1 - wall0
+!if(write_six_index_tensor)then
+! print*,'Writing three_body_5_index_exch_32 on disk ...'
+! call write_array_6_index_tensor(mo_num,three_body_5_index_exch_32,name_file)
+! call ezfio_set_three_body_5_index_exch_32_io_six_index_tensor("Read")
+!endif
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, three_body_5_index_exch_12, (mo_num, mo_num, mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 5 index matrix element of the -L  three-body operator 
+!
+! three_body_5_index_exch_12(i,j,m,l,n) = < phi_i phi_j phi_m | phi_i phi_l phi_n >
+!
+! notice the -1 sign: in this way three_body_5_index_exch_12 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: i,j,k,l,m,n
+ double precision :: integral, wall1, wall0
+ character*(328) :: name_file 
+ provide x_W_ij_erf_rk
+ name_file = 'six_index_tensor'
+ three_body_5_index_exch_12 = 0.d0
+ print*,'Providing the three_body_5_index_exch_12 ...'
+ call wall_time(wall0)
+!if(read_six_index_tensor)then
+! print*,'Reading three_body_5_index_exch_12 from disk ...'
+! call read_array_6_index_tensor(mo_num,three_body_5_index_exch_12,name_file)
+!else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_5_index_exch_12)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = n, mo_num
+      do j = l, mo_num
+        integral = 0.d0
+!                                  j,m,k,l,n,k : direct (case 1)
+        call give_integrals_3_body(j,m,k,n,l,k,integral)
+!                                  j,m,k,l,k,n : exchange 2 3
+
+        three_body_5_index_exch_12(k,j,m,l,n) = -1.d0 * integral 
+  
+        ! permutation with k,i
+        three_body_5_index_exch_12(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_exch_12(k,j,n,l,m) = -1.d0 * integral 
+        ! three permutations with k,i
+        three_body_5_index_exch_12(k,l,n,j,m) = -1.d0 * integral 
+  
+        ! permutation with l,j
+        three_body_5_index_exch_12(k,l,m,j,n) = -1.d0 * integral ! j,l
+        ! two permutations with l,j
+        three_body_5_index_exch_12(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_exch_12(k,l,n,j,m) = -1.d0 * integral 
+        ! two permutations with l,j
+  
+        ! permutation with m,n
+        three_body_5_index_exch_12(k,j,n,l,m) = -1.d0 * integral ! m,n
+        ! two permutations with m,n
+        three_body_5_index_exch_12(k,j,n,l,m) = -1.d0 * integral ! m,n
+        three_body_5_index_exch_12(k,l,n,j,m) = -1.d0 * integral ! m,n
+        ! three permutations with k,i
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+!endif
+ call wall_time(wall1)
+ print*,'wall time for three_body_5_index_exch_12',wall1 - wall0
+!if(write_six_index_tensor)then
+! print*,'Writing three_body_5_index_exch_12 on disk ...'
+! call write_array_6_index_tensor(mo_num,three_body_5_index_exch_12,name_file)
+! call ezfio_set_three_body_5_index_exch_12_io_six_index_tensor("Read")
+!endif
+
+END_PROVIDER 
+
+
+BEGIN_PROVIDER [ double precision, three_body_5_index_312, (mo_num, mo_num, mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 5 index matrix element of the -L  three-body operator 
+!
+! three_body_5_index_312(i,j,m,l,n) = < phi_i phi_j phi_m | phi_i phi_l phi_n >
+!
+! notice the -1 sign: in this way three_body_5_index_312 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: j,k,l,m,n
+ double precision :: integral, wall1, wall0
+ character*(128) :: name_file 
+ name_file = 'six_index_tensor'
+ provide x_W_ij_erf_rk
+ three_body_5_index_312 = 0.d0
+ print*,'Providing the three_body_5_index_312 ...'
+ call wall_time(wall0)
+!if(read_six_index_tensor)then
+! print*,'Reading three_body_5_index_312 from disk ...'
+! call read_array_6_index_tensor(mo_num,three_body_5_index_312,name_file)
+!else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_5_index_312)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = n, mo_num
+      do j = l, mo_num
+        integral = 0.d0
+        
+        !                         <j m k|l n k> - > <j m k|n k l>
+        call give_integrals_3_body(j,m,k,n,k,l,integral)
+
+        three_body_5_index_312(k,j,m,l,n) = -1.d0 * integral 
+  
+        ! permutation with k,i
+        three_body_5_index_312(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_312(k,j,n,l,m) = -1.d0 * integral 
+        ! three permutations with k,i
+        three_body_5_index_312(k,l,n,j,m) = -1.d0 * integral 
+  
+        ! permutation with l,j
+        three_body_5_index_312(k,l,m,j,n) = -1.d0 * integral ! j,l
+        ! two permutations with l,j
+        three_body_5_index_312(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_312(k,l,n,j,m) = -1.d0 * integral 
+        ! two permutations with l,j
+  
+        ! permutation with m,n
+        three_body_5_index_312(k,j,n,l,m) = -1.d0 * integral ! m,n
+        ! two permutations with m,n
+        three_body_5_index_312(k,j,n,l,m) = -1.d0 * integral ! m,n
+        three_body_5_index_312(k,l,n,j,m) = -1.d0 * integral ! m,n
+        ! three permutations with k,i
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+!endif
+ call wall_time(wall1)
+ print*,'wall time for three_body_5_index_312',wall1 - wall0
+!if(write_six_index_tensor)then
+! print*,'Writing three_body_5_index_312 on disk ...'
+! call write_array_6_index_tensor(mo_num,three_body_5_index_312,name_file)
+! call ezfio_set_three_body_5_index_312_io_six_index_tensor("Read")
+!endif
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, three_body_5_index_132, (mo_num, mo_num, mo_num, mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! 5 index matrix element of the -L  three-body operator 
+!
+! three_body_5_index_132(i,j,m,l,n) = < phi_i phi_j phi_m | phi_i phi_l phi_n >
+!
+! notice the -1 sign: in this way three_body_5_index_132 can be directly used to compute Slater rules :)
+ END_DOC
+ integer :: j,k,l,m,n
+ double precision :: integral, wall1, wall0
+ character*(128) :: name_file 
+ name_file = 'six_index_tensor'
+ provide x_W_ij_erf_rk
+ three_body_5_index_132 = 0.d0
+ print*,'Providing the three_body_5_index_132 ...'
+ call wall_time(wall0)
+!if(read_six_index_tensor)then
+! print*,'Reading three_body_5_index_132 from disk ...'
+! call read_array_6_index_tensor(mo_num,three_body_5_index_132,name_file)
+!else
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (j,k,l,m,n,integral) & 
+ !$OMP SHARED (mo_num,three_body_5_index_132)
+ !$OMP DO SCHEDULE (guided) COLLAPSE(2)
+  do n = 1, mo_num
+   do l = 1, mo_num
+    do k = 1, mo_num
+     do m = n, mo_num
+      do j = l, mo_num
+        integral = 0.d0
+        
+        !                         <j m k|l n k> - > <j m k|k l n>
+        call give_integrals_3_body(j,m,k,k,l,n,integral)
+
+        three_body_5_index_132(k,j,m,l,n) = -1.d0 * integral 
+  
+        ! permutation with k,i
+        three_body_5_index_132(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_132(k,j,n,l,m) = -1.d0 * integral 
+        ! three permutations with k,i
+        three_body_5_index_132(k,l,n,j,m) = -1.d0 * integral 
+  
+        ! permutation with l,j
+        three_body_5_index_132(k,l,m,j,n) = -1.d0 * integral ! j,l
+        ! two permutations with l,j
+        three_body_5_index_132(k,l,m,j,n) = -1.d0 * integral 
+        three_body_5_index_132(k,l,n,j,m) = -1.d0 * integral 
+        ! two permutations with l,j
+  
+        ! permutation with m,n
+        three_body_5_index_132(k,j,n,l,m) = -1.d0 * integral ! m,n
+        ! two permutations with m,n
+        three_body_5_index_132(k,j,n,l,m) = -1.d0 * integral ! m,n
+        three_body_5_index_132(k,l,n,j,m) = -1.d0 * integral ! m,n
+        ! three permutations with k,i
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
+!endif
+ call wall_time(wall1)
+ print*,'wall time for three_body_5_index_132',wall1 - wall0
+!if(write_six_index_tensor)then
+! print*,'Writing three_body_5_index_132 on disk ...'
+! call write_array_6_index_tensor(mo_num,three_body_5_index_132,name_file)
+! call ezfio_set_three_body_5_index_132_io_six_index_tensor("Read")
+!endif
+
+END_PROVIDER 
+
