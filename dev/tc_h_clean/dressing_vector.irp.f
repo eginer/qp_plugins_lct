@@ -77,29 +77,41 @@ subroutine get_e_components_htilde(psidet,psicoef,ndet,hmono_av,heff_av,hderiv_a
  integer(bit_kind), intent(in)  :: psidet(N_int,2,ndet)
  integer, intent(in)            :: ndet
  double precision, intent(out)  :: hmono_av,heff_av,hderiv_av,hthree_av,htot_av
- double precision :: hij,htot,htilde_psi_mat,hmono,heff,hderiv,hthree
+ double precision :: hij,htot,htilde_psi_mat,hmono,heff,hderiv,hthree,u_dot_v
+ double precision, allocatable :: hmono_vec(:),heff_vec(:),hderiv_vec(:),hthree_vec(:)
  integer :: i,j
+ allocate(hmono_vec(ndet),heff_vec(ndet),hderiv_vec(ndet),hthree_vec(ndet))
 
  hmono_av  = 0.d0
  heff_av   = 0.d0
  hderiv_av = 0.d0
  hthree_av = 0.d0
+
+ hmono_vec = 0.d0
+ heff_vec = 0.d0
+ hderiv_vec = 0.d0
+ hthree_vec = 0.d0
  i=1
  j=1
  call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htot)
  !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
- !$OMP SHARED(hmono_av,heff_av,hderiv_av,hthree_av,ndet,psidet,psicoef) &
+ !$OMP SHARED(hmono_vec,heff_vec,hderiv_vec,hthree_vec,ndet,psidet,psicoef) &
  !$OMP PRIVATE(i,j,htilde_psi_mat,hmono,heff,hderiv,hthree,htot)
   do i = 1, ndet
    do j = 1, ndet
     call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htot)
-    hmono_av += psicoef(j) * hmono * psicoef(i)
-    heff_av += psicoef(j) * heff * psicoef(i)
-    hderiv_av += psicoef(j) * hderiv * psicoef(i)
-    hthree_av += psicoef(j) * hthree * psicoef(i)
+    hmono_vec(i)  += psicoef(j) * hmono  
+    heff_vec(i)   += psicoef(j) * heff   
+    hderiv_vec(i) += psicoef(j) * hderiv 
+    hthree_vec(i) += psicoef(j) * hthree 
    enddo
   enddo
  !$OMP END PARALLEL DO
+ hmono_av = u_dot_v(psicoef,hmono_vec,ndet)
+ heff_av = u_dot_v(psicoef,heff_vec,ndet)
+ hderiv_av = u_dot_v(psicoef,hderiv_vec,ndet)
+ hthree_av = u_dot_v(psicoef,hthree_vec,ndet)
+
  htot_av = hmono_av + heff_av + hderiv_av + hthree_av
 
 
