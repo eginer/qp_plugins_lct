@@ -110,7 +110,7 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
  double precision, allocatable :: H_jj(:),Dress_jj(:),Dressing_vec(:,:),energies(:)
  double precision, allocatable :: htilde_psi(:)
  double precision :: residual,u_dot_v,e_expect,e_before, delta_e
- external hcalc_template
+ external H_u_0_nstates_openmp
 
  integer :: n_iter_max 
  n_iter_max = 1000
@@ -145,7 +145,7 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
   !!! Compute the dressing vector 
   call get_dressing_tc_for_dav(psicoef(1,1),psidet,sze,N_st,dagger,Dressing_vec)
   !!! Call the Davidson for dressing vector 
-  call dav_double_dressed(psicoef,H_jj,Dress_jj,Dressing_vec,idx_dress,energies,sze,N_st,N_st_diag,converged,hcalc_template)
+  call dav_double_dressed(psicoef,H_jj,Dress_jj,Dressing_vec,idx_dress,energies,sze,N_st,N_st_diag,converged,H_u_0_nstates_openmp)
 
   if(.not.dagger)then
    !!! Compute htilde_psi = Htilde | psicoef >
