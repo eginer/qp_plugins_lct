@@ -122,7 +122,7 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
  enddo
  !!! H matrix diagonal elements and nul diagonal dressing 
  do j = 1, N_det
-  H_jj(j) = H_matrix_all_dets(j,j)
+  H_jj(j) = H_matrix_diag_all_dets(j)
   Dress_jj(j) = 0.d0
  enddo
 
