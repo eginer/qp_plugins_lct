@@ -1,3 +1,21 @@
+subroutine htilde_mu_mat_tot(key_j,key_i,Nint,htot)
+  use bitmasks
+  BEGIN_DOC
+! <key_j | H_tilde | key_i> 
+!!
+!! WARNING !!
+! 
+! Non hermitian !!
+  END_DOC
+  implicit none
+  integer(bit_kind), intent(in)  :: key_j(Nint,2),key_i(Nint,2)
+  integer, intent(in)            :: Nint
+  double precision, intent(out)  :: htot
+  double precision  :: hmono,heff,hderiv,hthree
+  call htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
+  htot = hmono+heff+hderiv+hthree
+end
+
 subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
   use bitmasks
   BEGIN_DOC

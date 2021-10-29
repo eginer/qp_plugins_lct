@@ -30,4 +30,5 @@ subroutine routine
  do i = 1, N_det
   write(*,'(I5,X,(100(F9.5,X)))')i,leigvec_tc(i,1),reigvec_tc(i,1),psi_coef(i,1)
  enddo
+ call routine_save_right
 end

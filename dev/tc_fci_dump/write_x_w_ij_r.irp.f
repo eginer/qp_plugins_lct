@@ -17,12 +17,12 @@ subroutine routine_write_grid_pt_mos
  output =trim(ezfio_filename)//'/n_grid_pts_mo_num'
  i_unit_output = getUnitAndOpen(output,'w')
  write(i_unit_output,*)n_points_final_grid
- write(i_unit_output,*)mo_num
+ write(i_unit_output,*)n_act_orb 
 end
 
 subroutine routine_x_wij_r
  implicit none
- integer :: ipoint,m,i,j
+ integer :: ipoint,m,i,j,ii,jj
  double precision :: wall0,wall1
  double precision,allocatable :: weight(:)
  character*(128) :: output
@@ -34,8 +34,10 @@ subroutine routine_x_wij_r
  output =trim(ezfio_filename)//'/x_w_ij_r'
  i_unit_output = getUnitAndOpen(output,'w')
  call wall_time(wall0)
- do i = 1, mo_num
-  do j = 1, mo_num
+ do ii = 1, n_act_orb
+  i = list_act(ii)
+  do jj = 1, n_act_orb 
+   j = list_act(jj)
    do m = 1, 3
     do ipoint = 1, n_points_final_grid
      write(i_unit_output,*)ipoint,m,j,i,x_W_ij_erf_rk(ipoint,m,j,i)
@@ -50,7 +52,7 @@ end
 
 subroutine routine_mos
  implicit none
- integer :: ipoint,i
+ integer :: ipoint,i,ii
  double precision :: wall0,wall1
  character*(128) :: output
  integer :: i_unit_output
@@ -58,7 +60,8 @@ subroutine routine_mos
  output =trim(ezfio_filename)//'/mos_in_r'
  i_unit_output = getUnitAndOpen(output,'w')
  call wall_time(wall0)
- do i = 1, mo_num
+ do ii = 1, n_act_orb
+  i = list_act(ii)
   do ipoint = 1, n_points_final_grid
    write(i_unit_output,*)ipoint,i,mos_in_r_array_transp(ipoint,i) * sqrt_weight_at_r(ipoint)
   enddo
