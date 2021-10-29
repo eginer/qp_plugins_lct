@@ -61,4 +61,3 @@ subroutine read_fcidump_3_tc(array)
   enddo
 
 end
-

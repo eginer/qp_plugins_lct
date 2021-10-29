@@ -12,10 +12,10 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
  print*,'Providing the three_body_ints ...'
  call wall_time(wall0)
  name_file = 'six_index_tensor'
- if(read_3_body_tc_ints)then
+ if(read_three_body_ints)then
   call read_fcidump_3_tc(three_body_ints)
  else
-  if(read_six_index_tensor)then
+  if(read_three_body_ints)then
    print*,'Reading three_body_ints from disk ...'
    call read_array_6_index_tensor(mo_num,three_body_ints,name_file)
   else
@@ -74,10 +74,10 @@ BEGIN_PROVIDER [ double precision, three_body_ints, (mo_num, mo_num, mo_num, mo_
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_ints',wall1 - wall0
- if(write_six_index_tensor)then
+ if(write_three_body_ints)then
   print*,'Writing three_body_ints on disk ...'
   call write_array_6_index_tensor(mo_num,three_body_ints,name_file)
-  call ezfio_set_three_body_ints_io_six_index_tensor("Read")
+  call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
 
 END_PROVIDER 
