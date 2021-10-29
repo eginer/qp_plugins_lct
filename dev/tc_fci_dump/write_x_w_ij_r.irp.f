@@ -40,7 +40,7 @@ subroutine routine_x_wij_r
    j = list_act(jj)
    do m = 1, 3
     do ipoint = 1, n_points_final_grid
-     write(i_unit_output,*)ipoint,m,j,i,x_W_ij_erf_rk(ipoint,m,j,i)
+     write(i_unit_output,*)ipoint,m,jj,ii,x_W_ij_erf_rk(ipoint,m,j,i)
     enddo
    enddo
   enddo
@@ -63,7 +63,7 @@ subroutine routine_mos
  do ii = 1, n_act_orb
   i = list_act(ii)
   do ipoint = 1, n_points_final_grid
-   write(i_unit_output,*)ipoint,i,mos_in_r_array_transp(ipoint,i) * sqrt_weight_at_r(ipoint)
+   write(i_unit_output,*)ipoint,ii,mos_in_r_array_transp(ipoint,i) * sqrt_weight_at_r(ipoint)
   enddo
  enddo
  call wall_time(wall1)

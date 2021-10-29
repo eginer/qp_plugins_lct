@@ -189,7 +189,16 @@ end
 &BEGIN_PROVIDER [ double precision, h_three_comp_right_tc]
 &BEGIN_PROVIDER [ double precision, h_tot_comp_right_tc]
  implicit none
- call get_e_components_htilde(psi_det,psi_coef,n_det,h_mono_comp_right_tc,h_eff_comp_right_tc,& 
+ use bitmasks
+ double precision, allocatable :: psicoef(:)
+ integer(bit_kind),allocatable :: psidet(:,:,:)
+ allocate(psicoef(N_det),psidet(N_int,2,N_det))
+ integer :: i
+ do i = 1, N_det
+  psidet(1:N_int,1:2,i) = psi_det(1:N_int,1:2,i)
+  psicoef(i) = psi_coef(i,1)
+ enddo
+ call get_e_components_htilde(psidet,psicoef,n_det,h_mono_comp_right_tc,h_eff_comp_right_tc,& 
                               h_deriv_comp_right_tc,h_three_comp_right_tc,h_tot_comp_right_tc)
 
 END_PROVIDER 
