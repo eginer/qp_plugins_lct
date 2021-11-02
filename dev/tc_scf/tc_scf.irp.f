@@ -7,8 +7,8 @@ program tc_scf
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-!  call routine_mo
- call save_fock_mos
+  call routine_mo
+  call save_fock_mos
  touch mo_coef 
  call save_mos
 end
@@ -41,9 +41,11 @@ subroutine routine_mo
   do j = elec_alpha_num+1, mo_num
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)
-   f_tc = Fock_matrix_tc_mo_alpha(i,j) 
    call do_single_excitation(det_i,i,j,1,i_ok)
-   call htilde_mu_mat(ref_bitmask,det_i,hmono,heff,hderiv,hthree,htot)
+!   f_tc = Fock_matrix_tc_mo_alpha(i,j) ! <HF|H a^dagger_j a_i |HF > = F(i,j)
+!   call htilde_mu_mat(ref_bitmask,det_i,hmono,heff,hderiv,hthree,htot)
+   f_tc = Fock_matrix_tc_mo_alpha(j,i) ! <HF|H a^dagger_j a_i |HF > = F(i,j)
+   call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
    print*,'i,j',i,j
    print*,'ref,new,dabs'
    print*,htot,f_tc, dabs(f_tc - htot)
@@ -67,19 +69,23 @@ subroutine save_fock_mos
  double precision, allocatable :: reigvec_tc_tmp(:,:),leigvec_tc_tmp(:,:),eigval_right_tmp(:)
  allocate(reigvec_tc_tmp(mo_num,mo_num),leigvec_tc_tmp(mo_num,mo_num),eigval_right_tmp(mo_num))
  integer :: n_real_tc_eigval_right
+
  call non_hrmt_real_diag(mo_num,Fock_matrix_tc_mo_tot,reigvec_tc_tmp,leigvec_tc_tmp,m,eigval_right_tmp)
- print*,'eigenvectors '
+
  do i = 1, mo_num
   print*,'eigenvalues',eigval_right_tmp(i)
+  print*,'right eigenvectors '
   write(*,'(100(F10.5,X))')reigvec_tc_tmp(:,i)
+  print*,'left  eigenvectors '
+  write(*,'(100(F10.5,X))')leigvec_tc_tmp(:,i)
  enddo
- double precision, allocatable  :: mo_coef_new(:,:)
- allocate(mo_coef_new(ao_num, mo_num))
- mo_coef_new = mo_coef
+ double precision, allocatable  :: mo_coef_old(:,:)
+ allocate(mo_coef_old(ao_num, mo_num))
+ mo_coef_old = mo_coef
  integer :: m
  m = mo_num
- call dgemm('N','N',ao_num,m,m,1.d0,mo_coef_new,size(mo_coef_new,1),reigvec_tc_tmp,size(reigvec_tc_tmp,1),0.d0,mo_coef,size(mo_coef,1))
-! call dgemm('N','N',ao_num,m,m,1.d0,mo_coef_new,size(mo_coef_new,1),R,size(R,1),0.d0,mo_coef,size(mo_coef,1))
+ call dgemm('N','N',ao_num,m,m,1.d0,mo_coef_old,size(mo_coef_old,1),reigvec_tc_tmp,size(reigvec_tc_tmp,1),0.d0,mo_coef,size(mo_coef,1))
+! call dgemm('N','N',ao_num,m,m,1.d0,mo_coef_old,size(mo_coef_old,1),R,size(R,1),0.d0,mo_coef,size(mo_coef,1))
  
 
 end
