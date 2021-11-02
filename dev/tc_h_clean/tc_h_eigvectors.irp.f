@@ -76,7 +76,7 @@ subroutine write_left_right
  call ezfio_set_tc_h_clean_leigvec_tc(leigvec_tc_tmp)
 end
 
-subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dagger,energies_out,converged)
+subroutine iterative_davidson_tc(psidet,psicoef,ndet,N_st,N_st_diag,idx_dress,dagger,energies_out,converged)
  implicit none
  BEGIN_DOC
 ! iterative Davidson technique to obtain the lowests states of the TC Hamiltonian
@@ -85,7 +85,7 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
 !             
 ! psicoef     : guess of the coefficients 
 !             
-! sze         : number of determinants in input
+! ndet         : number of determinants in input
 !             
 ! N_st        : Number of state targetted 
 !             
@@ -101,9 +101,9 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
  END_DOC
 
  use bitmasks
- double precision, intent(inout)   :: psicoef(sze,N_st_diag),energies_out(N_st)
- integer(bit_kind), intent(in)     :: psidet(N_int,2,sze)
- integer, intent(in)               :: sze,N_st,idx_dress,N_st_diag
+ double precision, intent(inout)   :: psicoef(ndet,N_st_diag),energies_out(N_st)
+ integer(bit_kind), intent(in)     :: psidet(N_int,2,ndet)
+ integer, intent(in)               :: ndet,N_st,idx_dress,N_st_diag
  logical, intent(in)            :: dagger
  logical, intent(out)              :: converged
  integer :: istate,j,i
@@ -114,8 +114,8 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
 
  integer :: n_iter_max 
  n_iter_max = 1000
- allocate(H_jj(sze), Dress_jj(sze), Dressing_vec(sze,N_st))
- allocate(energies(N_st_diag),htilde_psi(sze))
+ allocate(H_jj(ndet), Dress_jj(ndet), Dressing_vec(ndet,N_st))
+ allocate(energies(N_st_diag),htilde_psi(ndet))
  !!! Create a Guess 
  do istate = N_st + 1, N_st_diag
   psicoef(istate,istate) = 1.d0
@@ -143,25 +143,25 @@ subroutine iterative_davidson_tc(psidet,psicoef,sze,N_st,N_st_diag,idx_dress,dag
   j += 1
   print*,'iteration = ',j
   !!! Compute the dressing vector 
-  call get_dressing_tc_for_dav(psicoef(1,1),psidet,sze,N_st,dagger,Dressing_vec)
+  call get_dressing_tc_for_dav(psicoef(1,1),psidet,ndet,N_st,dagger,Dressing_vec)
   !!! Call the Davidson for dressing vector 
-  call dav_double_dressed(psicoef,H_jj,Dress_jj,Dressing_vec,idx_dress,energies,sze,N_st,N_st_diag,converged,H_u_0_nstates_openmp)
+  call dav_double_dressed(psicoef,H_jj,Dress_jj,Dressing_vec,idx_dress,energies,ndet,N_st,N_st_diag,converged,H_u_0_nstates_openmp)
 
   if(.not.dagger)then
    !!! Compute htilde_psi = Htilde | psicoef >
-   call get_htilde_psi(psidet,psicoef,sze,htilde_psi)
+   call get_htilde_psi(psidet,psicoef,ndet,htilde_psi)
   else
-   call get_htilde_dagger_psi(psidet,psicoef,sze,htilde_psi)
+   call get_htilde_dagger_psi(psidet,psicoef,ndet,htilde_psi)
   endif
   !!! Compute the expectation value < psicoef | Htilde | psicoef >
-  e_expect = u_dot_v(htilde_psi,psicoef(1,1),sze)
+  e_expect = u_dot_v(htilde_psi,psicoef(1,1),ndet)
   if(j>1)then
    delta_e = energies(1) - e_before 
   endif
   e_before = energies(1)
   !!! Compute the residual < psicoef | (Htilde - E) | psicoef >
-  htilde_psi(1:sze) += -energies(1) * psicoef(1:sze,1)
-  residual = u_dot_v(psicoef(1,1),htilde_psi,sze)
+  htilde_psi(1:ndet) += -energies(1) * psicoef(1:ndet,1)
+  residual = u_dot_v(psicoef(1,1),htilde_psi,ndet)
   residual = dabs(residual)
   print*, ' energies = ',energies(1)
   if(j>1)then

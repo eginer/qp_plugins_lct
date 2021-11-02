@@ -1,4 +1,4 @@
-subroutine get_dressing_tc_for_dav(u_in,dets_in,sze,N_st,dagger,dress_vec)
+subroutine get_dressing_tc_for_dav(u_in,dets_in,ndet,N_st,dagger,dress_vec)
  implicit none
  BEGIN_DOC
 ! you enter with a wave function of determinants dets_in and coefs u_in
@@ -6,26 +6,26 @@ subroutine get_dressing_tc_for_dav(u_in,dets_in,sze,N_st,dagger,dress_vec)
 ! you get out with a dressing vector to dress_vec be used in the davidson dressed
  END_DOC
   use bitmasks
- double precision, intent(in)   :: u_in(sze)
- integer(bit_kind), intent(in)  :: dets_in(N_int,2,sze)
- integer, intent(in)            :: sze,N_st
+ integer, intent(in)            :: ndet,N_st
+ double precision, intent(in)   :: u_in(ndet)
+ integer(bit_kind), intent(in)  :: dets_in(N_int,2,ndet)
  logical, intent(in)            :: dagger
- double precision, intent(out)  :: dress_vec(sze,N_st)
+ double precision, intent(out)  :: dress_vec(ndet,N_st)
  integer :: i,ii,k,j, l
  double precision :: f, tmp
  double precision, allocatable :: delta(:)
 
- allocate(delta(sze))
+ allocate(delta(ndet))
  if(dagger)then
-  call get_delta_tc_dagger_psi(dets_in,u_in,sze,delta)
+  call get_delta_tc_dagger_psi(dets_in,u_in,ndet,delta)
  else
-  call get_delta_tc_psi(dets_in,u_in,sze,delta)
+  call get_delta_tc_psi(dets_in,u_in,ndet,delta)
  endif
 
  dress_vec(:,:) = 0.d0
 
  l = 1
- do j = 1, sze
+ do j = 1, ndet
    if (j == l) cycle
    dress_vec(j,1)  = delta(j) 
    dress_vec(l,1) -= u_in(j) * delta(j) / u_in(l)
