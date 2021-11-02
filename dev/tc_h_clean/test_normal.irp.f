@@ -17,8 +17,9 @@ subroutine test_pouet
  integer   :: exc(0:2,2,2)
  integer   :: degree
  double precision :: phase,hmono,heff,hderiv,hthree,htot
- double precision :: hnew
+ double precision :: hnew,accu_n(2,2)
  accu = 0.d0
+ accu_n = 0.d0
  do h1 = 1, mo_num
   do h2 = 1, mo_num
    do p1 = h1+1, mo_num
@@ -35,12 +36,14 @@ subroutine test_pouet
        if(i_ok == -1)cycle
        call get_excitation_degree(ref_bitmask,det_i,degree,N_int)
        if(degree.ne.2)cycle
+       accu_n(s2,s1) += 1.d0
        call get_excitation(ref_bitmask,det_i,exc,degree,phase,N_int)
        call htilde_mu_mat(ref_bitmask,det_i,hmono,heff,hderiv,hthree,htot)
        hnew = hmono+heff+hderiv+phase*(normal_two_body(p2,h2,p1,h1))
-!       if(dabs(htot).gt.1.d-6)then
-       print*,s1,s2,htot,hnew,dabs(hnew - htot)
-!       endif
+!       if(dabs(hthree).lt.1.d-10)cycle
+       if(dabs(htot).gt.1.d-6)then
+        print*,s1,s2,htot,hnew,dabs(hnew - htot)
+       endif
        accu(s2,s1) += dabs(hnew - htot)
       enddo
      enddo
@@ -52,7 +55,7 @@ subroutine test_pouet
  print*,''
  print*,''
  do i = 1, 2
-  print*,accu(:,i)
+  print*,accu(1,i)/accu_n(1,i),accu(2,i)/accu_n(2,i)
  enddo
   
 end
