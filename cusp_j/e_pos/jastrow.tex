@@ -40,7 +40,7 @@ This section presents the basics of the transcorrelation for electron-positron w
 \end{abstract}
 
 \maketitle
-\section{e-positron Jastrow factor}
+\section{e-positron transcorrelation}
 We assume that we have a Jastrow factor $j(\bri{i},\bri{p})$ where $\bri{i}$ is the position of the $i$-th electron and $\bri{p}$ is the position of the positron. 
 We want to compute the similarity transformation of the following Hamiltonian
 \begin{equation}
@@ -216,6 +216,64 @@ We can therefore write the total transcorrelated Hamiltonian as
            & -\frac{1}{2} \sum_{i=1}^N \sum_{j\ne i} \big[ \nabla_{\bri{p}} j(\bri{i},\bri{p})\big] \cdot \big[ \nabla_{\bri{p}} j(\bri{j},\bri{p})\big].
  \end{aligned}
 \end{equation}
+
+\section{e-positron equation for Jastrow factor}
+We can write the Hamiltonian for one electron-positron pair, neglecting all the rest of the particle in spherical coordinates as 
+\begin{equation}
+ \begin{aligned}
+  H_{ep} & = -\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} + \frac{1}{r} \big) \\
+ \end{aligned}
+\end{equation}
+where $r= |\br_{e}-\br_{p}|$. 
+Such a Hamiltonian is a special case of the generic hydrogen like Hamiltonian 
+\begin{equation}
+ \begin{aligned}
+ H^h(Z) & = -\frac{1}{2} \big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{}\big) - \frac{Z}{r} \\
+     & = -\frac{1}{2} \big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} + \frac{2Z}{r}\big).  
+ \end{aligned}
+\end{equation}
+We see that indeed one has 
+\begin{equation}
+ H_{ep} = 2 H^h(Z=\frac{1}{2}).
+\end{equation}
+We know how to compute the similarity transformation of $H^h(Z)$ by a generic Jastrow factor depending only on $r$
+\begin{equation}
+ \begin{aligned}
+ \label{eq:one_e_0}
+ & e^{-j(r)}H^h(Z)\,e^{j(r)} = \\
+ & -\frac{1}{2}\big( \deriv{}{r}{2} + \frac{2}{r} \deriv{}{r}{} \big) -\deriv{j(r)}{r}{}\deriv{}{r}{}\\
+ &-\frac{1}{r}\bigg(\deriv{j(r)}{r}{} + Z \bigg) \\ 
+ & - \frac{1}{2}\deriv{j(r)}{r}{2} -  \frac{1}{2}\bigg(\deriv{j(r)}{r}{} \bigg)^2.
+ \end{aligned}
+\end{equation}
+We want to find the Jastrow factor $j(r,\mu,Z)$ such that
+\begin{equation}
+ \label{eq:one_e_01}
+ -\frac{1}{r}\bigg(\deriv{j(r,\mu,Z)}{r}{} + Z \bigg) = -Z\frac{\text{erf}(\mu r)}{r},
+\end{equation}
+or equivalently
+\begin{equation}
+ \label{eq:one_e_1}
+ \deriv{}{r}{}j(r,\mu,Z) = Z\bigg( \text{erf}(\mu r) - 1\bigg).
+\end{equation}                                                      
+The Jastrow factor fulfilling Eq. \eqref{eq:one_e_1} is 
+\begin{equation}
+ \label{eq:one_e_2}
+ j(r,\mu,Z) = -Z r \bigg( 1 - \text{erf}\big(\mu r\big) \bigg) + \frac{Z}{\sqrt{\pi}\mu} e^{-\big(\mu r \big)^2}. 
+\end{equation}
+Therefore, if we take the Jastrow with $Z=\frac{1}{2}$ one obtains 
+\begin{equation}
+ \label{eq:one_e_3}
+ j_{ep}(r,\mu) = -\frac{1}{2} r \bigg( 1 - \text{erf}\big(\mu r\big) \bigg) + \frac{1}{2\sqrt{\pi}\mu} e^{-\big(\mu r \big)^2}, 
+\end{equation}
+and one can notice that such a Jastrow factor is exactly the opposite of the usual Jastrow factor used for electron-electron correlation  
+\begin{equation}
+ \label{eq:one_e_4}
+ j_{ep}(r,\mu) = -j_{ee}(r,\mu). 
+\end{equation}
+Therefore the similarity transformation with $j_{ep}(r,\mu)$ is exactly the adjoin of the usual similarity transformation for electrons. 
+
+
 
 
 \bibliography{srDFT_SC}
