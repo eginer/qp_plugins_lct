@@ -1,0 +1,58 @@
+program test
+ implicit none
+  my_grid_becke = .True.
+  my_n_pt_r_grid = 30
+  my_n_pt_a_grid = 50
+  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
+ call test_pouet
+end
+
+subroutine test_pouet
+ implicit none
+ use bitmasks ! you need to include the bitmasks_module.f90 features
+ integer(bit_kind), allocatable :: det_i(:,:)
+ allocate(det_i(N_int,2))
+ integer :: h1,p1,s1,s2,i_ok,i,h2,p2
+ double precision :: accu(2,2)
+ integer   :: exc(0:2,2,2)
+ integer   :: degree
+ double precision :: phase,hmono,heff,hderiv,hthree,htot
+ double precision :: hnew
+ accu = 0.d0
+ do h1 = 1, mo_num
+  do h2 = 1, mo_num
+   do p1 = h1+1, mo_num
+    do p2 = h2+1, mo_num
+     do s1 = 1, 2
+      do s2 = 1, 2
+       do i = 1, N_int
+         det_i(i,1) = ref_bitmask(i,1)
+         det_i(i,2) = ref_bitmask(i,2)
+       enddo
+       call do_single_excitation(det_i,h1,p1,s1,i_ok)
+       if(i_ok == -1)cycle
+       call do_single_excitation(det_i,h2,p2,s1,i_ok)
+       if(i_ok == -1)cycle
+       call get_excitation_degree(ref_bitmask,det_i,degree,N_int)
+       if(degree.ne.2)cycle
+       call get_excitation(ref_bitmask,det_i,exc,degree,phase,N_int)
+       call htilde_mu_mat(ref_bitmask,det_i,hmono,heff,hderiv,hthree,htot)
+       hnew = hmono+heff+hderiv+phase*(normal_two_body(p2,h2,p1,h1))
+!       if(dabs(htot).gt.1.d-6)then
+       print*,s1,s2,htot,hnew,dabs(hnew - htot)
+!       endif
+       accu(s2,s1) += dabs(hnew - htot)
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,''
+ print*,''
+ print*,''
+ do i = 1, 2
+  print*,accu(:,i)
+ enddo
+  
+end
