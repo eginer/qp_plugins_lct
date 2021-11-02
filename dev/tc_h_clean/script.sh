@@ -1,8 +1,8 @@
  source /home/emmanuel/qp2/quantum_package.rc
- atom=He
+ atom=Be
  qp run scf 
  echo $atom > ${atom}.xyz
- qp create_ezfio -b aug-cc-pvdz ${atom}.xyz 
+ qp create_ezfio -b cc-pcvdz ${atom}.xyz 
  qp run scf 
  # prints out typical values of mu, mu_lda and mu_rsc_lda seem good 
  qp run print_mu_av_tc | tee ${EZFIO_FILE}.mu_av.out 
@@ -10,6 +10,7 @@
  qp set ao_two_e_erf_ints mu_erf $mu_rsc_lda 
  # you set the threshold to ZERO to save all the determinants in the CIS 
  qp set determinants threshold_save_wf 0.
+ qp set tc_h_clean three_body_h_tc False
  # You diagonalize the TC Hamiltonian within the set of determinants saved in the EZFIO
 for i in `seq 1 10`
  do
