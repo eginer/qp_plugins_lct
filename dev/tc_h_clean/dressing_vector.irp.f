@@ -107,10 +107,16 @@ subroutine get_e_components_htilde(psidet,psicoef,ndet,hmono_av,heff_av,hderiv_a
    enddo
   enddo
  !$OMP END PARALLEL DO
- hmono_av = u_dot_v(psicoef,hmono_vec,ndet)
- heff_av = u_dot_v(psicoef,heff_vec,ndet)
- hderiv_av = u_dot_v(psicoef,hderiv_vec,ndet)
- hthree_av = u_dot_v(psicoef,hthree_vec,ndet)
+ do i = 1, ndet
+  hmono_av  += psicoef(i) * hmono_vec(i)
+  heff_av   += psicoef(i) * heff_vec(i)
+  hderiv_av += psicoef(i) * hderiv_vec(i)
+  hthree_av += psicoef(i) * hthree_vec(i)
+ enddo
+! hmono_av  = u_dot_v(psicoef,hmono_vec,ndet)
+! heff_av   = u_dot_v(psicoef,heff_vec,ndet)
+! hderiv_av = u_dot_v(psicoef,hderiv_vec,ndet)
+! hthree_av = u_dot_v(psicoef,hthree_vec,ndet)
 
  htot_av = hmono_av + heff_av + hderiv_av + hthree_av
 

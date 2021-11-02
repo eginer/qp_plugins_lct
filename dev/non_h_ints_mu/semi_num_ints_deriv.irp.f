@@ -189,9 +189,9 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, ao_non_hermit_term_chemist, (ao_num, ao_num, ao_num, ao_num)]
  implicit none
 BEGIN_DOC
-!                             1 1 2 2      1 2                                1 2 
+!                            1 1 2 2      1 2                                1 2 
 !
-! ao_two_e_eff_dr12_pot_array(k,i,l,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+! ao_non_hermit_term_chemist(k,i,l,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
 END_DOC
  integer :: i,j,k,l,ipoint,m
  double precision :: weight1,thr,r(3)
