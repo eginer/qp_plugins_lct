@@ -87,11 +87,11 @@ END_PROVIDER
     do l = 1, ao_num
      density_a = SCF_density_matrix_ao_alpha(l,j)
      density_b = SCF_density_matrix_ao_beta(l,j)
-     density   = density_a + density_b
+     density   = density_a + density_b                      !  rho(j,l)   *  < k l| T | i j>
      two_e_tc_non_hermit_integral_alpha(k,i) += density   * ao_non_hermit_term_chemist(l,j,k,i)
      two_e_tc_non_hermit_integral_beta(k,i)  += density   * ao_non_hermit_term_chemist(l,j,k,i)
-     two_e_tc_non_hermit_integral_alpha(k,i) -= density_a   * ao_non_hermit_term_chemist(k,j,l,i)
-     two_e_tc_non_hermit_integral_beta(k,i)  -= density_b   * ao_non_hermit_term_chemist(k,j,l,i)
+     two_e_tc_non_hermit_integral_alpha(k,i) -= density_a * ao_non_hermit_term_chemist(k,j,l,i)
+     two_e_tc_non_hermit_integral_beta(k,i)  -= density_b * ao_non_hermit_term_chemist(k,j,l,i)
     enddo
    enddo
   enddo
