@@ -46,11 +46,10 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
     call diag_htilde_mu_mat_scal_map(key_i,hmono,heff,hderiv,htot)
    endif
    if(three_body_h_tc)then
-!    if(pure_three_body_h_tc.and.degree==3)then
-!     call triple_htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
-!    endif
-    if(degree == 2 .and. double_3_body_tc)then
-     call double_htilde_mu_mat_three_body(key_j,key_i,hthree)
+    if(degree == 2)then
+     if(.not.double_normal_ord.and.double_3_body_tc)then
+       call double_htilde_mu_mat_three_body(key_j,key_i,hthree)
+     endif
     else if(degree == 1)then
      call single_htilde_mu_mat_three_body(key_j,key_i,hthree)
     else if(degree == 0)then
