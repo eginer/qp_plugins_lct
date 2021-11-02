@@ -126,3 +126,9 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_beta, (mo_num,mo_num) ]
    call ao_to_mo(Fock_matrix_tc_ao_beta,size(Fock_matrix_tc_ao_beta,1), &
                  Fock_matrix_tc_mo_beta,size(Fock_matrix_tc_mo_beta,1))
 END_PROVIDER
+
+BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
+ implicit none
+ Fock_matrix_tc_mo_tot = 0.5d0 * (Fock_matrix_tc_mo_alpha + Fock_matrix_tc_mo_beta)
+
+END_PROVIDER 

@@ -7,7 +7,10 @@ program tc_scf
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  call routine_mo
+!  call routine_mo
+ call save_fock_mos
+ touch mo_coef 
+ call save_mos
 end
 
 subroutine routine
@@ -48,5 +51,35 @@ subroutine routine_mo
   enddo
  enddo
 
+ print*,'accu_alpha = ',accu_alpha
+
+end
+
+subroutine save_fock_mos
+ implicit none
+ character*(64) :: label
+ integer :: sign,i
+ logical       :: output
+ output = .True.
+ label = "Canonical"
+ sign = 1
+! call mo_as_eigvectors_of_mo_matrix(Fock_matrix_tc_mo_tot,mo_num,mo_num,label,sign,output)
+ double precision, allocatable :: reigvec_tc_tmp(:,:),leigvec_tc_tmp(:,:),eigval_right_tmp(:)
+ allocate(reigvec_tc_tmp(mo_num,mo_num),leigvec_tc_tmp(mo_num,mo_num),eigval_right_tmp(mo_num))
+ integer :: n_real_tc_eigval_right
+ call non_hrmt_real_diag(mo_num,Fock_matrix_tc_mo_tot,reigvec_tc_tmp,leigvec_tc_tmp,m,eigval_right_tmp)
+ print*,'eigenvectors '
+ do i = 1, mo_num
+  print*,'eigenvalues',eigval_right_tmp(i)
+  write(*,'(100(F10.5,X))')reigvec_tc_tmp(:,i)
+ enddo
+ double precision, allocatable  :: mo_coef_new(:,:)
+ allocate(mo_coef_new(ao_num, mo_num))
+ mo_coef_new = mo_coef
+ integer :: m
+ m = mo_num
+ call dgemm('N','N',ao_num,m,m,1.d0,mo_coef_new,size(mo_coef_new,1),reigvec_tc_tmp,size(reigvec_tc_tmp,1),0.d0,mo_coef,size(mo_coef,1))
+! call dgemm('N','N',ao_num,m,m,1.d0,mo_coef_new,size(mo_coef_new,1),R,size(R,1),0.d0,mo_coef,size(mo_coef,1))
+ 
 
 end
