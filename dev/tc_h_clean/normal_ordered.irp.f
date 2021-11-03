@@ -165,11 +165,10 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
  END_DOC
  use bitmasks ! you need to include the bitmasks_module.f90 features
  integer :: i,ii,j,h1,p1,h2,p2
- integer :: kkk,k,m,l,n,hh1,hh2,pp1,pp2,kk
+ integer :: hh1,hh2,pp1,pp2
  integer                        :: occ(N_int*bit_kind_size,2),Ne(2)
  integer(bit_kind), allocatable :: key_i_core(:,:)
- double precision :: int_direct,int_exc_12,int_exc_13,int_exc_23,hthree
- double precision :: integral,int_exc_l,int_exc_ll
+ double precision :: hthree_aab,hthree_aaa
  allocate(key_i_core(N_int,2))
  if(core_tc_op)then
   do i = 1, N_int
@@ -189,8 +188,13 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
     h2 = list_act(hh2) 
     do pp2 = hh2 , n_act_orb
      p2 = list_act(pp2)
-     call give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree)
-     normal_two_body_aa_bb(p2,h2,p1,h1) = hthree
+     call give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree_aab)
+     if(Ne(2).ge.3)then
+      call give_aaa_contraction(h1,h2,p1,p2,Ne,occ,hthree_aaa)
+     else
+      hthree_aaa = 0.d0
+     endif
+     normal_two_body_aa_bb(p2,h2,p1,h1) = hthree_aab + hthree_aaa
     enddo
    enddo
   enddo
@@ -213,18 +217,19 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
 END_PROVIDER 
 
 
-subroutine update_aa_contraction(h1,h2,p1,p2,Ne,occ,array,n_array)
+subroutine give_aaa_contraction(h1,h2,p1,p2,Ne,occ,hthree)
  implicit none
  integer, intent(in) :: h1,h2,p1,p2
- integer, intent(in) :: Ne(2),occ(N_int*bit_kind_size,2),n_array
- double precision, intent(inout) :: array(n_array,n_array,n_array,n_array)
+ integer, intent(in) :: Ne(2),occ(N_int*bit_kind_size,2)
+ double precision, intent(out) :: hthree
  integer :: ii,i
  double precision :: int_direct,int_exc_12,int_exc_13,int_exc_23
  double precision :: integral,int_exc_l,int_exc_ll
+ hthree = 0.d0
  do ii = 1, Ne(2) ! purely closed shell part 
   i = occ(ii,2)
-  print*,'--'
-  print*,i
+!  print*,'--'
+!  print*,i
   call give_integrals_3_body(i ,p2,p1,i,h2,h1,integral)
   int_direct = -1.d0 * integral
   call give_integrals_3_body(p2,p1,i ,i,h2,h1,integral)
@@ -237,14 +242,14 @@ subroutine update_aa_contraction(h1,h2,p1,p2,Ne,occ,array,n_array)
   int_exc_13= -1.d0 * integral
   call give_integrals_3_body(i ,p1,p2,i,h2,h1,integral)
   int_exc_23= -1.d0 * integral
-  print*,'positive'
-  print*,int_direct,int_exc_l,int_exc_ll
-  print*,'negative'
-  print*,int_exc_12,int_exc_13,int_exc_23
-  print*,'--'
+!  print*,'positive'
+!  print*,int_direct,int_exc_l,int_exc_ll
+!  print*,'negative'
+!  print*,int_exc_12,int_exc_13,int_exc_23
+!  print*,'--'
 
-  array(p2,h2,p1,h1) +=  & 
-  2.d0 * int_direct + int_exc_l + int_exc_ll -( int_exc_12+ int_exc_13+2.d0 * int_exc_23  )
+  hthree +=  & 
+  1.d0 * int_direct + int_exc_l + int_exc_ll -( int_exc_12+ int_exc_13+ int_exc_23  )
  enddo
  do ii = Ne(2)+1,Ne(1) ! purely open-shell part 
   i = occ(ii,1)
@@ -261,8 +266,8 @@ subroutine update_aa_contraction(h1,h2,p1,p2,Ne,occ,array,n_array)
   call give_integrals_3_body(i ,p1,p2,i,h2,h1,integral)
   int_exc_23= -1.d0 * integral
 
-  array(p2,h2,p1,h1) +=  & 
-  1.d0 * int_direct + 0.5d0 * (int_exc_l + int_exc_ll -( int_exc_12+ int_exc_13+2.d0 * int_exc_23  ))
+  hthree +=  & 
+  1.d0 * int_direct + 0.5d0 * (int_exc_l + int_exc_ll -( int_exc_12+ int_exc_13+ int_exc_23  ))
  enddo
 
 end
@@ -271,7 +276,7 @@ subroutine give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree)
  implicit none
  integer, intent(in) :: h1,h2,p1,p2
  integer, intent(in) :: Ne(2),occ(N_int*bit_kind_size,2)
- double precision, intent(inout) :: hthree
+ double precision, intent(out) :: hthree
  integer :: ii,i
  double precision :: int_direct,int_exc_12,int_exc_13,int_exc_23
  double precision :: integral,int_exc_l,int_exc_ll

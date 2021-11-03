@@ -34,10 +34,10 @@ subroutine test_pouet
   do h2 = 1, mo_num
    do p1 = 1, mo_num
     do p2 = 1, mo_num
-!     do s1 = 1, 2
-!      do s2 = 1, 2
-     do s1 = 1,1
-      do s2 = 1,1
+     do s1 = 1, 2
+      do s2 = 1, 2
+!     do s1 = 2,2
+!      do s2 = 2,2
        do i = 1, N_int
          det_i(i,1) = ref_bitmask(i,1)
          det_i(i,2) = ref_bitmask(i,2)
@@ -56,7 +56,11 @@ subroutine test_pouet
 !       call give_aab_contraction(hh1,hh2,pp1,pp2,Ne,occ,hthree_new)
 !       print*,'phase = ',phase
 !       print*,'array(p2,h2,p1,h1)',array(pp2,hh2,pp1,hh1)
-       hthree_new = normal_two_body_aa_bb(pp2,hh2,pp1,hh1)
+       if(s1==s2)then
+        hthree_new = normal_two_body_aa_bb(pp2,hh2,pp1,hh1)
+       else
+        hthree_new = normal_two_body_ab(pp2,hh2,pp1,hh1)
+       endif
        hthree_new *= phase
        hnew = hmono+heff+hderiv+hthree_new
 !
