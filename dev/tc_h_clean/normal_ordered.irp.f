@@ -183,11 +183,11 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
  normal_two_body_aa_bb = 0.d0
  do hh1 = 1, n_act_orb
   h1 = list_act(hh1) 
-  do pp1 = 1 , n_act_orb
+  do pp1 = hh1 , n_act_orb
    p1 = list_act(pp1)
    do hh2 = 1, n_act_orb
     h2 = list_act(hh2) 
-    do pp2 = 1 , n_act_orb
+    do pp2 = hh2 , n_act_orb
      p2 = list_act(pp2)
      call give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree)
      normal_two_body_aa_bb(p2,h2,p1,h1) = hthree
@@ -196,19 +196,19 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
   enddo
  enddo
 
-! do hh1 = 1, n_act_orb
-!  h1 = list_act(hh1) 
-!  do pp1 = hh1+1, n_act_orb
-!   p1 = list_act(pp1)
-!   do hh2 = 1, n_act_orb
-!    h2 = list_act(hh2) 
-!    do pp2 = hh2+1, n_act_orb
-!     p2 = list_act(pp2)
-!     normal_two_body_aa_bb(h2,p2,h1,p1) = normal_two_body_aa_bb(p2,h2,p1,h1)
-!    enddo
-!   enddo
-!  enddo
-! enddo
+ do hh1 = 1, n_act_orb
+  h1 = list_act(hh1) 
+  do pp1 = hh1, n_act_orb
+   p1 = list_act(pp1)
+   do hh2 = 1, n_act_orb
+    h2 = list_act(hh2) 
+    do pp2 = hh2, n_act_orb
+     p2 = list_act(pp2)
+     normal_two_body_aa_bb(h2,p2,h1,p1) = normal_two_body_aa_bb(p2,h2,p1,h1)
+    enddo
+   enddo
+  enddo
+ enddo
 
 END_PROVIDER 
 
