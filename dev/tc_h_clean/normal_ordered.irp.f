@@ -86,17 +86,49 @@ BEGIN_PROVIDER [ double precision, normal_two_body, (mo_num, mo_num, mo_num, mo_
 END_PROVIDER 
 
 
+subroutine give_aba_contraction(h1,h2,p1,p2,Ne,occ,hthree)
+ implicit none
+ integer, intent(in) :: h1,h2,p1,p2
+ integer, intent(in) :: Ne(2),occ(N_int*bit_kind_size,2)
+ double precision, intent(out) :: hthree
+ double precision :: int_direct,int_exc_12,int_exc_13,integral
+ integer :: ii,i
+ !!!! double alpha/beta
+ hthree = 0.d0
+ do ii = 1, Ne(2) ! purely closed shell part 
+  i = occ(ii,2)
+  call give_integrals_3_body(i ,p2,p1,i,h2,h1,integral)
+  int_direct = -1.d0 * integral
+  call give_integrals_3_body(p1,p2, i,i,h2,h1,integral)
+  int_exc_13 = -1.d0 * integral
+  call give_integrals_3_body(p2, i,p1,i,h2,h1,integral)
+  int_exc_12 = -1.d0 * integral
+  hthree += 2.d0 * int_direct - 1.d0 * ( int_exc_13 + int_exc_12)
+ enddo
+ do ii = Ne(2) + 1, Ne(1) ! purely open-shell part 
+  i = occ(ii,1)
+  call give_integrals_3_body(i ,p2,p1,i,h2,h1,integral)
+  int_direct = -1.d0 * integral
+  call give_integrals_3_body(p1,p2, i,i,h2,h1,integral)
+  int_exc_13 = -1.d0 * integral
+  call give_integrals_3_body(p2, i,p1,i,h2,h1,integral)
+  int_exc_12 = -1.d0 * integral
+  hthree += 1.d0 * int_direct - 0.5d0* ( int_exc_13 + int_exc_12)
+ enddo
+
+end
+
 BEGIN_PROVIDER [ double precision, normal_two_body_ab, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  BEGIN_DOC
 ! Normal ordered two-body sector of the three-body terms for opposite spin double excitations 
  END_DOC
  use bitmasks ! you need to include the bitmasks_module.f90 features
- integer :: i,ii,j,h1,p1,h2,p2
- integer :: kkk,k,m,l,n,hh1,hh2,pp1,pp2,kk
+ integer :: h1,p1,h2,p2,i
+ integer :: hh1,hh2,pp1,pp2
  integer                        :: occ(N_int*bit_kind_size,2),Ne(2)
  integer(bit_kind), allocatable :: key_i_core(:,:)
- double precision :: int_direct,int_exc_12,int_exc_13,integral
+ double precision :: hthree
  allocate(key_i_core(N_int,2))
  if(core_tc_op)then
   do i = 1, N_int
@@ -116,27 +148,8 @@ BEGIN_PROVIDER [ double precision, normal_two_body_ab, (mo_num, mo_num, mo_num, 
     h2 = list_act(hh2) 
     do pp2 = hh2, n_act_orb
      p2 = list_act(pp2)
-      !!!! double alpha/beta
-      do ii = 1, Ne(2) ! purely closed shell part 
-       i = occ(ii,2)
-       call give_integrals_3_body(i ,p2,p1,i,h2,h1,integral)
-       int_direct = -1.d0 * integral
-       call give_integrals_3_body(p1,p2, i,i,h2,h1,integral)
-       int_exc_13 = -1.d0 * integral
-       call give_integrals_3_body(p2, i,p1,i,h2,h1,integral)
-       int_exc_12 = -1.d0 * integral
-       normal_two_body_ab(p2,h2,p1,h1) += 2.d0 * int_direct - 1.d0 * ( int_exc_13 + int_exc_12)
-      enddo
-      do ii = Ne(2) + 1, Ne(1) ! purely open-shell part 
-       i = occ(ii,1)
-       call give_integrals_3_body(i ,p2,p1,i,h2,h1,integral)
-       int_direct = -1.d0 * integral
-       call give_integrals_3_body(p1,p2, i,i,h2,h1,integral)
-       int_exc_13 = -1.d0 * integral
-       call give_integrals_3_body(p2, i,p1,i,h2,h1,integral)
-       int_exc_12 = -1.d0 * integral
-       normal_two_body_ab(p2,h2,p1,h1) += 1.d0 * int_direct - 0.5d0* ( int_exc_13 + int_exc_12)
-      enddo
+     call give_aba_contraction(h1,h2,p1,p2,Ne,occ,hthree)
+     normal_two_body_ab(p2,h2,p1,h1) = hthree    
     enddo
    enddo
   enddo
