@@ -53,9 +53,10 @@ subroutine test_pouet
        call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
        integer :: hh1,pp1,hh2,pp2,ss1,ss2
        call decode_exc(exc,2,hh1,pp1,hh2,pp2,ss1,ss2)
-       call give_aab_contraction(hh1,hh2,pp1,pp2,Ne,occ,hthree_new)
+!       call give_aab_contraction(hh1,hh2,pp1,pp2,Ne,occ,hthree_new)
 !       print*,'phase = ',phase
 !       print*,'array(p2,h2,p1,h1)',array(pp2,hh2,pp1,hh1)
+       hthree_new = normal_two_body_aa_bb(pp2,hh2,pp1,hh1)
        hthree_new *= phase
        hnew = hmono+heff+hderiv+hthree_new
 !

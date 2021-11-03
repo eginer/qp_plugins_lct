@@ -182,16 +182,12 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
  endif
  normal_two_body_aa_bb = 0.d0
  do hh1 = 1, n_act_orb
-! do hh1 = 1, 1
   h1 = list_act(hh1) 
   do pp1 = 1 , n_act_orb
-!  do pp1 = 4,4
    p1 = list_act(pp1)
    do hh2 = 1, n_act_orb
-!   do hh2 = 2,2
     h2 = list_act(hh2) 
     do pp2 = 1 , n_act_orb
-!    do pp2 = 7,7
      p2 = list_act(pp2)
      call give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree)
      normal_two_body_aa_bb(p2,h2,p1,h1) = hthree
