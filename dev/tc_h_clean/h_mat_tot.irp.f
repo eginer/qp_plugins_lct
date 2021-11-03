@@ -47,7 +47,7 @@ subroutine htilde_mu_mat(key_j,key_i,hmono,heff,hderiv,hthree,htot)
    endif
    if(three_body_h_tc)then
     if(degree == 2)then
-     if(.not.double_normal_ord.and.double_3_body_tc)then
+     if(.not.double_normal_ord)then
        call double_htilde_mu_mat_three_body(key_j,key_i,hthree)
      endif
     else if(degree == 1)then

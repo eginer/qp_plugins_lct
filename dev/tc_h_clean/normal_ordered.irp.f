@@ -1,11 +1,15 @@
 BEGIN_PROVIDER [ double precision, normal_two_body, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
+ BEGIN_DOC 
+! Normal ordering of the three body interaction on the HF density
+ END_DOC 
  use bitmasks ! you need to include the bitmasks_module.f90 features
  integer :: i,h1,p1,h2,p2
  integer :: hh1,hh2,pp1,pp2
  integer                        :: occ(N_int*bit_kind_size,2),Ne(2)
  integer(bit_kind), allocatable :: key_i_core(:,:)
  double precision :: hthree_aba,hthree_aaa,hthree_aab
+ double precision :: wall0,wall1
  allocate(key_i_core(N_int,2))
  if(core_tc_op)then
   do i = 1, N_int
@@ -17,6 +21,13 @@ BEGIN_PROVIDER [ double precision, normal_two_body, (mo_num, mo_num, mo_num, mo_
   call bitstring_to_list_ab(ref_bitmask,occ,Ne,N_int)
  endif
  normal_two_body = 0.d0
+ print*,'Providing normal_two_body ...'
+ call wall_time(wall0)
+ !$OMP PARALLEL                  &
+ !$OMP DEFAULT (NONE)            &
+ !$OMP PRIVATE (hh1,h1,hh2,h2,pp1,p1,pp2,p2,hthree_aba,hthree_aab,hthree_aaa) & 
+ !$OMP SHARED (n_act_orb,list_act,Ne,occ,normal_two_body)
+ !$OMP DO SCHEDULE (static) 
  do hh1 = 1, n_act_orb
   h1 = list_act(hh1) 
   do pp1 = hh1, n_act_orb
@@ -40,6 +51,8 @@ BEGIN_PROVIDER [ double precision, normal_two_body, (mo_num, mo_num, mo_num, mo_
    enddo
   enddo
  enddo
+ !$OMP END DO
+ !$OMP END PARALLEL
 
  do hh1 = 1, n_act_orb
   h1 = list_act(hh1) 
@@ -54,6 +67,8 @@ BEGIN_PROVIDER [ double precision, normal_two_body, (mo_num, mo_num, mo_num, mo_
    enddo
   enddo
  enddo
+ call wall_time(wall1)
+ print*,'Wall time for normal_two_body ',wall1-wall0
 
 END_PROVIDER 
 

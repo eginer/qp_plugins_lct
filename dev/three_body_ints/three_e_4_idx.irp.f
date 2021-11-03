@@ -27,7 +27,7 @@ BEGIN_PROVIDER [ double precision, three_body_4_index, (mo_num, mo_num, mo_num, 
   !$OMP SHARED (mo_num,three_body_4_index)
   !$OMP DO SCHEDULE (guided) COLLAPSE(2)
    do i = 1, mo_num
-    do k = 1, mo_num
+    do k = i, mo_num
      do m = 1, mo_num
       do j = 1, mo_num
        integral = 0.d0

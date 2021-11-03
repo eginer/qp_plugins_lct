@@ -287,7 +287,6 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
   call get_double_excitation(key_i,key_j,exc,phase,N_int)
   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
 
-   if(double_3_body_tc)then
     ! alpha/alpha/beta threee-body 
     if(Ne(1)+Ne(2).ge.3)then
      if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
@@ -345,7 +344,6 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
       endif 
      endif
     endif
-   endif
   hthree  *= phase
  end
 
