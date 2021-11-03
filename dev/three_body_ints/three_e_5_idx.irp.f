@@ -29,32 +29,32 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
          
          call give_integrals_3_body(j,m,k,l,n,k,integral)
  
          three_body_5_index(k,j,m,l,n) = -1.d0 * integral 
    
-         ! permutation with k,i
-         three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index(k,l,n,j,m) = -1.d0 * integral ! m,n
+!         ! permutation with k,i
+!         three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
+!         three_body_5_index(k,j,n,l,m) = -1.d0 * integral 
+!         ! three permutations with k,i
+!         three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
+!   
+!         ! permutation with l,j
+!         three_body_5_index(k,l,m,j,n) = -1.d0 * integral ! j,l
+!         ! two permutations with l,j
+!         three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
+!         three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
+!         ! two permutations with l,j
+!   
+!         ! permutation with m,n
+!         three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
+!         ! two permutations with m,n
+!         three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
+!         three_body_5_index(k,l,n,j,m) = -1.d0 * integral ! m,n
          ! three permutations with k,i
        enddo
       enddo
