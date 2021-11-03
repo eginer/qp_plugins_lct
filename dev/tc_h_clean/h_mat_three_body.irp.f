@@ -291,30 +291,27 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
     ! alpha/alpha/beta threee-body 
     if(Ne(1)+Ne(2).ge.3)then
      if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
-      print*,'double alpha '
-      print*,'loop over beta '
-      print*,h1,h2,p1,p2
+      double precision :: integral,integral_exch
       do k = 1, Ne(2) ! beta - alpha/alpha
        kk = occ(k,2)
-       print*,kk,three_body_5_index(kk,h1,h2,p1,p2),three_body_5_index_exch_32(kk,h1,h2,p1,p2)
-       hthree += three_body_5_index(kk,h1,h2,p1,p2) - three_body_5_index_exch_32(kk,h1,h2,p1,p2)
+       hthree += three_body_5_index(kk,h1,h2,p1,p2) - three_body_5_index_exch_12(kk,h1,h2,p1,p2)
       enddo
       if(Ne(1).ge.3)then
-       print*,'loop over alpha '
+!       print*,'loop over alpha '
        do k = 1, Ne(1) ! alpha/alpha/alpha
         kk = occ(k,1)
-        print*,'---'
-        print*,kk
+!        print*,'---'
+!        print*,kk
         hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
         hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
         hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
-        print*,'positive'
-        print*,three_body_5_index(kk,h1,h2,p1,p2),three_body_5_index_132(kk,h1,h2,p1,p2),three_body_5_index_312(kk,h1,h2,p1,p2)
+!        print*,'positive'
+!        print*,three_body_5_index(kk,h1,h2,p1,p2),three_body_5_index_132(kk,h1,h2,p1,p2),three_body_5_index_312(kk,h1,h2,p1,p2)
         hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
         hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
         hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
-        print*,'negative'
-        print*,three_body_5_index_exch_12(kk,h1,h2,p1,p2),three_body_5_index_exch_13(kk,h1,h2,p1,p2),three_body_5_index_exch_32(kk,h1,h2,p1,p2)
+!        print*,'negative'
+!        print*,three_body_5_index_exch_12(kk,h1,h2,p1,p2),three_body_5_index_exch_13(kk,h1,h2,p1,p2),three_body_5_index_exch_32(kk,h1,h2,p1,p2)
        enddo 
       endif
      else if(s1.eq.s2.and.s2.eq.2)then ! double beta 

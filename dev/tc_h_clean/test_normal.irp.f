@@ -18,16 +18,22 @@ subroutine test_pouet
  integer   :: degree
  double precision :: phase,hmono,heff,hderiv,hthree,htot,hthree_new
  double precision :: hnew,accu_n(2,2)
+ double precision, allocatable :: array(:,:,:,:)
+ allocate(array(mo_num,mo_num,mo_num,mo_num))
+ array = 0.d0
  accu = 0.d0
  accu_n = 0.d0
-! do h1 = 1, mo_num
-!  do h2 = 1, mo_num
-!   do p1 = h1, mo_num
-!    do p2 = h2, mo_num
- do h1 = 1, 1
-  do p1 = 7,7
-   do h2 = 2,2 
-    do p2 = 4,4
+ integer, allocatable           :: occ(:,:),Ne(:)
+ allocate(occ(N_int*bit_kind_size,2),Ne(2))
+ call bitstring_to_list_ab(ref_bitmask,occ,Ne,N_int)
+! do h1 = 1, 1
+!  do h2 = 2,2 
+!   do p1 = 7,7
+!    do p2 = 3,3
+ do h1 = 1, mo_num
+  do h2 = 1, mo_num
+   do p1 = 1, mo_num
+    do p2 = 1, mo_num
 !     do s1 = 1, 2
 !      do s2 = 1, 2
      do s1 = 1,1
@@ -43,16 +49,26 @@ subroutine test_pouet
        call get_excitation_degree(ref_bitmask,det_i,degree,N_int)
        if(degree.ne.2)cycle
        accu_n(s2,s1) += 1.d0
-       call get_excitation(ref_bitmask,det_i,exc,degree,phase,N_int)
-       call htilde_mu_mat(ref_bitmask,det_i,hmono,heff,hderiv,hthree,htot)
-       hthree_new = phase*(normal_two_body_aa_bb(p2,h2,p1,h1))
+       call get_excitation(det_i,ref_bitmask,exc,degree,phase,N_int)
+       call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
+       integer :: hh1,pp1,hh2,pp2,ss1,ss2
+       call decode_exc(exc,2,hh1,pp1,hh2,pp2,ss1,ss2)
+       call give_aab_contraction(hh1,hh2,pp1,pp2,Ne,occ,hthree_new)
+!       print*,'phase = ',phase
+!       print*,'array(p2,h2,p1,h1)',array(pp2,hh2,pp1,hh1)
+       hthree_new *= phase
        hnew = hmono+heff+hderiv+hthree_new
-
+!
+!       print*,hthree,hthree_new,dabs(hthree_new - hthree)
 !       if(dabs(hthree).lt.1.d-10)cycle
-       if(dabs(htot-hnew).gt.1.d-6)then
+       if(dabs(htot-hnew).gt.1.d-10)then
+        print*,'***'
+        print*,'wrong'
 !        print*,s1,s2,htot,hnew,dabs(hnew - htot)
-        print*,h1,h2,p1,p2
-        print*,s1,s2,hthree,hthree_new,dabs(hthree_new - hthree)
+        print*,h1,h2,p1,p2,s1,s2
+        print*,hthree,hthree_new,dabs(hthree_new - hthree)
+        print*,'***'
+        stop
        endif
        accu(s2,s1) += dabs(hnew - htot)
       enddo

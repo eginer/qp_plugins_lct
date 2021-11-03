@@ -168,7 +168,7 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
  integer :: kkk,k,m,l,n,hh1,hh2,pp1,pp2,kk
  integer                        :: occ(N_int*bit_kind_size,2),Ne(2)
  integer(bit_kind), allocatable :: key_i_core(:,:)
- double precision :: int_direct,int_exc_12,int_exc_13,int_exc_23
+ double precision :: int_direct,int_exc_12,int_exc_13,int_exc_23,hthree
  double precision :: integral,int_exc_l,int_exc_ll
  allocate(key_i_core(N_int,2))
  if(core_tc_op)then
@@ -181,37 +181,38 @@ BEGIN_PROVIDER [ double precision, normal_two_body_aa_bb, (n_act_orb, n_act_orb,
   call bitstring_to_list_ab(ref_bitmask,occ,Ne,N_int)
  endif
  normal_two_body_aa_bb = 0.d0
-! do hh1 = 1, n_act_orb
- do hh1 = 1, 1
+ do hh1 = 1, n_act_orb
+! do hh1 = 1, 1
   h1 = list_act(hh1) 
-!  do pp1 = hh1, n_act_orb
-  do pp1 = 7,7
+  do pp1 = 1 , n_act_orb
+!  do pp1 = 4,4
    p1 = list_act(pp1)
-!   do hh2 = 1, n_act_orb
-   do hh2 = 2,2
+   do hh2 = 1, n_act_orb
+!   do hh2 = 2,2
     h2 = list_act(hh2) 
-!    do pp2 = hh2, n_act_orb
-    do pp2 = 4,4
+    do pp2 = 1 , n_act_orb
+!    do pp2 = 7,7
      p2 = list_act(pp2)
-     call update_aa_small_contraction(h1,h2,p1,p2,Ne,occ,normal_two_body_aa_bb,n_act_orb)
+     call give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree)
+     normal_two_body_aa_bb(p2,h2,p1,h1) = hthree
     enddo
    enddo
   enddo
  enddo
 
- do hh1 = 1, n_act_orb
-  h1 = list_act(hh1) 
-  do pp1 = hh1+1, n_act_orb
-   p1 = list_act(pp1)
-   do hh2 = 1, n_act_orb
-    h2 = list_act(hh2) 
-    do pp2 = hh2+1, n_act_orb
-     p2 = list_act(pp2)
-     normal_two_body_aa_bb(h2,p2,h1,p1) = normal_two_body_aa_bb(p2,h2,p1,h1)
-    enddo
-   enddo
-  enddo
- enddo
+! do hh1 = 1, n_act_orb
+!  h1 = list_act(hh1) 
+!  do pp1 = hh1+1, n_act_orb
+!   p1 = list_act(pp1)
+!   do hh2 = 1, n_act_orb
+!    h2 = list_act(hh2) 
+!    do pp2 = hh2+1, n_act_orb
+!     p2 = list_act(pp2)
+!     normal_two_body_aa_bb(h2,p2,h1,p1) = normal_two_body_aa_bb(p2,h2,p1,h1)
+!    enddo
+!   enddo
+!  enddo
+! enddo
 
 END_PROVIDER 
 
@@ -270,29 +271,22 @@ subroutine update_aa_contraction(h1,h2,p1,p2,Ne,occ,array,n_array)
 
 end
 
-subroutine update_aa_small_contraction(h1,h2,p1,p2,Ne,occ,array,n_array)
+subroutine give_aab_contraction(h1,h2,p1,p2,Ne,occ,hthree)
  implicit none
  integer, intent(in) :: h1,h2,p1,p2
- integer, intent(in) :: Ne(2),occ(N_int*bit_kind_size,2),n_array
- double precision, intent(inout) :: array(n_array,n_array,n_array,n_array)
+ integer, intent(in) :: Ne(2),occ(N_int*bit_kind_size,2)
+ double precision, intent(inout) :: hthree
  integer :: ii,i
  double precision :: int_direct,int_exc_12,int_exc_13,int_exc_23
  double precision :: integral,int_exc_l,int_exc_ll
- print*,'h1,h2,p1,p2'
- print*,h1,h2,p1,p2
+ hthree = 0.d0
  do ii = 1, Ne(2) ! purely closed shell part 
   i = occ(ii,2)
-  print*,'--'
-  print*,i
-  call give_integrals_3_body(i ,p2,p1,i,h2,h1,integral)
+  call give_integrals_3_body(p2,p1,i,h2,h1,i,integral)
   int_direct = -1.d0 * integral
-  call give_integrals_3_body(i ,p1,p2,i,h2,h1,integral)
+  call give_integrals_3_body(p1,p2,i,h2,h1,i,integral)
   int_exc_23= -1.d0 * integral
-  print*,'positive'
-  print*,int_direct,int_exc_23
-  print*,'--'
-
-  array(p2,h2,p1,h1) +=  1.d0 * int_direct - int_exc_23
+  hthree  +=  1.d0 * int_direct - int_exc_23
  enddo
 
 end
