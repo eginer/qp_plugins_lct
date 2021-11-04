@@ -128,13 +128,13 @@ subroutine double_htilde_mu_mat_scal_map(key_j,key_i,hmono,heff,hderiv,htot)
    ! opposite spin two-body 
    if(s1==1)then
     heff    = get_mo_two_e_integral_tc_int(p2,p1,h2,h1,mo_integrals_tc_int_map) 
-    if(double_normal_ord)then
+    if(double_normal_ord.and.+Ne(1).gt.2)then
      heff += normal_two_body(h1,p1,h2,p2)
     endif
     hderiv  = mo_non_hermit_term(p2,p1,h2,h1) 
    else
     heff    = get_mo_two_e_integral_tc_int(p1,p2,h1,h2,mo_integrals_tc_int_map) 
-    if(double_normal_ord)then
+    if(double_normal_ord.and.Ne(2)+Ne(1).gt.2)then
      heff += normal_two_body(h1,p1,h2,p2)
     endif
     hderiv  = mo_non_hermit_term(p1,p2,h1,h2) 
@@ -143,13 +143,13 @@ subroutine double_htilde_mu_mat_scal_map(key_j,key_i,hmono,heff,hderiv,htot)
    ! same spin two-body 
    ! direct terms 
    heff    = get_mo_two_e_integral_tc_int(p2,p1,h2,h1,mo_integrals_tc_int_map) 
-   if(double_normal_ord)then
+   if(double_normal_ord.and.+Ne(1).gt.2)then
     heff += normal_two_body(h1,p1,h2,p2)
    endif
    hderiv  = mo_non_hermit_term(p2,p1,h2,h1)  
    ! exchange terms 
    heff   -= get_mo_two_e_integral_tc_int(p1,p2,h2,h1,mo_integrals_tc_int_map) 
-   if(double_normal_ord)then
+   if(double_normal_ord.and.+Ne(1).gt.2)then
     heff -= normal_two_body(h2,p1,h1,p2)
    endif
    hderiv -= mo_non_hermit_term(p1,p2,h2,h1) 

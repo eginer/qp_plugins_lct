@@ -1,6 +1,6 @@
 ! DO NOT MODIFY BY HAND
 ! Created by $QP_ROOT/scripts/ezfio_interface/ei_handler.py
-! from file /home/emmanuel/qp2/src/cipsi_dressed/EZFIO.cfg
+! from file /home_lct/eginer/qp2/src/cipsi_dressed/EZFIO.cfg
 
 
 BEGIN_PROVIDER [ logical, save_wf_after_selection  ]
