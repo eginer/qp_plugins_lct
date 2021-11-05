@@ -62,6 +62,10 @@ subroutine get_delta_tc_psi(psidet,psicoef,ndet,delta)
    do j = 1, ndet
     call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
     call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
+!   print*,i,j
+!   print*,mo_one_e_integrals(1,1)
+!   print*,'hmono,heff,hderiv',hmono,heff,hderiv,htilde_ij
+!   print*,'htilde,hij',htilde_ij,hij
     delta_mat = htilde_ij - hij 
     delta(i) = delta(i) + psicoef(j) * delta_mat
    enddo
