@@ -13,6 +13,13 @@ program diag_dress_iter
 
 end
 
+subroutine routine_bis
+ implicit none
+ double precision, allocatable  :: delta(:) , psicoef(:)
+ allocate( delta(n_det) , psicoef(n_det) )
+ call get_delta_tc_psi(psi_det,psicoef,n_det,delta)
+
+end
 
 subroutine routine
  implicit none

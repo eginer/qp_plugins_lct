@@ -72,7 +72,6 @@ BEGIN_PROVIDER [ double precision, normal_two_body, (mo_num, mo_num, mo_num, mo_
 
 END_PROVIDER 
 
-
 subroutine give_aba_contraction(h1,h2,p1,p2,Ne,occ,hthree)
  implicit none
  integer, intent(in) :: h1,h2,p1,p2
