@@ -60,6 +60,7 @@ subroutine run_stochastic_cipsi
     if (s2_eig) then
       call make_s2_eigenfunction
     endif
+!    print*,'eigval_right_tc = ',eigval_right_tc
     call diagonalize_CI_dressed
     call routine_save_right
   endif
@@ -113,21 +114,22 @@ subroutine run_stochastic_cipsi
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted
 
-    print*,'eigval_right_tc = ',eigval_right_tc(1)
-    call diagonalize_CI_dressed
+!    print*,'eigval_right_tc = ',eigval_right_tc(1)
     call routine_save_right
+    call diagonalize_CI_dressed
 !    call save_energy(psi_energy_with_nucl_rep, zeros)
     if (qp_stop()) exit
   enddo
 
   if (.not.qp_stop()) then
     if (N_det < N_det_max) then
-        call diagonalize_CI_dressed
+!        print*,'eigval_right_tc = ',eigval_right_tc(1)
         call routine_save_right
+        call diagonalize_CI_dressed
 !        call save_energy(psi_energy_with_nucl_rep, zeros)
     endif
-    print*,'eigval_right_tc = ',eigval_right_tc(1)
-    print*,'N_det = ',N_det
+!    print*,'eigval_right_tc = ',eigval_right_tc(1)
+!    print*,'N_det = ',N_det
     call diagonalize_CI_dressed
 
     call pt2_dealloc(pt2_data)

@@ -90,7 +90,8 @@ subroutine compute_mo_integrals_tc_int_jl_zero(j,l,n_integrals,buffer_i,buffer_v
       if(  trim(mo_class(i)) == "Core" .or. trim(mo_class(j)) == "Core" .or. trim(mo_class(k)) == "Core" .or. trim(mo_class(l)) == "Core")then
        integral = get_two_e_integral(i,j,k,l,mo_integrals_map)
       else
-       integral = 0.d0
+       integral = get_mo_tc_sym_two_e_pot(i,j,k,l,mo_tc_sym_two_e_pot_map)  & 
+           + 0.5d0 * (mo_non_hermit_term(i,j,k,l) + mo_non_hermit_term(k,l,i,j))
       endif
       if (abs(integral) < thr) then
         cycle

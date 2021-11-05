@@ -68,11 +68,11 @@ subroutine mo_two_e_integrals_tc_int_in_map_slave(thread,iproc)
     if (task_id == 0) exit
     read(task,*) j, l
     integer, external :: task_done_to_taskserver
-!    if(zero_tc_eff_map)then
-!     call compute_mo_integrals_tc_int_jl_zero(j,l,n_integrals,buffer_i,buffer_value)
-!    else
+    if(zero_tc_eff_map)then
+     call compute_mo_integrals_tc_int_jl_zero(j,l,n_integrals,buffer_i,buffer_value)
+    else
      call compute_mo_integrals_tc_int_jl(j,l,n_integrals,buffer_i,buffer_value)
-!    endif
+    endif
     if (task_done_to_taskserver(zmq_to_qp_run_socket,worker_id,task_id) == -1) then
         stop 'Unable to send task_done'
     endif
