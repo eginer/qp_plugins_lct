@@ -37,25 +37,6 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
  
          three_body_5_index(k,j,m,l,n) = -1.d0 * integral 
    
-         ! permutation with k,i
-         three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index(k,l,n,j,m) = -1.d0 * integral ! m,n
-         ! three permutations with k,i
        enddo
       enddo
      enddo
@@ -71,6 +52,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
   call write_array_5_index_tensor(mo_num,three_body_5_index,name_file)
   call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
+ do n = 1, mo_num
+  do l = 1, mo_num
+   do k = 1, mo_num
+    do m = n, mo_num
+     do j = l, mo_num
+      three_body_5_index(k,l,n,j,m) = three_body_5_index(k,j,m,l,n)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
 
 END_PROVIDER 
 
@@ -113,26 +105,6 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, 
 !!                                  j,m,k,k,n,l : exchange 1 3
  
          three_body_5_index_exch_13(k,j,m,l,n) = -1.d0 * integral 
-   
-         ! permutation with k,i
-         three_body_5_index_exch_13(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_exch_13(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index_exch_13(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index_exch_13(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index_exch_13(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_exch_13(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index_exch_13(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index_exch_13(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index_exch_13(k,l,n,j,m) = -1.d0 * integral ! m,n
-         ! three permutations with k,i
        enddo
       enddo
      enddo
@@ -148,6 +120,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, 
   call write_array_5_index_tensor(mo_num,three_body_5_index_exch_13,name_file)
   call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
+ do n = 1, mo_num
+  do l = 1, mo_num
+   do k = 1, mo_num
+    do m = n, mo_num
+     do j = l, mo_num
+      three_body_5_index_exch_13(k,l,n,j,m) = three_body_5_index_exch_13(k,j,m,l,n)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
 
 END_PROVIDER 
 
@@ -191,25 +174,6 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, 
  
          three_body_5_index_exch_32(k,j,m,l,n) = -1.d0 * integral 
    
-         ! permutation with k,i
-         three_body_5_index_exch_32(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_exch_32(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index_exch_32(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index_exch_32(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index_exch_32(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_exch_32(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index_exch_32(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index_exch_32(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index_exch_32(k,l,n,j,m) = -1.d0 * integral ! m,n
-         ! three permutations with k,i
        enddo
       enddo
      enddo
@@ -225,6 +189,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, 
   call write_array_5_index_tensor(mo_num,three_body_5_index_exch_32,name_file)
   call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
+ do n = 1, mo_num
+  do l = 1, mo_num
+   do k = 1, mo_num
+    do m = n, mo_num
+     do j = l, mo_num
+      three_body_5_index_exch_32(k,l,n,j,m) = three_body_5_index_exch_32(k,j,m,l,n)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
 
 END_PROVIDER 
 
@@ -268,25 +243,6 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_12, (mo_num, mo_num, 
  
          three_body_5_index_exch_12(k,j,m,l,n) = -1.d0 * integral 
    
-         ! permutation with k,i
-         three_body_5_index_exch_12(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_exch_12(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index_exch_12(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index_exch_12(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index_exch_12(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_exch_12(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index_exch_12(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index_exch_12(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index_exch_12(k,l,n,j,m) = -1.d0 * integral ! m,n
-         ! three permutations with k,i
        enddo
       enddo
      enddo
@@ -297,6 +253,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_12, (mo_num, mo_num, 
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_5_index_exch_12',wall1 - wall0
+ do n = 1, mo_num
+  do l = 1, mo_num
+   do k = 1, mo_num
+    do m = n, mo_num
+     do j = l, mo_num
+      three_body_5_index_exch_12(k,l,n,j,m) = three_body_5_index_exch_12(k,j,m,l,n)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
  if(write_three_body_ints)then
   print*,'Writing three_body_5_index_exch_12 on disk ...' 
   call write_array_5_index_tensor(mo_num,three_body_5_index_exch_12,name_file)
@@ -346,25 +313,6 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_312, (mo_num, mo_num, mo_n
  
          three_body_5_index_312(k,j,m,l,n) = -1.d0 * integral 
    
-         ! permutation with k,i
-         three_body_5_index_312(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_312(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index_312(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index_312(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index_312(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_312(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index_312(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index_312(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index_312(k,l,n,j,m) = -1.d0 * integral ! m,n
-         ! three permutations with k,i
        enddo
       enddo
      enddo
@@ -375,6 +323,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_312, (mo_num, mo_num, mo_n
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_5_index_312',wall1 - wall0
+ do n = 1, mo_num
+  do l = 1, mo_num
+   do k = 1, mo_num
+    do m = n, mo_num
+     do j = l, mo_num
+      three_body_5_index_312(k,l,n,j,m) = three_body_5_index_312(k,j,m,l,n)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
  if(write_three_body_ints)then
   print*,'Writing three_body_5_index_312 on disk ...' 
   call write_array_5_index_tensor(mo_num,three_body_5_index_312,name_file)
@@ -422,25 +381,6 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_132, (mo_num, mo_num, mo_n
  
          three_body_5_index_132(k,j,m,l,n) = -1.d0 * integral 
    
-         ! permutation with k,i
-         three_body_5_index_132(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_132(k,j,n,l,m) = -1.d0 * integral 
-         ! three permutations with k,i
-         three_body_5_index_132(k,l,n,j,m) = -1.d0 * integral 
-   
-         ! permutation with l,j
-         three_body_5_index_132(k,l,m,j,n) = -1.d0 * integral ! j,l
-         ! two permutations with l,j
-         three_body_5_index_132(k,l,m,j,n) = -1.d0 * integral 
-         three_body_5_index_132(k,l,n,j,m) = -1.d0 * integral 
-         ! two permutations with l,j
-   
-         ! permutation with m,n
-         three_body_5_index_132(k,j,n,l,m) = -1.d0 * integral ! m,n
-         ! two permutations with m,n
-         three_body_5_index_132(k,j,n,l,m) = -1.d0 * integral ! m,n
-         three_body_5_index_132(k,l,n,j,m) = -1.d0 * integral ! m,n
-         ! three permutations with k,i
        enddo
       enddo
      enddo
@@ -451,6 +391,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_132, (mo_num, mo_num, mo_n
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_5_index_132',wall1 - wall0
+ do n = 1, mo_num
+  do l = 1, mo_num
+   do k = 1, mo_num
+    do m = n, mo_num
+     do j = l, mo_num
+      three_body_5_index_132(k,l,n,j,m) = three_body_5_index_132(k,j,m,l,n)
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
  if(write_three_body_ints)then
   print*,'Writing three_body_5_index_132 on disk ...' 
   call write_array_5_index_tensor(mo_num,three_body_5_index_132,name_file)

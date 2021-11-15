@@ -86,8 +86,6 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
       direct_int = three_body_3_index(kk,jj,ii)
       exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
       exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
-!      exchange_int_231 = 0.d0
-!      exchange_int_312 = 0.d0
       exchange_int_12 = three_body_3_index_exch_12(kk,jj,ii)
       exchange_int_13 = three_body_3_index_exch_13(kk,jj,ii)
       exchange_int_23 = three_body_3_index_exch_23(kk,jj,ii)
@@ -289,37 +287,41 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
   call get_double_excitation(key_i,key_j,exc,phase,N_int)
   call decode_exc(exc,2,h1,p1,h2,p2,s1,s2)
 
-   if(double_3_body_tc)then
     ! alpha/alpha/beta threee-body 
     if(Ne(1)+Ne(2).ge.3)then
      if(s1.eq.s2.and.s2.eq.1)then ! double alpha 
+      double precision :: integral,integral_exch
       do k = 1, Ne(2) ! beta - alpha/alpha
        kk = occ(k,2)
-       hthree += three_body_5_index(kk,h1,h2,p1,p2)
+       hthree += three_body_5_index(kk,h1,h2,p1,p2) - three_body_5_index_exch_12(kk,h1,h2,p1,p2)
       enddo
-      do k = 1, Ne(1) ! alpha/alpha/alpha
-       kk = occ(k,1)
-       hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
-       hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
-       hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
-      enddo 
+      if(Ne(1).ge.3)then
+       do k = 1, Ne(1) ! alpha/alpha/alpha
+        kk = occ(k,1)
+        hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
+        hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
+        hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
+        hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
+        hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
+        hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
+       enddo 
+      endif
      else if(s1.eq.s2.and.s2.eq.2)then ! double beta 
       do k = 1, Ne(1) ! alpha- beta/beta
        kk = occ(k,1)
-       hthree += three_body_5_index(kk,h1,h2,p1,p2)
+       hthree += three_body_5_index(kk,h1,h2,p1,p2) - three_body_5_index_exch_12(kk,h1,h2,p1,p2)
       enddo
-      do k = 1, Ne(2) ! beta/beta/beta
-       kk = occ(k,2)
-       hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
-       hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
-       hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
-       hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
-      enddo 
+      if(Ne(2).ge.3)then
+       do k = 1, Ne(2) ! beta/beta/beta
+        kk = occ(k,2)
+        hthree +=  three_body_5_index(kk,h1,h2,p1,p2)
+        hthree +=  three_body_5_index_132(kk,h1,h2,p1,p2)
+        hthree +=  three_body_5_index_312(kk,h1,h2,p1,p2)
+        hthree -=  three_body_5_index_exch_12(kk,h1,h2,p1,p2)
+        hthree -=  three_body_5_index_exch_13(kk,h1,h2,p1,p2)
+        hthree -=  three_body_5_index_exch_32(kk,h1,h2,p1,p2)
+       enddo 
+      endif
      else ! double alpha/beta 
       if(s1.eq.1.and.s2.eq.2)then ! s1 == alpha , s2 == beta 
        do k = 1, Ne(1)
@@ -342,7 +344,6 @@ subroutine double_htilde_mu_mat_three_body(key_j,key_i,hthree)
       endif 
      endif
     endif
-   endif
   hthree  *= phase
  end
 

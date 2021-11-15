@@ -70,6 +70,43 @@ subroutine get_delta_tc_psi(psidet,psicoef,ndet,delta)
 
 end
 
+subroutine get_delta_av_tc_psi(psidet,psicoef,ndet,delta)
+ implicit none
+ BEGIN_DOC
+! you get in with a wave function psidet,psicoef and you get out with 
+!
+! |delta> = (Htilde - H) |Psi>
+ END_DOC
+ use bitmasks
+ double precision, intent(in)   :: psicoef(ndet)
+ integer(bit_kind), intent(in)  :: psidet(N_int,2,ndet)
+ integer, intent(in)            :: ndet
+ double precision, intent(out)  :: delta(ndet) 
+ double precision :: hij,htilde_ij,delta_mat,hmono,heff,hderiv,hthree,htilde_ji
+ integer :: i,j
+
+ delta = 0.d0
+ i=1
+ j=1
+ call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
+ call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(delta,ndet,psidet,psicoef,N_int) &
+ !$OMP PRIVATE(i,j,delta_mat,hmono,heff,hderiv,hthree,htilde_ij,htilde_ji,hij)
+  do i = 1, ndet
+   do j = 1, ndet
+    call htilde_mu_mat(psidet(1,1,i),psidet(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
+    call htilde_mu_mat(psidet(1,1,j),psidet(1,1,i),hmono,heff,hderiv,hthree,htilde_ji)
+    call i_H_j(psidet(1,1,i),psidet(1,1,j),N_int,hij)
+!    delta_mat = htilde_ij - hij 
+    delta_mat = 0.5d0 * (htilde_ij + htilde_ji)
+    delta(i) = delta(i) + psicoef(j) * delta_mat
+   enddo
+  enddo
+ !$OMP END PARALLEL DO
+
+end
+
 subroutine get_e_components_htilde(psidet,psicoef,ndet,hmono_av,heff_av,hderiv_av,hthree_av,htot_av)
  use bitmasks
  implicit none

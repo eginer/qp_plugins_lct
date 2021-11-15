@@ -23,6 +23,7 @@ BEGIN_PROVIDER [ logical, mo_two_e_integrals_tc_int_in_map ]
   character*(64)                 :: fmt
   !!deriv_mu_r_pot_physicist_mo
   PROVIDE mo_tc_sym_two_e_pot_in_map mo_non_hermit_term mo_two_e_integrals_in_map
+!  endif
   double precision               :: map_mb
 !  PROVIDE read_mo_two_e_integrals_tc_int io_mo_two_e_integrals_tc_int
 !  if (read_mo_two_e_integrals_tc_int) then
