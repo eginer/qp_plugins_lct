@@ -132,3 +132,37 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
  Fock_matrix_tc_mo_tot = 0.5d0 * (Fock_matrix_tc_mo_alpha + Fock_matrix_tc_mo_beta)
 
 END_PROVIDER 
+
+
+
+BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_tot, (ao_num, ao_num) ]
+  BEGIN_DOC
+  ! TC-Fock matrix in AO basis set
+  END_DOC
+  Fock_matrix_tc_ao_tot = 0.5d0 * (Fock_matrix_tc_ao_alpha + Fock_matrix_tc_ao_beta)
+END_PROVIDER
+
+BEGIN_PROVIDER [ double precision, SCFtc_energy ]
+  BEGIN_DOC
+  ! TC-HF energy
+  END_DOC
+  
+  implicit none
+  integer          :: i, j
+  double precision :: tmpa, tmpb
+
+  SCFtc_energy = nuclear_repulsion
+  do j = 1, ao_num
+    do i = 1, ao_num
+
+      tmpa = two_e_tc_hermit_integral_alpha(i,j) + two_e_tc_non_hermit_integral_alpha(i,j)
+      tmpb = two_e_tc_hermit_integral_beta (i,j) + two_e_tc_non_hermit_integral_beta (i,j)
+
+      SCFtc_energy = SCFtc_energy + ao_one_e_integrals(i,j) * Q_ao(i,j)  &
+      + 0.5d0 * ( tmpa * SCF_density_matrix_ao_alpha(i,j) + tmpb * SCF_density_matrix_ao_beta(i,j) )
+
+   enddo
+ enddo
+
+END_PROVIDER
+
