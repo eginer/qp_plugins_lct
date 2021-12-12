@@ -738,7 +738,15 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
       ! | E0            |alpha_h_psi |
       ! | alpha_h_psi   |      Hii   |
       ! c_alpha, E0  + e_pert
+      ! c_alpha = <alpha|H(j)|psi>
+!                = \sum_i \in psi c_i * <alpha|H(j)|i> 
+!                                 call htilde_mu_mat_tot(alpha,psi_selectors(1,1,i),Nint,htot)
+!                                 call htilde_mu_mat_tot(psi_selectors(1,1,i),alpha,Nint,htot_dag)
+!                                 psi_selectors_coef(i,1) * htot
+!                                 psi_selectors_coef(i,1) * htot_dag
 
+!        coef(1) = <alpha|H^t|psi>/delta_E = alpha_h_psi
+!        e_pert = psi_h_alpha * coef(1)
         ! flag if non hermitian selection 
         ! do your stuff to provide e_pert, coef
         ! else the usual 
@@ -1024,6 +1032,10 @@ subroutine get_d2(gen, phasemask, bannedOrb, banned, mat, mask, h, p, sp, coefs)
         p1 = p(i1, ma)
         p2 = p(i2, ma)
 
+        ! <p1 p2|1/r12|h1 h2> --> <p1 p2| w_ee^h + t^nh | h1 h2> --> < p2 p1 | H^tilde| h1 h2 >
+        ! 
+        !                      <p1 p2 | h1 h2>        -            <p2 p1 | h1 h2 >
+        ! < p2 p1 | H^tilde^dag| h1 h2 > = < h1 h2 | w_ee^h + t^nh | p1 p2 >
         hij = mo_two_e_integral(p1, p2, h1, h2) - mo_two_e_integral(p2, p1, h1, h2)
         if (hij == 0.d0) cycle
 
