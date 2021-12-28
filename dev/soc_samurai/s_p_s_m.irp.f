@@ -58,7 +58,7 @@ subroutine s_plus_det_orb_j(det_in,orb_j,det_out,phase)
 end
 
 
-subroutine s_plus_det(det_in,det_out,phase)
+subroutine s_plus_det(det_in,det_out,phase,ndet_out)
  implicit none
  BEGIN_DOC
 ! a^dagger_orb_j_up a_orb_j_down | det_in > = phase * | det_out >
@@ -66,11 +66,13 @@ subroutine s_plus_det(det_in,det_out,phase)
   use bitmasks ! you need to include the bitmasks_module.f90 features
  integer(bit_kind), intent(in)  :: det_in(N_int,2)
  integer(bit_kind), intent(out) :: det_out(N_int,2,elec_beta_num)
+ integer, intent(out)           :: ndet_out
  double precision , intent(out) :: phase(elec_beta_num)
  
- integer(bit_kind) :: open_shell(N_int),open_a_b(N_int,2)
+ integer(bit_kind) :: open_shell(N_int),open_a_b(N_int,2),det_tmp(N_int,2)
  integer(bit_kind) :: det_orb_j(N_int)
- integer :: i,j,n_occ_ab(2),ispin,occ(N_int*bit_kind_size,2)
+ double precision  :: phase_tmp
+ integer :: i,j,n_occ_ab(2),ispin,occ(N_int*bit_kind_size,2),k
 ! call debug_det(det_in,N_int)
  ! string with open shell orbitals 
  do i = 1, N_int
@@ -83,9 +85,28 @@ subroutine s_plus_det(det_in,det_out,phase)
  enddo
  call bitstring_to_list_ab(open_a_b, occ, n_occ_ab, N_int)
 ! call debug_det(open_a_b,N_int)
+ ndet_out = 0
  do i = 1, n_occ_ab(2)
   j = occ(i,2)
-  call s_plus_det_orb_j(det_in,j,det_out(1,1,i),phase(i))
+  call s_plus_det_orb_j(det_in,j,det_tmp,phase_tmp)
+  if(phase_tmp .ne. 0.d0)then
+   ndet_out += 1
+   det_out(:,:,ndet_out) = det_tmp(:,:) 
+   phase(ndet_out) = phase_tmp
+  endif
  enddo
 
+end
+
+
+double precision function factor_s_p(S,ms)
+ implicit none
+ double precision, intent(in) :: S,ms
+ factor_s_p = dsqrt(S*(S+1.d0) - ms*(ms+1.d0))
+end
+
+double precision function factor_s_m(S,ms)
+ implicit none
+ double precision, intent(in) :: S,ms
+ factor_s_m = dsqrt(S*(S+1.d0) - ms*(ms-1.d0))
 end
