@@ -54,7 +54,11 @@ END_PROVIDER
    do istate = 1, N_states
     S = s_values(istate)
     coef_tmp = factor_s_p(S,ms)
-    psi_coef_s_p(j,i,istate) = coef_sp(istate,j) / coef_tmp
+    if(dabs(coef_tmp).gt.1.d-12)then
+     psi_coef_s_p(j,i,istate) = coef_sp(istate,j) / coef_tmp
+    else
+     psi_coef_s_p(j,i,istate) = coef_sp(istate,j) 
+    endif
    enddo
   enddo
  enddo

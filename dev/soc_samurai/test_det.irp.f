@@ -5,6 +5,7 @@ program test_det
 ! call routine
 ! call test_conf
  call test_prov_s_p
+ call test_prov_s_m
 end
 
 subroutine test_prov_s_p
@@ -17,6 +18,20 @@ subroutine test_prov_s_p
   enddo
  enddo
  print*,'psi_norm_s_p',psi_norm_s_p
+ print*,'s2_values',s2_values
+ print*,'s_values ',s_values
+end
+
+subroutine test_prov_s_m
+ implicit none
+ integer :: i,j
+ do i = 1, N_configuration
+  do j = 1, n_det_per_conf_s_m(i) 
+   call debug_det(psi_det_s_m(1,1,j,i),N_int)
+   print*,'coef = ',psi_coef_s_m(j,i,:)
+  enddo
+ enddo
+ print*,'psi_norm_s_m',psi_norm_s_m
  print*,'s2_values',s2_values
  print*,'s_values ',s_values
 end
