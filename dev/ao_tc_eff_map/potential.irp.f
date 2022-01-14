@@ -53,6 +53,65 @@ double precision function eff_pot_gauss(x,mu)
  eff_pot_gauss =  mu/dsqrt(dacos(-1.d0)) * dexp(-mu*mu*x*x) - 0.25d0 * (1.d0 - derf(mu*x))**2.d0
 end
 
+
+
+! -------------------------------------------------------------------------------------------------
+! ---
+
+ BEGIN_PROVIDER [double precision, expo_gauss_eff_pot_dag, (n_gauss_eff_pot)]
+&BEGIN_PROVIDER [double precision, coef_gauss_eff_pot_dag, (n_gauss_eff_pot)]
+
+  include 'constants.include.F'
+
+  implicit none
+  integer :: i
+
+  ! fit of the (1 - erf(mu*x))^2 with n_max_fit_slat gaussians 
+  do i = 1, n_max_fit_slat
+    expo_gauss_eff_pot_dag(i) = expo_gauss_1_erf_x_2(i) 
+    coef_gauss_eff_pot_dag(i) = -0.25d0 * coef_gauss_1_erf_x_2(i) ! -1/4 * (1 - erf(mu*x))^2
+  enddo
+  ! Analytical Gaussian part of the potential 
+  expo_gauss_eff_pot_dag(n_max_fit_slat+1) = mu_erf * mu_erf
+  coef_gauss_eff_pot_dag(n_max_fit_slat+1) = -mu_erf * inv_sq_pi
+
+END_PROVIDER 
+
+! ---
+
+double precision function eff_pot_gauss_dag(x,mu)
+
+  include 'constants.include.F'
+
+  implicit none
+  double precision, intent(in) :: x, mu
+
+  eff_pot_gauss_dag = -mu*inv_sq_pi*dexp(-mu*mu*x*x) - 0.25d0*(1.d0-derf(mu*x))**2.d0
+
+end function eff_pot_gauss_dag
+
+! ---
+
+double precision function eff_pot_fit_gauss_dag(x)
+
+ implicit none
+ double precision, intent(in) :: x
+ integer                      :: i
+ double precision             :: alpha
+
+ eff_pot_fit_gauss_dag = -derf(mu_erf*x)/x
+ do i = 1, n_gauss_eff_pot
+  alpha = expo_gauss_eff_pot_dag(i)
+  eff_pot_fit_gauss_dag += coef_gauss_eff_pot_dag(i) * dexp(-alpha*x*x)
+ enddo
+
+end function eff_pot_fit_gauss_dag
+
+! ---
+! -------------------------------------------------------------------------------------------------
+
+
+
 double precision function eff_pot_fit_gauss(x)
  implicit none
  double precision, intent(in) :: x

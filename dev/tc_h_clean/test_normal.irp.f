@@ -4,7 +4,9 @@ program test
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
- call test_pouet
+
+  PROVIDE N_int
+  call test_pouet
 end
 
 subroutine test_pouet
@@ -50,7 +52,7 @@ subroutine test_pouet
        if(degree.ne.2)cycle
        accu_n(s2,s1) += 1.d0
        call get_excitation(det_i,ref_bitmask,exc,degree,phase,N_int)
-       call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
+       call htilde_mu_mat(det_i, ref_bitmask, N_int, hmono, heff, hderiv, hthree, htot)
        integer :: hh1,pp1,hh2,pp2,ss1,ss2
        call decode_exc(exc,2,hh1,pp1,hh2,pp2,ss1,ss2)
 !       call give_aab_contraction(hh1,hh2,pp1,pp2,Ne,occ,hthree_new)

@@ -8,12 +8,7 @@ BEGIN_PROVIDER [ type(map_type), mo_integrals_tc_int_map ]
   BEGIN_DOC
   ! |mo| integrals
   END_DOC
-  integer(key_kind)              :: key_max
-  integer(map_size_kind)         :: sze
-  call two_e_integrals_index(mo_num,mo_num,mo_num,mo_num,key_max)
-  sze = key_max
-  call map_init(mo_integrals_tc_int_map,sze)
-  print*,  'mo map initialized : ', sze
+  return
 END_PROVIDER
 
  BEGIN_PROVIDER [ integer, mo_integrals_tc_int_cache_min ]

@@ -62,10 +62,10 @@ subroutine routine_mo
       call do_single_excitation(det_i,i,a,1,i_ok)
 
       !f_tc = Fock_matrix_tc_mo_alpha(i,a) ! <HF|H a^dagger_a a_i |HF > = F(i,a)
-      !call htilde_mu_mat(ref_bitmask,det_i,hmono,heff,hderiv,hthree,htot)
+      !call htilde_mu_mat(ref_bitmask, det_i, N_int, hmono, heff, hderiv, hthree, htot)
 
       f_tc = Fock_matrix_tc_mo_alpha(a,i) ! <HF|H a^dagger_a a_i |HF > = F(i,a)
-      call htilde_mu_mat(det_i, ref_bitmask, hmono, heff, hderiv, hthree, htot)
+      call htilde_mu_mat(det_i, ref_bitmask, N_int, hmono, heff, hderiv, hthree, htot)
 
       print *, 'i,a', i,a
       print *, 'ref, new, dabs'

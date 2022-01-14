@@ -113,6 +113,17 @@ subroutine mo_two_e_integrals_tc_int_in_map_collector(zmq_socket_pull)
   integer*8                      :: control, accu, sze
   integer                        :: task_id, more
 
+  control = get_mo_tc_int_map_size(mo_integrals_tc_int_map)
+
+  if (control > 0) then
+      print *, ''
+      print *, irp_here
+      print *, 'Control : ', control
+      print *, 'Accu    : ', accu
+      stop
+  endif
+
+
   zmq_to_qp_run_socket = new_zmq_to_qp_run_socket()
 
   sze = mo_num*mo_num

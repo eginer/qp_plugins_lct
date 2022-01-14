@@ -10,20 +10,22 @@ program dmcdress
   read_wf = .True.
   touch read_wf
 
+  PROVIDE N_int
   call delta_dmcdressing
+
 end
 
 
 subroutine delta_dmcdressing()
 
   implicit none
-
   double precision, allocatable :: delta(:) 
 
   allocate( delta(N_det) )
 
-  ! get < I | Htild - H | psi > 
-  call get_delta_tc_psi(psi_det, psi_coef, N_det, delta)
+
+  ! get < I | H_mu - H | psi > 
+  call get_delta_tc_psi(psi_det, psi_coef, N_det, N_int, delta)
 
   ! order as QMCCHEM
   call dset_order(delta, psi_bilinear_matrix_order, N_det)
