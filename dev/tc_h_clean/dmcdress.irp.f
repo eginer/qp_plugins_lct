@@ -23,7 +23,6 @@ subroutine delta_dmcdressing()
 
   allocate( delta(N_det) )
 
-
   ! get < I | H_mu - H | psi > 
   call get_delta_tc_psi(psi_det, psi_coef, N_det, N_int, delta)
 

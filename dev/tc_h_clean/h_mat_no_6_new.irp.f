@@ -22,6 +22,8 @@ subroutine diag_htilde_mu_mat_scal_map(Nint, key_i, hmono, heff, hderiv, htot)
   PROVIDE mo_integrals_erf_map core_energy nuclear_repulsion core_bitmask
   PROVIDE core_fock_operator
 
+  PROVIDE j1b_gauss
+
   if(core_tc_op)then
    do i = 1, Nint
     key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
@@ -41,6 +43,13 @@ subroutine diag_htilde_mu_mat_scal_map(Nint, key_i, hmono, heff, hderiv, htot)
    do i = 1, Ne(ispin) ! 
     ii = occ(i,ispin) 
     hmono += mo_one_e_integrals(ii,ii)
+
+    if( j1b_gauss .eq. 1 ) then
+      hmono += mo_j1b_gauss_hermI  (ii,ii) &
+             + mo_j1b_gauss_hermII (ii,ii) &
+             + mo_j1b_gauss_nonherm(ii,ii)
+    endif
+
     if(core_tc_op)then
      hmono += core_fock_operator(ii,ii) ! add the usual Coulomb - Exchange from the core 
     endif
@@ -207,6 +216,8 @@ subroutine single_htilde_mu_mat_scal_map(Nint, key_j, key_i, hmono, heff, hderiv
 
   PROVIDE core_bitmask core_fock_operator mo_integrals_erf_map
 
+  PROVIDE j1b_gauss
+
   other_spin(1) = 2
   other_spin(2) = 1
 
@@ -234,6 +245,13 @@ subroutine single_htilde_mu_mat_scal_map(Nint, key_j, key_i, hmono, heff, hderiv
   call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
 
   hmono = mo_one_e_integrals(h1,p1) * phase
+
+  if( j1b_gauss .eq. 1 ) then
+    hmono += ( mo_j1b_gauss_hermI  (h1,p1) &
+             + mo_j1b_gauss_hermII (h1,p1) &
+             + mo_j1b_gauss_nonherm(h1,p1) ) * phase
+  endif
+
   if(core_tc_op)then
    hmono += phase * core_fock_operator(h1,p1)
   endif
@@ -300,6 +318,8 @@ subroutine diag_htildedag_mu_mat_scal_map(Nint, key_i, hmono, heff, hderiv, htot
   PROVIDE mo_integrals_erf_map core_energy nuclear_repulsion core_bitmask
   PROVIDE core_fock_operator
 
+  PROVIDE j1b_gauss
+
   if(core_tc_op)then
     do i = 1, Nint
       key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
@@ -316,6 +336,13 @@ subroutine diag_htildedag_mu_mat_scal_map(Nint, key_i, hmono, heff, hderiv, htot
     do i = 1, Ne(ispin)
       ii = occ(i,ispin) 
       hmono += mo_one_e_integrals(ii,ii)
+
+      if( j1b_gauss .eq. 1 ) then
+        hmono += mo_j1b_gauss_hermI  (ii,ii) &
+               + mo_j1b_gauss_hermII (ii,ii) &
+               + mo_j1b_gauss_nonherm(ii,ii)
+      endif
+
       if(core_tc_op)then
         hmono += core_fock_operator(ii,ii) ! add the usual Coulomb - Exchange from the core 
       endif
@@ -486,6 +513,8 @@ subroutine single_htildedag_mu_mat_scal_map(Nint, key_j, key_i, hmono, heff, hde
 
   PROVIDE core_bitmask core_fock_operator mo_integrals_erf_map
 
+  PROVIDE j1b_gauss
+
   other_spin(1) = 2
   other_spin(2) = 1
 
@@ -513,6 +542,11 @@ subroutine single_htildedag_mu_mat_scal_map(Nint, key_j, key_i, hmono, heff, hde
   call decode_exc(exc, 1, h1, p1, h2, p2, s1, s2)
 
   hmono = mo_one_e_integrals(h1,p1) * phase
+  if( j1b_gauss .eq. 1 ) then
+    hmono += ( mo_j1b_gauss_hermI  (h1,p1) &
+             + mo_j1b_gauss_hermII (h1,p1) &
+             + mo_j1b_gauss_nonherm(h1,p1) ) * phase
+  endif
   if(core_tc_op) then
    hmono += phase * core_fock_operator(h1,p1)
   endif
