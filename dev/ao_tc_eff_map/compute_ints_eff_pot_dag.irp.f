@@ -68,7 +68,7 @@ subroutine compute_ao_tc_sym_two_e_pot_dag_jl(j, l, n_integrals, buffer_i, buffe
   double precision               :: integral, integral_pot, integral_erf, thr
 
   double precision               :: ao_tc_sym_two_e_pot_dag, ao_two_e_integral_erf
-  double precision               :: j1b_gauss_erf, j1b_gauss_coul
+  double precision               :: j1b_gauss_erf, j1b_gauss_coul, j1b_gauss_coulerf
 
   PROVIDE j1b_gauss
 
@@ -94,8 +94,9 @@ subroutine compute_ao_tc_sym_two_e_pot_dag_jl(j, l, n_integrals, buffer_i, buffe
 
       if( j1b_gauss .eq. 1 ) then
         integral = integral                   &
-                 + j1b_gauss_erf (i, k, j, l) &
-                 + j1b_gauss_coul(i, k, j, l)
+                 + j1b_gauss_coulerf(i, j, k, l)
+                 !+ j1b_gauss_erf (i, k, j, l) &
+                 !+ j1b_gauss_coul(i, k, j, l)
       endif
 
       if( abs(integral) < thr ) cycle

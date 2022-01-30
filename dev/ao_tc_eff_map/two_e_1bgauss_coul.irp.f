@@ -642,8 +642,8 @@ double precision function general_primitive_integral_coul_shifted( dim          
   integer,          intent(in) :: dim
   integer,          intent(in) :: iorder_p(3), shift_P(3)
   integer,          intent(in) :: iorder_q(3), shift_Q(3)
-  double precision, intent(in) :: P_new(0:max_dim, 3), P_center(3), fact_p, p, p_inv
-  double precision, intent(in) :: Q_new(0:max_dim, 3), Q_center(3), fact_q, q, q_inv
+  double precision, intent(in) :: P_new(0:max_dim,3), P_center(3), fact_p, p, p_inv
+  double precision, intent(in) :: Q_new(0:max_dim,3), Q_center(3), fact_q, q, q_inv
 
   integer                      :: n_Ix, n_Iy, n_Iz, nx, ny, nz
   integer                      :: ix, iy, iz, jx, jy, jz, i
@@ -656,6 +656,7 @@ double precision function general_primitive_integral_coul_shifted( dim          
   double precision             :: a, b, c, d, e, f, accu, pq, const
   double precision             :: pq_inv, p10_1, p10_2, p01_1, p01_2, pq_inv_2
   double precision             :: d1(0:max_dim), d_poly(0:max_dim)
+  double precision             :: p_plus_q
 
   double precision             :: rint_sum
 
@@ -666,20 +667,21 @@ double precision function general_primitive_integral_coul_shifted( dim          
 
   ! Gaussian Product
   ! ----------------
-
+  p_plus_q = (p+q) 
   pq       = p_inv * 0.5d0 * q_inv
-  pq_inv   = 0.5d0 / (p+q)
+  pq_inv   = 0.5d0 / p_plus_q
   p10_1    = q * pq             ! 1/(2p)
   p01_1    = p * pq             ! 1/(2q)
   pq_inv_2 = pq_inv + pq_inv
-  p10_2    = pq_inv_2 * p10_1*q ! 0.5d0 * q / (pq + p*p)
-  p01_2    = pq_inv_2 * p01_1*p ! 0.5d0 * p / (q*q + pq)
+  p10_2    = pq_inv_2 * p10_1 * q ! 0.5d0 * q / (pq + p*p)
+  p01_2    = pq_inv_2 * p01_1 * p ! 0.5d0 * p / (q*q + pq)
 
   accu = 0.d0
 
   iorder = iorder_p(1) + iorder_q(1) + iorder_p(1) + iorder_q(1)
   iorder = iorder + shift_P(1) + shift_Q(1)
   iorder = iorder + shift_P(1) + shift_Q(1)
+  !DIR$ VECTOR ALIGNED
   do ix = 0, iorder
     Ix_pol(ix) = 0.d0
   enddo
@@ -696,10 +698,10 @@ double precision function general_primitive_integral_coul_shifted( dim          
       d  = a * Q_new(jx,1)
       if(abs(d) < thresh) cycle
 
-      !DIR$ FORCEINLINE
+      !DEC$ FORCEINLINE
       call give_polynom_mult_center_x( P_center(1), Q_center(1), ii, jj &
                                      , p, q, iorder, pq_inv, pq_inv_2, p10_1, p01_1, p10_2, p01_2, dx, nx )
-      !DIR$ FORCEINLINE
+      !DEC$ FORCEINLINE
       call add_poly_multiply(dx, nx, d, Ix_pol, n_Ix)
     enddo
   enddo
@@ -710,6 +712,7 @@ double precision function general_primitive_integral_coul_shifted( dim          
   iorder = iorder_p(2) + iorder_q(2) + iorder_p(2) + iorder_q(2)
   iorder = iorder + shift_P(2) + shift_Q(2)
   iorder = iorder + shift_P(2) + shift_Q(2)
+  !DIR$ VECTOR ALIGNED
   do ix = 0, iorder
     Iy_pol(ix) = 0.d0
   enddo
@@ -722,15 +725,15 @@ double precision function general_primitive_integral_coul_shifted( dim          
       b  = P_new(iy,2)
 
       do jy = 0, iorder_q(2)
-        
+
         jj = jy + shift_Q(2)
         e  = b * Q_new(jy,2)
-        if (abs(e) < thresh) cycle
+        if(abs(e) < thresh) cycle
 
-        !DIR$ FORCEINLINE
+        !DEC$ FORCEINLINE
         call give_polynom_mult_center_x( P_center(2), Q_center(2), ii, jj &
                                        , p, q, iorder, pq_inv, pq_inv_2, p10_1, p01_1, p10_2, p01_2, dy, ny )
-        !DIR$ FORCEINLINE
+        !DEC$ FORCEINLINE
         call add_poly_multiply(dy, ny, e, Iy_pol, n_Iy)
       enddo
     endif
@@ -757,24 +760,24 @@ double precision function general_primitive_integral_coul_shifted( dim          
 
         jj = jz + shift_Q(3)
         f  = c * Q_new(jz,3)
-        if (abs(f) < thresh) cycle
+        if(abs(f) < thresh) cycle
 
-        !DIR$ FORCEINLINE
+        !DEC$ FORCEINLINE
         call give_polynom_mult_center_x( P_center(3), Q_center(3), ii, jj &
                                        , p, q, iorder, pq_inv, pq_inv_2, p10_1, p01_1, p10_2, p01_2, dz, nz )
-        !DIR$ FORCEINLINE
+        !DEC$ FORCEINLINE
         call add_poly_multiply(dz, nz, f, Iz_pol, n_Iz)
       enddo
     endif
   enddo
-  if (n_Iz == -1) then
+  if(n_Iz == -1) then
     return
   endif
 
   rho = p * q * pq_inv_2
-  dist = (P_center(1) - Q_center(1))*(P_center(1) - Q_center(1)) &
-       + (P_center(2) - Q_center(2))*(P_center(2) - Q_center(2)) &
-       + (P_center(3) - Q_center(3))*(P_center(3) - Q_center(3))
+  dist = (P_center(1) - Q_center(1)) * (P_center(1) - Q_center(1)) &
+       + (P_center(2) - Q_center(2)) * (P_center(2) - Q_center(2)) &
+       + (P_center(3) - Q_center(3)) * (P_center(3) - Q_center(3))
   const = dist*rho
 
   n_pt_tmp = n_Ix + n_Iy
@@ -782,7 +785,7 @@ double precision function general_primitive_integral_coul_shifted( dim          
     d_poly(i) = 0.d0
   enddo
 
-  !DIR$ FORCEINLINE
+  !DEC$ FORCEINLINE
   call multiply_poly(Ix_pol, n_Ix, Iy_pol, n_Iy, d_poly, n_pt_tmp)
   if(n_pt_tmp == -1) then
     return
@@ -792,11 +795,11 @@ double precision function general_primitive_integral_coul_shifted( dim          
     d1(i) = 0.d0
   enddo
 
-  !DIR$ FORCEINLINE
+  !DEC$ FORCEINLINE
   call multiply_poly(d_poly, n_pt_tmp, Iz_pol, n_Iz, d1, n_pt_out)
   accu = accu + rint_sum(n_pt_out, const, d1)
 
-  general_primitive_integral_coul_shifted = fact_p * fact_q * accu * pi_5_2 * p_inv * q_inv / dsqrt(p+q)
+  general_primitive_integral_coul_shifted = fact_p * fact_q * accu * pi_5_2 * p_inv * q_inv / dsqrt(p_plus_q)
 
   return
 end function general_primitive_integral_coul_shifted

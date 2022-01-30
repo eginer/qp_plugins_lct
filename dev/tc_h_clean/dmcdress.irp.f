@@ -21,6 +21,10 @@ subroutine delta_dmcdressing()
   implicit none
   double precision, allocatable :: delta(:) 
 
+  print *, j1b_gauss
+  print *, j1b_gauss_pen
+  print *, mu_erf
+
   allocate( delta(N_det) )
 
   ! get < I | H_mu - H | psi > 

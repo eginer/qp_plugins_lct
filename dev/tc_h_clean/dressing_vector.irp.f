@@ -65,6 +65,8 @@ subroutine get_delta_tc_psi(psidet, psicoef, ndet, Nint, delta)
   j=1
   call htilde_mu_mat(psidet(1,1,i), psidet(1,1,j), Nint, hmono, heff, hderiv, hthree, htilde_ij)
   call i_H_j(psidet(1,1,i), psidet(1,1,j), Nint, hij)
+  !print *, hmono, heff, hderiv, hthree 
+  !print *, hij+nuclear_repulsion, htilde_ij+nuclear_repulsion
  !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
  !$OMP SHARED(delta, ndet, psidet, psicoef, Nint)    &
  !$OMP PRIVATE(i, j, delta_mat, hmono, heff, hderiv, hthree, htilde_ij, hij)
