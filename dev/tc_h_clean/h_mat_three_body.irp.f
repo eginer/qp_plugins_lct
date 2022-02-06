@@ -64,8 +64,6 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
       direct_int = three_body_3_index(kk,jj,ii)
       exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
       exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
-!      exchange_int_231 = 0.d0
-!      exchange_int_312 = 0.d0
       exchange_int_12  = three_body_3_index_exch_12(kk,jj,ii)
       exchange_int_13  = three_body_3_index_exch_13(kk,jj,ii)
       exchange_int_23  = three_body_3_index_exch_23(kk,jj,ii)
@@ -227,8 +225,6 @@ subroutine single_htilde_mu_mat_three_body(key_j,key_i,hthree)
        direct_int = three_body_4_index(jj,ii,h1,p1)                    ! < h1 jj ii | p1 jj ii >
        exchange_int_231 = three_body_4_index_exch_231(jj,ii,h1,p1)
        exchange_int_312 = three_body_4_index_exch_312(jj,ii,h1,p1)
-!       exchange_int_231 = 0.d0
-!       exchange_int_312 = 0.d0
        exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)       ! < h1 jj ii | p1 ii jj >
        exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
        exchange_int_13 = three_body_4_index_exch_12_part_bis(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
