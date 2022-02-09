@@ -18,8 +18,9 @@ subroutine test_direct
  accu = 0.d0
  do i = 1, mo_num
   do a = 1, mo_num
-!   call give_contrib_three_fock(i,a,ref)
-   call give_fock_ia_real_space(i,a,ref)
+   call give_contrib_three_fock(i,a,ref)
+!   call give_fock_ia_real_space_old(i,a,ref)
+!   call give_fock_ia_real_space_old_bis(i,a,new)
    call give_fock_ia_real_space_new(i,a,new)
    accu += dabs(ref - new)
    if(dabs(ref).gt.1.d-10)then
