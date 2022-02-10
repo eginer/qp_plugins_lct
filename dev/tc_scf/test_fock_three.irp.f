@@ -15,12 +15,14 @@ end
 subroutine test_scaled_fock_three
  implicit none
  integer :: i,j
- double precision :: accu, ref, new
+ double precision :: accu, ref, new,new_2
  accu = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
    call give_contrib_three_fock(i,j,ref)
    call give_fock_ia_same_spin(i,j,new)
+   call give_fock_ia_scaled_op_spin(i,j,new_2)
+   new += new_2
    accu += dabs(ref - new)
    if(dabs(ref) .gt.1.d-10 )then
     print*,ref,new,ref/new
