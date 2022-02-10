@@ -300,3 +300,222 @@ subroutine give_fock_ia_real_space_new(i,a,contrib)
  contrib = int_1 + int_2 + int_3 
 
 end
+
+BEGIN_PROVIDER [double precision, diag_three_elem_hf_old]
+ implicit none
+ double precision :: direct_int,exch_int,four_third,one_third,two_third
+ double precision :: exchange_int_231 , exchange_int_312 , exchange_int_23 , exchange_int_12 , exchange_int_13
+ integer :: i,j,k
+ one_third = 1.d0/3.d0
+ two_third = 2.d0/3.d0
+ four_third = 4.d0/3.d0
+ diag_three_elem_hf_old = 0.d0
+
+ do i = 1, elec_beta_num
+  do j = 1, elec_beta_num
+   do k = 1, elec_beta_num
+    call  give_integrals_3_body(i,j,k,i,j,k,direct_int)   
+    call  give_integrals_3_body(k,j,i,k,i,j,exchange_int_23)   
+    diag_three_elem_hf_old += four_third * (direct_int - exchange_int_23) 
+    call  give_integrals_3_body(k,j,i,j,i,k,exchange_int_231)   
+    call  give_integrals_3_body(k,j,i,j,k,i,exchange_int_12)   
+    call  give_integrals_3_body(k,j,i,i,j,k,exchange_int_13)   
+    diag_three_elem_hf_old += two_third *  exchange_int_231 & 
+                            - one_third * (exchange_int_12 + exchange_int_13)
+                            
+   enddo
+  enddo
+ enddo
+
+ diag_three_elem_hf_old = - diag_three_elem_hf_old 
+END_PROVIDER 
+
+subroutine give_fock_ia_real_space_prov(i,a,contrib)
+ implicit none
+ BEGIN_DOC
+! contrib is the contribution from the three body term to the Fock operator 
+!
+! WARNING : It takes into account only the closed shell part, and neglect the purely parallel spins contributions.
+ END_DOC
+ integer, intent(in) :: i,a
+ double precision, intent(out) :: contrib
+ double precision :: big_v_r
+ double precision :: int_1, int_2
+ double precision :: mos_i, mos_a, w_ia
+ double precision :: mos_ia, weight
+
+ integer :: mm, ipoint,k,l
+
+ int_1 = 0.d0
+ int_2 = 0.d0
+ do mm = 1, 3
+  do ipoint = 1, n_points_final_grid
+   weight = final_weight_at_r_vector(ipoint)                                                                          
+   mos_i  = mos_in_r_array_transp(ipoint,i) 
+   mos_a  = mos_in_r_array_transp(ipoint,a) 
+   mos_ia = mos_a * mos_i
+   w_ia   = x_W_ij_erf_rk(ipoint,mm,i,a) 
+   big_v_r  = fock_3_trace_w_tilde(ipoint,mm)
+     
+   int_1  += weight * fock_3_w_kk_sum(ipoint,mm) * (3.d0 * fock_3_rho_beta(ipoint) * w_ia       & 
+                                                  + 1.5d0 * mos_ia * fock_3_w_kk_sum(ipoint,mm) & 
+                                                  - 1.0d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
+                                                  - 1.0d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
+   int_2  += weight * (-1.d0) * ( 1.0d0 * fock_3_w_kl_mo_k_mo_l(ipoint,mm) * w_ia + 1.0d0 * fock_3_rho_beta(ipoint) * fock_3_w_ki_wk_a(ipoint,mm,i,a)  + 0.5d0 * mos_ia * big_v_r)
+  enddo
+ enddo
+ contrib = int_1 + int_2 
+
+end
+
+subroutine give_fock_ia_scaled_op_spin(i,a,contrib)
+ implicit none
+ BEGIN_DOC
+! contrib is the contribution from the three body term to the Fock operator 
+!
+! WARNING : It takes into the scaled anti-parrallel part to contain a part of direct and exchange of parrallel
+ END_DOC
+ integer, intent(in) :: i,a
+ double precision, intent(out) :: contrib
+ double precision :: big_v_r
+ double precision :: int_1, int_2
+ double precision :: mos_i, mos_a, w_ia
+ double precision :: mos_ia, weight
+
+ integer :: mm, ipoint,k,l
+
+ int_1 = 0.d0
+ int_2 = 0.d0
+ do mm = 1, 3
+  do ipoint = 1, n_points_final_grid
+   weight = final_weight_at_r_vector(ipoint)                                                                          
+   mos_i  = mos_in_r_array_transp(ipoint,i) 
+   mos_a  = mos_in_r_array_transp(ipoint,a) 
+   mos_ia = mos_a * mos_i
+   w_ia   = x_W_ij_erf_rk(ipoint,mm,i,a) 
+   big_v_r  = fock_3_trace_w_tilde(ipoint,mm)
+     
+   int_1  += weight * fock_3_w_kk_sum(ipoint,mm) * (4.d0 * fock_3_rho_beta(ipoint) * w_ia       & 
+                                                  + 2.0d0 * mos_ia * fock_3_w_kk_sum(ipoint,mm) & 
+                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
+                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
+   int_2  += weight * (-1.d0) * ( 2.0d0 * fock_3_w_kl_mo_k_mo_l(ipoint,mm) * w_ia + 1.5d0 * fock_3_rho_beta(ipoint) * fock_3_w_ki_wk_a(ipoint,mm,i,a)  + 1.0d0 * mos_ia * big_v_r)
+  enddo
+ enddo
+ contrib = int_1 + int_2 
+
+end
+
+subroutine give_fock_ia_same_spin(i,a,contrib)
+ implicit none
+ BEGIN_DOC
+! contrib is the contribution from the three body term to the Fock operator 
+!
+! WARNING : It takes into parrallel part of the three body term
+ END_DOC
+ integer, intent(in) :: i,a
+ double precision, intent(out) :: contrib
+ double precision :: big_v_r
+ double precision :: int_1, int_2
+ double precision :: mos_i, mos_a, w_ia
+ double precision :: mos_ia, weight
+
+ integer :: mm, ipoint,k,l
+
+ int_1 = 0.d0
+ int_2 = 0.d0
+ do mm = 1, 3
+  do ipoint = 1, n_points_final_grid
+   weight = final_weight_at_r_vector(ipoint)                                                                          
+   mos_i  = mos_in_r_array_transp(ipoint,i) 
+   mos_a  = mos_in_r_array_transp(ipoint,a) 
+   mos_ia = mos_a * mos_i
+   w_ia   = x_W_ij_erf_rk(ipoint,mm,i,a) 
+     
+   int_1  += weight *   2.d0  * (fock_3_w_kl_wla_phi_k(ipoint,mm,i) * mos_a + fock_3_w_kl_wla_phi_k(ipoint,mm,a) * mos_i & 
+             +fock_3_w_ki_mos_k(ipoint,mm,i) * fock_3_w_ki_mos_k(ipoint,mm,a))                          
+   int_2  += weight *  ( fock_3_rho_beta(ipoint) * fock_3_w_ki_wk_a(ipoint,mm,i,a) & 
+             + fock_3_w_kk_sum(ipoint,mm) * ( fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i  + fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a) )
+  enddo
+ enddo
+ contrib = 0.5d0 * (int_1 - int_2 )
+end
+
+subroutine give_contrib_three_fock(i,a,contrib)
+ implicit none
+ integer, intent(in) :: i,a
+ double precision, intent(out) :: contrib
+ double precision :: direct_int, exch_1, exch_2 
+ integer :: k,l
+ contrib = 0.d0
+ h = i
+ p = a
+ do k = 1, elec_beta_num
+  do l = 1, elec_beta_num
+   call  give_integrals_3_body(h,k,l,p,k,l,direct_int)  ! < h k l | p k l >
+   call  give_integrals_3_body(h,k,l,k,p,l,exch_1)      ! < h k l | k p l >
+   call  give_integrals_3_body(h,k,l,p,l,k,exch_2)      ! < h k l | p l k >
+   !   anti parallel spin : 1.5 direct - 1 exch_1 - 0.5 exch_2
+   contrib += 2.0d0 * direct_int - 1.5d0 * exch_1 - 1.0d0 * exch_2  
+!  !!contrib += 1.5d0 * direct_int - 1.0d0 * exch_1 - 0.5d0 * exch_2  
+  enddo
+ enddo
+ double precision :: exchange_int_13,exchange_int_12, exchange_int_23
+ double precision :: exchange_int_123, exchange_int_321,same_spin
+ integer :: h,p
+ same_spin = 0.d0
+ do k = 1, elec_beta_num
+  do l = 1, elec_beta_num
+!   call  give_integrals_3_body(h,k,l,p,k,l,direct_int)         ! <h k l | p k l >
+!   call  give_integrals_3_body(h,k,l,p,l,k,exchange_int_23)    ! <h k l | p l k >
+!   call  give_integrals_3_body(h,k,l,k,p,l,exchange_int_12)    ! <h k l | k p l >
+   call  give_integrals_3_body(h,k,l,k,l,p,exchange_int_123)   ! <h k l | k l p > 
+   call  give_integrals_3_body(h,k,l,l,p,k,exchange_int_321)   ! <h k l | l p k > 
+   call  give_integrals_3_body(h,k,l,l,k,p,exchange_int_13)    ! <h k l | l k p >
+   same_spin += exchange_int_123 + exchange_int_321 - exchange_int_13
+            
+  enddo
+ enddo
+ contrib += 0.5d0 * same_spin
+ 
+end
+
+
+BEGIN_PROVIDER [ double precision, ref_fock_three_new, (mo_num, mo_num)]
+ implicit none
+ integer :: i,a,k,l
+ double precision :: direct_int, contrib
+ ref_fock_three_new = 0.d0
+ do i = 1, mo_num
+  do a = 1, mo_num
+   call give_contrib_three_fock(i,a,contrib)
+   ref_fock_three_new(i,a) += contrib 
+  enddo
+ enddo
+END_PROVIDER 
+
+
+BEGIN_PROVIDER [ double precision, ref_fock_three, (mo_num, mo_num)]
+ implicit none
+ integer :: i,a,k,l
+ double precision :: direct_int, exch_1, exch_2
+ ref_fock_three = 0.d0
+ do i = 1, mo_num
+  do a = 1, mo_num
+   do k = 1, elec_beta_num
+    do l = k+1, elec_beta_num
+     call  give_integrals_3_body(k,l,i,k,l,a,direct_int)   
+     call  give_integrals_3_body(l,k,i,k,l,a,exch_1)   
+     ref_fock_three(i,a) += 1.d0 * direct_int - exch_1 
+    enddo
+    do l = 1, elec_beta_num
+     call  give_integrals_3_body(k,l,i,k,l,a,direct_int)   
+     call  give_integrals_3_body(i,l,k,k,l,a,exch_1)   
+     ref_fock_three(i,a) += 1.d0 * direct_int - exch_1 
+    enddo
+   enddo
+  enddo
+ enddo
+END_PROVIDER 
+
+

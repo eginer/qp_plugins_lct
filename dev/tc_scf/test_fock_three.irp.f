@@ -5,24 +5,25 @@ program test_fock_three
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
 ! call routine_test
-! call routine
+ call routine
 ! call test_direct
 ! call test_diag_three
- call test_scaled_fock_three
+! call test_scaled_fock_three
 
 end
 
 subroutine test_scaled_fock_three
  implicit none
  integer :: i,j
- double precision :: accu, ref, new,new_2
+ double precision :: accu, ref, new,new_2,contrib
  accu = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
    call give_contrib_three_fock(i,j,ref)
-   call give_fock_ia_same_spin(i,j,new)
-   call give_fock_ia_scaled_op_spin(i,j,new_2)
-   new += new_2
+!   call give_fock_ia_same_spin(i,j,new)
+!   call give_fock_ia_scaled_op_spin(i,j,new_2)
+   call give_fock_ia_three_e_total(i,j,contrib)
+   new = contrib
    accu += dabs(ref - new)
    if(dabs(ref) .gt.1.d-10 )then
     print*,ref,new,ref/new
@@ -113,7 +114,8 @@ subroutine routine
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)
    call do_single_excitation(det_i,i,a,1,i_ok)
-   call give_contrib_three_fock(i,a,f_tc)
+!   call give_contrib_three_fock(i,a,f_tc)
+   call give_fock_ia_three_e_total(i,a,f_tc)
 !   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
    call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
 !   print*,'***'
