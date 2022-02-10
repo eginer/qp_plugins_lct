@@ -249,8 +249,8 @@ subroutine give_fock_ia_real_space_prov(i,a,contrib)
      
    int_1  += weight * fock_3_w_kk_sum(ipoint,mm) * (3.d0 * fock_3_rho_beta(ipoint) * w_ia       & 
                                                   + 1.5d0 * mos_ia * fock_3_w_kk_sum(ipoint,mm) & 
-                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
-                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
+                                                  - 1.0d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
+                                                  - 1.0d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
    int_2  += weight * (-1.d0) * ( 1.0d0 * fock_3_v_r(ipoint,mm) * w_ia + 1.0d0 * fock_3_rho_beta(ipoint) * fock_3_w_tilde(ipoint,mm,i,a)  + 0.5d0 * mos_ia * big_v_r)
   enddo
  enddo
