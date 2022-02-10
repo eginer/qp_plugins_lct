@@ -50,8 +50,8 @@ subroutine give_contrib_three_fock(i,a,contrib)
    call  give_integrals_3_body(h,k,l,k,p,l,exch_1)      ! < h k l | k p l >
    call  give_integrals_3_body(h,k,l,p,l,k,exch_2)      ! < h k l | p l k >
    !   anti parallel spin : 1.5 direct - 1 exch_1 - 0.5 exch_2
-!   contrib += 2.0d0 * direct_int - 1.5d0 * exch_1 - 1.0d0 * exch_2  
-   contrib += 1.5d0 * direct_int - 1.0d0 * exch_1 - 0.5d0 * exch_2  
+   contrib += 2.0d0 * direct_int - 1.5d0 * exch_1 - 1.0d0 * exch_2  
+!   contrib += 1.5d0 * direct_int - 1.0d0 * exch_1 - 0.5d0 * exch_2  
   enddo
  enddo
  double precision :: exchange_int_13,exchange_int_12, exchange_int_23
@@ -252,6 +252,44 @@ subroutine give_fock_ia_real_space_prov(i,a,contrib)
                                                   - 1.0d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
                                                   - 1.0d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
    int_2  += weight * (-1.d0) * ( 1.0d0 * fock_3_v_r(ipoint,mm) * w_ia + 1.0d0 * fock_3_rho_beta(ipoint) * fock_3_w_tilde(ipoint,mm,i,a)  + 0.5d0 * mos_ia * big_v_r)
+  enddo
+ enddo
+ contrib = int_1 + int_2 
+
+end
+
+subroutine give_fock_ia_scaled_op_spin(i,a,contrib)
+ implicit none
+ BEGIN_DOC
+! contrib is the contribution from the three body term to the Fock operator 
+!
+! WARNING : It takes into the scaled anti-parrallel part to contain a part of direct and exchange of parrallel
+ END_DOC
+ integer, intent(in) :: i,a
+ double precision, intent(out) :: contrib
+ double precision :: big_v_r
+ double precision :: int_1, int_2
+ double precision :: mos_i, mos_a, w_ia
+ double precision :: mos_ia, weight
+
+ integer :: mm, ipoint,k,l
+
+ int_1 = 0.d0
+ int_2 = 0.d0
+ do mm = 1, 3
+  do ipoint = 1, n_points_final_grid
+   weight = final_weight_at_r_vector(ipoint)                                                                          
+   mos_i  = mos_in_r_array_transp(ipoint,i) 
+   mos_a  = mos_in_r_array_transp(ipoint,a) 
+   mos_ia = mos_a * mos_i
+   w_ia   = x_W_ij_erf_rk(ipoint,mm,i,a) 
+   big_v_r  = fock_3_trace_w_tilde(ipoint,mm)
+     
+   int_1  += weight * fock_3_w_kk_sum(ipoint,mm) * (4.d0 * fock_3_rho_beta(ipoint) * w_ia       & 
+                                                  + 2.0d0 * mos_ia * fock_3_w_kk_sum(ipoint,mm) & 
+                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
+                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
+   int_2  += weight * (-1.d0) * ( 2.0d0 * fock_3_v_r(ipoint,mm) * w_ia + 1.5d0 * fock_3_rho_beta(ipoint) * fock_3_w_tilde(ipoint,mm,i,a)  + 1.0d0 * mos_ia * big_v_r)
   enddo
  enddo
  contrib = int_1 + int_2 

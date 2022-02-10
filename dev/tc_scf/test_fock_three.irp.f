@@ -20,7 +20,7 @@ subroutine test_scaled_fock_three
  do i = 1, mo_num
   do j = 1, mo_num
    call give_contrib_three_fock(i,j,ref)
-   call give_fock_ia_real_space_prov(i,j,new)
+   call give_fock_ia_scaled_op_spin(i,j,new)
    accu += dabs(ref - new)
    if(dabs(ref) .gt.1.d-10 )then
     print*,ref,new,ref/new
