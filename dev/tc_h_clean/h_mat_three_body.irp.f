@@ -25,7 +25,7 @@ subroutine diag_htilde_mu_mat_three_body(key_i,hthree)
    double precision :: direct_int, exchange_int
    double precision :: exchange_int_12, exchange_int_13, exchange_int_23
    double precision :: exchange_int_231,exchange_int_312
-!!  ! alpha/alpha/beta three-body
+!  ! alpha/alpha/beta three-body
    do i = 1, Ne(1)
     ii = occ(i,1) 
     do j = i+1, Ne(1)

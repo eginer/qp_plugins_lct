@@ -1,8 +1,8 @@
 
  BEGIN_PROVIDER [ double precision, good_hermit_tc_fock_mat, (mo_num, mo_num)]
-  implicit none
-  integer :: i,j
-  good_hermit_tc_fock_mat = Fock_matrix_tc_mo_tot
+ implicit none
+ integer :: i,j
+ good_hermit_tc_fock_mat = Fock_matrix_tc_mo_tot
  do j = 1, mo_num
   do i = 1, j-1
    good_hermit_tc_fock_mat(i,j) = Fock_matrix_tc_mo_tot(j,i) 
@@ -48,7 +48,7 @@
  TC_right_HF_two_e_n_hermit_energy = 0.d0
  do j=1,ao_num
    do i=1,ao_num
-    TC_right_HF_two_e_hermit_energy += 0.5d0 * ( two_e_tc_hermit_integral_alpha(i,j) * SCF_density_matrix_ao_alpha(i,j) &
+    TC_right_HF_two_e_hermit_energy   += 0.5d0 * ( two_e_tc_hermit_integral_alpha(i,j) * SCF_density_matrix_ao_alpha(i,j) &
                                        +two_e_tc_hermit_integral_beta(i,j)  * SCF_density_matrix_ao_beta(i,j) )
     TC_right_HF_two_e_n_hermit_energy += 0.5d0 * ( two_e_tc_non_hermit_integral_alpha(i,j) * SCF_density_matrix_ao_alpha(i,j) &
                                        +two_e_tc_non_hermit_integral_beta(i,j)  * SCF_density_matrix_ao_beta(i,j) )
@@ -56,4 +56,8 @@
    enddo
  enddo
  TC_right_HF_energy += TC_right_HF_one_electron_energy + TC_right_HF_two_e_hermit_energy + TC_right_HF_two_e_n_hermit_energy 
+ if(three_body_h_tc)then
+  TC_right_HF_energy += diag_three_elem_hf 
+ endif
 END_PROVIDER
+

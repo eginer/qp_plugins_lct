@@ -6,7 +6,21 @@ program test_fock_three
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
 ! call routine_test
 ! call routine
- call test_direct
+! call test_direct
+ call test_diag_three
+
+end
+
+subroutine test_diag_three
+ implicit none
+ double precision :: hmono,heff,hderiv,hthree,htot
+ call htilde_mu_mat(ref_bitmask,ref_bitmask,hmono,heff,hderiv,hthree,htot)
+ print*,' hthree                 ',hthree
+ print*,' diag_three_elem_hf     ',diag_three_elem_hf
+ print*,' diag_three_elem_hf_old ',diag_three_elem_hf_old
+ print*,'****'
+ print*,'htot                    ',htot
+ print*,'TC_right_HF_energy      ',TC_right_HF_energy
 
 end
 
@@ -21,7 +35,8 @@ subroutine test_direct
    call give_contrib_three_fock(i,a,ref)
 !   call give_fock_ia_real_space_old(i,a,ref)
 !   call give_fock_ia_real_space_old_bis(i,a,new)
-   call give_fock_ia_real_space_new(i,a,new)
+!   call give_fock_ia_real_space_new(i,a,new)
+    call give_fock_ia_real_space_prov(i,a,new)
    accu += dabs(ref - new)
    if(dabs(ref).gt.1.d-10)then
     print*,'***'
@@ -62,6 +77,13 @@ subroutine routine
  double precision :: accu_alpha,accu_beta,hmono,heff,hderiv,hthree,htot
  integer(bit_kind), allocatable :: det_i(:,:)
  print*,'e_tilde_00 = ',e_tilde_00
+ print*,''
+  print*,'***'
+   print*,'TC HF total energy = ',TC_right_HF_energy
+   print*,'TC HF 1 e   energy = ',TC_right_HF_one_electron_energy
+   print*,'TC HF 2 e hermit   = ',TC_right_HF_two_e_hermit_energy
+   print*,'TC HF 2 non hermit = ',TC_right_HF_two_e_n_hermit_energy
+  print*,'***'
  print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
  allocate(det_i(N_int,2))
  do i = 1, elec_alpha_num
@@ -69,8 +91,11 @@ subroutine routine
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)
    call do_single_excitation(det_i,i,a,1,i_ok)
-   f_tc = ref_fock_three_new(i,a) ! <HF|H a^dagger_a a_i |HF > = F(i,a)
+   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
    call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
+!   print*,'***'
+!   print*,'hthree = ',hthree
+!   print*,'f_tc   = ',f_tc 
    if(dabs(hthree).gt.1.d-10)then
     print*,'i,a',i,a
     print*,'ref,new,dabs'

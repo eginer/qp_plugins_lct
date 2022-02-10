@@ -138,5 +138,8 @@ END_PROVIDER
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
  implicit none
  Fock_matrix_tc_mo_tot = 0.5d0 * (Fock_matrix_tc_mo_alpha + Fock_matrix_tc_mo_beta)
+ if(three_body_h_tc)then
+  Fock_matrix_tc_mo_tot += fock_3_mat
+ endif
 
 END_PROVIDER 
