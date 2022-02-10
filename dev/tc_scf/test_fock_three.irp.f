@@ -7,7 +7,27 @@ program test_fock_three
 ! call routine_test
 ! call routine
 ! call test_direct
- call test_diag_three
+! call test_diag_three
+ call test_scaled_fock_three
+
+end
+
+subroutine test_scaled_fock_three
+ implicit none
+ integer :: i,j
+ double precision :: accu, ref, new
+ accu = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   call give_contrib_three_fock(i,j,ref)
+   call give_fock_ia_real_space_prov(i,j,new)
+   accu += dabs(ref - new)
+   if(dabs(ref) .gt.1.d-10 )then
+    print*,ref,new,ref/new
+   endif
+  enddo
+ enddo
+ print*,'accu = ',accu
 
 end
 
@@ -91,7 +111,8 @@ subroutine routine
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)
    call do_single_excitation(det_i,i,a,1,i_ok)
-   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+   call give_contrib_three_fock(i,a,f_tc)
+!   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
    call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
 !   print*,'***'
 !   print*,'hthree = ',hthree
@@ -99,7 +120,7 @@ subroutine routine
    if(dabs(hthree).gt.1.d-10)then
     print*,'i,a',i,a
     print*,'ref,new,dabs'
-    print*,dabs(hthree),dabs(f_tc), dabs(f_tc) - dabs(hthree)
+    print*,dabs(hthree),dabs(f_tc), dabs(f_tc/hthree)
    endif
    accu_alpha += dabs(dabs(f_tc) - dabs(hthree))
   enddo

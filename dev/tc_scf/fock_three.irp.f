@@ -42,14 +42,36 @@ subroutine give_contrib_three_fock(i,a,contrib)
  double precision :: direct_int, exch_1, exch_2 
  integer :: k,l
  contrib = 0.d0
+ h = i
+ p = a
  do k = 1, elec_beta_num
   do l = 1, elec_beta_num
-   call  give_integrals_3_body(k,l,i,k,l,a,direct_int)   
-   call  give_integrals_3_body(i,l,k,k,l,a,exch_1)   ! i-k
-   call  give_integrals_3_body(l,k,i,k,l,a,exch_2)   ! l-k
+   call  give_integrals_3_body(h,k,l,p,k,l,direct_int)  ! < h k l | p k l >
+   call  give_integrals_3_body(h,k,l,k,p,l,exch_1)      ! < h k l | k p l >
+   call  give_integrals_3_body(h,k,l,p,l,k,exch_2)      ! < h k l | p l k >
+   !   anti parallel spin : 1.5 direct - 1 exch_1 - 0.5 exch_2
+!   contrib += 2.0d0 * direct_int - 1.5d0 * exch_1 - 1.0d0 * exch_2  
    contrib += 1.5d0 * direct_int - 1.0d0 * exch_1 - 0.5d0 * exch_2  
   enddo
  enddo
+ double precision :: exchange_int_13,exchange_int_12, exchange_int_23
+ double precision :: exchange_int_123, exchange_int_321,same_spin
+ integer :: h,p
+ same_spin = 0.d0
+! do k = 1, elec_beta_num
+!  do l = 1, elec_beta_num
+!!   call  give_integrals_3_body(h,k,l,p,k,l,direct_int)         ! <h k l | p k l >
+!!   call  give_integrals_3_body(h,k,l,p,l,k,exchange_int_23)    ! <h k l | p l k >
+!!   call  give_integrals_3_body(h,k,l,k,p,l,exchange_int_12)    ! <h k l | k p l >
+!   call  give_integrals_3_body(h,k,l,k,l,p,exchange_int_123)   ! <h k l | k l p > 
+!   call  give_integrals_3_body(h,k,l,l,p,k,exchange_int_321)   ! <h k l | l p k > 
+!   call  give_integrals_3_body(h,k,l,l,k,p,exchange_int_13)    ! <h k l | l k p >
+!   same_spin += exchange_int_123 + exchange_int_321 - exchange_int_13
+!            
+!  enddo
+! enddo
+ contrib += 0.5d0 * same_spin
+ 
 end
 
 
@@ -227,9 +249,9 @@ subroutine give_fock_ia_real_space_prov(i,a,contrib)
      
    int_1  += weight * fock_3_w_kk_sum(ipoint,mm) * (3.d0 * fock_3_rho_beta(ipoint) * w_ia       & 
                                                   + 1.5d0 * mos_ia * fock_3_w_kk_sum(ipoint,mm) & 
-                                                  - fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
-                                                  - fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
-   int_2  += weight * (-1.d0) * ( fock_3_v_r(ipoint,mm) * w_ia + fock_3_rho_beta(ipoint) * fock_3_w_tilde(ipoint,mm,i,a)  + 0.5d0 * mos_ia * big_v_r)
+                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,i) * mos_a      & 
+                                                  - 1.5d0 * fock_3_w_ki_mos_k(ipoint,mm,a) * mos_i )
+   int_2  += weight * (-1.d0) * ( 1.0d0 * fock_3_v_r(ipoint,mm) * w_ia + 1.0d0 * fock_3_rho_beta(ipoint) * fock_3_w_tilde(ipoint,mm,i,a)  + 0.5d0 * mos_ia * big_v_r)
   enddo
  enddo
  contrib = int_1 + int_2 
