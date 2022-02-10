@@ -96,8 +96,8 @@ end
 subroutine routine
  implicit none
  integer :: i,a,i_ok
- double precision :: f_tc
- double precision :: accu_alpha,accu_beta,hmono,heff,hderiv,hthree,htot
+ double precision :: f_tc,f_tc_3
+ double precision :: accu_alpha,accu_beta,hmono,heff,hderiv,hthree,htot,accu_tot
  integer(bit_kind), allocatable :: det_i(:,:)
  print*,'e_tilde_00 = ',e_tilde_00
  print*,''
@@ -109,25 +109,47 @@ subroutine routine
   print*,'***'
  print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
  allocate(det_i(N_int,2))
+ accu_beta = 0.d0
+ accu_alpha = 0.d0
+ accu_tot = 0.d0
  do i = 1, elec_alpha_num
   do a = elec_alpha_num+1, mo_num
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)
    call do_single_excitation(det_i,i,a,1,i_ok)
-!   call give_contrib_three_fock(i,a,f_tc)
-   call give_fock_ia_three_e_total(i,a,f_tc)
-!   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
    call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
-!   print*,'***'
-!   print*,'hthree = ',hthree
-!   print*,'f_tc   = ',f_tc 
+
+   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+   f_tc_3 = f_tc
    if(dabs(hthree).gt.1.d-10)then
-    print*,'i,a',i,a
+    print*,'3 body '
     print*,'ref,new,dabs'
     print*,dabs(hthree),dabs(f_tc), dabs(f_tc/hthree)
+    print*,'***'
    endif
    accu_alpha += dabs(dabs(f_tc) - dabs(hthree))
+
+   f_tc = Fock_matrix_tc_mo_alpha(a,i) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+   if(dabs(hmono+heff+hderiv).gt.1.d-10)then
+    print*,'two body '
+    print*,'ref,new,dabs'
+    print*,dabs(hmono+heff+hderiv),dabs(f_tc), dabs(f_tc/(hmono+heff+hderiv))
+    print*,'***'
+   endif
+   accu_beta += dabs(dabs(f_tc) - dabs(hmono+heff+hderiv))
+
+   f_tc = Fock_matrix_tc_mo_alpha(a,i) + f_tc_3 ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+   if(dabs(htot).gt.1.d-10)then
+    print*,'Total '
+    print*,'ref,new,dabs'
+    print*,dabs(htot),dabs(f_tc), dabs(f_tc/htot)
+    print*,'***'
+   endif
+   accu_tot += dabs(dabs(f_tc) - dabs(htot))
+
   enddo
  enddo
- print*,'accu_alpha = ',accu_alpha
+ print*,'accu_three = ',accu_alpha
+ print*,'accu_twoe  = ',accu_beta
+ print*,'accu_tot   = ',accu_tot 
 end

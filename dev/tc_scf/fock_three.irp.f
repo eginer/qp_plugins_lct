@@ -12,7 +12,7 @@ BEGIN_PROVIDER [ double precision, fock_3_mat, (mo_num, mo_num)]
   do i = 1, mo_num
    do j = 1, mo_num
     call give_fock_ia_three_e_total(j,i,contrib)
-    fock_3_mat(j,i) = contrib
+    fock_3_mat(j,i) = -contrib
    enddo
   enddo
 !  !$OMP END DO

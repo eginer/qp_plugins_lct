@@ -28,7 +28,7 @@
   logical            :: output
   sign = 1
   label = "Canonical"
-  output = .True.
+  output = .False.
   
   call mo_as_eigvectors_of_mo_matrix(good_hermit_tc_fock_mat,mo_num,mo_num,label,sign,output)                                                    
  end
