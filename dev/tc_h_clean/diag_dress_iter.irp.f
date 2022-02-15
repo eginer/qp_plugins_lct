@@ -71,9 +71,34 @@ subroutine routine
  print*,'< h_eee >       = ',h_three_comp_right_tc
  print*,'< h_tot >       = ',h_tot_comp_right_tc
  print*,'******************'
+ print*,'singles_hf_mat_ele',singles_hf_mat_elem
+ print*,'e_tilde_00      = ',e_tilde_00
+ print*,'E corr tc       = ',eigval_right_tc - e_tilde_00
+ print*,'e_pt2_tc        = ',e_pt2_tc
+ print*,'e_pt2_tc_single = ',e_pt2_tc_single
+ print*,'e_pt2_tc_double = ',e_pt2_tc_double
+ print*,'e_from_right_eigv ',e_from_right_eigv
+ print*,'******************'
+! print*,'******************'
+! print*,'h_tilde_dagger_expect_right    = ',h_tilde_dagger_expect_right
+! print*,'h_tilde_expect_right           = ',h_tilde_expect_right
+! print*,'h_tilde_dagger_expect_psi_coef = ',h_tilde_dagger_expect_psi_coef
+! print*,'h_tilde_expect_psi_coef        = ',h_tilde_dagger_expect_psi_coef
+! print*,'eigval_sym_tc                  = ',eigval_sym_tc(1)
+! print*,'exp_h_tilde_eigvec_sym_tc      = ',exp_h_tilde_eigvec_sym_tc
+! print*,'******************'
+ print*,'******************'
+ if(comp_left_eigv.or.full_tc_h_solver)then
+  print*,' norm_ground_left_right = ',norm_ground_left_right
+  print*,' norm_ground_right       = ',norm_ground_right
+  print*,' norm_ground_left       = ',norm_ground_left
+ endif
  print*,'Left, right and usual eigenvectors '
  do i = 1, N_det
-  write(*,'(I5,X,(100(F9.5,X)))')i,leigvec_tc(i,1),reigvec_tc(i,1),psi_coef(i,1)
+  double precision :: tmp
+  tmp = (leigvec_tc(i,1)/leigvec_tc(1,1) + reigvec_tc(i,1)/reigvec_tc(1,1)) * 0.5d0
+!  write(*,'(I5,X,(100(F12.7,X)))')i,leigvec_tc(i,1),reigvec_tc(i,1),psi_coef(i,1),eigvec_sym_tc(i,1)/eigvec_sym_tc(1,1),tmp
+  write(*,'(I5,X,(100(F12.7,X)))')i,leigvec_tc(i,1),reigvec_tc(i,1),psi_coef(i,1)
  enddo
  call routine_save_right
 end

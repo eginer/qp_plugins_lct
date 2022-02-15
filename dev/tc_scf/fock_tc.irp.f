@@ -83,6 +83,12 @@ END_PROVIDER
  two_e_tc_non_hermit_integral_beta  = 0.d0
  do i = 1, ao_num
   do k = 1, ao_num
+!  !$OMP PARALLEL                  &
+!  !$OMP DEFAULT (NONE)            &
+!  !$OMP PRIVATE (j,l,density_a,density_b,density) & 
+!  !$OMP SHARED (i,k,ao_num,SCF_density_matrix_ao_alpha,SCF_density_matrix_ao_beta,ao_non_hermit_term_chemist) & 
+!  !$OMP SHARED (two_e_tc_non_hermit_integral_alpha,two_e_tc_non_hermit_integral_beta)
+!  !$OMP DO SCHEDULE (dynamic)
    do j = 1, ao_num
     do l = 1, ao_num
      density_a = SCF_density_matrix_ao_alpha(l,j)
@@ -94,6 +100,8 @@ END_PROVIDER
      two_e_tc_non_hermit_integral_beta(k,i)  -= density_b * ao_non_hermit_term_chemist(k,j,l,i)
     enddo
    enddo
+!  !$OMP END DO
+!  !$OMP END PARALLEL
   enddo
  enddo
 
@@ -130,6 +138,9 @@ END_PROVIDER
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
  implicit none
  Fock_matrix_tc_mo_tot = 0.5d0 * (Fock_matrix_tc_mo_alpha + Fock_matrix_tc_mo_beta)
+ if(three_body_h_tc)then
+  Fock_matrix_tc_mo_tot += fock_3_mat
+ endif
 
 END_PROVIDER 
 

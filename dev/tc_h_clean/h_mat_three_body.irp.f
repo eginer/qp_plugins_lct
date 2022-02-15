@@ -69,8 +69,6 @@ subroutine diag_htilde_mu_mat_three_body(Nint, key_i, hthree)
       direct_int = three_body_3_index(kk,jj,ii)
       exchange_int_231 = three_body_3_index_exch_231(kk,jj,ii)
       exchange_int_312 = three_body_3_index_exch_231(kk,jj,ii)
-!      exchange_int_231 = 0.d0
-!      exchange_int_312 = 0.d0
       exchange_int_12  = three_body_3_index_exch_12(kk,jj,ii)
       exchange_int_13  = three_body_3_index_exch_13(kk,jj,ii)
       exchange_int_23  = three_body_3_index_exch_23(kk,jj,ii)

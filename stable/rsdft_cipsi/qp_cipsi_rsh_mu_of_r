@@ -208,7 +208,7 @@ def main():
     ezfio.set_mo_two_e_erf_ints_io_mo_two_e_integrals_erf("None")
     ezfio.set_ao_two_e_erf_ints_io_ao_two_e_integrals_erf("None")
     save_mu_of_r_ints(filename)
-    ezfio.set_dft_keywords_mu_dft_type("Read")
+#    ezfio.set_dft_keywords_mu_dft_type("Read")
     # Make a link for the integrals 
     print("cd %s/work ; for i in *erf* ; do  ln -s $i ${i/_erf/} ; done"%filename)
     subprocess.check_output("cd %s/work ; for i in *erf* ; do rm -f ${i/_erf/} ;  ln -s $i ${i/_erf/} ; done"%filename, shell=True, executable='/bin/bash')
