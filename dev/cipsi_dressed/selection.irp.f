@@ -62,33 +62,36 @@ END_TEMPLATE
 end subroutine
 
 
-subroutine select_connected(i_generator,E0,pt2_data,b,subset,csubset)
+subroutine select_connected(i_generator, E0, pt2_data, b, subset, csubset)
+
   use bitmasks
   use selection_types
+
   implicit none
-  integer, intent(in)            :: i_generator, subset, csubset
+  integer,                intent(in)    :: i_generator, subset, csubset
+  double precision,       intent(in)    :: E0(N_states)
   type(selection_buffer), intent(inout) :: b
-  type(pt2_type), intent(inout)   :: pt2_data
-  integer :: k,l
-  double precision, intent(in)   :: E0(N_states)
+  type(pt2_type),         intent(inout) :: pt2_data
 
-  integer(bit_kind)              :: hole_mask(N_int,2), particle_mask(N_int,2)
-
-  double precision, allocatable  :: fock_diag_tmp(:,:)
+  integer                               :: k, l
+  integer(bit_kind)                     :: hole_mask(N_int,2), particle_mask(N_int,2)
+  double precision, allocatable         :: fock_diag_tmp(:,:)
 
   allocate(fock_diag_tmp(2,mo_num+1))
 
-  call build_fock_tmp(fock_diag_tmp,psi_det_generators(1,1,i_generator),N_int)
+  call build_fock_tmp(fock_diag_tmp, psi_det_generators(1,1,i_generator), N_int)
 
-  do k=1,N_int
-      hole_mask(k,1) = iand(generators_bitmask(k,1,s_hole), psi_det_generators(k,1,i_generator))
-      hole_mask(k,2) = iand(generators_bitmask(k,2,s_hole), psi_det_generators(k,2,i_generator))
+  do k = 1, N_int
+      hole_mask(k,1)     = iand(generators_bitmask(k,1,s_hole), psi_det_generators(k,1,i_generator))
+      hole_mask(k,2)     = iand(generators_bitmask(k,2,s_hole), psi_det_generators(k,2,i_generator))
       particle_mask(k,1) = iand(generators_bitmask(k,1,s_part), not(psi_det_generators(k,1,i_generator)) )
       particle_mask(k,2) = iand(generators_bitmask(k,2,s_part), not(psi_det_generators(k,2,i_generator)) )
   enddo
-  call select_singles_and_doubles(i_generator,hole_mask,particle_mask,fock_diag_tmp,E0,pt2_data,b,subset,csubset)
+  call select_singles_and_doubles(i_generator, hole_mask, particle_mask, fock_diag_tmp, E0, pt2_data, b, subset, csubset)
+
   deallocate(fock_diag_tmp)
-end subroutine
+
+end subroutine select_connected
 
 
 double precision function get_phase_bi(phasemask, s1, s2, h1, p1, h2, p2, Nint)
@@ -135,13 +138,16 @@ double precision function get_phase_bi(phasemask, s1, s2, h1, p1, h2, p2, Nint)
 end
 
 
-subroutine select_singles_and_doubles(i_generator,hole_mask,particle_mask,fock_diag_tmp,E0,pt2_data,buf,subset,csubset)
+subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock_diag_tmp, E0, pt2_data, buf, subset, csubset)
+
+  BEGIN_DOC
+  !  WARNING /!\ : It is assumed that the generators and selectors are psi_det_sorted
+  END_DOC
+
   use bitmasks
   use selection_types
+
   implicit none
-  BEGIN_DOC
-!            WARNING /!\ : It is assumed that the generators and selectors are psi_det_sorted
-  END_DOC
 
   integer, intent(in)                   :: i_generator, subset, csubset
   integer(bit_kind), intent(in)         :: hole_mask(N_int,2), particle_mask(N_int,2)
@@ -550,7 +556,8 @@ subroutine select_singles_and_doubles(i_generator,hole_mask,particle_mask,fock_d
   deallocate(preinteresting, prefullinteresting, interesting, fullinteresting)
   deallocate(banned, bannedOrb,mat)
   deallocate(mat_p,mat_m)
-end subroutine
+
+end subroutine select_singles_and_doubles
 
 
 
@@ -786,18 +793,45 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
         !do istate = 1, N_states
         istate = 1
+        call htilde_mu_mat_tot( det, det, N_int, Hii)
         delta_E = E0(istate) - Hii + E_shift
+        !print *, '  --E0 modif-- ', E0(istate)
+
+        call get_excitation_degree( HF_bitmask, det, degree, N_int)
 
         psi_h_alpha = 0.d0
         alpha_h_psi = 0.d0
-        do iii = 1, N_det_selectors
+        !do iii = 1, N_det_selectors
+        do iii = 1, N_det
+
+          ! coefficient left
           call htilde_mu_mat_tot( psi_selectors(1,1,iii), det, N_int, i_h_alpha)
-          psi_h_alpha += i_h_alpha * psi_selectors_coef(iii,istate) 
+          !psi_h_alpha += i_h_alpha * psi_selectors_coef(iii,istate) 
+          psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
+
+          ! coefficient right
           call htilde_mu_mat_tot( det, psi_selectors(1,1,iii), N_int, alpha_h_i)
-          alpha_h_psi += alpha_h_i * psi_selectors_coef(iii,istate) 
+          !alpha_h_psi += alpha_h_i * psi_selectors_coef(iii,istate) 
+          alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
+
         enddo
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha
+
+
+        if(    dabs( alpha_h_psi ) .gt. (1d-8) &
+          .or. dabs( psi_h_alpha ) .gt. (1d-8) ) then
+
+          print *, ' --degree--', degree
+          print *, '  --delta E-- ', delta_E
+          print *, ' coef, e_pert', coef(1), e_pert(1)
+          print *, ' a_H_psi, psi_H_a', alpha_h_psi, psi_h_alpha
+
+        endif
+
+
+
+        
 
         !do istate = 1, N_states
         !  delta_E = E0(istate) - Hii + E_shift
@@ -916,9 +950,11 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
           case default
             ! Energy selection
             if (h0_type == 'CFG') then
-              w = min(w, e_pert(istate) * s_weight(istate,istate)) / c0_weight(istate)
+              !w = min(w, e_pert(istate) * s_weight(istate,istate)) / c0_weight(istate)
+              w = min(w, -dabs(e_pert(istate)) * s_weight(istate,istate)) / c0_weight(istate)
             else
-              w = min(w, e_pert(istate) * s_weight(istate,istate))
+              !w = min(w, e_pert(istate) * s_weight(istate,istate))
+              w = min(w, -dabs( e_pert(istate) ) * s_weight(istate,istate))
             endif
 
         end select
@@ -938,6 +974,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
       if(w <= buf%mini) then
         call add_to_selection_buffer(buf, det, w)
+        print *, ' !! det is selected'
       end if
     end do
   end do
