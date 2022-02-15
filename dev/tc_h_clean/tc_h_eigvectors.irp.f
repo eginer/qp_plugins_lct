@@ -1,3 +1,102 @@
+ BEGIN_PROVIDER [ double precision, singles_hf_mat_elem]
+ implicit none
+ integer :: i,degree
+ double precision :: hmono,heff,hderiv,hthree,htilde_ij
+ singles_hf_mat_elem = 0.d0
+ do i = 1, N_det
+  call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
+  if(degree == 1)then
+   call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,hmono,heff,hderiv,hthree,htilde_ij)
+   singles_hf_mat_elem += dabs(htilde_ij)
+  endif
+ enddo
+ END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, h_tilde_expect_right]
+&BEGIN_PROVIDER [ double precision, h_tilde_expect_psi_coef]
+&BEGIN_PROVIDER [ double precision, h_tilde_dagger_expect_right]
+&BEGIN_PROVIDER [ double precision, h_tilde_dagger_expect_psi_coef]
+  implicit none
+  integer :: i,j
+  double precision :: hmono,heff,hderiv,hthree,htilde_ij
+  h_tilde_expect_right = 0.d0
+  h_tilde_dagger_expect_right = 0.d0
+  h_tilde_expect_psi_coef = 0.d0
+  h_tilde_dagger_expect_psi_coef = 0.d0
+  do i = 1, N_det
+   do j = 1, N_det
+    call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
+    h_tilde_expect_right += htilde_ij * reigvec_tc(i,1) * reigvec_tc(j,1)
+    h_tilde_expect_psi_coef += htilde_ij * psi_coef(i,1) * psi_coef(j,1)
+    call htilde_mu_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
+    h_tilde_dagger_expect_right += htilde_ij * reigvec_tc(i,1) * reigvec_tc(j,1)
+    h_tilde_dagger_expect_psi_coef += htilde_ij * psi_coef(i,1) * psi_coef(j,1)
+   enddo
+  enddo
+ END_PROVIDER
+
+ BEGIN_PROVIDER [ double precision, e_from_right_eigv]
+ implicit none
+ integer :: i,degree
+ double precision :: hmono,heff,hderiv,hthree,htilde_ij
+ e_from_right_eigv = 0.d0
+ do i = 1, N_det
+  call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
+  e_from_right_eigv += htilde_ij * reigvec_tc(i,1)/reigvec_tc(1,1)
+  call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,hmono,heff,hderiv,hthree,htilde_ij)
+ enddo
+
+ END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, e_pt2_tc]
+&BEGIN_PROVIDER [ double precision, e_pt2_tc_single]
+&BEGIN_PROVIDER [ double precision, e_pt2_tc_double]
+ implicit none 
+ integer :: i,degree
+ double precision :: hmono,heff,hderiv,hthree,htilde_ij,coef_pt1,e_i0,delta_e
+ e_pt2_tc = 0.d0
+ e_pt2_tc_single = 0.d0
+ e_pt2_tc_double = 0.d0
+ do i = 1, N_det
+  call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
+  if(degree == 1 .or. degree == 2)then
+   call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,hmono,heff,hderiv,hthree,htilde_ij)
+   call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,heff,hderiv,hthree,e_i0)
+   delta_e = e_tilde_00 - e_i0
+   coef_pt1 = htilde_ij / delta_e
+   call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
+   e_pt2_tc += coef_pt1 * htilde_ij
+   if(degree == 1)then
+    e_pt2_tc_single += coef_pt1 * htilde_ij
+   else 
+    e_pt2_tc_double += coef_pt1 * htilde_ij
+   endif
+  endif
+ enddo
+ END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, e_tilde_00]
+ implicit none
+ double precision :: hmono,heff,hderiv,hthree,htilde_ij
+ call htilde_mu_mat(HF_bitmask,HF_bitmask,hmono,heff,hderiv,hthree,e_tilde_00)
+ END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, norm_ground_left_right]
+&BEGIN_PROVIDER [ double precision, norm_ground_right]
+&BEGIN_PROVIDER [ double precision, norm_ground_left]
+ implicit none
+ integer :: i
+ norm_ground_left_right = 0.d0
+ norm_ground_right = 0.d0
+ norm_ground_left = 0.d0
+ do i = 1, N_det
+  norm_ground_left_right += reigvec_tc(i,1) * leigvec_tc(i,1)
+  norm_ground_left += leigvec_tc(i,1) * leigvec_tc(i,1)
+  norm_ground_right += reigvec_tc(i,1) * reigvec_tc(i,1)
+ enddo
+ END_PROVIDER 
+
+
  BEGIN_PROVIDER [double precision, eigval_right_tc, (N_states)]
 &BEGIN_PROVIDER [double precision, eigval_left_tc, (N_states)]
 &BEGIN_PROVIDER [double precision, reigvec_tc, (N_det,N_states)]

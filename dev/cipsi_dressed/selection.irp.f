@@ -1098,6 +1098,10 @@ subroutine get_d2(gen, phasemask, bannedOrb, banned, mat, mask, h, p, sp, coefs)
         p1 = p(i1, ma)
         p2 = p(i2, ma)
 
+        ! <p1 p2|1/r12|h1 h2> --> <p1 p2| w_ee^h + t^nh | h1 h2> --> < p2 p1 | H^tilde| h1 h2 >
+        ! 
+        !                      <p1 p2 | h1 h2>        -            <p2 p1 | h1 h2 >
+        ! < p2 p1 | H^tilde^dag| h1 h2 > = < h1 h2 | w_ee^h + t^nh | p1 p2 >
         hij = mo_two_e_integral(p1, p2, h1, h2) - mo_two_e_integral(p2, p1, h1, h2)
         if (hij == 0.d0) cycle
 
