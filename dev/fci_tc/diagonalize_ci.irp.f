@@ -20,6 +20,7 @@ subroutine diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
   print*,'eigval_right_tc = ',eigval_right_tc(1)
   if(print_pt2)then
    print*,'E+PT2           = ',eigval_right_tc(1) + pt2_data % pt2(1)
+   print*,'PT2             = ',pt2_data % pt2(1)
   endif
   E_tc  = eigval_right_tc(1)
 end

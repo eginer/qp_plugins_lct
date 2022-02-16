@@ -108,21 +108,21 @@ subroutine run_stochastic_cipsi
     if (qp_stop()) exit
   enddo
 
-  if (.not.qp_stop()) then
-    if (N_det < N_det_max) then
-     call routine_save_right
-     call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
-    endif
-
-    call pt2_dealloc(pt2_data)
-    call pt2_dealloc(pt2_data_err)
-    call pt2_alloc(pt2_data, N_states)
-    call pt2_alloc(pt2_data_err, N_states)
-    call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-    call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
-  endif
-  call pt2_dealloc(pt2_data)
-  call pt2_dealloc(pt2_data_err)
+!  if (.not.qp_stop()) then
+!    if (N_det < N_det_max) then
+!     call routine_save_right
+!     call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
+!    endif
+!
+!    call pt2_dealloc(pt2_data)
+!    call pt2_dealloc(pt2_data_err)
+!    call pt2_alloc(pt2_data, N_states)
+!    call pt2_alloc(pt2_data_err, N_states)
+!    call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
+!    call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
+!  endif
+!  call pt2_dealloc(pt2_data)
+!  call pt2_dealloc(pt2_data_err)
   call routine_save_right
 
 end

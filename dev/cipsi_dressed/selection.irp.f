@@ -584,6 +584,8 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
   double precision                      :: s_weight(N_states,N_states)
 
   double precision, external            :: diag_H_mat_elem_fock
+  integer :: iii
+  double precision :: i_h_alpha, alpha_h_i
 
   PROVIDE dominant_dets_of_cfgs N_dominant_dets_of_cfgs
   do jstate=1,N_states
@@ -745,8 +747,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
       !logical          :: hermitian_case
       !hermitian_case = .TRUE.
 
-      if(hermitian_case) then
-
+      if(cipsi_tc == "reg_h") then
         ! -------------------------------------------
         !
         ! Hermitian 
@@ -778,8 +779,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         !
         ! -------------------------------------------
 
-      else
-
+      else if(cipsi_tc == "h_tc") then
         ! -------------------------------------------
         ! Non hermitian 
         ! c_alpha = <alpha|H(j)|psi_0>/delta_E(alpha)
@@ -787,9 +787,6 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         ! <alpha|H|psi_0> and <psi_0|H|alpha>
         ! <det|H(j)|psi_0> and transpose 
         ! -------------------------------------------
-
-        integer :: iii
-        double precision :: i_h_alpha, alpha_h_i
 
         !do istate = 1, N_states
         istate = 1
@@ -803,7 +800,6 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         alpha_h_psi = 0.d0
         !do iii = 1, N_det_selectors
         do iii = 1, N_det
-
           ! coefficient left
           call htilde_mu_mat_tot( psi_det(1,1,iii), det, N_int, i_h_alpha)
           !psi_h_alpha += i_h_alpha * psi_selectors_coef(iii,istate) 
@@ -813,93 +809,46 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
           call htilde_mu_mat_tot( det, psi_det(1,1,iii), N_int, alpha_h_i)
           !alpha_h_psi += alpha_h_i * psi_selectors_coef(iii,istate) 
           alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
-
         enddo
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha
-
-
-!        if(    dabs( alpha_h_psi ) .gt. (1d-8) &
-!          .or. dabs( psi_h_alpha ) .gt. (1d-8) ) then
-!
-!          print *, ' --degree--', degree
-!          print *, '  --delta E-- ', delta_E
-!          print *, ' coef, e_pert', coef(1), e_pert(1)
-!          print *, ' a_H_psi, psi_H_a', alpha_h_psi, psi_h_alpha
-!
-!        endif
-
-
-
-        
-
-        !do istate = 1, N_states
-        !  delta_E = E0(istate) - Hii + E_shift
-
-        !  alpha_h_psi = mat_p(istate, p1, p2) 
-        !  if(alpha_h_psi == 0.d0) cycle
-        !  psi_h_alpha = mat_m(istate, p1, p2) 
-        !  if(psi_h_alpha == 0.d0) cycle
-
-        !  val = 4.d0 * alpha_h_psi * psi_h_alpha
-        !  tmp = dsqrt(delta_E * delta_E + val)
-        !  if(delta_E < 0.d0) then
-        !      tmp = -tmp
-        !  endif
-        !  e_pert(istate) = 0.5d0 * (tmp - delta_E) 
-
-        !  if(dabs(alpha_h_psi) > 1.d-4) then
-        !    coef(istate) = e_pert(istate) / alpha_h_psi
-        !  else
-        !    coef(istate) = alpha_h_psi / delta_E
-        !  endif
-        !enddo
-
-        !
+      else if(cipsi_tc == "sym_h_tc") then
+        ! -------------------------------------------
+        ! Non hermitian 
+        ! c_alpha = <alpha|H(j)|psi_0>/delta_E(alpha)
+        ! e_alpha = c_alpha * <psi_0|H(j)|alpha>
+        ! <alpha|H|psi_0> and <psi_0|H|alpha>
+        ! <det|H(j)|psi_0> and transpose 
         ! -------------------------------------------
 
+        !do istate = 1, N_states
+        istate = 1
+        call htilde_mu_mat_tot( det, det, N_int, Hii)
+        delta_E = E0(istate) - Hii + E_shift
+        !print *, '  --E0 modif-- ', E0(istate)
+
+        call get_excitation_degree( HF_bitmask, det, degree, N_int)
+
+        psi_h_alpha = 0.d0
+        alpha_h_psi = 0.d0
+        !do iii = 1, N_det_selectors
+        do iii = 1, N_det
+          ! coefficient left
+          call htilde_mu_mat_tot( psi_det(1,1,iii), det, N_int, i_h_alpha)
+          call htilde_mu_mat_tot( det, psi_det(1,1,iii), N_int, alpha_h_i)
+          alpha_h_psi += (alpha_h_i+i_h_alpha) * reigvec_tc(iii,1) 
+        enddo
+        alpha_h_psi = alpha_h_psi * 0.5d0
+        psi_h_alpha = alpha_h_psi
+        coef(istate)   = alpha_h_psi / delta_E 
+        e_pert(istate) = coef(istate) * psi_h_alpha
       endif
-
-
 
       do_diag = sum(dabs(coef)) > 0.001d0 .and. N_states > 1
 
       double precision :: eigvalues(N_states+1)
       double precision :: work(1+6*(N_states+1)+2*(N_states+1)**2)
       integer :: info, k , iwork(N_states+1)
-
-!     if (do_diag) then
-!       double precision :: pt2_matrix(N_states+1,N_states+1)
-!       pt2_matrix(N_states+1,N_states+1) = Hii+E_shift
-!       do istate=1,N_states
-!         pt2_matrix(:,istate) = 0.d0
-!         pt2_matrix(istate,istate) = E0(istate)
-!         pt2_matrix(istate,N_states+1) = mat(istate,p1,p2)
-!         pt2_matrix(N_states+1,istate) = mat(istate,p1,p2)
-!       enddo
-
-!       call DSYEV( 'V', 'U', N_states+1, pt2_matrix, N_states+1, eigvalues, &
-!                    work, size(work), info )
-!       if (info /= 0) then
-!         print *, 'error in '//irp_here
-!         stop -1
-!       endif
-!       pt2_matrix = dabs(pt2_matrix)
-!       iwork(1:N_states+1) = maxloc(pt2_matrix,DIM=1)
-!       do k=1,N_states
-!         e_pert(k) = eigvalues(iwork(k)) - E0(k)
-!       enddo
-!     endif
-
-
-
-!      ! Gram-Schmidt using input overlap matrix
-!      do istate=1,N_states
-!        do jstate=1,istate-1
-!          if ( (pt2_overlap(jstate,istate) == 0.d0).or.(pt2_overlap(jstate,jstate) == 0.d0) ) cycle
-!          coef(istate) = coef(istate) - pt2_overlap(jstate,istate)/pt2_overlap(jstate,jstate) * coef(jstate)
-!        enddo
-!      enddo
 
       do istate=1, N_states
 
@@ -908,25 +857,6 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         pt2_data % overlap(:,istate) = pt2_data % overlap(:,istate) + coef(:) * coef(istate)
         pt2_data % variance(istate)  = pt2_data % variance(istate) + alpha_h_psi * alpha_h_psi
         pt2_data % pt2(istate)       = pt2_data % pt2(istate)      + e_pert(istate)
-
-!!!DEBUG
-!        delta_E = E0(istate) - Hii + E_shift
-!        pt2_data % pt2(istate) = pt2_data % pt2(istate) + alpha_h_psi**2/delta_E
-!
-!        integer :: k
-!        double precision :: alpha_h_psi_2,hij
-!        alpha_h_psi_2 = 0.d0
-!        do k = 1,N_det_selectors
-!         call i_H_j(det,psi_selectors(1,1,k),N_int,hij)
-!         alpha_h_psi_2 = alpha_h_psi_2 + psi_selectors_coef(k,istate) * hij
-!        enddo
-!        if(dabs(alpha_h_psi_2 - alpha_h_psi).gt.1.d-12)then
-!         call debug_det(psi_det_generators(1,1,i_generator),N_int)
-!         call debug_det(det,N_int)
-!         print*,'alpha_h_psi,alpha_h_psi_2 = ',alpha_h_psi,alpha_h_psi_2
-!         stop
-!        endif
-!!!DEBUG
 
         select case (weight_selection)
 
