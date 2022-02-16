@@ -1,5 +1,5 @@
 program fci
-  implicit none
+
   BEGIN_DOC
   ! Selected Full Configuration Interaction with stochastic selection
   ! and PT2.
@@ -35,15 +35,33 @@ program fci
   ! to |true|.
   !
   END_DOC
+
+  implicit none
+
   my_grid_becke = .True.
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
-  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
+  touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
+
+  call debug()
+
+end
 !  read_wf = .True.
 !  touch read_wf 
 
+
+subroutine debug()
+
+  implicit none
+
   if (.not.is_zmq_slave) then
-    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde
+!!    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde
+
+    ! ---
+    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde 
+    PROVIDE mo_two_e_integrals_tc_int_in_map mo_two_e_integrals_tcdag_int_in_map
+    ! ---
+
     if (do_pt2) then
       call run_stochastic_cipsi
     else
@@ -51,9 +69,15 @@ program fci
     endif
 
   else
-    PROVIDE mo_two_e_integrals_in_map pt2_min_parallel_tasks
+!!    PROVIDE mo_two_e_integrals_in_map pt2_min_parallel_tasks
+
+    ! ---
+    PROVIDE mo_two_e_integrals_in_map pt2_min_parallel_tasks 
+    PROVIDE mo_two_e_integrals_tc_int_in_map mo_two_e_integrals_tcdag_int_in_map
+    ! ---
 
     call run_slave_cipsi
 
   endif
+
 end

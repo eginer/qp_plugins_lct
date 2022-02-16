@@ -21,6 +21,7 @@ BEGIN_PROVIDER [ logical, mo_two_e_integrals_tc_int_in_map ]
   integer                        :: n_integrals, rc
   integer                        :: kk, m, j1, i1, lmax
   character*(64)                 :: fmt
+
   !!deriv_mu_r_pot_physicist_mo
   PROVIDE mo_tc_sym_two_e_pot_in_map mo_non_hermit_term mo_two_e_integrals_in_map
 !  endif
@@ -38,6 +39,17 @@ BEGIN_PROVIDER [ logical, mo_two_e_integrals_tc_int_in_map ]
   call wall_time(wall_0)
   call wall_time(wall_1)
   call cpu_time(cpu_1)
+
+  integer(key_kind)              :: key_max
+  integer(map_size_kind)         :: sze
+  call map_deinit(mo_integrals_tc_int_map)
+  call two_e_integrals_index(mo_num,mo_num,mo_num,mo_num,key_max)
+  sze = key_max
+  call map_init(mo_integrals_tc_int_map,sze)
+  print*,  'mo map initialized : ', sze
+
+
+
 
   integer(ZMQ_PTR) :: zmq_to_qp_run_socket, zmq_socket_pull
   call new_parallel_job(zmq_to_qp_run_socket,zmq_socket_pull,'mo_integrals_tc_int')
@@ -72,7 +84,7 @@ BEGIN_PROVIDER [ logical, mo_two_e_integrals_tc_int_in_map ]
   call end_parallel_job(zmq_to_qp_run_socket, zmq_socket_pull, 'mo_integrals_tc_int')
 
 
-  print*, 'Sorting the map'
+  print*, irp_here, ': Sorting the map'
   call map_sort(mo_integrals_tc_int_map)
   call cpu_time(cpu_2)
   call wall_time(wall_2)

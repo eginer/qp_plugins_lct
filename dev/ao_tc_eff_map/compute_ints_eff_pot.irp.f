@@ -19,6 +19,13 @@ subroutine compute_ao_tc_sym_two_e_pot_jl(j,l,n_integrals,buffer_i,buffer_value)
   integer                        :: kk, m, j1, i1
   logical, external              :: ao_two_e_integral_zero
 
+  double precision               :: j1b_gauss_erf, j1b_gauss_coul
+  double precision               :: j1b_gauss_coul_debug
+  double precision               :: j1b_gauss_coul_modifdebug
+  double precision               :: j1b_gauss_coulerf
+
+  PROVIDE j1b_gauss
+
   thr = ao_integrals_threshold
 
   n_integrals = 0
@@ -45,7 +52,18 @@ subroutine compute_ao_tc_sym_two_e_pot_jl(j,l,n_integrals,buffer_i,buffer_value)
       integral_pot = ao_tc_sym_two_e_pot(i,k,j,l)  ! i,k : r1    j,l : r2
       integral_erf = ao_two_e_integral_erf(i,k,j,l)
       integral = integral_erf + integral_pot
-      if (abs(integral) < thr) then
+
+      if( j1b_gauss .eq. 1 ) then
+        integral = integral                   & 
+                 + j1b_gauss_coulerf(i, k, j, l)
+                 !+ j1b_gauss_coul(i, k, j, l) &
+                 !+ j1b_gauss_erf (i, k, j, l)
+                 !+ j1b_gauss_coul_modifdebug(i, k, j, l) 
+                 !+ j1b_gauss_coul_debug(i, k, j, l) 
+      endif
+
+
+      if(abs(integral) < thr) then
         cycle
       endif
       n_integrals += 1

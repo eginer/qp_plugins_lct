@@ -1,10 +1,14 @@
 subroutine run_cipsi
-  implicit none
-  use selection_types
+
   BEGIN_DOC
-! Selected Full Configuration Interaction with deterministic selection and
-! stochastic PT2.
+  ! Selected Full Configuration Interaction with deterministic selection and
+  ! stochastic PT2.
   END_DOC
+
+  use selection_types
+
+  implicit none
+
   integer                        :: i,j,k
   type(pt2_type)                 :: pt2_data, pt2_data_err
   double precision, allocatable  :: zeros(:)
@@ -14,6 +18,7 @@ subroutine run_cipsi
   double precision :: threshold_generators_save
   double precision :: rss
   double precision, external :: memory_of_double
+
   PROVIDE H_apply_buffer_allocated
 
   N_iter = 1

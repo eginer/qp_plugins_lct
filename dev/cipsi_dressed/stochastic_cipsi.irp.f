@@ -86,7 +86,8 @@ subroutine run_stochastic_cipsi
     call pt2_dealloc(pt2_data_err)
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
-    call ZMQ_pt2(psi_energy_with_nucl_rep,pt2_data,pt2_data_err,relative_error,to_select) ! Stochastic PT2 and selection
+    call ZMQ_pt2(eigval_right_tc, pt2_data, pt2_data_err, relative_error,to_select) ! Stochastic PT2 and selection
+    !call ZMQ_pt2(psi_energy_with_nucl_rep,pt2_data,pt2_data_err,relative_error,to_select) ! Stochastic PT2 and selection
 
     correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
                     (psi_energy_with_nucl_rep(1) + pt2_data % rpt2(1) - hf_energy_ref)
@@ -136,7 +137,8 @@ subroutine run_stochastic_cipsi
     call pt2_dealloc(pt2_data_err)
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
-    call ZMQ_pt2(psi_energy_with_nucl_rep, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
+    call ZMQ_pt2(eigval_right_tc, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
+    !call ZMQ_pt2(psi_energy_with_nucl_rep, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
 
 !    call save_energy(psi_energy_with_nucl_rep, pt2_data % pt2)
     call print_summary(psi_energy_with_nucl_rep, &

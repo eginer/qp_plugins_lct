@@ -1,8 +1,10 @@
 subroutine run_slave_cipsi
-  implicit none
+
   BEGIN_DOC
-! Helper program for distributed parallelism
+  ! Helper program for distributed parallelism
   END_DOC
+
+  implicit none
 
   call omp_set_max_active_levels(1)
   distributed_davidson = .False.
@@ -20,7 +22,9 @@ subroutine provide_everything
   PROVIDE N_det_selectors pt2_stoch_istate N_det selection_weight pseudo_sym
 end
 
+
 subroutine run_slave_main
+
   use f77_zmq
 
   implicit none
