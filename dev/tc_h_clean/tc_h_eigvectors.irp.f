@@ -172,8 +172,8 @@
 
   endif
 
-  print*,'eigval_right_tc = ',eigval_right_tc(1)
-  print*,'N_det tc        = ',N_det
+!  print*,'eigval_right_tc = ',eigval_right_tc(1)
+!  print*,'N_det tc        = ',N_det
 
 END_PROVIDER 
 

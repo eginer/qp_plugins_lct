@@ -805,12 +805,12 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         do iii = 1, N_det
 
           ! coefficient left
-          call htilde_mu_mat_tot( psi_selectors(1,1,iii), det, N_int, i_h_alpha)
+          call htilde_mu_mat_tot( psi_det(1,1,iii), det, N_int, i_h_alpha)
           !psi_h_alpha += i_h_alpha * psi_selectors_coef(iii,istate) 
           psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
 
           ! coefficient right
-          call htilde_mu_mat_tot( det, psi_selectors(1,1,iii), N_int, alpha_h_i)
+          call htilde_mu_mat_tot( det, psi_det(1,1,iii), N_int, alpha_h_i)
           !alpha_h_psi += alpha_h_i * psi_selectors_coef(iii,istate) 
           alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
 
@@ -819,15 +819,15 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         e_pert(istate) = coef(istate) * psi_h_alpha
 
 
-        if(    dabs( alpha_h_psi ) .gt. (1d-8) &
-          .or. dabs( psi_h_alpha ) .gt. (1d-8) ) then
-
-          print *, ' --degree--', degree
-          print *, '  --delta E-- ', delta_E
-          print *, ' coef, e_pert', coef(1), e_pert(1)
-          print *, ' a_H_psi, psi_H_a', alpha_h_psi, psi_h_alpha
-
-        endif
+!        if(    dabs( alpha_h_psi ) .gt. (1d-8) &
+!          .or. dabs( psi_h_alpha ) .gt. (1d-8) ) then
+!
+!          print *, ' --degree--', degree
+!          print *, '  --delta E-- ', delta_E
+!          print *, ' coef, e_pert', coef(1), e_pert(1)
+!          print *, ' a_H_psi, psi_H_a', alpha_h_psi, psi_h_alpha
+!
+!        endif
 
 
 
@@ -974,7 +974,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
       if(w <= buf%mini) then
         call add_to_selection_buffer(buf, det, w)
-        print *, ' !! det is selected'
+!        print *, ' !! det is selected'
       end if
     end do
   end do

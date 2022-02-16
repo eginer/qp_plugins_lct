@@ -9,7 +9,7 @@ subroutine run_stochastic_cipsi
   integer                        :: to_select
   type(pt2_type)                 :: pt2_data, pt2_data_err
   logical, external              :: qp_stop
-
+  logical                        :: print_pt2
 
   double precision :: rss
   double precision, external :: memory_of_double
@@ -42,7 +42,8 @@ subroutine run_stochastic_cipsi
   if (s2_eig) then
     call make_s2_eigenfunction
   endif
-  call diagonalize_CI_dressed
+  print_pt2 = .False.
+  call diagonalize_CI_dressed(pt2_data,print_pt2)
   call routine_save_right
 
   call ezfio_has_hartree_fock_energy(has)
@@ -60,8 +61,8 @@ subroutine run_stochastic_cipsi
     if (s2_eig) then
       call make_s2_eigenfunction
     endif
-!    print*,'eigval_right_tc = ',eigval_right_tc
-    call diagonalize_CI_dressed
+    print_pt2 = .False.
+    call diagonalize_CI_dressed(pt2_data,print_pt2)
     call routine_save_right
   endif
 
@@ -69,11 +70,12 @@ subroutine run_stochastic_cipsi
 
   correlation_energy_ratio = 0.d0
 
+  print_pt2 = .True.
   do while (                                                         &
         (N_det < N_det_max) .and.                                    &
-        (maxval(abs(pt2_data % pt2(1:N_states))) > pt2_max) .and.               &
-        (maxval(abs(pt2_data % variance(1:N_states))) > variance_max) .and.     &
-        (correlation_energy_ratio <= correlation_energy_ratio_max)   &
+        (maxval(abs(pt2_data % pt2(1:N_states))) > pt2_max)          &
+!        (maxval(abs(pt2_data % variance(1:N_states))) > variance_max) .and.     &
+!        (correlation_energy_ratio <= correlation_energy_ratio_max)   &
         )
       write(*,'(A)')  '--------------------------------------------------------------------------------'
 
@@ -87,67 +89,40 @@ subroutine run_stochastic_cipsi
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
     call ZMQ_pt2(eigval_right_tc, pt2_data, pt2_data_err, relative_error,to_select) ! Stochastic PT2 and selection
-    !call ZMQ_pt2(psi_energy_with_nucl_rep,pt2_data,pt2_data_err,relative_error,to_select) ! Stochastic PT2 and selection
 
     correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
                     (psi_energy_with_nucl_rep(1) + pt2_data % rpt2(1) - hf_energy_ref)
     correlation_energy_ratio = min(1.d0,correlation_energy_ratio)
-
-    call write_double(6,correlation_energy_ratio, 'Correlation ratio')
-    call print_summary(psi_energy_with_nucl_rep, &
-       pt2_data, pt2_data_err, N_det,N_configuration,N_states,psi_s2)
-
-!    call save_energy(psi_energy_with_nucl_rep, pt2_data % pt2)
-
-    call save_iterations(psi_energy_with_nucl_rep(1:N_states),pt2_data % rpt2,N_det)
-    call print_extrapolated_energy()
     N_iter += 1
 
     if (qp_stop()) exit
 
     ! Add selected determinants
     call copy_H_apply_buffer_to_wf()
-!    if (save_wf_after_selection) then
-!      call save_wavefunction
-!    endif
 
     PROVIDE  psi_coef
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted
 
-!    print*,'eigval_right_tc = ',eigval_right_tc(1)
-    call routine_save_right
-    call diagonalize_CI_dressed
-!    call save_energy(psi_energy_with_nucl_rep, zeros)
+    call diagonalize_CI_dressed(pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
 
   if (.not.qp_stop()) then
     if (N_det < N_det_max) then
-!        print*,'eigval_right_tc = ',eigval_right_tc(1)
-        call routine_save_right
-        call diagonalize_CI_dressed
-!        call save_energy(psi_energy_with_nucl_rep, zeros)
+     call routine_save_right
+     call diagonalize_CI_dressed(pt2_data,print_pt2)
     endif
-!    print*,'eigval_right_tc = ',eigval_right_tc(1)
-!    print*,'N_det = ',N_det
-    call diagonalize_CI_dressed
 
     call pt2_dealloc(pt2_data)
     call pt2_dealloc(pt2_data_err)
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
     call ZMQ_pt2(eigval_right_tc, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-    !call ZMQ_pt2(psi_energy_with_nucl_rep, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-
-!    call save_energy(psi_energy_with_nucl_rep, pt2_data % pt2)
-    call print_summary(psi_energy_with_nucl_rep, &
-       pt2_data , pt2_data_err, N_det, N_configuration, N_states, psi_s2)
-    call save_iterations(psi_energy_with_nucl_rep(1:N_states),pt2_data % rpt2,N_det)
-    call print_extrapolated_energy()
+    call diagonalize_CI_dressed(pt2_data,print_pt2)
   endif
-!    print*,'ci_energy_dressed_scf = ',ci_energy_dressed_scf(1)
   call pt2_dealloc(pt2_data)
   call pt2_dealloc(pt2_data_err)
+  call routine_save_right
 
 end
