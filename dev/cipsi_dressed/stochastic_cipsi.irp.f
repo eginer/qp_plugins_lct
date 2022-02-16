@@ -43,7 +43,7 @@ subroutine run_stochastic_cipsi
     call make_s2_eigenfunction
   endif
   print_pt2 = .False.
-  call diagonalize_CI_dressed(pt2_data,print_pt2)
+  call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
   call routine_save_right
 
   call ezfio_has_hartree_fock_energy(has)
@@ -62,11 +62,11 @@ subroutine run_stochastic_cipsi
       call make_s2_eigenfunction
     endif
     print_pt2 = .False.
-    call diagonalize_CI_dressed(pt2_data,print_pt2)
+    call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
     call routine_save_right
   endif
 
-  double precision :: correlation_energy_ratio
+  double precision :: correlation_energy_ratio,E_denom,E_tc
 
   correlation_energy_ratio = 0.d0
 
@@ -83,16 +83,16 @@ subroutine run_stochastic_cipsi
     to_select = int(sqrt(dble(N_states))*dble(N_det)*selection_factor)
     to_select = max(N_states_diag, to_select)
 
-
+    E_denom = E_tc
     call pt2_dealloc(pt2_data)
     call pt2_dealloc(pt2_data_err)
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
-    call ZMQ_pt2(eigval_right_tc, pt2_data, pt2_data_err, relative_error,to_select) ! Stochastic PT2 and selection
+    call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error,to_select) ! Stochastic PT2 and selection
 
-    correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
-                    (psi_energy_with_nucl_rep(1) + pt2_data % rpt2(1) - hf_energy_ref)
-    correlation_energy_ratio = min(1.d0,correlation_energy_ratio)
+!    correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
+!                    (psi_energy_with_nucl_rep(1) + pt2_data % rpt2(1) - hf_energy_ref)
+!    correlation_energy_ratio = min(1.d0,correlation_energy_ratio)
     N_iter += 1
 
     if (qp_stop()) exit
@@ -104,22 +104,22 @@ subroutine run_stochastic_cipsi
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted
 
-    call diagonalize_CI_dressed(pt2_data,print_pt2)
+    call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
 
   if (.not.qp_stop()) then
     if (N_det < N_det_max) then
      call routine_save_right
-     call diagonalize_CI_dressed(pt2_data,print_pt2)
+     call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
     endif
 
     call pt2_dealloc(pt2_data)
     call pt2_dealloc(pt2_data_err)
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
-    call ZMQ_pt2(eigval_right_tc, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-    call diagonalize_CI_dressed(pt2_data,print_pt2)
+    call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
+    call diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
   endif
   call pt2_dealloc(pt2_data)
   call pt2_dealloc(pt2_data_err)

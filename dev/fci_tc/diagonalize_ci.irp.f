@@ -1,7 +1,8 @@
 
-subroutine diagonalize_CI_dressed(pt2_data,print_pt2)
+subroutine diagonalize_CI_dressed(E_tc,pt2_data,print_pt2)
   use selection_types
   implicit none
+  double precision, intent(out)  :: E_tc
   type(pt2_type)  , intent(in)   :: pt2_data
   logical, intent(in) :: print_pt2
   BEGIN_DOC
@@ -20,4 +21,5 @@ subroutine diagonalize_CI_dressed(pt2_data,print_pt2)
   if(print_pt2)then
    print*,'E+PT2           = ',eigval_right_tc(1) + pt2_data % pt2(1)
   endif
+  E_tc  = eigval_right_tc(1)
 end
