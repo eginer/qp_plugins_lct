@@ -1,3 +1,4 @@
+  use bitmasks ! you need to include the bitmasks_module.f90 features
  BEGIN_PROVIDER [ double precision, singles_hf_mat_elem]
  implicit none
  integer :: i,degree
@@ -6,7 +7,7 @@
  do i = 1, N_det
   call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
   if(degree == 1)then
-   call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,hmono,heff,hderiv,hthree,htilde_ij)
+   call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,N_int,hmono,heff,hderiv,hthree,htilde_ij)
    singles_hf_mat_elem += dabs(htilde_ij)
   endif
  enddo
@@ -25,10 +26,10 @@
   h_tilde_dagger_expect_psi_coef = 0.d0
   do i = 1, N_det
    do j = 1, N_det
-    call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,j),hmono,heff,hderiv,hthree,htilde_ij)
+    call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,j),N_int,hmono,heff,hderiv,hthree,htilde_ij)
     h_tilde_expect_right += htilde_ij * reigvec_tc(i,1) * reigvec_tc(j,1)
     h_tilde_expect_psi_coef += htilde_ij * psi_coef(i,1) * psi_coef(j,1)
-    call htilde_mu_mat(psi_det(1,1,j),psi_det(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
+    call htilde_mu_mat(psi_det(1,1,j),psi_det(1,1,i),N_int,hmono,heff,hderiv,hthree,htilde_ij)
     h_tilde_dagger_expect_right += htilde_ij * reigvec_tc(i,1) * reigvec_tc(j,1)
     h_tilde_dagger_expect_psi_coef += htilde_ij * psi_coef(i,1) * psi_coef(j,1)
    enddo
@@ -41,9 +42,9 @@
  double precision :: hmono,heff,hderiv,hthree,htilde_ij
  e_from_right_eigv = 0.d0
  do i = 1, N_det
-  call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
+  call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),N_int,hmono,heff,hderiv,hthree,htilde_ij)
   e_from_right_eigv += htilde_ij * reigvec_tc(i,1)/reigvec_tc(1,1)
-  call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,hmono,heff,hderiv,hthree,htilde_ij)
+  call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,N_int,hmono,heff,hderiv,hthree,htilde_ij)
  enddo
 
  END_PROVIDER 
@@ -60,11 +61,11 @@
  do i = 1, N_det
   call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
   if(degree == 1 .or. degree == 2)then
-   call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,hmono,heff,hderiv,hthree,htilde_ij)
-   call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,i),hmono,heff,hderiv,hthree,e_i0)
+   call htilde_mu_mat(psi_det(1,1,i),HF_bitmask,N_int,hmono,heff,hderiv,hthree,htilde_ij)
+   call htilde_mu_mat(psi_det(1,1,i),psi_det(1,1,i),N_int,hmono,heff,hderiv,hthree,e_i0)
    delta_e = e_tilde_00 - e_i0
    coef_pt1 = htilde_ij / delta_e
-   call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),hmono,heff,hderiv,hthree,htilde_ij)
+   call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),N_int,hmono,heff,hderiv,hthree,htilde_ij)
    e_pt2_tc += coef_pt1 * htilde_ij
    if(degree == 1)then
     e_pt2_tc_single += coef_pt1 * htilde_ij
@@ -78,7 +79,7 @@
  BEGIN_PROVIDER [ double precision, e_tilde_00]
  implicit none
  double precision :: hmono,heff,hderiv,hthree,htilde_ij
- call htilde_mu_mat(HF_bitmask,HF_bitmask,hmono,heff,hderiv,hthree,e_tilde_00)
+ call htilde_mu_mat(HF_bitmask,HF_bitmask,N_int,hmono,heff,hderiv,hthree,e_tilde_00)
  END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, norm_ground_left_right]

@@ -814,12 +814,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         e_pert(istate) = coef(istate) * psi_h_alpha
       else if(cipsi_tc == "sym_h_tc") then
         ! -------------------------------------------
-        ! Non hermitian 
-        ! c_alpha = <alpha|H(j)|psi_0>/delta_E(alpha)
-        ! e_alpha = c_alpha * <psi_0|H(j)|alpha>
-        ! <alpha|H|psi_0> and <psi_0|H|alpha>
-        ! <det|H(j)|psi_0> and transpose 
-        ! -------------------------------------------
+        ! H+H^dagger
 
         !do istate = 1, N_states
         istate = 1
