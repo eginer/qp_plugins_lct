@@ -29,8 +29,10 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+!      do m = n, mo_num
+!       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
          
          call give_integrals_3_body(j,m,k,l,n,k,integral)
@@ -52,17 +54,18 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
   call write_array_5_index_tensor(mo_num,three_body_5_index,name_file)
   call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = n, mo_num
-     do j = l, mo_num
-      three_body_5_index(k,l,n,j,m) = three_body_5_index(k,j,m,l,n)
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
+! do n = 1, mo_num
+!  do l = 1, mo_num
+!   do k = 1, mo_num
+!    do m = 1, n-1
+!     do j = 1, l-1
+!      three_body_5_index(k,j,m,l,n) = three_body_5_index(k,l,n,j,m)
+!      three_body_5_index(k,j,m,l,n)
+!     enddo
+!    enddo
+!   enddo
+!  enddo
+! enddo
 
 END_PROVIDER 
 
@@ -97,8 +100,10 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, 
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+!      do m = n, mo_num
+!       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
 !!                                  j,m,k,l,n,k : direct (case 2)
          call give_integrals_3_body(j,m,k,k,n,l,integral)
@@ -120,17 +125,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_13, (mo_num, mo_num, 
   call write_array_5_index_tensor(mo_num,three_body_5_index_exch_13,name_file)
   call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = n, mo_num
-     do j = l, mo_num
-      three_body_5_index_exch_13(k,l,n,j,m) = three_body_5_index_exch_13(k,j,m,l,n)
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
+! do n = 1, mo_num
+!  do l = 1, mo_num
+!   do k = 1, mo_num
+!    do m = n, mo_num
+!     do j = l, mo_num
+!      three_body_5_index_exch_13(k,l,n,j,m) = three_body_5_index_exch_13(k,j,m,l,n)
+!     enddo
+!    enddo
+!   enddo
+!  enddo
+! enddo
 
 END_PROVIDER 
 
@@ -165,8 +170,10 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, 
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+!      do m = n, mo_num
+!       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
 !!                                  j,m,k,l,n,k : direct (case 3)
          call give_integrals_3_body(j,m,k,l,k,n,integral)
@@ -189,17 +196,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_32, (mo_num, mo_num, 
   call write_array_5_index_tensor(mo_num,three_body_5_index_exch_32,name_file)
   call ezfio_set_three_body_ints_io_three_body_ints("Read")
  endif
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = n, mo_num
-     do j = l, mo_num
-      three_body_5_index_exch_32(k,l,n,j,m) = three_body_5_index_exch_32(k,j,m,l,n)
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
+! do n = 1, mo_num
+!  do l = 1, mo_num
+!   do k = 1, mo_num
+!    do m = n, mo_num
+!     do j = l, mo_num
+!      three_body_5_index_exch_32(k,l,n,j,m) = three_body_5_index_exch_32(k,j,m,l,n)
+!     enddo
+!    enddo
+!   enddo
+!  enddo
+! enddo
 
 END_PROVIDER 
 
@@ -234,8 +241,10 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_12, (mo_num, mo_num, 
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+!      do m = n, mo_num
+!       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
 !!                                  j,m,k,l,n,k : direct (case 1)
          call give_integrals_3_body(j,m,k,n,l,k,integral)
@@ -253,17 +262,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_exch_12, (mo_num, mo_num, 
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_5_index_exch_12',wall1 - wall0
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = n, mo_num
-     do j = l, mo_num
-      three_body_5_index_exch_12(k,l,n,j,m) = three_body_5_index_exch_12(k,j,m,l,n)
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
+! do n = 1, mo_num
+!  do l = 1, mo_num
+!   do k = 1, mo_num
+!    do m = n, mo_num
+!     do j = l, mo_num
+!      three_body_5_index_exch_12(k,l,n,j,m) = three_body_5_index_exch_12(k,j,m,l,n)
+!     enddo
+!    enddo
+!   enddo
+!  enddo
+! enddo
  if(write_three_body_ints)then
   print*,'Writing three_body_5_index_exch_12 on disk ...' 
   call write_array_5_index_tensor(mo_num,three_body_5_index_exch_12,name_file)
@@ -304,8 +313,10 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_312, (mo_num, mo_num, mo_n
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+!      do m = n, mo_num
+!       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
          
          !                         <j m k|l n k> - > <j m k|n k l>
@@ -323,17 +334,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_312, (mo_num, mo_num, mo_n
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_5_index_312',wall1 - wall0
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = n, mo_num
-     do j = l, mo_num
-      three_body_5_index_312(k,l,n,j,m) = three_body_5_index_312(k,j,m,l,n)
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
+! do n = 1, mo_num
+!  do l = 1, mo_num
+!   do k = 1, mo_num
+!    do m = n, mo_num
+!     do j = l, mo_num
+!      three_body_5_index_312(k,l,n,j,m) = three_body_5_index_312(k,j,m,l,n)
+!     enddo
+!    enddo
+!   enddo
+!  enddo
+! enddo
  if(write_three_body_ints)then
   print*,'Writing three_body_5_index_312 on disk ...' 
   call write_array_5_index_tensor(mo_num,three_body_5_index_312,name_file)
@@ -372,8 +383,10 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_132, (mo_num, mo_num, mo_n
    do n = 1, mo_num
     do l = 1, mo_num
      do k = 1, mo_num
-      do m = n, mo_num
-       do j = l, mo_num
+!      do m = n, mo_num
+!       do j = l, mo_num
+      do m = 1, mo_num
+       do j = 1, mo_num
          integral = 0.d0
          
          !                         <j m k|l n k> - > <j m k|k l n>
@@ -391,17 +404,17 @@ BEGIN_PROVIDER [ double precision, three_body_5_index_132, (mo_num, mo_num, mo_n
  endif
  call wall_time(wall1)
  print*,'wall time for three_body_5_index_132',wall1 - wall0
- do n = 1, mo_num
-  do l = 1, mo_num
-   do k = 1, mo_num
-    do m = n, mo_num
-     do j = l, mo_num
-      three_body_5_index_132(k,l,n,j,m) = three_body_5_index_132(k,j,m,l,n)
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
+! do n = 1, mo_num
+!  do l = 1, mo_num
+!   do k = 1, mo_num
+!    do m = n, mo_num
+!     do j = l, mo_num
+!      three_body_5_index_132(k,l,n,j,m) = three_body_5_index_132(k,j,m,l,n)
+!     enddo
+!    enddo
+!   enddo
+!  enddo
+! enddo
  if(write_three_body_ints)then
   print*,'Writing three_body_5_index_132 on disk ...' 
   call write_array_5_index_tensor(mo_num,three_body_5_index_132,name_file)
