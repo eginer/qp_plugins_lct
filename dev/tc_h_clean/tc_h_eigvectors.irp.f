@@ -294,7 +294,7 @@ subroutine iterative_davidson_tc(psidet, psicoef, ndet, Nint, N_st, N_st_diag, i
    print*,'  Delta E = ', delta_e
   endif
   print*, ' residual = ',residual
-  converged = residual.lt.threshold_davidson.or.dabs(delta_e).lt.1.d-5
+  converged = residual.lt.threshold_davidson.or.dabs(delta_e).lt.thresh_it_dav
   if(j>n_iter_max)then
    converged = .False.
    exit
