@@ -1,4 +1,4 @@
-program dmcdress
+program compute_deltamu
 
   implicit none
 
