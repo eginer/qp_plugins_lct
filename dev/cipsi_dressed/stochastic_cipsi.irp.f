@@ -4,7 +4,7 @@ subroutine run_stochastic_cipsi
   BEGIN_DOC
 ! Selected Full Configuration Interaction with Stochastic selection and PT2.
   END_DOC
-  integer                        :: i,j,k
+  integer                        :: i,j,k,ndet
   double precision, allocatable  :: zeros(:)
   integer                        :: to_select
   type(pt2_type)                 :: pt2_data, pt2_data_err
@@ -43,7 +43,7 @@ subroutine run_stochastic_cipsi
     call make_s2_eigenfunction
   endif
   print_pt2 = .False.
-  call diagonalize_CI_dressed(E_tc,norm,pt2_data,print_pt2)
+  call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
   call routine_save_right
 
   call ezfio_has_hartree_fock_energy(has)
@@ -62,7 +62,7 @@ subroutine run_stochastic_cipsi
       call make_s2_eigenfunction
     endif
     print_pt2 = .False.
-    call diagonalize_CI_dressed(E_tc,norm,pt2_data,print_pt2)
+    call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
     call routine_save_right
   endif
 
@@ -74,8 +74,6 @@ subroutine run_stochastic_cipsi
   do while (                                                         &
         (N_det < N_det_max) .and.                                    &
         (maxval(abs(pt2_data % pt2(1:N_states))) > pt2_max)          &
-!        (maxval(abs(pt2_data % variance(1:N_states))) > variance_max) .and.     &
-!        (correlation_energy_ratio <= correlation_energy_ratio_max)   &
         )
       write(*,'(A)')  '--------------------------------------------------------------------------------'
 
@@ -83,16 +81,13 @@ subroutine run_stochastic_cipsi
     to_select = int(sqrt(dble(N_states))*dble(N_det)*selection_factor)
     to_select = max(N_states_diag, to_select)
 
-    E_denom = E_tc
+    E_denom = E_tc ! TC Energy of the current wave function 
     call pt2_dealloc(pt2_data)
     call pt2_dealloc(pt2_data_err)
     call pt2_alloc(pt2_data, N_states)
     call pt2_alloc(pt2_data_err, N_states)
     call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error,to_select) ! Stochastic PT2 and selection
 
-!    correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
-!                    (psi_energy_with_nucl_rep(1) + pt2_data % rpt2(1) - hf_energy_ref)
-!    correlation_energy_ratio = min(1.d0,correlation_energy_ratio)
     N_iter += 1
 
     if (qp_stop()) exit
@@ -104,24 +99,24 @@ subroutine run_stochastic_cipsi
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted
 
-    call diagonalize_CI_dressed(E_tc,norm,pt2_data,print_pt2)
+    call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
 
-   if (.not.qp_stop()) then
-     if (N_det < N_det_max) then
-      thresh_it_dav  = 5.d-7
-      soft_touch thresh_it_dav
-      call diagonalize_CI_dressed(E_tc,norm,pt2_data,print_pt2)
-     endif
+!  if (.not.qp_stop()) then
+!    if (N_det < N_det_max) then
+!     thresh_it_dav  = 5.d-7
+!     soft_touch thresh_it_dav
+!     call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
+!    endif
 !
 !    call pt2_dealloc(pt2_data)
 !    call pt2_dealloc(pt2_data_err)
 !    call pt2_alloc(pt2_data, N_states)
 !    call pt2_alloc(pt2_data_err, N_states)
 !    call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-!    call diagonalize_CI_dressed(E_tc,norm,pt2_data,print_pt2)
-   endif
+!    call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
+!  endif
 !  call pt2_dealloc(pt2_data)
 !  call pt2_dealloc(pt2_data_err)
   call routine_save_right
