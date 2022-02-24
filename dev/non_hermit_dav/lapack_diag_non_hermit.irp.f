@@ -78,8 +78,8 @@ subroutine non_hrmt_real_diag(n,A,reigvec,leigvec,n_real_eigv,eigval)
   if(dabs(WI(i)).lt.thr)then
    n_good += 1
   else
-   print*,'Found an imaginary component to eigenvalue'
-   print*,'Re(i) + Im(i)',WR(i),WI(i)
+!   print*,'Found an imaginary component to eigenvalue'
+!   print*,'Re(i) + Im(i)',WR(i),WI(i)
   endif
  enddo
  allocate(list_good(n_good),iorder(n_good))
@@ -191,8 +191,8 @@ subroutine non_hrmt_general_real_diag(n,A,B,reigvec,leigvec,n_real_eigv,eigval)
   if(dabs(WI(i)).lt.1.d-12)then
    n_good += 1
   else
-   print*,'Found an imaginary component to eigenvalue'
-   print*,'Re(i) + Im(i)',WR(i),WI(i)
+!   print*,'Found an imaginary component to eigenvalue'
+!   print*,'Re(i) + Im(i)',WR(i),WI(i)
   endif
  enddo
  allocate(list_good(n_good),iorder(n_good))
