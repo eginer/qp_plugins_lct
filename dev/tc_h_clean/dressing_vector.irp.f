@@ -40,7 +40,50 @@ subroutine get_dressing_tc_for_dav(u_in, dets_in, ndet, Nint, N_st,dagger,dress_
 
 end subroutine get_dressing_tc_for_dav
 
+! ---
 
+subroutine get_Htc_psi(psidet, psicoef, ndet, Nint, delta)
+
+  BEGIN_DOC
+  ! you get in with a wave function psidet,psicoef and you get out with 
+  !
+  ! |delta> = Htilde |Psi>
+  END_DOC
+
+  use bitmasks
+
+  implicit none
+
+  integer,           intent(in) :: ndet, Nint
+  double precision,  intent(in) :: psicoef(ndet)
+  integer(bit_kind), intent(in) :: psidet(Nint,2,ndet)
+  double precision, intent(out) :: delta(ndet) 
+
+  integer                       :: i, j
+  double precision              :: htilde_ij, hmono, heff, hderiv, hthree
+
+  i = 1
+  j = 1
+  call htilde_mu_mat( psidet(1,1,i), psidet(1,1,j), Nint     &
+                    , hmono, heff, hderiv, hthree, htilde_ij )
+
+  delta(1:ndet) = 0.d0
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(delta, ndet, psidet, psicoef, Nint)    &
+ !$OMP PRIVATE(i, j, hmono, heff, hderiv, hthree, htilde_ij)
+  do i = 1, ndet
+    do j = 1, ndet
+      call htilde_mu_mat( psidet(1,1,i), psidet(1,1,j), Nint     &
+                        , hmono, heff, hderiv, hthree, htilde_ij )
+      delta(i) = delta(i) + psicoef(j) * htilde_ij
+    enddo
+  enddo
+ !$OMP END PARALLEL DO
+
+  return
+end subroutine get_Htc_psi
+
+! ---
 
 subroutine get_delta_tc_psi(psidet, psicoef, ndet, Nint, delta)
 
