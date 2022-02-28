@@ -83,20 +83,57 @@
  END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, norm_ground_left_right]
-&BEGIN_PROVIDER [ double precision, norm_ground_right]
-&BEGIN_PROVIDER [ double precision, norm_ground_left]
  implicit none
  integer :: i
  norm_ground_left_right = 0.d0
- norm_ground_right = 0.d0
- norm_ground_left = 0.d0
  do i = 1, N_det
   norm_ground_left_right += reigvec_tc(i,1) * leigvec_tc(i,1)
-  norm_ground_left += leigvec_tc(i,1) * leigvec_tc(i,1)
+ enddo
+
+ if(dabs(norm_ground_left_right).lt.0.01d0)then
+  print *,'Two small norm !!'
+  do i = 1,N_det
+   print *,i,reigvec_tc(i,1) , leigvec_tc(i,1)
+  enddo
+!  call routine_save_right
+!  stop
+ endif
+
+ END_PROVIDER
+
+ BEGIN_PROVIDER [ double precision, norm_ground_right]
+ implicit none
+ integer :: i
+ norm_ground_right = 0.d0
+ do i = 1, N_det
   norm_ground_right += reigvec_tc(i,1) * reigvec_tc(i,1)
  enddo
- END_PROVIDER 
+ END_PROVIDER
 
+ BEGIN_PROVIDER [ double precision, norm_ground_left]
+ implicit none
+ integer :: i
+ norm_ground_left = 0.d0
+ do i = 1, N_det
+  norm_ground_left += leigvec_tc(i,1) * leigvec_tc(i,1)
+ enddo
+ if(dabs(norm_ground_left).lt.0.1d0)then
+  print *,'Warning ! norm_ground_left too small!'
+  print *,'norm_ground_left = ',norm_ground_left
+ endif
+ END_PROVIDER
+
+ BEGIN_PROVIDER [ integer, index_HF_psi_det]
+ implicit none
+ integer :: i,degree
+ do i = 1, N_det
+   call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
+   if(degree == 0)then
+    index_HF_psi_det = i
+    exit
+   endif
+ enddo
+ END_PROVIDER 
 
  BEGIN_PROVIDER [double precision, eigval_right_tc, (N_states)]
 &BEGIN_PROVIDER [double precision, eigval_left_tc, (N_states)]
@@ -110,7 +147,7 @@
   implicit none
   integer                       :: i, idx_dress, j
   logical                       :: converged, dagger
-  integer                       :: n_real_tc_eigval_right
+  integer                       :: n_real_tc_eigval_right,igood_r,igood_l
   double precision, allocatable :: reigvec_tc_tmp(:,:),leigvec_tc_tmp(:,:),eigval_right_tmp(:)
 
   PROVIDE N_det N_int
@@ -121,13 +158,53 @@
     allocate(reigvec_tc_tmp(N_det,N_det),leigvec_tc_tmp(N_det,N_det),eigval_right_tmp(N_det))
 
     call non_hrmt_real_diag(N_det,htilde_matrix_elmt,reigvec_tc_tmp,leigvec_tc_tmp,n_real_tc_eigval_right,eigval_right_tmp)
-    do i = 1, N_states
-      eigval_right_tc(i) = eigval_right_tmp(i)
-      do j = 1, N_det
-        reigvec_tc(j,i) = reigvec_tc_tmp(j,i)
-        leigvec_tc(j,i) = leigvec_tc_tmp(j,i)
-      enddo
+    double precision, allocatable :: coef_hf_r(:),coef_hf_l(:)
+    integer, allocatable :: iorder(:)
+    allocate(coef_hf_r(N_det),coef_hf_l(N_det),iorder(N_det))
+    do i = 1,N_det
+     iorder(i) = i
+     coef_hf_r(i) = -dabs(reigvec_tc_tmp(index_HF_psi_det,i))
     enddo
+    call dsort(coef_hf_r,iorder,N_det)
+    igood_r = iorder(1)
+    do i = 1,N_det
+     iorder(i) = i
+     coef_hf_l(i) = -dabs(leigvec_tc_tmp(index_HF_psi_det,i))
+    enddo
+    call dsort(coef_hf_l,iorder,N_det)
+    igood_l = iorder(1)
+
+    if(igood_r.ne.igood_l.and.igood_r.ne.1)then
+     print *,''
+     print *,'Warning, the left and right eigenvectors are "not the same" '
+     print *,'Warning, the ground state is not dominated by HF...'
+     print *,'State with largest RIGHT coefficient of HF ',igood_r
+     print *,'coef of HF in RIGHT eigenvector = ',reigvec_tc_tmp(index_HF_psi_det,igood_r)
+     print *,'State with largest LEFT  coefficient of HF ',igood_l
+     print *,'coef of HF in LEFT  eigenvector = ',leigvec_tc_tmp(index_HF_psi_det,igood_l)
+    endif
+    if(state_following)then
+     print *,'Following the states with the largest coef on HF'
+     i= igood_r
+     eigval_right_tc(1) = eigval_right_tmp(i)
+     do j = 1, N_det
+       reigvec_tc(j,1) = reigvec_tc_tmp(j,i)
+     enddo
+     i= igood_l
+     eigval_left_tc(1)  = eigval_right_tmp(i)
+     do j = 1, N_det
+       leigvec_tc(j,1) = leigvec_tc_tmp(j,i)
+     enddo
+    else 
+     do i = 1, N_states
+       eigval_right_tc(i) = eigval_right_tmp(i)
+       eigval_left_tc(i)  = eigval_right_tmp(i)
+       do j = 1, N_det
+         reigvec_tc(j,i) = reigvec_tc_tmp(j,i)
+         leigvec_tc(j,i) = leigvec_tc_tmp(j,i)
+       enddo
+     enddo
+    endif
 
   else
 
