@@ -809,7 +809,8 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
           alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
         enddo
         coef(istate)   = alpha_h_psi / delta_E 
-        e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
+!        e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
+        e_pert(istate) = coef(istate) * psi_h_alpha
       else if(cipsi_tc == "e_sym") then
         ! -------------------------------------------
         ! Non hermitian 
@@ -840,7 +841,8 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
           alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
         enddo
         coef(istate)   = alpha_h_psi / delta_E 
-        e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
+!       e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
+        e_pert(istate) = coef(istate) * psi_h_alpha
       else if(cipsi_tc == "sym_h_tc") then
         ! -------------------------------------------
         ! H+H^dagger

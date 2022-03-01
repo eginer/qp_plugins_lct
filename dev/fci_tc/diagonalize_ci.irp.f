@@ -35,7 +35,11 @@ subroutine diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
    print*,'*****'
   endif
   E_tc  = eigval_right_tc(1)
-  norm  = norm_ground_left_right
+  if(cipsi_tc == "e_sym")then
+   norm = norm_ground_right
+  else
+   norm  = norm_ground_left_right
+  endif
   ndet  = N_det
   call routine_save_right 
 end
