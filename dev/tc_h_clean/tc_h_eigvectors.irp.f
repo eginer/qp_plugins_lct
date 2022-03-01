@@ -185,6 +185,7 @@
     endif
     if(state_following)then
      print *,'Following the states with the largest coef on HF'
+     print *,'igood_r,igood_l',igood_r,igood_l
      i= igood_r
      eigval_right_tc(1) = eigval_right_tmp(i)
      do j = 1, N_det
