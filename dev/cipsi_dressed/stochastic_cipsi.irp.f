@@ -99,10 +99,20 @@ subroutine run_stochastic_cipsi
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted
 
+    print *,'******'
+    print *,'norm = ',norm
+    print *,'******'
     call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
 
+  call pt2_dealloc(pt2_data)
+  call pt2_dealloc(pt2_data_err)
+  call pt2_alloc(pt2_data, N_states)
+  call pt2_alloc(pt2_data_err, N_states)
+  print *,'E_tc = ',E_tc
+  call ZMQ_pt2(E_tc, pt2_data, pt2_data_err, relative_error,0) ! Stochastic PT2 and selection
+  call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 !  if (.not.qp_stop()) then
 !    if (N_det < N_det_max) then
 !     thresh_it_dav  = 5.d-7
