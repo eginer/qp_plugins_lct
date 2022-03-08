@@ -29,9 +29,10 @@ subroutine diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
    print*,'previous wave function info'
    print*,'norm(before)      = ',norm
    print*,'E(before)         = ',E_tc
+   print*,'PT1 norm          = ',dsqrt(pt2_data % overlap(1,1))
    print*,'E(before) + PT2   = ',E_tc + (pt2_data % pt2(1))/norm
    print*,'PT2               = ',pt2_data % pt2(1)
-   print*,'Ndet, E_tc, E+PT2 = ',ndet,E_tc,E_tc + (pt2_data % pt2(1))/norm
+   print*,'Ndet, E_tc, E+PT2 = ',ndet,E_tc,E_tc + (pt2_data % pt2(1))/norm,dsqrt(pt2_data % overlap(1,1))
    print*,'*****'
   endif
   E_tc  = eigval_right_tc(1)
