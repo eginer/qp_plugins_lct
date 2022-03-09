@@ -237,8 +237,10 @@
       dagger = .True. ! to compute the LEFT  eigenvector 
       reigvec_tc_tmp = 0.d0
       do i = 1, N_states
-        do j = 1, N_det
-          reigvec_tc_tmp(j,i) = psi_coef(j,i)
+        do j = 1, min(N_det,n_det_max_full)
+!        print *,'psi_left_guess(j,i)',psi_left_guess(j,i)
+        reigvec_tc_tmp(j,i) = psi_left_guess(j,i)
+!         reigvec_tc_tmp(j,i) = reigvec_tc(j,i)
         enddo
       enddo
       call iterative_davidson_tc(psi_det, reigvec_tc_tmp, N_det, N_int, N_states, N_states_diag, idx_dress, dagger, eigval_left_tc, converged)
@@ -247,12 +249,49 @@
           leigvec_tc(j,i) = reigvec_tc_tmp(j,i) 
         enddo
       enddo
+    else 
+      do i = 1, N_states
+        do j = 1, N_det
+         leigvec_tc(j,i) = reigvec_tc(j,i) 
+        enddo
+      enddo
     endif
 
   endif
-
-!  print*,'eigval_right_tc = ',eigval_right_tc(1)
-!  print*,'N_det tc        = ',N_det
+  !!!! Normalization of the scalar product of the left/right eigenvectors
+  double precision  :: accu, tmp 
+  do i = 1, N_states
+   !!!! Normalization of right eigenvectors |Phi>
+   accu = 0.d0
+   do j = 1, N_det
+    accu += reigvec_tc(j,i) * reigvec_tc(j,i)
+   enddo
+   accu = 1.d0/dsqrt(accu)
+   do j = 1, N_det
+    reigvec_tc(j,i) *= accu 
+   enddo
+   !!!! Adaptation of the norm of the left eigenvector such that <chi|Phi> = 1
+   accu = 0.d0
+   do j = 1, N_det
+    accu += leigvec_tc(j,i) * reigvec_tc(j,i)
+   enddo
+   if(accu.gt.0.d0)then
+    accu = 1.d0/dsqrt(accu)
+   else
+    accu = 1.d0/dsqrt(-accu)
+   endif
+   tmp = (leigvec_tc(1,i) * reigvec_tc(1,i) )/dabs(leigvec_tc(1,i) * reigvec_tc(1,i))
+   do j = 1, N_det
+    leigvec_tc(j,i) *= accu * tmp
+    reigvec_tc(j,i) *= accu 
+   enddo
+   print*,'leigvec_tc(1,i),reigvec_tc(1,i) = ',leigvec_tc(1,i),reigvec_tc(1,i)
+   accu = 0.d0
+   do j = 1, N_det
+    accu += leigvec_tc(j,i) * reigvec_tc(j,i)
+   enddo
+   print*,'norm l/r = ',accu
+  enddo
 
 END_PROVIDER 
 
@@ -413,4 +452,14 @@ end
   call get_e_components_htilde(psidet, psicoef, n_det, N_int, h_mono_comp_right_tc, h_eff_comp_right_tc,& 
                               h_deriv_comp_right_tc, h_three_comp_right_tc, h_tot_comp_right_tc)
 
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, psi_left_guess, (n_det_max_full,N_states)]
+ implicit none
+ print *,'providing psi_left_guess '
+ psi_left_guess = 0.d0
+ integer :: i
+ do i = 1, min(n_det_max_full,N_states)
+  psi_left_guess(i,i) = 1.d0
+ enddo
 END_PROVIDER 
