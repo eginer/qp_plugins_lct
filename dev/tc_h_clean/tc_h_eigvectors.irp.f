@@ -238,7 +238,8 @@
       reigvec_tc_tmp = 0.d0
       do i = 1, N_states
         do j = 1, N_det
-          reigvec_tc_tmp(j,i) = psi_coef(j,i)
+!        reigvec_tc_tmp(j,i) = psi_left_guess(j,i)
+         reigvec_tc_tmp(j,i) = reigvec_tc(j,i)
         enddo
       enddo
       call iterative_davidson_tc(psi_det, reigvec_tc_tmp, N_det, N_int, N_states, N_states_diag, idx_dress, dagger, eigval_left_tc, converged)
@@ -250,14 +251,25 @@
     else 
       do i = 1, N_states
         do j = 1, N_det
-          leigvec_tc(j,i) = reigvec_tc(j,i) 
+         leigvec_tc(j,i) = reigvec_tc(j,i) 
         enddo
       enddo
     endif
 
   endif
+  !!!! Normalization of the scalar product of the left/right eigenvectors
+  double precision  :: accu, tmp 
   do i = 1, N_states
-   double precision  :: accu, tmp 
+   !!!! Normalization of right eigenvectors |Phi>
+   accu = 0.d0
+   do j = 1, N_det
+    accu += reigvec_tc(j,i) * reigvec_tc(j,i)
+   enddo
+   accu = 1.d0/dsqrt(accu)
+   do j = 1, N_det
+    reigvec_tc(j,i) *= accu 
+   enddo
+   !!!! Adaptation of the norm of the left eigenvector such that <chi|Phi> = 1
    accu = 0.d0
    do j = 1, N_det
     accu += leigvec_tc(j,i) * reigvec_tc(j,i)
@@ -439,4 +451,10 @@ end
   call get_e_components_htilde(psidet, psicoef, n_det, N_int, h_mono_comp_right_tc, h_eff_comp_right_tc,& 
                               h_deriv_comp_right_tc, h_three_comp_right_tc, h_tot_comp_right_tc)
 
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, psi_left_guess,(N_det,N_states)]
+ implicit none
+ psi_left_guess = 0.d0
+ psi_left_guess(1,:) = 1.d0
 END_PROVIDER 
