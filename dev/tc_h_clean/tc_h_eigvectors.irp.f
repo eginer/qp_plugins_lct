@@ -237,9 +237,10 @@
       dagger = .True. ! to compute the LEFT  eigenvector 
       reigvec_tc_tmp = 0.d0
       do i = 1, N_states
-        do j = 1, N_det
-!        reigvec_tc_tmp(j,i) = psi_left_guess(j,i)
-         reigvec_tc_tmp(j,i) = reigvec_tc(j,i)
+        do j = 1, min(N_det,n_det_max_full)
+!        print *,'psi_left_guess(j,i)',psi_left_guess(j,i)
+        reigvec_tc_tmp(j,i) = psi_left_guess(j,i)
+!         reigvec_tc_tmp(j,i) = reigvec_tc(j,i)
         enddo
       enddo
       call iterative_davidson_tc(psi_det, reigvec_tc_tmp, N_det, N_int, N_states, N_states_diag, idx_dress, dagger, eigval_left_tc, converged)
@@ -453,8 +454,12 @@ end
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, psi_left_guess,(N_det,N_states)]
+BEGIN_PROVIDER [ double precision, psi_left_guess, (n_det_max_full,N_states)]
  implicit none
+ print *,'providing psi_left_guess '
  psi_left_guess = 0.d0
- psi_left_guess(1,:) = 1.d0
+ integer :: i
+ do i = 1, min(n_det_max_full,N_states)
+  psi_left_guess(i,i) = 1.d0
+ enddo
 END_PROVIDER 

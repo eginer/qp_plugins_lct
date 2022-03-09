@@ -39,9 +39,14 @@ subroutine diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
   do j=1,N_states
     do i=1,N_det
       psi_coef(i,j) = reigvec_tc(i,j)
+    enddo
+  enddo
+  do j=1,N_states
+    do i=1,min(N_det,n_det_max_full)
       psi_left_guess(i,j) = leigvec_tc(i,j)
     enddo
   enddo
   SOFT_TOUCH psi_coef reigvec_tc leigvec_tc eigval_right_tc eigval_left_tc psi_left_guess
+!  SOFT_TOUCH psi_coef 
   call routine_save_right 
 end
