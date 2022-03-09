@@ -11,12 +11,6 @@ subroutine diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 !  eigenstates of the CI matrix
   END_DOC
   integer :: i,j
-  do j=1,N_states
-    do i=1,N_det
-      psi_coef(i,j) = reigvec_tc(i,j)
-    enddo
-  enddo
-  SOFT_TOUCH psi_coef
   print*,'*****'
   print*,'New wave function information'
   print*,'N_det tc               = ',N_det
@@ -42,5 +36,11 @@ subroutine diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
    norm  = norm_ground_left_right
   endif
   ndet  = N_det
+  do j=1,N_states
+    do i=1,N_det
+      psi_coef(i,j) = reigvec_tc(i,j)
+    enddo
+  enddo
+  SOFT_TOUCH psi_coef reigvec_tc leigvec_tc eigval_right_tc eigval_left_tc
   call routine_save_right 
 end
