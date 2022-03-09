@@ -45,6 +45,9 @@ program fci
   if(cipsi_tc == "h_tc") then 
    comp_left_eigv = .True.
    touch comp_left_eigv
+  else
+   comp_left_eigv = .False.
+   touch comp_left_eigv
   endif
   call run_cipsi_tc
 

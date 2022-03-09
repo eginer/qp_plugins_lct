@@ -247,12 +247,38 @@
           leigvec_tc(j,i) = reigvec_tc_tmp(j,i) 
         enddo
       enddo
+    else 
+      do i = 1, N_states
+        do j = 1, N_det
+          leigvec_tc(j,i) = reigvec_tc(j,i) 
+        enddo
+      enddo
     endif
 
   endif
-
-!  print*,'eigval_right_tc = ',eigval_right_tc(1)
-!  print*,'N_det tc        = ',N_det
+  do i = 1, N_states
+   double precision  :: accu, tmp 
+   accu = 0.d0
+   do j = 1, N_det
+    accu += leigvec_tc(j,i) * reigvec_tc(j,i)
+   enddo
+   if(accu.gt.0.d0)then
+    accu = 1.d0/dsqrt(accu)
+   else
+    accu = 1.d0/dsqrt(-accu)
+   endif
+   tmp = (leigvec_tc(1,i) * reigvec_tc(1,i) )/dabs(leigvec_tc(1,i) * reigvec_tc(1,i))
+   do j = 1, N_det
+    leigvec_tc(j,i) *= accu * tmp
+    reigvec_tc(j,i) *= accu 
+   enddo
+   print*,'leigvec_tc(1,i),reigvec_tc(1,i) = ',leigvec_tc(1,i),reigvec_tc(1,i)
+   accu = 0.d0
+   do j = 1, N_det
+    accu += leigvec_tc(j,i) * reigvec_tc(j,i)
+   enddo
+   print*,'norm l/r = ',accu
+  enddo
 
 END_PROVIDER 
 
