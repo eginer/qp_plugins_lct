@@ -61,8 +61,6 @@ subroutine compute_ao_tc_sym_two_e_pot_jl(j, l, n_integrals, buffer_i, buffer_va
                  + j1b_gauss_coulerf(i, k, j, l)
                  !+ j1b_gauss_coul(i, k, j, l) &
                  !+ j1b_gauss_erf (i, k, j, l)
-                 !+ j1b_gauss_coul_modifdebug(i, k, j, l) 
-                 !+ j1b_gauss_coul_debug(i, k, j, l) 
       endif
 
 
