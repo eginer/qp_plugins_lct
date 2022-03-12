@@ -181,12 +181,13 @@ double precision function int_gauss_r2(A_center, B_center, C_center, power_A, po
   integer                      :: iorder(3)
   double precision             :: AB_expo, fact_AB, AB_center(3), P_AB(0:max_dim,3)
   double precision             :: cx0, cy0, cz0, cx, cy, cz
+  double precision             :: int_tmp
 
   double precision             :: overlap_gaussian_x
 
   dim1 = 100
 
-  ! P_AB(0:max_dim,3) polynomial
+  ! P_AB(0:max_dim,3) polynomial centered on AB_center
   ! AB_center(3)      new center
   ! AB_expo           new exponent
   ! fact_AB           constant factor
@@ -212,7 +213,7 @@ double precision function int_gauss_r2(A_center, B_center, C_center, power_A, po
   enddo
   ! >>>
 
-  int_gauss_r2 = 0.d0
+  int_tmp = 0.d0
 
   power_C = 2
 
@@ -221,21 +222,23 @@ double precision function int_gauss_r2(A_center, B_center, C_center, power_A, po
   do i = 0, iorder(1)
     cx = cx + P_AB(i,1) * overlap_gaussian_x(AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
   enddo
-  int_gauss_r2 = int_gauss_r2 + fact_AB * cx * cy0 * cz0
+  int_tmp += cx * cy0 * cz0
 
   ! ( y - YC)^2
   cy = 0.d0
   do i = 0, iorder(2)
     cy = cy + P_AB(i,2) * overlap_gaussian_x(AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
   enddo
-  int_gauss_r2 = int_gauss_r2 + fact_AB * cx0 * cy * cz0
+  int_tmp += cx0 * cy * cz0
 
   ! ( z - ZC)^2
   cz = 0.d0
   do i = 0, iorder(3)
     cz = cz + P_AB(i,3) * overlap_gaussian_x(AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
   enddo
-  int_gauss_r2 = int_gauss_r2 + fact_AB * cx0 * cy0 * cz
+  int_tmp += cx0 * cy0 * cz
+
+  int_gauss_r2 = fact_AB * int_tmp
 
   return
 end function int_gauss_r2
