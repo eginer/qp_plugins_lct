@@ -51,9 +51,22 @@ BEGIN_PROVIDER [ double precision, mo_j1b_gauss_nonherm, (mo_num,mo_num)]
   END_DOC
 
   implicit none
+  integer                       :: i, j
+  double precision, allocatable :: j1b_t(:,:)
+
+  allocate(j1b_t(ao_num,ao_num))
+  do i = 1, ao_num
+    do j = 1, ao_num
+      !j1b_t(j,i) = j1b_gauss_nonherm(i,j)
+      j1b_t(j,i) = j1b_gauss_nonherm(j,i)
+    enddo
+  enddo
 
   mo_j1b_gauss_nonherm = 0.d0
-  call ao_to_mo(    j1b_gauss_nonherm, size(   j1b_gauss_nonherm, 1) &
+  !call ao_to_mo(    j1b_gauss_nonherm, size(   j1b_gauss_nonherm, 1) &
+  call ao_to_mo( j1b_t, size(j1b_t, 1) &
                , mo_j1b_gauss_nonherm, size(mo_j1b_gauss_nonherm, 1) )
-
+  
+  deallocate( j1b_t )
+  
 END_PROVIDER
