@@ -169,7 +169,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   !
 
   c_tmp1 = 2.d0 * C_center(1) - C_center1(1) - C_center2(1)
-  c_tmp2 = ( C_center(1) - C_center1(1) ) * ( C_center(1) - C_center2(1) ) * cx0
+  c_tmp2 = ( C_center(1) - C_center1(1) ) * ( C_center(1) - C_center2(1) ) 
 
   cx = 0.d0
   do i = 0, iorder(1)
@@ -185,7 +185,9 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
             * overlap_gaussian_x( AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
 
     ! < XA | exp[-gama r_C^2] | XB >
-    cx      = cx + P_AB(i,1) * c_tmp2
+    power_C = 0
+    cx      = cx + P_AB(i,1) * c_tmp2 &
+            * overlap_gaussian_x( AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
 
   enddo
 
@@ -201,7 +203,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   !
 
   c_tmp1 = 2.d0 * C_center(2) - C_center1(2) - C_center2(2)
-  c_tmp2 = ( C_center(2) - C_center1(2) ) * ( C_center(2) - C_center2(2) ) * cy0
+  c_tmp2 = ( C_center(2) - C_center1(2) ) * ( C_center(2) - C_center2(2) ) 
 
   cy = 0.d0
   do i = 0, iorder(2)
@@ -217,7 +219,9 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
             * overlap_gaussian_x( AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
 
     ! < XA | exp[-gama r_C^2] | XB >
-    cy      = cy + P_AB(i,2) * c_tmp2
+    power_C = 0
+    cy      = cy + P_AB(i,2) * c_tmp2 &
+            * overlap_gaussian_x( AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
 
   enddo
 
@@ -233,7 +237,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   !
 
   c_tmp1 = 2.d0 * C_center(3) - C_center1(3) - C_center2(3)
-  c_tmp2 = ( C_center(3) - C_center1(3) ) * ( C_center(3) - C_center2(3) ) * cz0
+  c_tmp2 = ( C_center(3) - C_center1(3) ) * ( C_center(3) - C_center2(3) ) 
 
   cz = 0.d0
   do i = 0, iorder(3)
@@ -249,7 +253,9 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
             * overlap_gaussian_x( AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
 
     ! < XA | exp[-gama r_C^2] | XB >
-    cz      = cz + P_AB(i,3) * c_tmp2
+    power_C = 0
+    cz      = cz + P_AB(i,3) * c_tmp2 &
+            * overlap_gaussian_x( AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
 
   enddo
 
