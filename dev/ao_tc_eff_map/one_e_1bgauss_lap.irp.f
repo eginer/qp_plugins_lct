@@ -141,49 +141,21 @@ double precision function int_gauss_r0(A_center, B_center, C_center, power_A, po
     return
   endif
 
-   ! method 1
-!
-!  power_C = 0
-!
-!  cx = 0.d0
-!  do i = 0, iorder(1)
-!    cx = cx + P_AB(i,1) * overlap_gaussian_x(AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
-!  enddo
-!  cy = 0.d0
-!  do i = 0, iorder(2)
-!    cy = cy + P_AB(i,2) * overlap_gaussian_x(AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
-!  enddo
-!  cz = 0.d0
-!  do i = 0, iorder(3)
-!    cz = cz + P_AB(i,3) * overlap_gaussian_x(AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
-!  enddo
-  ! !!!
 
+  power_C = 0
 
-  ! method 2
-  call gaussian_product(AB_expo, AB_center, gama, C_center, fact_p, p, P_center)
-  fact_AB = fact_AB * fact_p
-
-  nmax = maxval(iorder)
-  do i = 0, nmax
-    F_integral_tab(i) = F_integral(i,p)
+  cx = 0.d0
+  do i = 0, iorder(1)
+    cx = cx + P_AB(i,1) * overlap_gaussian_x(AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
   enddo
-
-  cx = P_AB(0,1) * F_integral_tab(0)
-  cy = P_AB(0,2) * F_integral_tab(0)
-  cz = P_AB(0,3) * F_integral_tab(0)
-
-  do i = 1, iorder(1)
-    cx = cx + P_AB(i,1) * F_integral_tab(i)
+  cy = 0.d0
+  do i = 0, iorder(2)
+    cy = cy + P_AB(i,2) * overlap_gaussian_x(AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
   enddo
-  do i = 1, iorder(2)
-    cy = cy + P_AB(i,2) * F_integral_tab(i)
+  cz = 0.d0
+  do i = 0, iorder(3)
+    cz = cz + P_AB(i,3) * overlap_gaussian_x(AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
   enddo
-  do i = 1, iorder(3)
-    cz = cz + P_AB(i,3) * F_integral_tab(i)
-  enddo
-
-  ! !!!
 
   int_gauss_r0 = fact_AB * cx * cy * cz
 
