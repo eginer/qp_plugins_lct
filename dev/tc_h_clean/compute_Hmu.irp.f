@@ -11,14 +11,15 @@ program compute_Hmu
   touch read_wf
 
   PROVIDE N_int
-  call delta_dmcdressing
+  call Hmu_psi()
 
 end
 
 
-subroutine delta_dmcdressing()
+subroutine Hmu_psi()
 
   implicit none
+  integer                       :: i
   double precision, allocatable :: delta(:) 
 
   print *, j1b_gauss
@@ -33,9 +34,12 @@ subroutine delta_dmcdressing()
   ! order as QMCCHEM
   call dset_order(delta, psi_bilinear_matrix_order, N_det)
 
-  call ezfio_set_dmc_dress_dmc_delta_h(delta)
+  do i = 1, N_det
+    print *, delta(i)
+  enddo 
 
   deallocate(delta)
 
   return
-end subroutine delta_dmcdressing
+end subroutine Hmu_psi
+

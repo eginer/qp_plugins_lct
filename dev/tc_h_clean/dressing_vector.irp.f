@@ -103,13 +103,15 @@ subroutine get_delta_tc_psi(psidet, psicoef, ndet, Nint, delta)
   double precision :: hij,htilde_ij,delta_mat,hmono,heff,hderiv,hthree
   integer :: i,j
 
-  delta = 0.d0
-  i=1
-  j=1
+  i = 1
+  j = 1
   call htilde_mu_mat(psidet(1,1,i), psidet(1,1,j), Nint, hmono, heff, hderiv, hthree, htilde_ij)
   call i_H_j(psidet(1,1,i), psidet(1,1,j), Nint, hij)
-  !print *, hmono, heff, hderiv, hthree 
-  !print *, hij+nuclear_repulsion, htilde_ij+nuclear_repulsion
+
+  print *, hmono, heff, hderiv, hthree 
+  print *, hij+nuclear_repulsion, htilde_ij+nuclear_repulsion
+
+  delta = 0.d0
  !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
  !$OMP SHARED(delta, ndet, psidet, psicoef, Nint)    &
  !$OMP PRIVATE(i, j, delta_mat, hmono, heff, hderiv, hthree, htilde_ij, hij)
@@ -125,6 +127,42 @@ subroutine get_delta_tc_psi(psidet, psicoef, ndet, Nint, delta)
 
 end subroutine get_delta_tc_psi
 
+! ---
+
+subroutine get_Htc_psi(psidet, psicoef, ndet, Nint, delta)
+
+  use bitmasks
+
+  implicit none
+  integer,           intent(in) :: ndet, Nint
+  double precision,  intent(in) :: psicoef(ndet)
+  integer(bit_kind), intent(in) :: psidet(Nint,2,ndet)
+  double precision, intent(out) :: delta(ndet) 
+
+  integer                       :: i, j
+  double precision              :: htilde_ij, hmono, heff, hderiv, hthree
+
+  i = 1
+  j = 1
+  call htilde_mu_mat(psidet(1,1,i), psidet(1,1,j), Nint, hmono, heff, hderiv, hthree, htilde_ij)
+  print *, hmono, heff, hderiv, hthree 
+  print *, htilde_ij+nuclear_repulsion
+
+  delta = 0.d0
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(delta, ndet, psidet, psicoef, Nint)    &
+ !$OMP PRIVATE(i, j, hmono, heff, hderiv, hthree, htilde_ij)
+  do i = 1, ndet
+    do j = 1, ndet
+      call htilde_mu_mat(psidet(1,1,i), psidet(1,1,j), Nint, hmono, heff, hderiv, hthree, htilde_ij)
+      delta(i) = delta(i) + psicoef(j) * htilde_ij 
+    enddo
+  enddo
+ !$OMP END PARALLEL DO
+
+end subroutine get_Htc_psi
+
+! ---
 
 
 subroutine get_delta_av_tc_psi(psidet, psicoef, ndet, Nint, delta)
