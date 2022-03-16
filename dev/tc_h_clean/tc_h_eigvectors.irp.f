@@ -270,6 +270,10 @@
    do j = 1, N_det
     reigvec_tc(j,i) *= accu 
    enddo
+   tmp = reigvec_tc(1,i) / dabs(reigvec_tc(1,i))
+   do j = 1, N_det
+    reigvec_tc(j,i) *= tmp
+   enddo
    !!!! Adaptation of the norm of the left eigenvector such that <chi|Phi> = 1
    accu = 0.d0
    do j = 1, N_det
