@@ -5,8 +5,10 @@ PROVIDE three_body_3_index_exch_13 three_body_3_index_exch_231
 PROVIDE three_body_4_index three_body_4_index_exch_12_part three_body_4_index_exch_12
 PROVIDE three_body_4_index_exch_231 three_body_4_index_exch_312
 PROVIDE three_body_4_index_exch_12_part_bis
-PROVIDE three_body_5_index three_body_5_index_132 three_body_5_index_312 
-PROVIDE three_body_5_index_exch_12 three_body_5_index_exch_13 three_body_5_index_exch_32
+if(.not.double_normal_ord)then
+ PROVIDE three_body_5_index three_body_5_index_132 three_body_5_index_312 
+ PROVIDE three_body_5_index_exch_12 three_body_5_index_exch_13 three_body_5_index_exch_32
+endif
 end
 subroutine diag_htilde_mu_mat_three_body(Nint, key_i, hthree)
 
