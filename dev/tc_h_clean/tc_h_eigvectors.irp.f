@@ -270,6 +270,10 @@
    do j = 1, N_det
     reigvec_tc(j,i) *= accu 
    enddo
+   tmp = reigvec_tc(1,i) / dabs(reigvec_tc(1,i))
+   do j = 1, N_det
+    reigvec_tc(j,i) *= tmp
+   enddo
    !!!! Adaptation of the norm of the left eigenvector such that <chi|Phi> = 1
    accu = 0.d0
    do j = 1, N_det
@@ -295,6 +299,13 @@
 
 END_PROVIDER 
 
+
+ BEGIN_PROVIDER [double precision, eigval_right_tc_nucl_rep, (N_states)]
+&BEGIN_PROVIDER [double precision, eigval_left_tc_nucl_rep, (N_states)]
+ implicit none
+ eigval_right_tc_nucl_rep(:) += nuclear_repulsion
+ eigval_left_tc_nucl_rep(:)  += nuclear_repulsion
+END_PROVIDER 
 
 
 subroutine write_left_right()
