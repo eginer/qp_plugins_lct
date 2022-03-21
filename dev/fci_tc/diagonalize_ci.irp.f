@@ -15,18 +15,18 @@ subroutine diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
   print*,'New wave function information'
   print*,'N_det tc               = ',N_det
   print*,'norm_ground_left_right = ',norm_ground_left_right
-  print*,'eigval_right_tc = ',eigval_right_tc(1)
-  print*,'Ndet, E_tc = ',N_det,eigval_right_tc(1)
+  print*,'eigval_right_tc = ',eigval_right_tc_nucl_rep(1)
+  print*,'Ndet, E_tc = ',N_det,eigval_right_tc_nucl_rep(1)
   print*,'*****'
   if(print_pt2)then
    print*,'*****'
    print*,'previous wave function info'
    print*,'norm(before)      = ',norm
-   print*,'E(before)         = ',E_tc
+   print*,'E(before)         = ',E_tc + nuclear_repulsion
    print*,'PT1 norm          = ',dsqrt(pt2_data % overlap(1,1))
-   print*,'E(before) + PT2   = ',E_tc + (pt2_data % pt2(1))/norm
+   print*,'E(before) + PT2   = ',E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm
    print*,'PT2               = ',pt2_data % pt2(1)
-   print*,'Ndet, E_tc, E+PT2 = ',ndet,E_tc,E_tc + (pt2_data % pt2(1))/norm,dsqrt(pt2_data % overlap(1,1))
+   print*,'Ndet, E_tc, E+PT2 = ',ndet,E_tc + nuclear_repulsion,E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm,dsqrt(pt2_data % overlap(1,1))
    print*,'*****'
   endif
   E_tc  = eigval_right_tc(1)
