@@ -301,15 +301,17 @@ subroutine get_htilde_dagger_psi(psidet, psicoef, ndet, Nint, htilde_psi)
 end subroutine get_htilde_dagger_psi
 
 
-subroutine get_dressed_matrix(u0,psidets,h_dressed,idress)
+subroutine get_dressed_matrix(u0,dets_in,h_dressed,idress)
  use bitmasks
  BEGIN_DOC
 ! You enter with u0, a good guess to the right eigenvector of the TC Hamiltonian
 !
 ! You get out with a dressed symmetric matrix taking the effect of (Htilde - H) |u0>
  END_DOC
+  use bitmasks
  implicit none
  integer, intent(in) :: idress
+ integer(bit_kind), intent(in) :: dets_in(N_int,2,N_det)
  double precision, intent(in) :: u0(N_det)
  double precision, intent(out):: h_dressed(N_det,N_det)
  double precision, allocatable :: delta_u0(:)
@@ -319,7 +321,7 @@ subroutine get_dressed_matrix(u0,psidets,h_dressed,idress)
  allocate(delta_u0(N_det))
  !!!!!!!!!!!!! Computing the dressing vector 
  delta_u0 = 0.d0
- call get_delta_tc_psi(dets_in, u_in, ndet, Nint, delta_u0)
+ call get_delta_tc_psi(dets_in, u0, N_det, N_int, delta_u0)
  delta_u0 *= 1.d0/u0(idress)
  !!!!!!!!!!!!! Computing the dressing matrix 
  h_dressed = h_matrix_all_dets
