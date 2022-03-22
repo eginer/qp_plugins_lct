@@ -66,7 +66,9 @@ subroutine run_cipsi_tc
     ! ---
     PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde 
     PROVIDE mo_two_e_integrals_tc_int_in_map mo_two_e_integrals_tcdag_int_in_map
-    call provide_all_three_ints
+    if(elec_alpha_num+elec_beta_num.ge.3)then
+     call provide_all_three_ints
+    endif
     ! ---
 
     if (do_pt2) then
@@ -81,7 +83,9 @@ subroutine run_cipsi_tc
     ! ---
     PROVIDE mo_two_e_integrals_in_map pt2_min_parallel_tasks 
     PROVIDE mo_two_e_integrals_tc_int_in_map mo_two_e_integrals_tcdag_int_in_map
-    call provide_all_three_ints
+    if(elec_alpha_num+elec_beta_num.ge.3)then
+     call provide_all_three_ints
+    endif
     ! ---
 
     call run_slave_cipsi
