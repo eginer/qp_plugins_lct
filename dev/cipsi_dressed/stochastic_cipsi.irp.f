@@ -72,8 +72,8 @@ subroutine run_stochastic_cipsi
 
   correlation_energy_ratio = 0.d0
 
-  thresh_it_dav  = 5.d-5
-  soft_touch thresh_it_dav
+! thresh_it_dav  = 5.d-5
+! soft_touch thresh_it_dav
 
   print_pt2 = .True.
   do while (                                                         &
@@ -122,8 +122,8 @@ subroutine run_stochastic_cipsi
    enddo
   enddo
 
-  thresh_it_dav  = 5.d-6
-  soft_touch thresh_it_dav
+! thresh_it_dav  = 5.d-6
+! soft_touch thresh_it_dav
 
   call pt2_dealloc(pt2_data)
   call pt2_dealloc(pt2_data_err)
