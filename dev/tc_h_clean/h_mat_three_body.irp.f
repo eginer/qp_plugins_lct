@@ -8,6 +8,8 @@ PROVIDE three_body_4_index_exch_12_part_bis
 if(.not.double_normal_ord)then
  PROVIDE three_body_5_index three_body_5_index_132 three_body_5_index_312 
  PROVIDE three_body_5_index_exch_12 three_body_5_index_exch_13 three_body_5_index_exch_32
+else
+ PROVIDE normal_two_body
 endif
 end
 subroutine diag_htilde_mu_mat_three_body(Nint, key_i, hthree)

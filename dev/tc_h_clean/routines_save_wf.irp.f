@@ -7,7 +7,7 @@ subroutine routine_save_left_right
   allocate(coef_tmp(N_det, N_states))
   do i = 1, N_det
    coef_tmp(i,1) = reigvec_tc(i,1)
-   coef_tmp(i,1) = leigvec_tc(i,1)
+   coef_tmp(i,2) = leigvec_tc(i,1)
   enddo
  else
   N_states = 1
@@ -16,7 +16,7 @@ subroutine routine_save_left_right
    coef_tmp(i,1) = reigvec_tc(i,1)
   enddo
  endif
- call save_wavefunction_general(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
+ call save_wavefunction_general_unormalized(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
 end
 
 subroutine routine_save_right
@@ -28,5 +28,5 @@ subroutine routine_save_right
  do i = 1, N_det
   coef_tmp(i,1) = reigvec_tc(i,1)
  enddo
- call save_wavefunction_general(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
+ call save_wavefunction_general_unormalized(N_det,N_states,psi_det,size(coef_tmp,1),coef_tmp(1,1))
 end

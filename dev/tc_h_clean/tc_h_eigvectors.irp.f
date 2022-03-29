@@ -303,8 +303,11 @@ END_PROVIDER
  BEGIN_PROVIDER [double precision, eigval_right_tc_nucl_rep, (N_states)]
 &BEGIN_PROVIDER [double precision, eigval_left_tc_nucl_rep, (N_states)]
  implicit none
- eigval_right_tc_nucl_rep(:) += nuclear_repulsion
- eigval_left_tc_nucl_rep(:)  += nuclear_repulsion
+integer :: i
+ do i = 1,N_states
+  eigval_right_tc_nucl_rep(i) += eigval_right_tc(i) + nuclear_repulsion
+  eigval_left_tc_nucl_rep(i)  += eigval_left_tc(i) + nuclear_repulsion
+ enddo
 END_PROVIDER 
 
 
