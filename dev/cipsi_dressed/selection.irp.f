@@ -798,17 +798,23 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
         psi_h_alpha = 0.d0
         alpha_h_psi = 0.d0
-        !do iii = 1, N_det_selectors
-        do iii = 1, N_det
-          ! coefficient left
-!          call htilde_mu_mat_tot( psi_det(1,1,iii), det, N_int, i_h_alpha)
-          call hji_hij_mu_mat_tot(psi_det(1,1,iii), det, N_int, i_h_alpha,alpha_h_i)
-          psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
-!
+!        do iii = 1, N_det
+!          ! coefficient left
+!          call hji_hij_mu_mat_tot(psi_det(1,1,iii), det, N_int, i_h_alpha,alpha_h_i)
+!          psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
 !          ! coefficient right
-!          call htilde_mu_mat_tot( det, psi_det(1,1,iii), N_int, alpha_h_i)
-          alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
+!          alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
+!        enddo
+
+        do iii = 1, N_det_thresh_psi_r
+          ! coefficient left
+          call hji_hij_mu_mat_tot(psi_det_sorted_r(1,1,iii), det, N_int, i_h_alpha,alpha_h_i)
+          psi_h_alpha += i_h_alpha * leigvec_tc_sorted_r(iii,1)
+          ! coefficient right
+          alpha_h_psi += alpha_h_i * reigvec_tc_sorted_r(iii,1) 
         enddo
+
+
         coef(istate)   = alpha_h_psi / delta_E 
 !        e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
         e_pert(istate) = coef(istate) * psi_h_alpha
