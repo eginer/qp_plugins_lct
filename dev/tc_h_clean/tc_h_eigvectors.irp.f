@@ -486,7 +486,7 @@ END_PROVIDER
  double precision, allocatable :: psicoef(:)
  allocate(psicoef(N_det))
  do i = 1,N_det
-  psicoef(i) = -dabs(reigvec_tc(i,1))
+  psicoef(i) = -dsqrt(dabs(reigvec_tc(i,1)*leigvec_tc(i,1)))
   psi_det_sorted_r_order(i) = i
  enddo
  call dsort(psicoef,psi_det_sorted_r_order,N_det)
