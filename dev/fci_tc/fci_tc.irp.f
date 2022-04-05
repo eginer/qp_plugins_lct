@@ -49,6 +49,8 @@ program fci
    comp_left_eigv = .False.
    touch comp_left_eigv
   endif
+  pt2_relative_error = 0.05d0
+  touch pt2_relative_error
   call run_cipsi_tc
 
 end

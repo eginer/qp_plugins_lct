@@ -815,9 +815,9 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         enddo
 
 
-        coef(istate)   = alpha_h_psi / delta_E 
+        coef(istate)   = alpha_h_psi / (delta_E  )
 !        e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
-        e_pert(istate) = coef(istate) * psi_h_alpha
+        e_pert(istate) = coef(istate) * psi_h_alpha / norm_lr_psi_sorted
       else if(cipsi_tc == "h_tc_2x2") then
         ! -------------------------------------------
         ! Non hermitian 

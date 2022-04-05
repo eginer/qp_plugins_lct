@@ -112,15 +112,15 @@ subroutine run_stochastic_cipsi
     call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
-  print*,'data to extrapolate '
-  do i = 2, N_iter
-   print*,'iteration ',i
-   print*,'pt1,Ept2',pt1(i),ept2(i)
-   call get_extrapolated_energy(i-1,ept2(i),pt1(i),extrap_energy(i))
-   do j = 2, i
-    print*,'j,e,energy',j,extrap_energy(j)
-   enddo
-  enddo
+!  print*,'data to extrapolate '
+!  do i = 2, N_iter
+!   print*,'iteration ',i
+!   print*,'pt1,Ept2',pt1(i),ept2(i)
+!   call get_extrapolated_energy(i-1,ept2(i),pt1(i),extrap_energy(i))
+!   do j = 2, i
+!    print*,'j,e,energy',j,extrap_energy(j)
+!   enddo
+!  enddo
 
 ! thresh_it_dav  = 5.d-6
 ! soft_touch thresh_it_dav
@@ -129,7 +129,6 @@ subroutine run_stochastic_cipsi
   call pt2_dealloc(pt2_data_err)
   call pt2_alloc(pt2_data, N_states)
   call pt2_alloc(pt2_data_err, N_states)
-  print *,'E_tc = ',E_tc
   call ZMQ_pt2(E_tc, pt2_data, pt2_data_err, relative_error,0) ! Stochastic PT2 and selection
   call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 !  if (.not.qp_stop()) then

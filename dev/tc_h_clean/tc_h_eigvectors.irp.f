@@ -481,12 +481,19 @@ END_PROVIDER
 
  BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_r, (N_int,2,N_det) ]
 &BEGIN_PROVIDER [ integer, psi_det_sorted_r_order, (N_det) ]
+&BEGIN_PROVIDER [ double precision, norm_lr_abs ]
  implicit none
  integer :: i
  double precision, allocatable :: psicoef(:)
+ norm_lr_abs = 0.d0
  allocate(psicoef(N_det))
  do i = 1,N_det
-  psicoef(i) = -dsqrt(dabs(reigvec_tc(i,1)*leigvec_tc(i,1)))
+  norm_lr_abs += dabs(reigvec_tc(i,1)*leigvec_tc(i,1))
+  if(thresh_psi_r_norm)then
+   psicoef(i) = -dsqrt(dabs(reigvec_tc(i,1)*leigvec_tc(i,1)))
+  else
+   psicoef(i) = -(dabs(reigvec_tc(i,1)))
+  endif
   psi_det_sorted_r_order(i) = i
  enddo
  call dsort(psicoef,psi_det_sorted_r_order,N_det)
@@ -506,14 +513,36 @@ END_PROVIDER
 END_PROVIDER 
 
  BEGIN_PROVIDER [ integer, N_det_thresh_psi_r]
+&BEGIN_PROVIDER [ double precision, norm_lr_psi_sorted ]
  implicit none 
  integer :: i 
- N_det_thresh_psi_r = 0
- do i = 1, N_det
-  if(dabs(reigvec_tc_sorted_r(i,1)).gt.thresh_psi_r)then
-   N_det_thresh_psi_r += 1
-  endif
- enddo
+ double precision :: accu
+ accu = 0.d0
+ norm_lr_psi_sorted = 0.d0
+ if(thresh_psi_r_norm)then
+  N_det_thresh_psi_r = 1
+  do i = 1, N_det
+   accu += dabs(reigvec_tc_sorted_r(i,1)*leigvec_tc_sorted_r(i,1))/norm_lr_abs
+   norm_lr_psi_sorted += reigvec_tc_sorted_r(i,1)*leigvec_tc_sorted_r(i,1)
+   if(accu.le.thresh_psi_r)then
+    N_det_thresh_psi_r += 1
+   else
+    exit
+   endif
+  enddo
+ else
+  N_det_thresh_psi_r = 0
+  do i = 1, N_det
+   norm_lr_psi_sorted += reigvec_tc_sorted_r(i,1)*leigvec_tc_sorted_r(i,1)
+   if(dabs(reigvec_tc_sorted_r(i,1)).ge.thresh_psi_r)then
+    N_det_thresh_psi_r += 1
+   else
+    exit
+   endif
+  enddo
+ endif
+
  print*,'N_det_thresh_psi_r = ',N_det_thresh_psi_r
+ print*,'norm_lr_psi_sorted = ',norm_lr_psi_sorted
  END_PROVIDER 
 
