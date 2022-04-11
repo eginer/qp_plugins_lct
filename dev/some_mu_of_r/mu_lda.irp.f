@@ -22,6 +22,11 @@
   else
    mu = max(mu_tmp,mu_of_r_min)
   endif
+  if(rescaled_on_top_mu)then
+   mu = mu * 0.25d0 * (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12)
+  else 
+   mu=mu
+  endif
   mu_of_r_extra_grid_lda(ipoint,1) = mu
 
   elec_a += rho_a_hf * weight
@@ -61,6 +66,11 @@ END_PROVIDER
    mu = max(mu_tmp,mu_of_r_min)
   else
    mu = mu_tmp 
+  endif
+  if(rescaled_on_top_mu)then
+   mu = mu * 0.25d0 * (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12)
+  else 
+   mu=mu
   endif
 
   mu_of_r_lda(ipoint,1) = mu
