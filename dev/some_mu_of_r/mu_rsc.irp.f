@@ -27,7 +27,7 @@
    mu = mu_tmp
   endif
   if(rescaled_on_top_mu)then
-   mu = mu *0.25d0 *  (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12)
+   mu = mu *dsqrt(0.25d0 *  (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12))
   else 
    mu=mu
   endif
@@ -142,7 +142,7 @@ end
    mu = max(mu_tmp,mu_of_r_min)
   endif
   if(rescaled_on_top_mu)then
-   mu = mu *0.25d0 *  (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12)
+   mu = mu *dsqrt(0.25d0 *  (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12))
   else 
    mu=mu
   endif
