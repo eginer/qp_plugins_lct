@@ -67,11 +67,13 @@ subroutine run_stochastic_cipsi
   endif
 
   double precision :: correlation_energy_ratio,E_denom,E_tc,norm
+  double precision, allocatable :: ept2(:), pt1(:),extrap_energy(:)
+  allocate(ept2(1000),pt1(1000),extrap_energy(100))
 
   correlation_energy_ratio = 0.d0
 
-  thresh_it_dav  = 5.d-5
-  soft_touch thresh_it_dav
+! thresh_it_dav  = 5.d-5
+! soft_touch thresh_it_dav
 
   print_pt2 = .True.
   do while (                                                         &
@@ -105,12 +107,23 @@ subroutine run_stochastic_cipsi
     print *,'******'
     print *,'norm = ',norm
     print *,'******'
+    ept2(N_iter-1) = E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm
+    pt1(N_iter-1) = dsqrt(pt2_data % overlap(1,1))
     call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
+  print*,'data to extrapolate '
+  do i = 2, N_iter
+   print*,'iteration ',i
+   print*,'pt1,Ept2',pt1(i),ept2(i)
+   call get_extrapolated_energy(i-1,ept2(i),pt1(i),extrap_energy(i))
+   do j = 2, i
+    print*,'j,e,energy',j,extrap_energy(j)
+   enddo
+  enddo
 
-  thresh_it_dav  = 5.d-6
-  soft_touch thresh_it_dav
+! thresh_it_dav  = 5.d-6
+! soft_touch thresh_it_dav
 
   call pt2_dealloc(pt2_data)
   call pt2_dealloc(pt2_data_err)
@@ -138,3 +151,4 @@ subroutine run_stochastic_cipsi
   call routine_save_right
 
 end
+
