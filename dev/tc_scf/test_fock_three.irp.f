@@ -37,7 +37,7 @@ end
 subroutine test_diag_three
  implicit none
  double precision :: hmono,heff,hderiv,hthree,htot
- call htilde_mu_mat(ref_bitmask,ref_bitmask,hmono,heff,hderiv,hthree,htot)
+ call htilde_mu_mat(ref_bitmask,ref_bitmask,N_int,hmono,heff,hderiv,hthree,htot)
  print*,' hthree                 ',hthree
  print*,' diag_three_elem_hf     ',diag_three_elem_hf
  print*,' diag_three_elem_hf_old ',diag_three_elem_hf_old
@@ -112,44 +112,49 @@ subroutine routine
  accu_beta = 0.d0
  accu_alpha = 0.d0
  accu_tot = 0.d0
- do i = 1, elec_alpha_num
+ do i = 1, elec_beta_num
   do a = elec_alpha_num+1, mo_num
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)
+   ! Alpha single excitation 
    call do_single_excitation(det_i,i,a,1,i_ok)
-   call htilde_mu_mat(det_i,ref_bitmask,hmono,heff,hderiv,hthree,htot)
+   call htilde_mu_mat(det_i,ref_bitmask,N_int,hmono,heff,hderiv,hthree,htot)
 
-   f_tc = fock_3_mat(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+   f_tc = fock_3_mat(i,a) + fock_3_mat_a_op_sh(i,a) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
    f_tc_3 = f_tc
    if(dabs(hthree).gt.1.d-10)then
     print*,'3 body '
+   print*,'! Alpha single excitation '
+   call debug_det(det_i,N_int)
+    print*,'i,a',i,a
     print*,'ref,new,dabs'
     print*,dabs(hthree),dabs(f_tc), dabs(f_tc/hthree)
+    print*,fock_3_mat(i,a),fock_3_mat_a_op_sh(i,a)
     print*,'***'
    endif
    accu_alpha += dabs(dabs(f_tc) - dabs(hthree))
 
-   f_tc = Fock_matrix_tc_mo_alpha(a,i) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
-   if(dabs(hmono+heff+hderiv).gt.1.d-10)then
-    print*,'two body '
-    print*,'ref,new,dabs'
-    print*,dabs(hmono+heff+hderiv),dabs(f_tc), dabs(f_tc/(hmono+heff+hderiv))
-    print*,'***'
-   endif
-   accu_beta += dabs(dabs(f_tc) - dabs(hmono+heff+hderiv))
-
-   f_tc = Fock_matrix_tc_mo_alpha(a,i) + f_tc_3 ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
-   if(dabs(htot).gt.1.d-10)then
-    print*,'Total '
-    print*,'ref,new,dabs'
-    print*,dabs(htot),dabs(f_tc), dabs(f_tc/htot)
-    print*,'***'
-   endif
-   accu_tot += dabs(dabs(f_tc) - dabs(htot))
+!   f_tc = Fock_matrix_tc_mo_alpha(a,i) ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+!   if(dabs(hmono+heff+hderiv).gt.1.d-10)then
+!    print*,'two body '
+!    print*,'ref,new,dabs'
+!    print*,dabs(hmono+heff+hderiv),dabs(f_tc), dabs(f_tc/(hmono+heff+hderiv))
+!    print*,'***'
+!   endif
+!   accu_beta += dabs(dabs(f_tc) - dabs(hmono+heff+hderiv))
+!
+!   f_tc = Fock_matrix_tc_mo_alpha(a,i) + f_tc_3 ! <HF|(a^dagger_a a_i) H |HF > = F(i,a)
+!   if(dabs(htot).gt.1.d-10)then
+!    print*,'Total '
+!    print*,'ref,new,dabs'
+!    print*,dabs(htot),dabs(f_tc), dabs(f_tc/htot)
+!    print*,'***'
+!   endif
+!   accu_tot += dabs(dabs(f_tc) - dabs(htot))
 
   enddo
  enddo
  print*,'accu_three = ',accu_alpha
- print*,'accu_twoe  = ',accu_beta
- print*,'accu_tot   = ',accu_tot 
+! print*,'accu_twoe  = ',accu_beta
+! print*,'accu_tot   = ',accu_tot 
 end
