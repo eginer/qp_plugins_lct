@@ -132,13 +132,11 @@ BEGIN_PROVIDER [ double precision, fock_3_mat_a_op_sh, (mo_num, mo_num)]
 !              -  exchange_int_13  )! p <-> i
 
         call  give_integrals_3_body(h,j,i,p,j,i,direct_int) 
-        call  give_integrals_3_body(p,j,i,j,i,h,exchange_int_231)
-        call  give_integrals_3_body(p,j,i,i,h,j,exchange_int_312) 
+        call  give_integrals_3_body(h,j,i,i,p,j,exchange_int_231)
+        call  give_integrals_3_body(h,j,i,j,i,p,exchange_int_312) 
         call  give_integrals_3_body(h,j,i,p,i,j,exchange_int_23) 
-!         exchange_int_12  = - exchange_int_12 
-        call  give_integrals_3_body(p,i,j,i,h,j,exchange_int_12)
-!         exchange_int_13  = - exchange_int_13 
-        call  give_integrals_3_body(p,i,j,j,i,h,exchange_int_13)  
+        call  give_integrals_3_body(h,j,i,i,j,p,exchange_int_12)
+        call  give_integrals_3_body(h,j,i,j,p,i,exchange_int_13)  
 !
        fock_3_mat_a_op_sh(h,p) -= ( direct_int + exchange_int_231 + exchange_int_312 & 
               -  exchange_int_23 & ! i <-> j
