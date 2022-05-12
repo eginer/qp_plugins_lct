@@ -22,10 +22,10 @@ subroutine routine
     do k = 1, mo_num
      ! mo_non_hermit_term(k,l,i,j) = <k l| V(r_12) |i j>
 !      ref = bi_ortho_mo_ints(k,l,i,j)
-      ref = bi_ortho_mo_ints(l,k,j,i)
-!      ref = mo_bi_ortho_tc_two_e(l,k,j,i)
-!      old = get_mo_two_e_integral_tc_int(k,l,i,j,mo_integrals_tc_int_map)
-      old = mo_non_hermit_term(l,k,j,i)
+!      ref = bi_ortho_mo_ints(l,k,j,i)
+      ref = mo_bi_ortho_tc_two_e(l,k,j,i)
+      old = get_mo_two_e_integral_tc_int(k,l,i,j,mo_integrals_tc_int_map)
+      old += mo_non_hermit_term(l,k,j,i)
 
       contrib = dabs(ref - old)
       if(dabs(ref).gt.1.d-10)then

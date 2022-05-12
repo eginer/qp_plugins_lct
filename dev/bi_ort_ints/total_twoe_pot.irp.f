@@ -11,8 +11,7 @@ BEGIN_PROVIDER [double precision, ao_two_e_tc_tot, (ao_num, ao_num, ao_num, ao_n
   do l = 1, ao_num
    do i = 1, ao_num
     do k = 1, ao_num
-!     integral_sym  = get_ao_tc_sym_two_e_pot(i,k,j,l,ao_tc_sym_two_e_pot_map)
-     integral_sym = 0.d0
+     integral_sym  = get_ao_tc_sym_two_e_pot(i,j,k,l,ao_tc_sym_two_e_pot_map)
      ! ao_non_hermit_term_chemist(k,i,l,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
      integral_nsym = ao_non_hermit_term_chemist(k,i,l,j)
      ao_two_e_tc_tot(k,i,l,j) = integral_sym + integral_nsym 
