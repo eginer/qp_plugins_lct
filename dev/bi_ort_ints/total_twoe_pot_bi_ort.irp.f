@@ -1,7 +1,7 @@
 BEGIN_PROVIDER [double precision, mo_bi_ortho_tc_two_e_chemist, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  BEGIN_DOC
-! mo_bi_ortho_tc_two_e_chemist(k,i,l,j) = <k l|V(r_12)|i j>
+! mo_bi_ortho_tc_two_e_chemist(k,i,l,j) = <k l|V(r_12)|i j> where i,j are right MOs and k,l are left MOs
  END_DOC
  integer :: i,j,k,l,m,n,p,q
  double precision, allocatable :: mo_tmp_1(:,:,:,:),mo_tmp_2(:,:,:,:),mo_tmp_3(:,:,:,:)
@@ -68,7 +68,7 @@ END_PROVIDER
 BEGIN_PROVIDER [double precision, mo_bi_ortho_tc_two_e, (mo_num, mo_num, mo_num, mo_num)]
  implicit none
  BEGIN_DOC
-! mo_bi_ortho_tc_two_e(k,l,i,j) = <k l| V(r_12) |i j>
+! mo_bi_ortho_tc_two_e(k,l,i,j) = <k l| V(r_12) |i j> where i,j are right MOs and k,l are left MOs
  END_DOC
  integer :: i,j,k,l
  do j = 1, mo_num
