@@ -112,7 +112,8 @@ subroutine routine
  accu_beta = 0.d0
  accu_alpha = 0.d0
  accu_tot = 0.d0
- do i = 1, elec_beta_num
+! do i = 1, elec_beta_num
+ do i =  elec_beta_num+1,elec_alpha_num
   do a = elec_alpha_num+1, mo_num
    det_i(:,1) = ref_bitmask(:,1)
    det_i(:,2) = ref_bitmask(:,2)

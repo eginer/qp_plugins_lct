@@ -243,12 +243,12 @@ subroutine single_htilde_mu_mat_three_body(Nint, key_j, key_i, hthree)
       ii = occ(i,1)
       do j = i+1, Ne(1)
        jj = occ(j,1)
-       direct_int = three_body_4_index(jj,ii,h1,p1)                    ! < h1 jj ii | p1 jj ii >
-       exchange_int_231 = three_body_4_index_exch_231(jj,ii,h1,p1)
-       exchange_int_312 = three_body_4_index_exch_312(jj,ii,h1,p1)
-       exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)       ! < h1 jj ii | p1 ii jj >
-       exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
-       exchange_int_13 = three_body_4_index_exch_12_part_bis(ii,jj,h1,p1)  ! < h1 jj ii | ii p1 jj >
+       direct_int = three_body_4_index(jj,ii,h1,p1)                       ! < h1 jj ii | p1 jj ii >
+       exchange_int_231 = three_body_4_index_exch_231(jj,ii,h1,p1)        ! < h1 jj ii | ii p1 jj >
+       exchange_int_312 = three_body_4_index_exch_312(jj,ii,h1,p1)        ! < h1 jj ii | jj ii p1 >
+       exchange_int_23 = three_body_4_index_exch_12(jj,ii,h1,p1)          ! < h1 jj ii | p1 ii jj >
+       exchange_int_12 = three_body_4_index_exch_12_part(ii,jj,h1,p1)     ! < h1 jj ii | ii jj p1 >
+       exchange_int_13 = three_body_4_index_exch_12_part_bis(ii,jj,h1,p1) ! < h1 jj ii | jj p1 ii >
        hthree += direct_int + exchange_int_231 + exchange_int_312 & 
               -  exchange_int_23 & ! ii <-> jj
               -  exchange_int_12 & ! p1 <-> jj

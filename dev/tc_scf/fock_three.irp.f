@@ -106,8 +106,8 @@ BEGIN_PROVIDER [ double precision, fock_3_mat_a_op_sh, (mo_num, mo_num)]
  double precision :: exchange_int_23, exchange_int_12, exchange_int_13 
 
  fock_3_mat_a_op_sh = 0.d0
- do h = 1, elec_beta_num
-  do p = elec_alpha_num +1, mo_num
+ do h = 1, mo_num
+  do p = 1, mo_num
    !F_a^{ab}(h,p) 
    do i = 1, elec_beta_num ! beta 
     do j = elec_beta_num+1, elec_alpha_num ! alpha
@@ -116,50 +116,43 @@ BEGIN_PROVIDER [ double precision, fock_3_mat_a_op_sh, (mo_num, mo_num)]
      fock_3_mat_a_op_sh(h,p) -= direct_int - exch_int
     enddo
    enddo
-
+   !F_a^{aa}(h,p)
    do i = 1, elec_beta_num ! alpha 
     do j = elec_beta_num+1, elec_alpha_num ! alpha
-       direct_int = three_body_4_index(j,i,h,p)                    ! < h j i | p j i >
-       exchange_int_231 = three_body_4_index_exch_231(j,i,h,p)
-       exchange_int_312 = three_body_4_index_exch_312(j,i,h,p)
-       exchange_int_23 = three_body_4_index_exch_12(j,i,h,p)       ! < h j i | p i j >
-       exchange_int_12 = three_body_4_index_exch_12_part(i,j,h,p)  ! < h j i | i p j >
-       exchange_int_13 = three_body_4_index_exch_12_part_bis(i,j,h,p)  ! < h j i | i p j >
-
-!       fock_3_mat_a_op_sh(h,p) += ( direct_int + exchange_int_231 + exchange_int_312 & 
-!              -  exchange_int_23 & ! i <-> j
-!              -  exchange_int_12 & ! p <-> j
-!              -  exchange_int_13  )! p <-> i
-
-        call  give_integrals_3_body(h,j,i,p,j,i,direct_int) 
-        call  give_integrals_3_body(h,j,i,i,p,j,exchange_int_231)
-        call  give_integrals_3_body(h,j,i,j,i,p,exchange_int_312) 
-        call  give_integrals_3_body(h,j,i,p,i,j,exchange_int_23) 
-        call  give_integrals_3_body(h,j,i,i,j,p,exchange_int_12)
-        call  give_integrals_3_body(h,j,i,j,p,i,exchange_int_13)  
-!
+       direct_int = three_body_4_index(j,i,h,p)                    
+       call  give_integrals_3_body(h,j,i,p,j,i,direct_int) 
+       call  give_integrals_3_body(h,j,i,i,p,j,exchange_int_231)
+       call  give_integrals_3_body(h,j,i,j,i,p,exchange_int_312) 
+       call  give_integrals_3_body(h,j,i,p,i,j,exchange_int_23) 
+       call  give_integrals_3_body(h,j,i,i,j,p,exchange_int_12)
+       call  give_integrals_3_body(h,j,i,j,p,i,exchange_int_13)  
        fock_3_mat_a_op_sh(h,p) -= ( direct_int + exchange_int_231 + exchange_int_312 & 
               -  exchange_int_23 & ! i <-> j
               -  exchange_int_12 & ! p <-> j
               -  exchange_int_13  )! p <-> i
     enddo 
    enddo
- 
   enddo
  enddo
+! symmetrized 
+! do p = 1, elec_beta_num
+!  do h = elec_alpha_num +1, mo_num
+!   fock_3_mat_a_op_sh(h,p) = fock_3_mat_a_op_sh(p,h)
+!  enddo
+! enddo
  
- do h = elec_beta_num+1, elec_alpha_num
-  do p = elec_alpha_num +1, mo_num
-   !F_a^{bb}(h,p) 
-   do i = 1, elec_beta_num
-    do j = i+1, elec_beta_num
-     call  give_integrals_3_body(h,j,i,p,j,i,direct_int)   
-     call  give_integrals_3_body(h,j,i,p,i,j,exch_int)   
-     fock_3_mat_a_op_sh(h,p) += direct_int - exch_int
-    enddo
-   enddo
-  enddo
- enddo
+! do h = elec_beta_num+1, elec_alpha_num
+!  do p = elec_alpha_num +1, mo_num
+!   !F_a^{bb}(h,p) 
+!   do i = 1, elec_beta_num
+!    do j = i+1, elec_beta_num
+!     call  give_integrals_3_body(h,j,i,p,j,i,direct_int)   
+!     call  give_integrals_3_body(h,j,i,p,i,j,exch_int)   
+!     fock_3_mat_a_op_sh(h,p) -= direct_int - exch_int
+!    enddo
+!   enddo
+!  enddo
+! enddo
 
 END_PROVIDER 
 
