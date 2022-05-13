@@ -8,7 +8,8 @@ program bi_ort_ints
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
   call test_overlap
-  call routine
+  call routine_twoe
+  call routine_onee
 end
 
 subroutine test_overlap
@@ -16,7 +17,7 @@ subroutine test_overlap
  provide overlap_bi_ortho
 end
 
-subroutine routine
+subroutine routine_twoe
  implicit none
  integer :: i,j,k,l
  double precision :: old, get_mo_two_e_integral_tc_int
@@ -47,4 +48,26 @@ subroutine routine
  enddo
  print*,'accu = ',accu/(dble(mo_num)**4)
 
+end
+
+subroutine routine_onee
+ implicit none
+ integer :: i,k
+ double precision :: ref,new,accu,contrib
+ accu = 0.d0
+ do i = 1, mo_num
+  do k = 1, mo_num
+   ref = mo_bi_ortho_tc_one_e_slow(k,i)
+   new = mo_bi_ortho_tc_one_e(k,i)
+   contrib = dabs(ref - new)
+   if(dabs(ref).gt.1.d-10)then
+    if(contrib .gt. 1.d-10)then
+     print*,'i,k',i,k
+     print*,ref,new,contrib
+    endif
+   endif
+   accu += contrib
+  enddo
+ enddo
+ print*,'accu = ',accu/mo_num**2
 end

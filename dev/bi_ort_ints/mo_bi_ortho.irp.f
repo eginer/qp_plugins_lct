@@ -1,5 +1,10 @@
  BEGIN_PROVIDER [ double precision, mo_r_coef, (ao_num, mo_num)]
  implicit none
+ BEGIN_DOC
+ ! Coef of the RIGHT MOs on the AOS. 
+ ! 
+ ! Contains normalization factors ensuring BI-ORTHONORMALITY with LEFT MOs
+ END_DOC
 ! mo_r_coef = mo_coef
 ! mo_r_coef = Reig_tcFock_ao
  mo_r_coef = mo_r_coef_un_norm
@@ -16,6 +21,11 @@
 
  BEGIN_PROVIDER [ double precision, mo_l_coef, (ao_num, mo_num)]
  implicit none
+ BEGIN_DOC
+ ! Coef of the LEFT  MOs on the AOS. 
+ ! 
+ ! Contains normalization factors ensuring BI-ORTHONORMALITY with RIGHT MOs
+ END_DOC
 ! mo_l_coef = mo_coef
 ! mo_l_coef = Leig_tcFock_ao
  mo_l_coef = mo_l_coef_un_norm
@@ -32,6 +42,9 @@
  BEGIN_PROVIDER [ double precision, overlap_bi_ortho, (mo_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, overlap_diag_bi_ortho, (mo_num)]
  integer :: i,k,m,n
+ BEGIN_DOC
+! Overlap matrix between the RIGHT and LEFT MOs. Should be the identity matrix 
+ END_DOC
  overlap_bi_ortho = 0.d0
  do i = 1, mo_num
   do k = 1, mo_num
@@ -48,7 +61,10 @@
  double precision :: accu_d, accu_nd 
  accu_d = 0.d0
  accu_nd = 0.d0
+ print*,'****************'
+ print*,'Overlap matrix betwee mo_l_coef and mo_r_coef  '
  do i = 1, mo_num
+  write(*,'(100(F16.10,X))')overlap_bi_ortho(i,:)
   do k = 1, mo_num
   if(i==k)then
    accu_d += overlap_bi_ortho(k,i)
@@ -59,6 +75,7 @@
  enddo
  print*,'accu_d  = ',accu_d
  print*,'accu_nd = ',accu_nd
+ print*,'****************'
  
  END_PROVIDER 
 

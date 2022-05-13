@@ -20,7 +20,6 @@ BEGIN_PROVIDER [double precision, mo_bi_ortho_tc_two_e_chemist, (mo_num, mo_num,
    enddo
   enddo
  enddo
-! free ao_non_hermit_term_chemist 
  allocate(mo_tmp_2(mo_num,mo_num,ao_num,ao_num))
  mo_tmp_2 = 0.d0
  do m = 1, ao_num
