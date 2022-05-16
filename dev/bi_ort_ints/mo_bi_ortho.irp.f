@@ -5,17 +5,20 @@
  ! 
  ! Contains normalization factors ensuring BI-ORTHONORMALITY with LEFT MOs
  END_DOC
-! mo_r_coef = mo_coef
-! mo_r_coef = Reig_tcFock_ao
- mo_r_coef = mo_r_coef_un_norm
- integer :: i,m
- double precision :: norm
- do i = 1, mo_num
-  norm = dsqrt(dabs(overlap_diag_bi_ortho_un_norm(i)))
-  do m = 1, ao_num
-   mo_r_coef(m,i) *= 1.d0/norm
+ if(bi_ortho)then
+!  mo_r_coef = Reig_tcFock_ao
+  mo_r_coef = mo_r_coef_un_norm
+  integer :: i,m
+  double precision :: norm
+  do i = 1, mo_num
+   norm = dsqrt(dabs(overlap_diag_bi_ortho_un_norm(i)))
+   do m = 1, ao_num
+    mo_r_coef(m,i) *= 1.d0/norm
+   enddo
   enddo
- enddo
+ else
+  mo_r_coef = mo_coef
+ endif
  END_PROVIDER 
 
 
@@ -26,17 +29,20 @@
  ! 
  ! Contains normalization factors ensuring BI-ORTHONORMALITY with RIGHT MOs
  END_DOC
-! mo_l_coef = mo_coef
+ if(bi_ortho)then
 ! mo_l_coef = Leig_tcFock_ao
- mo_l_coef = mo_l_coef_un_norm
- integer :: i,m
- double precision :: norm
+  mo_l_coef = mo_l_coef_un_norm
+  integer :: i,m
+  double precision :: norm
  do i = 1, mo_num
   norm = dsqrt(dabs(overlap_diag_bi_ortho_un_norm(i)))
   do m = 1, ao_num
    mo_l_coef(m,i) *= 1.d0/norm
   enddo
  enddo
+ else
+  mo_l_coef = mo_coef
+ endif
  END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, overlap_bi_ortho, (mo_num, mo_num)]
