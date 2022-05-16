@@ -33,7 +33,7 @@ subroutine delta_dmcdressing()
   ! order as QMCCHEM
   call dset_order(delta, psi_bilinear_matrix_order, N_det)
 
-!  call ezfio_set_dmc_dress_dmc_delta_h(delta)
+  call ezfio_set_dmc_dress_dmc_delta_h(delta)
 
   deallocate(delta)
 
