@@ -42,7 +42,6 @@ subroutine htilde_mu_mat(key_j, key_i, Nint, hmono, heff, hderiv, hthree, htot)
   integer                       :: degree
 
   call get_excitation_degree(key_j, key_i, degree, Nint)
-
   hmono  = 0.d0
   heff   = 0.d0
   hderiv = 0.d0
