@@ -39,17 +39,10 @@ double precision function j1b_gauss_coul(i, j, k, l)
   double precision    :: ff, gg, cx, cy, cz
 
   double precision    :: general_primitive_integral_coul_shifted
-  !double precision    :: j1b_gauss_coul_schwartz_accel
   
   PROVIDE j1b_gauss_pen
 
   dim1 = n_pt_max_integrals
-
-  ! TODO
-  !if( ao_prim_num(i) * ao_prim_num(j) * ao_prim_num(k) * ao_prim_num(l) > 1024 ) then
-  !  j1b_gauss_coul = j1b_gauss_coul_schwartz_accel(i, j, k, l)
-  !  return
-  !endif
 
   num_i = ao_nucl(i)
   num_j = ao_nucl(j)

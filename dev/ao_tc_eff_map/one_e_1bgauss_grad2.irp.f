@@ -99,8 +99,6 @@ BEGIN_PROVIDER [ double precision, j1b_gauss_hermII, (ao_num,ao_num)]
  !$OMP END DO
  !$OMP END PARALLEL
 
-  !j1b_gauss_hermII(1:ao_num,1:ao_num) = 0.d0
-
 END_PROVIDER
 
 
@@ -128,6 +126,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   double precision             :: AB_expo, fact_AB, AB_center(3), P_AB(0:max_dim,3)
   double precision             :: gama, fact_C, C_center(3)
   double precision             :: cx0, cy0, cz0, c_tmp1, c_tmp2, cx, cy, cz
+  double precision             :: int_tmp
 
   double precision             :: overlap_gaussian_x
 
@@ -142,7 +141,6 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
                                       , iorder, alpha, beta, power_A, power_B, A_center, B_center, dim1)
 
   call gaussian_product(gama1, C_center1, gama2, C_center2, fact_C, gama, C_center)
-  fact_AB = fact_AB * fact_C
 
   ! <<<
   ! to avoid multi-evaluation
@@ -162,8 +160,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   enddo
   ! >>>
 
-  int_gauss_4G = 0.d0
-
+  int_tmp = 0.d0
 
   ! -----------------------------------------------------------------------------------------------
   !
@@ -172,7 +169,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   !
 
   c_tmp1 = 2.d0 * C_center(1) - C_center1(1) - C_center2(1)
-  c_tmp2 = ( C_center(1) - C_center1(1) ) * ( C_center(1) - C_center2(1) ) * cx0
+  c_tmp2 = ( C_center(1) - C_center1(1) ) * ( C_center(1) - C_center2(1) ) 
 
   cx = 0.d0
   do i = 0, iorder(1)
@@ -188,11 +185,13 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
             * overlap_gaussian_x( AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
 
     ! < XA | exp[-gama r_C^2] | XB >
-    cx      = cx + P_AB(i,1) * c_tmp2
+    power_C = 0
+    cx      = cx + P_AB(i,1) * c_tmp2 &
+            * overlap_gaussian_x( AB_center(1), C_center(1), AB_expo, gama, i, power_C, dim1)
 
   enddo
 
-  int_gauss_4G = int_gauss_4G + fact_AB * cx * cy0 * cz0
+  int_tmp += cx * cy0 * cz0
 
   ! -----------------------------------------------------------------------------------------------
 
@@ -204,7 +203,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   !
 
   c_tmp1 = 2.d0 * C_center(2) - C_center1(2) - C_center2(2)
-  c_tmp2 = ( C_center(2) - C_center1(2) ) * ( C_center(2) - C_center2(2) ) * cy0
+  c_tmp2 = ( C_center(2) - C_center1(2) ) * ( C_center(2) - C_center2(2) ) 
 
   cy = 0.d0
   do i = 0, iorder(2)
@@ -220,11 +219,13 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
             * overlap_gaussian_x( AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
 
     ! < XA | exp[-gama r_C^2] | XB >
-    cy      = cy + P_AB(i,2) * c_tmp2
+    power_C = 0
+    cy      = cy + P_AB(i,2) * c_tmp2 &
+            * overlap_gaussian_x( AB_center(2), C_center(2), AB_expo, gama, i, power_C, dim1)
 
   enddo
 
-  int_gauss_4G = int_gauss_4G + fact_AB * cx0 * cy * cz0
+  int_tmp += cx0 * cy * cz0
 
   ! -----------------------------------------------------------------------------------------------
 
@@ -236,7 +237,7 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
   !
 
   c_tmp1 = 2.d0 * C_center(3) - C_center1(3) - C_center2(3)
-  c_tmp2 = ( C_center(3) - C_center1(3) ) * ( C_center(3) - C_center2(3) ) * cz0
+  c_tmp2 = ( C_center(3) - C_center1(3) ) * ( C_center(3) - C_center2(3) ) 
 
   cz = 0.d0
   do i = 0, iorder(3)
@@ -252,13 +253,17 @@ double precision function int_gauss_4G( A_center, B_center, C_center1, C_center2
             * overlap_gaussian_x( AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
 
     ! < XA | exp[-gama r_C^2] | XB >
-    cz      = cz + P_AB(i,3) * c_tmp2
+    power_C = 0
+    cz      = cz + P_AB(i,3) * c_tmp2 &
+            * overlap_gaussian_x( AB_center(3), C_center(3), AB_expo, gama, i, power_C, dim1)
 
   enddo
 
-  int_gauss_4G = int_gauss_4G + fact_AB * cx0 * cy0 * cz
+  int_tmp += cx0 * cy0 * cz
 
   ! -----------------------------------------------------------------------------------------------
+
+  int_gauss_4G = fact_AB * fact_C * int_tmp
 
   return
 end function int_gauss_4G

@@ -11,7 +11,7 @@ BEGIN_PROVIDER [ double precision, three_body_5_index, (mo_num, mo_num, mo_num, 
  integer :: j,k,l,m,n
  double precision :: integral, wall1, wall0
  character*(128) :: name_file 
- three_body_5_index = 0.d0
+ three_body_5_index(1:mo_num, 1:mo_num, 1:mo_num, 1:mo_num, 1:mo_num) = 0.d0
  print*,'Providing the three_body_5_index ...'
  name_file = 'three_body_5_index'
  call wall_time(wall0)
