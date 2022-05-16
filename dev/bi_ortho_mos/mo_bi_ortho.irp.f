@@ -7,11 +7,11 @@
  END_DOC
  if(bi_ortho)then
 !  mo_r_coef = Reig_tcFock_ao
-  mo_r_coef = mo_r_coef_un_norm
+  mo_r_coef = bi_ortho_fock_reigvec_ao
   integer :: i,m
   double precision :: norm
   do i = 1, mo_num
-   norm = dsqrt(dabs(overlap_diag_bi_ortho_un_norm(i)))
+   norm = dsqrt(dabs(overlap_diag_bi_ortho_mo_coef(i)))
    do m = 1, ao_num
     mo_r_coef(m,i) *= 1.d0/norm
    enddo
@@ -31,11 +31,11 @@
  END_DOC
  if(bi_ortho)then
 ! mo_l_coef = Leig_tcFock_ao
-  mo_l_coef = mo_l_coef_un_norm
+  mo_l_coef = bi_ortho_fock_leigvec_ao
   integer :: i,m
   double precision :: norm
  do i = 1, mo_num
-  norm = dsqrt(dabs(overlap_diag_bi_ortho_un_norm(i)))
+  norm = dsqrt(dabs(overlap_diag_bi_ortho_mo_coef(i)))
   do m = 1, ao_num
    mo_l_coef(m,i) *= 1.d0/norm
   enddo
@@ -73,9 +73,9 @@
   write(*,'(100(F16.10,X))')overlap_bi_ortho(i,:)
   do k = 1, mo_num
   if(i==k)then
-   accu_d += overlap_bi_ortho(k,i)
+   accu_d += dabs(overlap_bi_ortho(k,i))
   else
-   accu_nd += overlap_bi_ortho(k,i)
+   accu_nd += dabs(overlap_bi_ortho(k,i))
   endif
   enddo 
  enddo
@@ -141,12 +141,18 @@
  double precision :: accu_d, accu_nd 
  accu_d = 0.d0
  accu_nd = 0.d0
+ print*,'overlap_bi_ortho_un_norm'
+ print*,'****************'
+ print*,'Overlap matrix betwee mo_l_coef_un_norm and mo_r_coef_un_norm  '
+ do i = 1, mo_num
+  write(*,'(100(F16.10,X))')overlap_bi_ortho_un_norm(i,:)
+ enddo
  do i = 1, mo_num
   do k = 1, mo_num
   if(i==k)then
-   accu_d += overlap_bi_ortho_un_norm(k,i)
+   accu_d += dabs(overlap_bi_ortho_un_norm(k,i))
   else
-   accu_nd += overlap_bi_ortho_un_norm(k,i)
+   accu_nd += dabs(overlap_bi_ortho_un_norm(k,i))
   endif
   enddo 
  enddo
@@ -155,6 +161,70 @@
  
  END_PROVIDER 
 
+ BEGIN_PROVIDER [double precision, reigvec_overlap_diag_bi_ortho_un_norm, (mo_num, mo_num)]
+&BEGIN_PROVIDER [double precision, leigvec_overlap_diag_bi_ortho_un_norm, (mo_num, mo_num)]
+&BEGIN_PROVIDER [double precision, eigval_overlap_diag_bi_ortho_un_norm, (mo_num)]
+ implicit none
+ integer :: n_real
+ call non_hrmt_real_diag(mo_num,overlap_bi_ortho_un_norm,&
+         reigvec_overlap_diag_bi_ortho_un_norm,leigvec_overlap_diag_bi_ortho_un_norm,&
+         n_real,eigval_overlap_diag_bi_ortho_un_norm)
+ integer :: i
+ do i = 1, mo_num
+  print*,'eigval_overlap_diag_bi_ortho_un_norm',eigval_overlap_diag_bi_ortho_un_norm(i)
+ enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, bi_ortho_fock_reigvec_ao, (ao_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, bi_ortho_fock_leigvec_ao, (ao_num, mo_num)]
+ implicit none
+ integer :: i,j,p,q
+ bi_ortho_fock_reigvec_ao = 0.d0
+ bi_ortho_fock_leigvec_ao = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do p = 1, ao_num
+    bi_ortho_fock_reigvec_ao(p,i) += reigvec_overlap_diag_bi_ortho_un_norm(j,i) * fock_tc_reigvec_ao(p,j)
+    bi_ortho_fock_leigvec_ao(p,i) += leigvec_overlap_diag_bi_ortho_un_norm(j,i) * fock_tc_leigvec_ao(p,j)
+   enddo
+  enddo
+ enddo
+  
+
+ END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, overlap_bi_ortho_mo_coef, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, overlap_diag_bi_ortho_mo_coef, (mo_num)]
+ implicit none
+ integer :: i,j,p,q
+ overlap_bi_ortho_mo_coef = 0.d0 
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do p = 1, ao_num
+    do q = 1, ao_num
+     overlap_bi_ortho_mo_coef(j,i) += ao_overlap(p,q) * bi_ortho_fock_leigvec_ao(p,j) * bi_ortho_fock_reigvec_ao(q,i)
+    enddo
+   enddo
+  enddo
+ enddo
+ do i = 1, mo_num
+  overlap_diag_bi_ortho_mo_coef(i) = overlap_bi_ortho_mo_coef(i,i)
+ enddo
+ print*,'overlap for bi_ortho_fock_reigvec_ao'
+ double precision :: accu_d, accu_nd
+ accu_d = 0.d0
+ accu_nd = 0.d0
+ do i = 1, mo_num
+  write(*,'(100(F16.10,X))')overlap_bi_ortho_mo_coef(i,:)
+  accu_d += dabs(overlap_bi_ortho_mo_coef(i,i))
+  do j = 1, mo_num
+   if(i==j)cycle
+   accu_nd += dabs(overlap_bi_ortho_mo_coef(j,i))
+  enddo
+ enddo
+ print*,'accu_d  = ',accu_d
+ print*,'accu_nd = ',accu_nd
+ END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, fock_tc_reigvec_mo, (mo_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, fock_tc_leigvec_mo, (mo_num, mo_num)]
@@ -171,19 +241,6 @@
    enddo
   enddo
  enddo
-! print*,'r_eigvec'
-! do i = 1, mo_num
-!  write(*,'(100(F16.10,X))')fock_tc_reigvec_mo(:,i)
-! enddo
-! print*,'l_eigvec'
-! do i = 1, mo_num
-!  write(*,'(100(F16.10,X))')fock_tc_leigvec_mo(:,i)
-! enddo
-! 
-! print*,'s_mat '
-! do i = 1, mo_num
-!  write(*,'(100(F16.10,X))')s_mat(i,:)
-! enddo
  double precision :: accu_d, accu_nd
  accu_d = 0.D0
  accu_nd = 0.D0
@@ -198,8 +255,6 @@
  enddo
  print*,'accu_d  MO = ',accu_d
  print*,'accu_nd MO = ',accu_nd
- 
-
  END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, fock_tc_reigvec_ao, (ao_num, mo_num)]

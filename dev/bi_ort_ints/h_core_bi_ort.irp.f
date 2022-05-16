@@ -1,5 +1,8 @@
 BEGIN_PROVIDER [ double precision, mo_bi_ortho_tc_one_e, (mo_num, mo_num)]
  implicit none
+ BEGIN_DOC
+! mo_bi_ortho_tc_one_e(k,i) = <MO^L_k | h_c | MO^R_i>
+ END_DOC
  integer :: i,k,p,q
  double precision, allocatable :: mo_tmp(:,:)
  allocate(mo_tmp(ao_num, mo_num))
