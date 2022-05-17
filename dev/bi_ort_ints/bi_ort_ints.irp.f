@@ -7,11 +7,12 @@ program bi_ort_ints
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-!  call test_overlap
+  call test_overlap
   call routine_twoe
   call routine_onee
-!  call test_v_ki_bi_ortho
-!  call test_x_v_ki_bi_ortho
+  call test_v_ki_bi_ortho
+  call test_x_v_ki_bi_ortho
+  call test_3_body_bi_ort
 end
 
 subroutine test_overlap
@@ -23,7 +24,6 @@ subroutine test_overlap
   write(*,'(100(F15.10,X))')Fock_matrix_tc_mo_tot(i,:)
  enddo
  print*,'********'
- provide overlap_bi_ortho_un_norm
  provide overlap_bi_ortho
 end
 
@@ -124,5 +124,39 @@ subroutine test_x_v_ki_bi_ortho
   enddo
  enddo
  print*,'accu = ',accu/dble(mo_num*mo_num*n_points_final_grid*3)
+
+end
+
+subroutine test_3_body_bi_ort
+ implicit none
+ integer :: n,l,k,m,j,i
+ double precision :: new, ref, contrib, accu
+ accu = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do m = 1, mo_num
+    do k = 1, mo_num
+     do l = 1, mo_num
+      do n = 1, mo_num
+!       call give_integrals_3_body_bi_ort(n,l,k,m,j,i,new)
+!       new = - new
+       new = three_body_ints_bi_ort(n,l,k,m,j,i)
+       ref = three_body_ints(n,l,k,m,j,i)
+       contrib = dabs(ref - new)
+       accu += contrib
+       if(dabs(ref).gt.1.d-10)then
+        if(contrib .gt. 1.d-10)then
+         print*,n,l,k,m,j,i
+         print*,ref,new,contrib
+        endif
+       endif
+      enddo
+     enddo
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu/dble(mo_num**6)
+ 
 
 end
