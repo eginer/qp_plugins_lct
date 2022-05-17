@@ -15,6 +15,7 @@ subroutine diag_htilde_three_body_ints_bi_ort(Nint, key_i, hthree)
   integer(bit_kind)             :: key_i_core(Nint,2)
   double precision              :: direct_int, exchange_int
   double precision              :: sym_3_e_int_from_6_idx_tensor,contrib
+  double precision              :: three_e_diag_parrallel_spin
 
   if(core_tc_op)then
    do i = 1, Nint
@@ -63,7 +64,8 @@ subroutine diag_htilde_three_body_ints_bi_ort(Nint, key_i, hthree)
      jj = occ(j,1) ! 2 
      do m = j+1, Ne(1)
       mm = occ(m,1) ! 3 
-      hthree += sym_3_e_int_from_6_idx_tensor(mm,jj,ii,mm,jj,ii)
+!      ref =  sym_3_e_int_from_6_idx_tensor(mm,jj,ii,mm,jj,ii) USES THE 6 IDX TENSOR 
+      hthree += three_e_diag_parrallel_spin(mm,jj,ii) ! USES ONLY 3-IDX TENSORS
      enddo
     enddo
    enddo
@@ -75,7 +77,8 @@ subroutine diag_htilde_three_body_ints_bi_ort(Nint, key_i, hthree)
      jj = occ(j,2) ! 2
      do m = j+1, Ne(2)
       mm = occ(m,2) ! 3
-      hthree += sym_3_e_int_from_6_idx_tensor(mm,jj,ii,mm,jj,ii)
+!      ref =  sym_3_e_int_from_6_idx_tensor(mm,jj,ii,mm,jj,ii) USES THE 6 IDX TENSOR 
+      hthree += three_e_diag_parrallel_spin(mm,jj,ii) ! USES ONLY 3-IDX TENSORS
      enddo
     enddo
    enddo
@@ -104,7 +107,7 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
   integer                       :: Ne(2),i,j,ii,jj,ispin,jspin,k,kk
   integer                       :: degree,exc(0:2,2,2)
   integer                       :: h1, p1, h2, p2, s1, s2
-  double precision              :: direct_int,phase,exchange_int
+  double precision              :: direct_int,phase,exchange_int,three_e_single_parrallel_spin 
   double precision              :: contrib,sym_3_e_int_from_6_idx_tensor
   integer                       :: other_spin(2)
   integer(bit_kind)             :: key_j_core(Nint,2),key_i_core(Nint,2)
@@ -168,7 +171,8 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
       ii = occ(i,s1)
       do j = i+1, Ne(s1)
        jj = occ(j,s1)
-       hthree += sym_3_e_int_from_6_idx_tensor(jj,ii,p1,jj,ii,h1)
+!       ref = sym_3_e_int_from_6_idx_tensor(jj,ii,p1,jj,ii,h1)
+       hthree += three_e_single_parrallel_spin(jj,ii,p1,h1) ! USES THE 4-IDX TENSOR 
       enddo
      enddo
    endif

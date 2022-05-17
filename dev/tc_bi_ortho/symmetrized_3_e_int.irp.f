@@ -57,3 +57,46 @@ double precision function sym_3_e_int_from_6_idx_tensor(n,l,k,m,j,i)
                                - three_body_ints_bi_ort(n,l,k,m,i,j)   ! elec 3 is kept fixed
 
 end
+
+double precision function direct_sym_3_e_int(n,l,k,m,j,i)
+ implicit none
+ BEGIN_DOC
+ ! returns all good combinations of permutations of integrals with the good signs 
+ !
+ ! for a given (k^dagger l^dagger n^dagger m j i)  <nlk|L|mji> when all indices have the same spins
+ END_DOC
+ integer, intent(in)  :: n,l,k,m,j,i
+ double precision :: integral
+ direct_sym_3_e_int = 0.d0
+ call give_integrals_3_body_bi_ort(n,l,k,m,j,i,integral)   ! direct 
+ direct_sym_3_e_int += integral
+ call give_integrals_3_body_bi_ort(n,l,k,j,i,m,integral)   ! 1st cyclic permutation  
+ direct_sym_3_e_int += integral
+ call give_integrals_3_body_bi_ort(n,l,k,i,m,j,integral)   ! 2nd cyclic permutation  
+ direct_sym_3_e_int += integral
+ call give_integrals_3_body_bi_ort(n,l,k,j,m,i,integral)   ! elec 1 is kept fixed 
+ direct_sym_3_e_int += -integral
+ call give_integrals_3_body_bi_ort(n,l,k,i,j,m,integral)   ! elec 2 is kept fixed
+ direct_sym_3_e_int += -integral
+ call give_integrals_3_body_bi_ort(n,l,k,m,i,j,integral)   ! elec 3 is kept fixed
+ direct_sym_3_e_int += -integral
+
+end
+
+double precision function three_e_diag_parrallel_spin(m,j,i)
+ implicit none
+ integer, intent(in) :: i,j,m
+  three_e_diag_parrallel_spin = three_e_3_idx_direct_bi_ort(m,j,i)  ! direct
+  three_e_diag_parrallel_spin += three_e_3_idx_cycle_1_bi_ort(m,j,i) + three_e_3_idx_cycle_2_bi_ort(m,j,i) & ! two cyclic permutations 
+  - three_e_3_idx_exch23_bi_ort(m,j,i) - three_e_3_idx_exch13_bi_ort(m,j,i)  & ! two first exchange 
+  - three_e_3_idx_exch12_bi_ort(m,j,i) ! last exchange 
+end
+
+double precision function three_e_single_parrallel_spin(m,j,k,i)
+ implicit none
+ integer, intent(in) :: i,k,j,m
+  three_e_single_parrallel_spin = three_e_4_idx_direct_bi_ort(m,j,k,i)  ! direct
+  three_e_single_parrallel_spin += three_e_4_idx_cycle_1_bi_ort(m,j,k,i) + three_e_4_idx_cycle_2_bi_ort(m,j,k,i) & ! two cyclic permutations 
+  - three_e_4_idx_exch23_bi_ort(m,j,k,i) - three_e_4_idx_exch13_bi_ort(m,j,k,i)  & ! two first exchange 
+  - three_e_4_idx_exch12_bi_ort(m,j,k,i) ! last exchange 
+end
