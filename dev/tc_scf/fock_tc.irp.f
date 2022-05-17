@@ -141,7 +141,7 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
  if(three_body_h_tc)then
   Fock_matrix_tc_mo_tot += fock_3_mat
  endif
-
+ call restore_symmetry(mo_num,mo_num,Fock_matrix_tc_mo_tot,mo_num,1.d-10)
 END_PROVIDER 
 
 
