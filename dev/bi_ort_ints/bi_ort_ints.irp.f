@@ -7,12 +7,13 @@ program bi_ort_ints
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  call test_overlap
-  call routine_twoe
-  call routine_onee
-  call test_v_ki_bi_ortho
-  call test_x_v_ki_bi_ortho
-  call test_3_body_bi_ort
+!  call test_overlap
+!  call routine_twoe
+!  call routine_onee
+!  call test_v_ki_bi_ortho
+!  call test_x_v_ki_bi_ortho
+!  call test_3_body_bi_ort
+  call test_3_e_diag
 end
 
 subroutine test_overlap
@@ -159,4 +160,20 @@ subroutine test_3_body_bi_ort
  print*,'accu = ',accu/dble(mo_num**6)
  
 
+end
+
+subroutine test_3_e_diag
+ implicit none
+ integer :: i,j,m
+ double precision :: accu
+ accu = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do m = 1, mo_num
+    accu += dabs(three_e_3_idx_direct_bi_ort_new(m,j,i) - three_e_3_idx_direct_bi_ort(m,j,i))
+    print*,three_e_3_idx_direct_bi_ort_new(m,j,i),three_e_3_idx_direct_bi_ort(m,j,i),dabs(three_e_3_idx_direct_bi_ort_new(m,j,i) - three_e_3_idx_direct_bi_ort(m,j,i))
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu
 end
