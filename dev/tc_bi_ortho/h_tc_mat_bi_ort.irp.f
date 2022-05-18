@@ -1,4 +1,26 @@
 !!!!!! 
+subroutine htilde_mu_mat_bi_ortho_tot(key_j, key_i, Nint, htot)
+
+  BEGIN_DOC
+  ! <key_j | H_tilde | key_i> 
+  !!
+  !! WARNING !!
+  ! 
+  ! Non hermitian !!
+  END_DOC
+
+  use bitmasks
+
+  implicit none
+  integer, intent(in)           :: Nint
+  integer(bit_kind), intent(in) :: key_j(Nint,2),key_i(Nint,2)
+  double precision, intent(out) :: htot
+  double precision              :: hmono,htwoe,hthree
+
+  call htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
+
+end subroutine htilde_mu_mat_tot
+
 subroutine htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
  implicit none
   use bitmasks
@@ -24,6 +46,17 @@ subroutine htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
    call single_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
   else if(degree == 2)then
    call double_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
+ endif
+ if(three_body_h_tc) then
+   if(degree == 2) then
+     if(.not.double_normal_ord) then
+       call double_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
+     endif
+   else if(degree == 1)then
+     call single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
+   else if(degree == 0)then
+     call diag_htilde_three_body_ints_bi_ort(Nint, key_i, hthree)
+   endif
  endif
  htot = hmono + htwoe + hthree
  
