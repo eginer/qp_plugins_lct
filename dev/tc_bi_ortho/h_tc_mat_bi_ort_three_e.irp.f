@@ -237,9 +237,16 @@ subroutine double_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
        hthree += three_body_ints_bi_ort(mm,p1,p1,mm,h2,h1) & 
                - three_body_ints_bi_ort(mm,p1,p1,mm,h1,h2)
       enddo
+      double precision :: contrib, ref, new, three_e_double_parrallel_spin
       do m = 1, Ne(s1) ! pure contribution from s1 
        mm = occ(m,s1)
-       hthree += sym_3_e_int_from_6_idx_tensor(mm,p1,p1,mm,h2,h1)
+       new = three_e_double_parrallel_spin(mm,p2,h2,p1,h1)
+       ref = sym_3_e_int_from_6_idx_tensor(mm,p1,p1,mm,h2,h1)
+       if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+        print*,mm,p2,h2,p1,h1
+        print*,ref,new,dabs(ref - new)
+       endif
+       hthree += new
       enddo 
      else ! different spin excitation 
        do m = 1, Ne(s1)
