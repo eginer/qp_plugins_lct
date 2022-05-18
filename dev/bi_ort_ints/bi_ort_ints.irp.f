@@ -13,7 +13,8 @@ program bi_ort_ints
 !  call test_v_ki_bi_ortho
 !  call test_x_v_ki_bi_ortho
 !  call test_3_body_bi_ort
-  call test_3_e_diag
+!  call test_3_e_diag
+!  call test_3_e_diag_cycle1
 end
 
 subroutine test_overlap
@@ -162,18 +163,3 @@ subroutine test_3_body_bi_ort
 
 end
 
-subroutine test_3_e_diag
- implicit none
- integer :: i,j,m
- double precision :: accu
- accu = 0.d0
- do i = 1, mo_num
-  do j = 1, mo_num
-   do m = 1, mo_num
-    accu += dabs(three_e_3_idx_direct_bi_ort_new(m,j,i) - three_e_3_idx_direct_bi_ort(m,j,i))
-    print*,three_e_3_idx_direct_bi_ort_new(m,j,i),three_e_3_idx_direct_bi_ort(m,j,i),dabs(three_e_3_idx_direct_bi_ort_new(m,j,i) - three_e_3_idx_direct_bi_ort(m,j,i))
-   enddo
-  enddo
- enddo
- print*,'accu = ',accu
-end

@@ -22,7 +22,7 @@ BEGIN_PROVIDER [ double precision, three_e_3_idx_direct_bi_ort, (mo_num, mo_num,
  !$OMP DO SCHEDULE (dynamic)
   do i = 1, mo_num
    do j = 1, mo_num
-    do m = j, mo_num
+    do m = 1, mo_num
       call give_integrals_3_body_bi_ort(m,j,i,m,j,i,integral)
       three_e_3_idx_direct_bi_ort(m,j,i) = -1.d0 * integral 
     enddo
@@ -76,6 +76,14 @@ BEGIN_PROVIDER [ double precision, three_e_3_idx_cycle_1_bi_ort, (mo_num, mo_num
  !$OMP END DO
  !$OMP END PARALLEL
  call wall_time(wall1)
+
+  do i = 1, mo_num
+   do j = 1, mo_num
+    do m = 1, j
+     three_e_3_idx_cycle_1_bi_ort(m,j,i) = three_e_3_idx_cycle_1_bi_ort(j,m,i)
+    enddo
+   enddo
+  enddo
  print*,'wall time for three_e_3_idx_cycle_1_bi_ort',wall1 - wall0
 
 END_PROVIDER 
@@ -113,6 +121,13 @@ BEGIN_PROVIDER [ double precision, three_e_3_idx_cycle_2_bi_ort, (mo_num, mo_num
  !$OMP END DO
  !$OMP END PARALLEL
  call wall_time(wall1)
+  do i = 1, mo_num
+   do j = 1, mo_num
+    do m = 1, j
+     three_e_3_idx_cycle_2_bi_ort(m,j,i) = three_e_3_idx_cycle_2_bi_ort(j,m,i)
+    enddo
+   enddo
+  enddo
  print*,'wall time for three_e_3_idx_cycle_2_bi_ort',wall1 - wall0
 
 END_PROVIDER 
@@ -149,6 +164,13 @@ BEGIN_PROVIDER [ double precision, three_e_3_idx_exch23_bi_ort, (mo_num, mo_num,
   enddo
  !$OMP END DO
  !$OMP END PARALLEL
+  do i = 1, mo_num
+   do j = 1, mo_num
+    do m = 1, j
+     three_e_3_idx_exch23_bi_ort(m,j,i) = three_e_3_idx_exch23_bi_ort(j,m,i)
+    enddo
+   enddo
+  enddo
  call wall_time(wall1)
  print*,'wall time for three_e_3_idx_exch23_bi_ort',wall1 - wall0
 
@@ -186,6 +208,13 @@ BEGIN_PROVIDER [ double precision, three_e_3_idx_exch13_bi_ort, (mo_num, mo_num,
   enddo
  !$OMP END DO
  !$OMP END PARALLEL
+  do i = 1, mo_num
+   do j = 1, mo_num
+    do m = 1, j
+     three_e_3_idx_exch13_bi_ort(m,j,i) = three_e_3_idx_exch13_bi_ort(j,m,i)
+    enddo
+   enddo
+  enddo
  call wall_time(wall1)
  print*,'wall time for three_e_3_idx_exch13_bi_ort',wall1 - wall0
 
@@ -223,6 +252,13 @@ BEGIN_PROVIDER [ double precision, three_e_3_idx_exch12_bi_ort, (mo_num, mo_num,
   enddo
  !$OMP END DO
  !$OMP END PARALLEL
+  do i = 1, mo_num
+   do j = 1, mo_num
+    do m = 1, j
+     three_e_3_idx_exch12_bi_ort(m,j,i) = three_e_3_idx_exch12_bi_ort(j,m,i)
+    enddo
+   enddo
+  enddo
  call wall_time(wall1)
  print*,'wall time for three_e_3_idx_exch12_bi_ort',wall1 - wall0
 

@@ -111,6 +111,8 @@ subroutine test_whole_hij
      print*,'Diagonal element '
      print*,'ref,new,de'
      print*,ref,new,ref-new
+     print*,i,j
+     stop
     endif
     accu_diag += dabs(ref-new)
    else if(degree == 1)then
