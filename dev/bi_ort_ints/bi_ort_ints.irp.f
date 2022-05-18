@@ -15,6 +15,7 @@ program bi_ort_ints
 !  call test_3_body_bi_ort
 !  call test_3_e_diag
 !  call test_3_e_diag_cycle1
+ call test_3_e
 end
 
 subroutine test_overlap
@@ -129,7 +130,7 @@ subroutine test_x_v_ki_bi_ortho
 
 end
 
-subroutine test_3_body_bi_ort
+subroutine test_3_e
  implicit none
  integer :: n,l,k,m,j,i
  double precision :: new, ref, contrib, accu
@@ -137,29 +138,21 @@ subroutine test_3_body_bi_ort
  do i = 1, mo_num
   do j = 1, mo_num
    do m = 1, mo_num
-    do k = 1, mo_num
-     do l = 1, mo_num
-      do n = 1, mo_num
-!       call give_integrals_3_body_bi_ort(n,l,k,m,j,i,new)
-!       new = - new
-       new = three_body_ints_bi_ort(n,l,k,m,j,i)
-       ref = three_body_ints(n,l,k,m,j,i)
-       contrib = dabs(ref - new)
-       accu += contrib
-       if(dabs(ref).gt.1.d-10)then
-        if(contrib .gt. 1.d-10)then
-         print*,n,l,k,m,j,i
-         print*,ref,new,contrib
-        endif
-       endif
-      enddo
-     enddo
-    enddo
+    ref = three_e_3_idx_exch12_bi_ort(m,j,i) 
+    new = three_e_3_idx_exch12_bi_ort_new(m,j,i) 
+    contrib = dabs(ref - new)
+    if(contrib.gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+     print*,m,j,i
+     print*,ref,new,contrib
+    endif
+    accu += contrib
    enddo
   enddo
  enddo
- print*,'accu = ',accu/dble(mo_num**6)
+ print*,'accu = ',accu/dble(mo_num**3)
  
 
 end
+
+
 
