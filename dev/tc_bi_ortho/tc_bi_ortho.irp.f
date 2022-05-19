@@ -11,9 +11,9 @@ program tc_bi_ortho
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
 !  call routine_provide
-!  call routine_diag
+  call routine_diag
 ! call routine_three_e
-  call test_whole_hij
+!  call test_whole_hij
 end
 
 subroutine routine_provide

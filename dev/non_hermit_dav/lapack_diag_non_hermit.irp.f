@@ -52,16 +52,16 @@ subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
  enddo
  ! You sort the real eigenvalues 
  call dsort(eigval,iorder,n_good)
-! print*,'n_real_eigv = ',n_real_eigv
+ print*,'n_real_eigv = ',n_real_eigv
 ! print*,'n           = ',n
  do i = 1, n_real_eigv
-!  print*,i,'eigval(i) = ',eigval(i) 
+  print*,i,'eigval(i) = ',eigval(i) 
   do j = 1, n
    reigvec(j,i) = VR(j,list_good(iorder(i)))
    leigvec(j,i) = Vl(j,list_good(iorder(i)))
   enddo
-!  write(*,'(X,100(F16.10,X))')reigvec(:,i)
-!  write(*,'(X,100(F16.10,X))')leigvec(:,i)
+  write(*,'(X,100(F16.10,X))')reigvec(:,i)
+  write(*,'(X,100(F16.10,X))')leigvec(:,i)
  enddo
 end
 subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
@@ -85,7 +85,7 @@ subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
   character*1 :: JOBVL,JOBVR,BALANC,SENSE
   JOBVL = "V" ! computes the left  eigenvectors 
   JOBVR = "V" ! computes the right eigenvectors 
-  BALANC = "B" ! Diagonal scaling and Permutation for optimization
+  BALANC = "P" ! Diagonal scaling and Permutation for optimization
   SENSE = "B"
   integer, allocatable :: IWORK(:)
   integer     :: lda,ldvl,ldvr,LWORK,INFO
