@@ -7,9 +7,15 @@ program bi_ort_ints
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  call test_overlap
-  call routine_twoe
-  call routine_onee
+!  call test_overlap
+!  call routine_twoe
+!  call routine_onee
+!  call test_v_ki_bi_ortho
+!  call test_x_v_ki_bi_ortho
+!  call test_3_body_bi_ort
+!  call test_3_e_diag
+!  call test_3_e_diag_cycle1
+ call test_3_e
 end
 
 subroutine test_overlap
@@ -21,7 +27,6 @@ subroutine test_overlap
   write(*,'(100(F15.10,X))')Fock_matrix_tc_mo_tot(i,:)
  enddo
  print*,'********'
- provide overlap_bi_ortho_un_norm
  provide overlap_bi_ortho
 end
 
@@ -31,6 +36,7 @@ subroutine routine_twoe
  double precision :: old, get_mo_two_e_integral_tc_int
  double precision :: ref,new, accu, contrib, bi_ortho_mo_ints
  accu = 0.d0
+ print*,'Testing the bi ortho two e'
  do j = 1, mo_num
   do i = 1, mo_num
    do l = 1, mo_num
@@ -46,7 +52,7 @@ subroutine routine_twoe
       if(dabs(ref).gt.1.d-10)then
        if(contrib.gt.1.d-10)then
         print*,k,l,i,j
-        print*,old,ref,contrib
+        print*,ref,new,contrib
        endif
       endif
       accu += contrib
@@ -62,6 +68,7 @@ subroutine routine_onee
  implicit none
  integer :: i,k
  double precision :: ref,new,accu,contrib
+ print*,'Testing the bi ortho one e'
  accu = 0.d0
  do i = 1, mo_num
   do k = 1, mo_num
@@ -79,3 +86,73 @@ subroutine routine_onee
  enddo
  print*,'accu = ',accu/mo_num**2
 end
+
+subroutine test_v_ki_bi_ortho
+ implicit none
+ integer :: i,k,ipoint
+ double precision :: accu,ref,new,contrib
+ print*,'Testing intermediates for three e terms'
+ accu = 0.d0
+ do ipoint = 1, n_points_final_grid
+  do i = 1, mo_num
+   do k = 1, mo_num
+    ref = mo_v_ki_bi_ortho_erf_rk_cst_mu_naive(k,i,ipoint)
+    new = mo_v_ki_bi_ortho_erf_rk_cst_mu(k,i,ipoint)
+    contrib = dabs(ref - new)
+    accu += contrib
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu/dble(mo_num*mo_num*n_points_final_grid)
+
+end
+
+subroutine test_x_v_ki_bi_ortho
+ implicit none
+ integer :: i,k,ipoint,m
+ double precision :: accu,ref,new,contrib
+ print*,'Testing intermediates for three e terms in X'
+ accu = 0.d0
+ 
+ do ipoint = 1, n_points_final_grid
+  do m = 1, 3
+   do i = 1, mo_num
+    do k = 1, mo_num
+     ref = mo_x_v_ki_bi_ortho_erf_rk_cst_mu_naive(k,i,m,ipoint)
+     new = mo_x_v_ki_bi_ortho_erf_rk_cst_mu(k,i,m,ipoint)
+     contrib = dabs(ref - new)
+     accu += contrib
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu/dble(mo_num*mo_num*n_points_final_grid*3)
+
+end
+
+subroutine test_3_e
+ implicit none
+ integer :: n,l,k,m,j,i
+ double precision :: new, ref, contrib, accu
+ accu = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do m = 1, mo_num
+    ref = three_e_3_idx_exch12_bi_ort(m,j,i) 
+    new = three_e_3_idx_exch12_bi_ort_new(m,j,i) 
+    contrib = dabs(ref - new)
+    if(contrib.gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+     print*,m,j,i
+     print*,ref,new,contrib
+    endif
+    accu += contrib
+   enddo
+  enddo
+ enddo
+ print*,'accu = ',accu/dble(mo_num**3)
+ 
+
+end
+
+
+

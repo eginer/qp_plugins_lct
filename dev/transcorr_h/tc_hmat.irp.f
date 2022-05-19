@@ -81,7 +81,7 @@ END_PROVIDER
     enddo
    enddo
  else if(full_tc_h_solver)then
-  call non_hrmt_real_diag(N_det,htilde_matrix_elmt,reigvec_trans,leigvec_trans,n_good_trans_eigval,eigval_trans)
+  call non_hrmt_real_diag(N_det,htilde_matrix_elmt,leigvec_trans,reigvec_trans,n_good_trans_eigval,eigval_trans)
   do i = 1, n_good_trans_eigval
    reigvec_trans_norm(i) = 0.d0
    leigvec_trans_norm(i) = 0.d0

@@ -157,7 +157,7 @@
 
     allocate(reigvec_tc_tmp(N_det,N_det),leigvec_tc_tmp(N_det,N_det),eigval_right_tmp(N_det))
 
-    call non_hrmt_real_diag(N_det,htilde_matrix_elmt,reigvec_tc_tmp,leigvec_tc_tmp,n_real_tc_eigval_right,eigval_right_tmp)
+    call non_hrmt_real_diag(N_det,htilde_matrix_elmt,leigvec_tc_tmp,reigvec_tc_tmp,n_real_tc_eigval_right,eigval_right_tmp)
     double precision, allocatable :: coef_hf_r(:),coef_hf_l(:)
     integer, allocatable :: iorder(:)
     allocate(coef_hf_r(N_det),coef_hf_l(N_det),iorder(N_det))

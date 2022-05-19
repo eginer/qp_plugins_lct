@@ -19,7 +19,6 @@ subroutine test_overlap
   write(*,'(100(F15.10,X))')Fock_matrix_tc_mo_tot(i,:)
  enddo
  print*,'********'
- provide overlap_bi_ortho_un_norm
  provide overlap_bi_ortho
 end
 
