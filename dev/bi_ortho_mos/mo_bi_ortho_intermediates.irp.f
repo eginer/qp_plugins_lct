@@ -10,9 +10,14 @@
  integer :: i,j,k,l
  double precision, allocatable ::  eigval_right_tmp(:)
  allocate( eigval_right_tmp(mo_num))
- call non_hrmt_real_diag_new(mo_num,Fock_matrix_tc_mo_tot,&
-      fock_tc_leigvec_mo,fock_tc_reigvec_mo,& 
-      n_real_tc,eigval_right_tmp)
+ !call non_hrmt_real_diag_new(mo_num,Fock_matrix_tc_mo_tot,&
+ !     fock_tc_leigvec_mo,fock_tc_reigvec_mo,& 
+ !     n_real_tc,eigval_right_tmp)
+
+ call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot          &
+                    , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
+                    , n_real_tc, eigval_right_tmp )
+
  overlap_fock_tc_eigvec_mo = 0.d0
  do i = 1, mo_num
   do k = 1, mo_num
