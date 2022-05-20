@@ -31,6 +31,8 @@ BEGIN_PROVIDER [double precision, FQS_SQF_Matrix_AO, (ao_num,ao_num)]
             , Fock_matrix_tc_ao_tot, size(Fock_matrix_tc_ao_tot,1) &
             , 1.d0, FQS_SQF_Matrix_AO, size(FQS_SQF_Matrix_AO,1) )
 
+  deallocate( scratch )
+
 END_PROVIDER
 
 
