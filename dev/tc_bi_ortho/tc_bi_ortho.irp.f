@@ -11,9 +11,9 @@ program tc_bi_ortho
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
 !  call routine_provide
-!  call routine_diag
+  call routine_diag
 ! call routine_three_e
-  call test_whole_hij
+!  call test_whole_hij
 end
 
 subroutine routine_provide
@@ -29,6 +29,19 @@ subroutine routine_diag
  integer ::i
  do i = 1,N_states
   print*,'i,E(i)',i,eigval_right_tc_bi_orth(i)
+ enddo
+ print*,'e_tilde_bi_orth_00      = ',e_tilde_bi_orth_00
+ print*,'e_pt2_tc_bi_orth        = ',e_pt2_tc_bi_orth
+ print*,'e_pt2_tc_bi_orth_single = ',e_pt2_tc_bi_orth_single
+ print*,'e_pt2_tc_bi_orth_double = ',e_pt2_tc_bi_orth_double
+ print*,'***'
+ print*,'e_corr_bi_orth          = ',e_corr_bi_orth
+ print*,'e_corr_bi_orth_proj     = ',e_corr_bi_orth_proj
+ print*,'e_corr_single_bi_orth   = ',e_corr_single_bi_orth
+ print*,'e_corr_double_bi_orth   = ',e_corr_double_bi_orth
+ print*,'Left/right eigenvectors'
+ do i = 1,N_det
+  write(*,'(I5,X,(100(F12.7,X)))')i,leigvec_tc_bi_orth(i,1),reigvec_tc_bi_orth(i,1)
  enddo
 end
 

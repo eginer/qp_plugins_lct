@@ -3,6 +3,7 @@
 
  BEGIN_PROVIDER [ double precision, fock_tc_reigvec_mo, (mo_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, fock_tc_leigvec_mo, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, eigval_fock_tc_mo, (mo_num)]
 &BEGIN_PROVIDER [ double precision, overlap_fock_tc_eigvec_mo, (mo_num, mo_num)]
 
   BEGIN_DOC
@@ -71,6 +72,7 @@ END_PROVIDER
 
   implicit none
   integer                       :: i, k, q, p
+  double precision              :: accu 
   double precision, allocatable :: tmp(:,:)
 
   call rotate_mo_coef(mo_coef, fock_tc_reigvec_mo, mo_overlap, fock_tc_reigvec_ao)
@@ -101,11 +103,26 @@ END_PROVIDER
 
   deallocate( tmp )
 
-
-  !print*,'overlap_fock_tc_eigvec_ao = '
-  !do i = 1, mo_num
-  ! write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
-  !enddo
+  accu = 0.d0
+  do i = 1, mo_num
+    do j = 1, mo_num
+      accu += dabs(overlap_fock_tc_eigvec_ao(j,i) - overlap_fock_tc_eigvec_mo(j,i))
+    enddo
+  enddo
+  accu = accu / dble(mo_num**2)
+  if(dabs(accu).gt.1.d-10) then
+    print*,'Warning !! '
+    print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
+    print*,'an average of ', accu
+    print*,'overlap_fock_tc_eigvec_ao = '
+    do i = 1, mo_num
+      write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
+    enddo
+    print*,'overlap_fock_tc_eigvec_mo = '
+    do i = 1, mo_num
+      write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
+    enddo
+  endif
 
 END_PROVIDER
 
