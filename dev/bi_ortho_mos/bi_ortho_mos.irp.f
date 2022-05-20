@@ -14,5 +14,7 @@ subroutine test_overlap
  implicit none
  integer :: i,j
  provide overlap_bi_ortho
+! provide overlap_orthocanonical_fock_eigv
+! provide s_fock_matrix_eigval
 end
 

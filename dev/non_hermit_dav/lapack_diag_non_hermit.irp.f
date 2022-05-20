@@ -14,22 +14,25 @@ subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
  double precision, allocatable :: Aw(:,:)
  integer, intent(out) :: n_real_eigv
  print*,'Computing the left/right eigenvectors ...'
- character*1 :: JOBVL,JOBVR
- JOBVL = "V" ! computes the left  eigenvectors 
- JOBVR = "V" ! computes the right eigenvectors 
  double precision, allocatable :: WR(:),WI(:),Vl(:,:),VR(:,:)
  integer :: i,j,k
  integer :: n_good
- integer, allocatable :: list_good(:), iorder(:)
+ integer, allocatable :: list_good(:), iorder(:), Aw_diag(:)
  double precision :: thr
- thr = 1.d-5
+ thr = 1.d-10
  ! Eigvalue(n) = WR(n) + i * WI(n)
  allocate(WR(n),WI(n),VL(n,n),VR(n,n),Aw(n,n))
  Aw = A
+ do i = 1, n
+  double precision :: r
+  call RANDOM_NUMBER(r)
+  Aw(i,i) += thr * r
+ enddo
  call lapack_diag_non_sym_new(n,Aw,WR,WI,VL,VR)
  ! You track the real eigenvalues 
  n_good = 0
  do i = 1, n
+!   print*,'Re(i) + Im(i)',i,WR(i),WI(i)
   if(dabs(WI(i)).lt.thr)then
    n_good += 1
   else
@@ -52,16 +55,16 @@ subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
  enddo
  ! You sort the real eigenvalues 
  call dsort(eigval,iorder,n_good)
- print*,'n_real_eigv = ',n_real_eigv
+! print*,'n_real_eigv = ',n_real_eigv
 ! print*,'n           = ',n
  do i = 1, n_real_eigv
-  print*,i,'eigval(i) = ',eigval(i) 
+!  print*,i,'eigval(i) = ',eigval(i) 
   do j = 1, n
    reigvec(j,i) = VR(j,list_good(iorder(i)))
    leigvec(j,i) = Vl(j,list_good(iorder(i)))
   enddo
-  write(*,'(X,100(F16.10,X))')reigvec(:,i)
-  write(*,'(X,100(F16.10,X))')leigvec(:,i)
+!  write(*,'(X,100(F16.10,X))')reigvec(:,i)
+!  write(*,'(X,100(F16.10,X))')leigvec(:,i)
  enddo
 end
 subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
@@ -85,7 +88,7 @@ subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
   character*1 :: JOBVL,JOBVR,BALANC,SENSE
   JOBVL = "V" ! computes the left  eigenvectors 
   JOBVR = "V" ! computes the right eigenvectors 
-  BALANC = "P" ! Diagonal scaling and Permutation for optimization
+  BALANC = "N" ! Diagonal scaling and Permutation for optimization
   SENSE = "B"
   integer, allocatable :: IWORK(:)
   integer     :: lda,ldvl,ldvr,LWORK,INFO
@@ -110,7 +113,7 @@ subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
   LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
   deallocate(WORK)
   allocate(WORK(LWORK))
-  ! Actual diagonalization 
+  ! Actual dnon_hrmt_real_diag_newiagonalization 
   call dgeevx(BALANC,JOBVL,JOBVR,SENSE,&  ! CHARACTERS 
               n,A,lda,                 &  ! MATRIX TO DIAGONALIZE
               WR,WI,                   &  ! REAL AND IMAGINARY PART OF EIGENVALUES 

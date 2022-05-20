@@ -6,7 +6,6 @@
  ! Contains normalization factors ensuring BI-ORTHONORMALITY with LEFT MOs
  END_DOC
  if(bi_ortho)then
-!  mo_r_coef = Reig_tcFock_ao
   mo_r_coef = fock_tc_reigvec_ao
   integer :: i,m
   double precision :: norm
@@ -30,7 +29,6 @@
  ! Contains normalization factors ensuring BI-ORTHONORMALITY with RIGHT MOs
  END_DOC
  if(bi_ortho)then
-! mo_l_coef = Leig_tcFock_ao
   mo_l_coef = fock_tc_leigvec_ao
   integer :: i,m
   double precision :: norm
@@ -88,19 +86,30 @@
  double precision :: accu_d, accu_nd 
  accu_d = 0.d0
  accu_nd = 0.d0
- print*,'****************'
- print*,'Overlap matrix betwee mo_l_coef and mo_r_coef  '
  do i = 1, mo_num
-  write(*,'(100(F16.10,X))')overlap_bi_ortho(i,:)
   do k = 1, mo_num
-  if(i==k)then
-   accu_d += dabs(overlap_bi_ortho(k,i))
-  else
-   accu_nd += dabs(overlap_bi_ortho(k,i))
-  endif
+   if(i==k)then
+    accu_d += dabs(overlap_bi_ortho(k,i))
+   else
+    accu_nd += dabs(overlap_bi_ortho(k,i))
+   endif
   enddo 
  enddo
+ accu_d = accu_d/dble(mo_num)
+ accu_nd = accu_nd/dble(mo_num**2-mo_num)
+ if(dabs(accu_d-1.d0).gt.1.d-10.or.dabs(accu_nd).gt.1.d-10)then
+  print*,'Warning !!!'
+  print*,'Average trace of overlap_bi_ortho is different from 1 by ', accu_d
+  print*,'And bi orthogonality is off by an average of ',accu_nd
+  print*,'****************'
+  print*,'Overlap matrix betwee mo_l_coef and mo_r_coef  '
+  do i = 1, mo_num
+   write(*,'(100(F16.10,X))')overlap_bi_ortho(i,:)
+  enddo
+ endif
+ print*,'Average trace of overlap_bi_ortho (should be 1.)'
  print*,'accu_d  = ',accu_d
+ print*,'Sum of off diagonal terms of overlap_bi_ortho (should be zero)'
  print*,'accu_nd = ',accu_nd
  print*,'****************'
  
