@@ -23,20 +23,27 @@ subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
   integer                       :: i, j
   integer                       :: n_good
   double precision              :: thr
+  double precision              :: r
   integer,          allocatable :: list_good(:), iorder(:)
   double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:)
   double precision, allocatable :: Aw(:,:)
+
+
+  thr = 1.d-5
 
   print*,'Computing the left/right eigenvectors ...'
 
   ! Eigvalue(n) = WR(n) + i * WI(n)
   allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
   Aw = A
+  do i = 1, n
+    call RANDOM_NUMBER(r)
+    Aw(i,i) += thr * r
+  enddo
   call lapack_diag_non_sym_new(n,Aw,WR,WI,VL,VR)
   deallocate( Aw )
 
   ! You track the real eigenvalues 
-  thr = 1.d-5
   n_good = 0
   do i = 1, n
     if(dabs(WI(i)).lt.thr)then
@@ -66,19 +73,14 @@ subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
 
   ! You sort the real eigenvalues 
   call dsort(eigval, iorder, n_good)
-! print*,'n_real_eigv = ',n_real_eigv
-! print*,'n           = ',n
 
   reigvec(:,:) = 0.d0 
   leigvec(:,:) = 0.d0 
   do i = 1, n_real_eigv
-!  print*,i,'eigval(i) = ',eigval(i) 
     do j = 1, n
       reigvec(j,i) = VR(j,list_good(iorder(i)))
       leigvec(j,i) = Vl(j,list_good(iorder(i)))
     enddo
-!  write(*,'(X,100(F16.10,X))')reigvec(:,i)
-!  write(*,'(X,100(F16.10,X))')leigvec(:,i)
   enddo
 
   deallocate( list_good, iorder )
@@ -144,7 +146,7 @@ subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
   LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
   deallocate(WORK)
   allocate(WORK(LWORK))
-  ! Actual diagonalization 
+  ! Actual dnon_hrmt_real_diag_newiagonalization 
   call dgeevx(BALANC,JOBVL,JOBVR,SENSE,&  ! CHARACTERS 
               n,A,lda,                 &  ! MATRIX TO DIAGONALIZE
               WR,WI,                   &  ! REAL AND IMAGINARY PART OF EIGENVALUES 
