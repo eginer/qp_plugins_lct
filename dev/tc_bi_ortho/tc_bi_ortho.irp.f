@@ -30,6 +30,19 @@ subroutine routine_diag
  do i = 1,N_states
   print*,'i,E(i)',i,eigval_right_tc_bi_orth(i)
  enddo
+ print*,'e_tilde_bi_orth_00      = ',e_tilde_bi_orth_00
+ print*,'e_pt2_tc_bi_orth        = ',e_pt2_tc_bi_orth
+ print*,'e_pt2_tc_bi_orth_single = ',e_pt2_tc_bi_orth_single
+ print*,'e_pt2_tc_bi_orth_double = ',e_pt2_tc_bi_orth_double
+ print*,'***'
+ print*,'e_corr_bi_orth          = ',e_corr_bi_orth
+ print*,'e_corr_bi_orth_proj     = ',e_corr_bi_orth_proj
+ print*,'e_corr_single_bi_orth   = ',e_corr_single_bi_orth
+ print*,'e_corr_double_bi_orth   = ',e_corr_double_bi_orth
+ print*,'Left/right eigenvectors'
+ do i = 1,N_det
+  write(*,'(I5,X,(100(F12.7,X)))')i,leigvec_tc_bi_orth(i,1),reigvec_tc_bi_orth(i,1)
+ enddo
 end
 
 subroutine routine_three_e

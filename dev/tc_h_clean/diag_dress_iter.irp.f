@@ -65,15 +65,18 @@ subroutine routine
  print*,'eigval_right_tc = ',eigval_right_tc
  print*,'eigval_left_tc  = ',eigval_left_tc
  print*,'******************'
- print*,'< h_core >      = ',h_mono_comp_right_tc
- print*,'< h_eff_2e >    = ',h_eff_comp_right_tc
- print*,'< h_deriv_2_e > = ',h_deriv_comp_right_tc
- print*,'< h_eee >       = ',h_three_comp_right_tc
- print*,'< h_tot >       = ',h_tot_comp_right_tc
- print*,'******************'
+! print*,'< h_core >      = ',h_mono_comp_right_tc
+! print*,'< h_eff_2e >    = ',h_eff_comp_right_tc
+! print*,'< h_deriv_2_e > = ',h_deriv_comp_right_tc
+! print*,'< h_eee >       = ',h_three_comp_right_tc
+! print*,'< h_tot >       = ',h_tot_comp_right_tc
+! print*,'******************'
  print*,'singles_hf_mat_ele',singles_hf_mat_elem
  print*,'e_tilde_00      = ',e_tilde_00
- print*,'E corr tc       = ',eigval_right_tc - e_tilde_00
+ print*,'E corr tc       = ',e_corr_tc
+ print*,'E corr tc_proj  = ',e_corr_tc_proj
+ print*,'e_corr_single_tc= ',e_corr_single_tc
+ print*,'e_corr_double_tc= ',e_corr_double_tc
  print*,'e_pt2_tc        = ',e_pt2_tc
  print*,'e_pt2_tc_single = ',e_pt2_tc_single
  print*,'e_pt2_tc_double = ',e_pt2_tc_double
