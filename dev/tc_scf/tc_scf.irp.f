@@ -18,37 +18,64 @@ end
 subroutine routine_scf()
 
   implicit none
-  integer :: i
+  integer          :: i, j, it
+  double precision :: e_save, e_delta
 
-  i = 0
-  print*,'iteration = ',i
+  it = 0
+  print*,'iteration = ', it
   print*,'grad_good_hermit_tc_fock_mat = ', grad_good_hermit_tc_fock_mat
   print*,'***'
-  print*,'TC HF total energy = ',TC_right_HF_energy
-  print*,'TC HF 1 e   energy = ',TC_right_HF_one_electron_energy
-  print*,'TC HF 2 e hermit   = ',TC_right_HF_two_e_hermit_energy
-  print*,'TC HF 2 non hermit = ',TC_right_HF_two_e_n_hermit_energy
-  print*,'TC HF 3 body       = ',diag_three_elem_hf
+  print*,'TC HF total energy = ', TC_right_HF_energy
+  print*,'TC HF 1 e   energy = ', TC_right_HF_one_electron_energy
+  print*,'TC HF 2 e hermit   = ', TC_right_HF_two_e_hermit_energy
+  print*,'TC HF 2 non hermit = ', TC_right_HF_two_e_n_hermit_energy
+  print*,'TC HF 3 body       = ', diag_three_elem_hf
   print*,'***'
- 
-  do while( (grad_good_hermit_tc_fock_mat.gt.thresh_tcscf) &
-      .and. (i.lt.n_it_tcscf_max) )
+
+  ! ---
+  ! new orbitals
+
+  mo_l_coef = fock_tc_leigvec_ao
+  mo_r_coef = fock_tc_reigvec_ao
+
+  ! ---
+
+  e_delta = 10.d0
+  e_save = TC_right_HF_energy
+
+  !do while( (grad_good_hermit_tc_fock_mat.gt.thresh_tcscf) &
+  do while( (e_delta.gt.thresh_tcscf) &
+      .and. (it.lt.n_it_tcscf_max) )
   
-    i += 1
-    print*,'iteration = ',i
+    it += 1
+    print*,'iteration = ', it
     print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
     print*,'***'
-    print*,'TC HF total energy = ',TC_right_HF_energy
-    print*,'TC HF 1 e   energy = ',TC_right_HF_one_electron_energy
-    print*,'TC HF 2 e hermit   = ',TC_right_HF_two_e_hermit_energy
-    print*,'TC HF 2 non hermit = ',TC_right_HF_two_e_n_hermit_energy
-    print*,'TC HF 3 body       = ',diag_three_elem_hf
+    print*,'TC HF total energy = ', TC_right_HF_energy
+    print*,'TC HF 1 e   energy = ', TC_right_HF_one_electron_energy
+    print*,'TC HF 2 e hermit   = ', TC_right_HF_two_e_hermit_energy
+    print*,'TC HF 2 non hermit = ', TC_right_HF_two_e_n_hermit_energy
+    print*,'TC HF 3 body       = ', diag_three_elem_hf
     print*,'***'
-    call save_good_hermit_tc_eigvectors
-    touch mo_coef 
-    call save_mos
+
+    !call save_good_hermit_tc_eigvectors
+
+    ! ---
+    ! new orbitals
+
+    mo_l_coef = fock_tc_leigvec_ao
+    mo_r_coef = fock_tc_reigvec_ao
+
+    ! ---
+
+    e_delta = dabs( TC_right_HF_energy - e_save )
+    e_save = TC_right_HF_energy
 
   enddo
+
+  call ezfio_set_bi_ortho_mos_mo_l_coef(mo_l_coef)
+  call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
+
 
 end subroutine routine_scf
 
