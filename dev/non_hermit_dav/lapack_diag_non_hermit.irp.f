@@ -448,7 +448,7 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
     if( dabs(WI(i)).lt.thr ) then
       n_good += 1
     else
-      print*, 'Found an imaginary component to eigenvalue'
+      print*, 'Found an imaginary component to eigenvalue on i = ', i
       print*, 'Re(i) + Im(i)', WR(i), WI(i)
     endif
   enddo

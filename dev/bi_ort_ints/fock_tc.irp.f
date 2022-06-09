@@ -50,7 +50,6 @@
     do k1 = 1, n_elements
 
       call two_e_integrals_index_reverse(kk, ii, ll, jj, keys(k1))
-
       do k2 = 1, 8
         if( kk(k2)==0 ) cycle
         i = ii(k2)
@@ -64,6 +63,7 @@
         two_e_tc_hermit_integral_alpha_tmp(l,j) -= TCSCF_density_matrix_ao_alpha(k,i) * integral
         two_e_tc_hermit_integral_beta_tmp (l,j) -= TCSCF_density_matrix_ao_beta (k,i) * integral
       enddo
+
     enddo
   enddo
  !$OMP END DO NOWAIT
