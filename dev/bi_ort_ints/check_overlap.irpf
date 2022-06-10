@@ -1,4 +1,4 @@
-program bi_ortho_mos
+program check_overlap 
   implicit none
   BEGIN_DOC
 ! TODO : Put the documentation of the program here
@@ -10,10 +10,11 @@ program bi_ortho_mos
   call test_overlap
 end
 
-subroutine test_overlap                                                                                                   
- implicit none
- integer :: i,j
- provide overlap_bi_ortho
+subroutine test_overlap
+  implicit none
+
+  provide overlap_bi_ortho
+
 ! provide overlap_orthocanonical_fock_eigv
 ! provide s_fock_matrix_eigval
 end
