@@ -111,7 +111,7 @@ BEGIN_PROVIDER [ double precision, fock_3_mat_a_op_sh, (mo_num, mo_num)]
    !F_a^{ab}(h,p) 
    do i = 1, elec_beta_num ! beta 
     do j = elec_beta_num+1, elec_alpha_num ! alpha
-     call  give_integrals_3_body(h,j,i,p,j,i,direct_int)   
+     call  give_integrals_3_body(h,j,i,p,j,i,direct_int)    ! <hji|pji>
      call  give_integrals_3_body(h,j,i,j,p,i,exch_int)   
      fock_3_mat_a_op_sh(h,p) -= direct_int - exch_int
     enddo

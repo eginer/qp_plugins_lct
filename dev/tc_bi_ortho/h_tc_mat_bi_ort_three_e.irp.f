@@ -141,10 +141,10 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
    ! alpha/alpha/beta three-body
    if(Ne(1)+Ne(2).ge.3)then
      ! hole of spin s1 :: contribution from purely other spin 
-     ispin = other_spin(s1)
-     do i = 1, Ne(ispin)
-      ii = occ(i,ispin) 
-      do j = i+1, Ne(ispin)
+     ispin = other_spin(s1) ! ispin is the other spin than s1
+     do i = 1, Ne(ispin)  ! i is the orbitals of the other spin than s1  
+      ii = occ(i,ispin)  
+      do j = i+1, Ne(ispin) ! j has the same spin than s1 
        jj = occ(j,ispin) 
        !   is == ispin  in :::   s1 is is  s1 is is      s1 is is s1 is is
        !                       < h1 j  i | p1 j  i > - < h1 j  i | p1 i j >
