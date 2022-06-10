@@ -80,6 +80,7 @@ end subroutine save_good_hermit_tc_eigvectors
   TC_right_HF_energy += TC_right_HF_one_electron_energy &
                       + TC_right_HF_two_e_hermit_energy &
                       + TC_right_HF_two_e_n_hermit_energy 
+
   if(three_body_h_tc) then
     TC_right_HF_energy += diag_three_elem_hf 
   endif
