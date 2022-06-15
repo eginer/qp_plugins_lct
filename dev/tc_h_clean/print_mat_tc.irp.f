@@ -14,6 +14,20 @@ program print_mat_tc
   touch read_wf 
 
   call routine
+  call routine_print_brutal
+end
+
+subroutine routine_print_brutal
+ integer :: i,j
+ do i = 1,N_det
+  do j = 1,N_det
+   print*,j,i,htilde_matrix_elmt(j,i)
+  enddo
+ enddo
+ print*,'eigval_right_tc'
+ do i = 1,N_det
+  print*,i,eigval_right_tc(i) 
+ enddo
 end
 
 subroutine routine

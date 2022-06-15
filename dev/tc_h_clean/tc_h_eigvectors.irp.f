@@ -82,6 +82,34 @@
  call htilde_mu_mat(HF_bitmask,HF_bitmask,N_int,hmono,heff,hderiv,hthree,e_tilde_00)
  END_PROVIDER 
 
+ BEGIN_PROVIDER [double precision, e_corr_tc]
+  implicit none
+  e_corr_tc = eigval_right_tc(1) - e_tilde_00
+ END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, e_corr_tc_proj]
+&BEGIN_PROVIDER [ double precision, e_corr_single_tc]
+&BEGIN_PROVIDER [ double precision, e_corr_double_tc]
+ implicit none
+ integer :: i,degree
+ double precision :: hmono,heff,hderiv,hthree,htilde_ij
+ e_corr_single_tc = 0.d0
+ e_corr_double_tc = 0.d0
+ do i = 1, N_det
+  call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
+  if(degree == 1 .or. degree == 2)then
+   call htilde_mu_mat(HF_bitmask,psi_det(1,1,i),N_int,hmono,heff,hderiv,hthree,htilde_ij)
+   if(degree == 1)then
+    e_corr_single_tc += reigvec_tc(i,1)/reigvec_tc(1,1) * htilde_ij
+   else 
+    e_corr_double_tc += reigvec_tc(i,1)/reigvec_tc(1,1) * htilde_ij
+   endif
+  endif
+ enddo
+ e_corr_tc_proj = e_corr_double_tc + e_corr_single_tc
+ END_PROVIDER 
+ 
+
  BEGIN_PROVIDER [ double precision, norm_ground_left_right]
  implicit none
  integer :: i
@@ -122,6 +150,8 @@
   print *,'norm_ground_left = ',norm_ground_left
  endif
  END_PROVIDER
+ 
+ 
 
  BEGIN_PROVIDER [ integer, index_HF_psi_det]
  implicit none
@@ -157,7 +187,7 @@
 
     allocate(reigvec_tc_tmp(N_det,N_det),leigvec_tc_tmp(N_det,N_det),eigval_right_tmp(N_det))
 
-    call non_hrmt_real_diag(N_det,htilde_matrix_elmt,reigvec_tc_tmp,leigvec_tc_tmp,n_real_tc_eigval_right,eigval_right_tmp)
+    call non_hrmt_real_diag(N_det,htilde_matrix_elmt,leigvec_tc_tmp,reigvec_tc_tmp,n_real_tc_eigval_right,eigval_right_tmp)
     double precision, allocatable :: coef_hf_r(:),coef_hf_l(:)
     integer, allocatable :: iorder(:)
     allocate(coef_hf_r(N_det),coef_hf_l(N_det),iorder(N_det))
@@ -546,3 +576,72 @@ BEGIN_PROVIDER [ double precision, psi_left_guess, (n_det_max_full,N_states)]
   psi_left_guess(i,i) = 1.d0
  enddo
 END_PROVIDER 
+
+
+ BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_r, (N_int,2,N_det) ]
+&BEGIN_PROVIDER [ integer, psi_det_sorted_r_order, (N_det) ]
+&BEGIN_PROVIDER [ double precision, norm_lr_abs ]
+ implicit none
+ integer :: i
+ double precision, allocatable :: psicoef(:)
+ norm_lr_abs = 0.d0
+ allocate(psicoef(N_det))
+ do i = 1,N_det
+  norm_lr_abs += dabs(reigvec_tc(i,1)*leigvec_tc(i,1))
+  if(thresh_psi_r_norm)then
+   psicoef(i) = -dsqrt(dabs(reigvec_tc(i,1)*leigvec_tc(i,1)))
+  else
+   psicoef(i) = -(dabs(reigvec_tc(i,1)))
+  endif
+  psi_det_sorted_r_order(i) = i
+ enddo
+ call dsort(psicoef,psi_det_sorted_r_order,N_det)
+ do i = 1, N_det
+  psi_det_sorted_r(1:N_int,1:2,i) = psi_det(1:N_int,1:2,psi_det_sorted_r_order(i))
+ enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, reigvec_tc_sorted_r, (N_det,N_states)]
+&BEGIN_PROVIDER [ double precision, leigvec_tc_sorted_r, (N_det,N_states)]
+ implicit none 
+ integer :: i,j
+ do i = 1, N_det
+  reigvec_tc_sorted_r(i,:) = reigvec_tc(psi_det_sorted_r_order(i),:)
+  leigvec_tc_sorted_r(i,:) = leigvec_tc(psi_det_sorted_r_order(i),:)
+ enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ integer, N_det_thresh_psi_r]
+&BEGIN_PROVIDER [ double precision, norm_lr_psi_sorted ]
+ implicit none 
+ integer :: i 
+ double precision :: accu
+ accu = 0.d0
+ norm_lr_psi_sorted = 0.d0
+ if(thresh_psi_r_norm)then
+  N_det_thresh_psi_r = 1
+  do i = 1, N_det
+   accu += dabs(reigvec_tc_sorted_r(i,1)*leigvec_tc_sorted_r(i,1))/norm_lr_abs
+   norm_lr_psi_sorted += reigvec_tc_sorted_r(i,1)*leigvec_tc_sorted_r(i,1)
+   if(accu.le.thresh_psi_r)then
+    N_det_thresh_psi_r += 1
+   else
+    exit
+   endif
+  enddo
+ else
+  N_det_thresh_psi_r = 0
+  do i = 1, N_det
+   norm_lr_psi_sorted += reigvec_tc_sorted_r(i,1)*leigvec_tc_sorted_r(i,1)
+   if(dabs(reigvec_tc_sorted_r(i,1)).ge.thresh_psi_r)then
+    N_det_thresh_psi_r += 1
+   else
+    exit
+   endif
+  enddo
+ endif
+
+ print*,'N_det_thresh_psi_r = ',N_det_thresh_psi_r
+ print*,'norm_lr_psi_sorted = ',norm_lr_psi_sorted
+ END_PROVIDER 
+

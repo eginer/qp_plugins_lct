@@ -1,4 +1,5 @@
-subroutine run_stochastic_cipsi
+
+subroutine print_tc_pt2
   use selection_types
   implicit none
   BEGIN_DOC
@@ -43,8 +44,7 @@ subroutine run_stochastic_cipsi
     call make_s2_eigenfunction
   endif
   print_pt2 = .False.
-  call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
-  call routine_save_right
+  call print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 
   call ezfio_has_hartree_fock_energy(has)
   if (has) then
@@ -62,24 +62,17 @@ subroutine run_stochastic_cipsi
       call make_s2_eigenfunction
     endif
     print_pt2 = .False.
-    call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
-    call routine_save_right
+    call print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
   endif
 
   double precision :: correlation_energy_ratio,E_denom,E_tc,norm
-  double precision, allocatable :: ept2(:), pt1(:),extrap_energy(:)
-  allocate(ept2(1000),pt1(1000),extrap_energy(100))
 
   correlation_energy_ratio = 0.d0
 
-! thresh_it_dav  = 5.d-5
-! soft_touch thresh_it_dav
+  thresh_it_dav  = 5.d-5
+  soft_touch thresh_it_dav
 
   print_pt2 = .True.
-  do while (                                                         &
-        (N_det < N_det_max) .and.                                    &
-        (maxval(abs(pt2_data % pt2(1:N_states))) > pt2_max)          &
-        )
       write(*,'(A)')  '--------------------------------------------------------------------------------'
 
 
@@ -95,59 +88,16 @@ subroutine run_stochastic_cipsi
 
     N_iter += 1
 
-    if (qp_stop()) exit
+!    call copy_H_apply_buffer_to_wf()
 
-    ! Add selected determinants
-    call copy_H_apply_buffer_to_wf()
-
-    PROVIDE  psi_coef
-    PROVIDE  psi_det
-    PROVIDE  psi_det_sorted
-
+!    PROVIDE  psi_coef
+!    PROVIDE  psi_det
+!    PROVIDE  psi_det_sorted
+!
     print *,'******'
     print *,'norm = ',norm
     print *,'******'
-    ept2(N_iter-1) = E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm
-    pt1(N_iter-1) = dsqrt(pt2_data % overlap(1,1))
-    call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
-    if (qp_stop()) exit
-  enddo
-!  print*,'data to extrapolate '
-!  do i = 2, N_iter
-!   print*,'iteration ',i
-!   print*,'pt1,Ept2',pt1(i),ept2(i)
-!   call get_extrapolated_energy(i-1,ept2(i),pt1(i),extrap_energy(i))
-!   do j = 2, i
-!    print*,'j,e,energy',j,extrap_energy(j)
-!   enddo
-!  enddo
+    call print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 
-! thresh_it_dav  = 5.d-6
-! soft_touch thresh_it_dav
-
-  call pt2_dealloc(pt2_data)
-  call pt2_dealloc(pt2_data_err)
-  call pt2_alloc(pt2_data, N_states)
-  call pt2_alloc(pt2_data_err, N_states)
-  call ZMQ_pt2(E_tc, pt2_data, pt2_data_err, relative_error,0) ! Stochastic PT2 and selection
-  call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
-!  if (.not.qp_stop()) then
-!    if (N_det < N_det_max) then
-!     thresh_it_dav  = 5.d-7
-!     soft_touch thresh_it_dav
-!     call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
-!    endif
-!
-!    call pt2_dealloc(pt2_data)
-!    call pt2_dealloc(pt2_data_err)
-!    call pt2_alloc(pt2_data, N_states)
-!    call pt2_alloc(pt2_data_err, N_states)
-!    call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-!    call diagonalize_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
-!  endif
-!  call pt2_dealloc(pt2_data)
-!  call pt2_dealloc(pt2_data_err)
-  call routine_save_right
 
 end
-

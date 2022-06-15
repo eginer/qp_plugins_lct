@@ -26,9 +26,9 @@ subroutine main()
   double precision, allocatable :: e_tmp(:), tmp, e_tot
   double precision, allocatable :: e_tmp_3b(:), tmp_3b, e_3b
 
-  print *, j1b_gauss
-  print *, j1b_gauss_pen
-  print *, mu_erf
+  !print *, j1b_gauss
+  !print *, j1b_gauss_pen
+  !print *, mu_erf
 
   i = 1
   j = 1
@@ -69,7 +69,7 @@ subroutine main()
   deallocate( e_tmp, e_tmp_3b )
 
   return
-end subroutine main()
+end subroutine main
 
 
 
