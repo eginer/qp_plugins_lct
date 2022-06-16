@@ -152,7 +152,7 @@ subroutine htildedag_mu_mat(key_j, key_i, Nint, hmono, heff, hderiv, hthree, hto
     else if(degree == 1) then
       call single_htilde_mu_mat_three_body(Nint, key_j, key_i, hthree)
     else if(degree == 0) then
-      call diag_htilde_mu_mat_three_body(Nint, key_i,hthree)
+      call diag_htilde_mu_mat_three_body(Nint, key_i, hthree)
     endif
   endif
   
