@@ -71,6 +71,7 @@ BEGIN_PROVIDER [double precision, diag_three_elem_hf]
  implicit none
  integer :: i,j,k,ipoint,mm
  double precision :: contrib,weight,four_third,one_third,two_third,exchange_int_231
+ if(three_body_h_tc)then
  one_third = 1.d0/3.d0
  two_third = 2.d0/3.d0
  four_third = 4.d0/3.d0
@@ -96,6 +97,9 @@ BEGIN_PROVIDER [double precision, diag_three_elem_hf]
   enddo
  enddo
  diag_three_elem_hf = - diag_three_elem_hf
+ else 
+  diag_three_elem_hf = 0.D0
+ endif
 END_PROVIDER 
 
 

@@ -28,7 +28,7 @@
   !enddo
   !print*,'********'
 
-  !call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
+!   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
   call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot          &
                      , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
                      , n_real_tc, eigval_right_tmp )
@@ -103,6 +103,24 @@ END_PROVIDER
 
 ! ---
 
+ BEGIN_PROVIDER [ double precision, overlap_mo_r, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, overlap_mo_l, (mo_num, mo_num)]
+ implicit none
+ integer :: i,j,p,q
+ overlap_mo_r = 0.d0
+ overlap_mo_l = 0.d0
+ do i = 1, mo_num
+   do j = 1, mo_num
+    do p = 1, ao_num
+     do q = 1, ao_num
+      overlap_mo_r(j,i) += mo_r_coef(q,i) * mo_r_coef(p,j) * ao_overlap(q,p) 
+      overlap_mo_l(j,i) += mo_l_coef(q,i) * mo_l_coef(p,j) * ao_overlap(q,p)
+     enddo
+    enddo
+   enddo
+ enddo
+END_PROVIDER 
+
  BEGIN_PROVIDER [ double precision, fock_tc_reigvec_ao, (ao_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, fock_tc_leigvec_ao, (ao_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, overlap_fock_tc_eigvec_ao, (mo_num, mo_num) ]
@@ -118,17 +136,17 @@ END_PROVIDER
   double precision              :: accu 
   double precision, allocatable :: tmp(:,:)
 
-  ! ---
+!  call rotate_mo_coef(mo_r_coef, fock_tc_reigvec_mo, overlap_mo_r, fock_tc_reigvec_ao)
+!  call rotate_mo_coef(mo_l_coef, fock_tc_leigvec_mo, overlap_mo_l, fock_tc_leigvec_ao)
 
-  !!call rotate_mo_coef(mo_r_coef, fock_tc_reigvec_mo, mo_overlap, fock_tc_reigvec_ao)
-  !!call rotate_mo_coef(mo_l_coef, fock_tc_leigvec_mo, mo_overlap, fock_tc_leigvec_ao)
 
-  ! MO_R x R
+!  ! MO_R x R
   call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
             , mo_r_coef, size(mo_r_coef, 1)                   &
             , fock_tc_reigvec_mo, size(fock_tc_reigvec_mo, 1) &
             , 0.d0, fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) )
-  ! MO_L x L
+
+!  ! MO_L x L
   call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
             , mo_l_coef, size(mo_l_coef, 1)                   &
             , fock_tc_leigvec_mo, size(fock_tc_leigvec_mo, 1) &
@@ -136,30 +154,30 @@ END_PROVIDER
 
   ! ---
 
-  !overlap_fock_tc_eigvec_ao = 0.d0  
-  !do i = 1, mo_num 
-  !  do k = 1, mo_num
-  !    do p = 1, ao_num
-  !      do q = 1, ao_num
-  !        overlap_fock_tc_eigvec_ao(k,i) += fock_tc_leigvec_ao(q,k) * ao_overlap(q,p) * fock_tc_reigvec_ao(p,i) 
-  !      enddo
-  !    enddo
-  !  enddo
-  !enddo
+   overlap_fock_tc_eigvec_ao = 0.d0  
+   do i = 1, mo_num 
+     do k = 1, mo_num
+       do p = 1, ao_num
+         do q = 1, ao_num
+           overlap_fock_tc_eigvec_ao(k,i) += fock_tc_leigvec_ao(q,k) * ao_overlap(q,p) * fock_tc_reigvec_ao(p,i) 
+         enddo
+       enddo
+     enddo
+   enddo
 
-  allocate( tmp(mo_num,ao_num) )
-
-  ! tmp <-- L.T x S_ao
-  call dgemm( "T", "N", mo_num, ao_num, ao_num, 1.d0                                           &
-            , fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1), ao_overlap, size(ao_overlap, 1) &
-            , 0.d0, tmp, size(tmp, 1) )
-
-  ! S <-- tmp x R
-  call dgemm( "N", "N", mo_num, mo_num, ao_num, 1.d0                             &
-            , tmp, size(tmp, 1), fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) &
-            , 0.d0, overlap_fock_tc_eigvec_ao, size(overlap_fock_tc_eigvec_ao, 1) )
-
-  deallocate( tmp )
+!  allocate( tmp(mo_num,ao_num) )
+!
+!  ! tmp <-- L.T x S_ao
+!  call dgemm( "T", "N", mo_num, ao_num, ao_num, 1.d0                                           &
+!            , fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1), ao_overlap, size(ao_overlap, 1) &
+!            , 0.d0, tmp, size(tmp, 1) )
+!
+!  ! S <-- tmp x R
+!  call dgemm( "N", "N", mo_num, mo_num, ao_num, 1.d0                             &
+!            , tmp, size(tmp, 1), fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) &
+!            , 0.d0, overlap_fock_tc_eigvec_ao, size(overlap_fock_tc_eigvec_ao, 1) )
+!
+!  deallocate( tmp )
 
   ! ---
 

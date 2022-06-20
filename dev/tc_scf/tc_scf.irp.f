@@ -63,6 +63,7 @@ subroutine routine_scf()
 
     e_delta = dabs( TC_right_HF_energy - e_save )
     print*, 'it, delta E = ', it, e_delta
+    provide overlap_bi_ortho
     e_save = TC_right_HF_energy
 
     !call save_good_hermit_tc_eigvectors
