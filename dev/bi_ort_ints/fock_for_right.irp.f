@@ -71,7 +71,7 @@ end subroutine save_good_hermit_tc_eigvectors
       TC_right_HF_two_e_hermit_energy += 0.5d0 * ( two_e_tc_hermit_integral_alpha(i,j) * TCSCF_density_matrix_ao_alpha(i,j) &
                                        + two_e_tc_hermit_integral_beta(i,j) * TCSCF_density_matrix_ao_beta(i,j) )
       TC_right_HF_two_e_n_hermit_energy += 0.5d0 * ( two_e_tc_non_hermit_integral_alpha(i,j) * TCSCF_density_matrix_ao_alpha(i,j) &
-                                         + two_e_tc_non_hermit_integral_beta(i,j) * TCSCF_density_matrix_ao_beta(i,j) )
+                                                   + two_e_tc_non_hermit_integral_beta(i,j)  * TCSCF_density_matrix_ao_beta(i,j) )
       TC_right_HF_one_electron_energy += ao_one_e_integrals(i,j) &
                                        * (TCSCF_density_matrix_ao_alpha(i,j) + TCSCF_density_matrix_ao_beta (i,j) )
     enddo

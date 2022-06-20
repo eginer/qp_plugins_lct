@@ -47,6 +47,7 @@
  do i = 1, N_det
   call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
   call htilde_mu_mat_bi_ortho(HF_bitmask,psi_det(1,1,i),N_int,hmono,htwoe,hthree,htilde_ij)
+  print*,reigvec_tc_bi_orth(i,1) , htilde_ij,reigvec_tc_bi_orth(1,1)
   if(degree == 1)then
    e_corr_single_bi_orth += reigvec_tc_bi_orth(i,1) * htilde_ij/reigvec_tc_bi_orth(1,1)
   else if(degree == 2)then
@@ -76,24 +77,28 @@
 
 
     allocate(reigvec_tc_bi_orth_tmp(N_det,N_det),leigvec_tc_bi_orth_tmp(N_det,N_det),eigval_right_tmp(N_det))
-    call non_hrmt_real_diag(N_det,htilde_matrix_elmt_bi_ortho,& 
+    call non_hrmt_real_diag_new(N_det,htilde_matrix_elmt_bi_ortho,& 
          leigvec_tc_bi_orth_tmp,reigvec_tc_bi_orth_tmp,& 
          n_real_tc_bi_orth_eigval_right,eigval_right_tmp)
     double precision, allocatable :: coef_hf_r(:),coef_hf_l(:)
     integer, allocatable :: iorder(:)
     allocate(coef_hf_r(N_det),coef_hf_l(N_det),iorder(N_det))
     do i = 1,N_det
+     print*,'reigvec_tc_bi_orth_tmp(i)',reigvec_tc_bi_orth_tmp(i,1)
      iorder(i) = i
      coef_hf_r(i) = -dabs(reigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
     enddo
     call dsort(coef_hf_r,iorder,N_det)
     igood_r = iorder(1)
+    print*,'igood_r = ',igood_r
     do i = 1,N_det
      iorder(i) = i
+     print*,'leigvec_tc_bi_orth_tmp(i)',leigvec_tc_bi_orth_tmp(i,1)
      coef_hf_l(i) = -dabs(leigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
     enddo
     call dsort(coef_hf_l,iorder,N_det)
     igood_l = iorder(1)
+    print*,'igood_l = ',igood_l
 
     if(igood_r.ne.igood_l.and.igood_r.ne.1)then
      print *,''

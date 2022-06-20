@@ -176,15 +176,15 @@ END_PROVIDER
     print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
     print*,'an average of ', accu
 
-    !print*,'overlap_fock_tc_eigvec_ao = '
-    !do i = 1, mo_num
-    !  write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
-    !enddo
-    !print*,'overlap_fock_tc_eigvec_mo = '
-    !do i = 1, mo_num
-    !  write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
-    !enddo
-    !stop
+     print*,'overlap_fock_tc_eigvec_ao = '
+     do i = 1, mo_num
+       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
+     enddo
+     print*,'overlap_fock_tc_eigvec_mo = '
+     do i = 1, mo_num
+       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
+     enddo
+!     stop
 
   endif
 

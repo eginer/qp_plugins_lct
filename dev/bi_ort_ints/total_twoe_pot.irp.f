@@ -1,9 +1,11 @@
 BEGIN_PROVIDER [double precision, ao_two_e_tc_tot, (ao_num, ao_num, ao_num, ao_num) ]
  integer :: i,j,k,l
  BEGIN_DOC
-! ao_two_e_tc_tot(k,i,l,j) = (ki|V^TC(r_12)|jl) = <lk| V^TC(r_12) |ji> where V^TC(r_12) is the total TC operator 
+! ao_two_e_tc_tot(k,i,l,j) = (ki|V^TC(r_12)|lj) = <lk| V^TC(r_12) |ji> where V^TC(r_12) is the total TC operator 
 !
 ! including both hermitian and non hermitian parts
+!
+! WARNING :: non hermitian ! acts on "the right functions" (i,j)
  END_DOC
  double precision :: integral_sym, integral_nsym, get_ao_tc_sym_two_e_pot
  PROVIDE ao_tc_sym_two_e_pot_in_map
