@@ -1,6 +1,3 @@
-
-! ---
-
  BEGIN_PROVIDER [ double precision, fock_tc_reigvec_mo, (mo_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, fock_tc_leigvec_mo, (mo_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, eigval_fock_tc_mo, (mo_num)]
@@ -101,14 +98,37 @@
  
 END_PROVIDER 
 
-! ---
+
+ BEGIN_PROVIDER [ double precision, overlap_mo_r_mo, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, overlap_mo_l_mo, (mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! overlap_mo_r_mo(j,i) = <MO_i|MO_R_j>
+ END_DOC
+ integer :: i,j,p,q
+ overlap_mo_r_mo = 0.d0
+ overlap_mo_l_mo = 0.d0
+ do i = 1, mo_num
+   do j = 1, mo_num
+    do p = 1, ao_num
+     do q = 1, ao_num
+      overlap_mo_r_mo(j,i) += mo_r_coef(q,i) * mo_coef(p,j) * ao_overlap(q,p) 
+      overlap_mo_l_mo(j,i) += mo_l_coef(q,i) * mo_coef(p,j) * ao_overlap(q,p)
+     enddo
+    enddo
+   enddo
+ enddo
+END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, overlap_mo_r, (mo_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, overlap_mo_l, (mo_num, mo_num)]
  implicit none
+ BEGIN_DOC
+! overlap_mo_r_mo(j,i) = <MO_i|MO_R_j>
+ END_DOC
  integer :: i,j,p,q
- overlap_mo_r = 0.d0
- overlap_mo_l = 0.d0
+ overlap_mo_r= 0.d0
+ overlap_mo_l= 0.d0
  do i = 1, mo_num
    do j = 1, mo_num
     do p = 1, ao_num
@@ -118,6 +138,40 @@ END_PROVIDER
      enddo
     enddo
    enddo
+ enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, fock_tc_reigvec_mo_ortho, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, fock_tc_leigvec_mo_ortho, (mo_num, mo_num)]
+ implicit none
+ BEGIN_DOC
+! Expansion of the right- and left-eigenvectors of the fock matrix on the usual orthonormal MO basis
+!
+! fock_tc_reigvec_mo_ortho(j,i) = <MO_i|MO_R_j>
+ END_DOC
+ integer :: i,j,k
+ fock_tc_reigvec_mo_ortho = 0.d0
+ fock_tc_leigvec_mo_ortho = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num 
+   do k = 1, mo_num
+    fock_tc_reigvec_mo_ortho(j,i) += fock_tc_reigvec_mo(k,i) * overlap_mo_r_mo(j,k)
+    fock_tc_leigvec_mo_ortho(j,i) += fock_tc_leigvec_mo(k,i) * overlap_mo_l_mo(j,k)
+   enddo
+  enddo
+ enddo
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, overlap_fock_tc_lreigvec_mo_ortho, (mo_num, mo_num)]
+ implicit none
+ integer :: i,j,k
+ overlap_fock_tc_lreigvec_mo_ortho = 0.D0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do k = 1, mo_num
+    overlap_fock_tc_lreigvec_mo_ortho(j,i) += fock_tc_leigvec_mo_ortho(k,j) * fock_tc_reigvec_mo_ortho(k,i)
+   enddo
+  enddo
  enddo
 END_PROVIDER 
 
@@ -140,19 +194,28 @@ END_PROVIDER
 !  call rotate_mo_coef(mo_l_coef, fock_tc_leigvec_mo, overlap_mo_l, fock_tc_leigvec_ao)
 
 
-!  ! MO_R x R
-  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
-            , mo_r_coef, size(mo_r_coef, 1)                   &
-            , fock_tc_reigvec_mo, size(fock_tc_reigvec_mo, 1) &
-            , 0.d0, fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) )
+ fock_tc_reigvec_ao = 0.d0
+ fock_tc_leigvec_ao = 0.d0
+ do i = 1, mo_num
+  do p = 1, ao_num
+   do k = 1, mo_num
+    fock_tc_reigvec_ao(p,i) += mo_coef(p,k) * fock_tc_reigvec_mo_ortho(k,i)
+    fock_tc_leigvec_ao(p,i) += mo_coef(p,k) * fock_tc_leigvec_mo_ortho(k,i)
+   enddo
+  enddo
+ enddo
+  ! MO_R x R
+!  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
+!            , mo_r_coef, size(mo_r_coef, 1)                   &
+!            , fock_tc_reigvec_mo, size(fock_tc_reigvec_mo, 1) &
+!            , 0.d0, fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) )
 
 !  ! MO_L x L
-  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
-            , mo_l_coef, size(mo_l_coef, 1)                   &
-            , fock_tc_leigvec_mo, size(fock_tc_leigvec_mo, 1) &
-            , 0.d0, fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1) )
+!  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
+!            , mo_l_coef, size(mo_l_coef, 1)                   &
+!            , fock_tc_leigvec_mo, size(fock_tc_leigvec_mo, 1) &
+!            , 0.d0, fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1) )
 
-  ! ---
 
    overlap_fock_tc_eigvec_ao = 0.d0  
    do i = 1, mo_num 
@@ -202,7 +265,7 @@ END_PROVIDER
      do i = 1, mo_num
        write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
      enddo
-!     stop
+     stop
 
   endif
 
