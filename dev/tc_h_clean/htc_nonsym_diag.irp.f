@@ -21,7 +21,7 @@ program htc_nonsym_diag
   PROVIDE psi_det
   PROVIDE psi_coef 
 
-  call check() 
+  !call check() 
   call nonsym_test() 
 
 end 
@@ -81,6 +81,8 @@ subroutine nonsym_test()
     enddo
   enddo
 
+  print *, ' | right - left | eigen-energy = ', dabs(wr(1)-wl(1))
+
   ! ---
 
   deallocate(wr, wl, u_in, H_jj) 
@@ -127,7 +129,8 @@ subroutine check()
   do i = 1, n_states
     print *, ' exact eigen-energy = ', eigval(1)
     do j = 1, N_det
-      write(113, *) reigvec_tc(j,1), leigvec_tc(j,1)
+      write(211, *) reigvec_tc(j,1)
+      write(212, *) leigvec_tc(j,1)
     enddo
   enddo
  

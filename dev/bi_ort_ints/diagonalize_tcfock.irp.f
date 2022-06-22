@@ -28,10 +28,10 @@
   !enddo
   !print*,'********'
 
-  !call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
-  call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot          &
-                     , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
-                     , n_real_tc, eigval_right_tmp )
+  !call non_hrmt_real_diag_new( &
+  !call non_hrmt_bieig(         &
+  call non_hrmt_bieig_fullvect( &
+    mo_num, Fock_matrix_tc_mo_tot, fock_tc_leigvec_mo, fock_tc_reigvec_mo, n_real_tc, eigval_right_tmp)
 
   eigval_fock_tc_mo = eigval_right_tmp
   !print*,'Eigenvalues of Fock_matrix_tc_mo_tot'
@@ -81,9 +81,9 @@
   endif
 
   if( dabs(accu_d - dble(mo_num)) .gt. 1e-7 ) then
-    print *, 'mo_num     = ', mo_num 
-    print *, 'accu_d  MO = ', accu_d
-    print *, 'normalizing vectors ...'
+    !print *, 'mo_num     = ', mo_num 
+    !print *, 'accu_d  MO = ', accu_d
+    !print *, 'normalizing vectors ...'
     do i = 1, mo_num
       norm = dsqrt(dabs(overlap_fock_tc_eigvec_mo(i,i)))
       if( norm.gt.1e-7 ) then

@@ -46,8 +46,7 @@ subroutine routine_scf()
 
 
   !do while( (grad_good_hermit_tc_fock_mat.gt.thresh_tcscf) &
-  !do while( (e_delta.gt.thresh_tcscf) .and. (it.lt.n_it_tcscf_max) )
-  do while( it .lt. n_it_tcscf_max )
+  do while( (e_delta.gt.thresh_tcscf) .and. (it.lt.n_it_tcscf_max) )
   
     it += 1
     print*,'iteration = ', it
@@ -62,7 +61,7 @@ subroutine routine_scf()
     print*,'***'
 
     e_delta = dabs( TC_right_HF_energy - e_save )
-    print*, 'it, delta E = ', it, e_delta
+    print*, 'it:', it, TC_right_HF_energy, e_delta
     e_save = TC_right_HF_energy
 
     !call save_good_hermit_tc_eigvectors

@@ -26,55 +26,55 @@
 
   two_e_tc_hermit_integral_alpha = 0.d0
   two_e_tc_hermit_integral_beta  = 0.d0
-  PROVIDE ao_tc_sym_two_e_pot_in_map
+! PROVIDE ao_tc_sym_two_e_pot_in_map
 
- !$OMP PARALLEL DEFAULT(NONE)                                      &
- !$OMP PRIVATE( i, j, k, l, k1, integral, ii, jj, kk, ll, i8, keys, values, n_elements_max  &
- !$OMP        , n_elements, two_e_tc_hermit_integral_alpha_tmp, two_e_tc_hermit_integral_beta_tmp ) &
- !$OMP SHARED( ao_num, TCSCF_density_matrix_ao_alpha, TCSCF_density_matrix_ao_beta &
- !$OMP       , ao_tc_sym_two_e_pot_map, two_e_tc_hermit_integral_alpha, two_e_tc_hermit_integral_beta )
+!!$OMP PARALLEL DEFAULT(NONE)                                      &
+!!$OMP PRIVATE( i, j, k, l, k1, integral, ii, jj, kk, ll, i8, keys, values, n_elements_max  &
+!!$OMP        , n_elements, two_e_tc_hermit_integral_alpha_tmp, two_e_tc_hermit_integral_beta_tmp ) &
+!!$OMP SHARED( ao_num, TCSCF_density_matrix_ao_alpha, TCSCF_density_matrix_ao_beta &
+!!$OMP       , ao_tc_sym_two_e_pot_map, two_e_tc_hermit_integral_alpha, two_e_tc_hermit_integral_beta )
 
-  call get_cache_map_n_elements_max(ao_tc_sym_two_e_pot_map, n_elements_max)
+! call get_cache_map_n_elements_max(ao_tc_sym_two_e_pot_map, n_elements_max)
 
-  allocate( keys(n_elements_max), values(n_elements_max) )
-  allocate( two_e_tc_hermit_integral_alpha_tmp(ao_num,ao_num) &
-          , two_e_tc_hermit_integral_beta_tmp(ao_num,ao_num) )
+! allocate( keys(n_elements_max), values(n_elements_max) )
+! allocate( two_e_tc_hermit_integral_alpha_tmp(ao_num,ao_num) &
+!         , two_e_tc_hermit_integral_beta_tmp(ao_num,ao_num) )
 
-  two_e_tc_hermit_integral_alpha_tmp = 0.d0
-  two_e_tc_hermit_integral_beta_tmp  = 0.d0
+! two_e_tc_hermit_integral_alpha_tmp = 0.d0
+! two_e_tc_hermit_integral_beta_tmp  = 0.d0
 
- !$OMP DO SCHEDULE(static,1)
-  do i8 = 0_8, ao_tc_sym_two_e_pot_map%map_size
-    n_elements = n_elements_max
-    call get_cache_map(ao_tc_sym_two_e_pot_map, i8, keys, values, n_elements)
-    do k1 = 1, n_elements
+!!$OMP DO SCHEDULE(static,1)
+! do i8 = 0_8, ao_tc_sym_two_e_pot_map%map_size
+!   n_elements = n_elements_max
+!   call get_cache_map(ao_tc_sym_two_e_pot_map, i8, keys, values, n_elements)
+!   do k1 = 1, n_elements
 
-      call two_e_integrals_index_reverse(kk, ii, ll, jj, keys(k1))
-      do k2 = 1, 8
-        if( kk(k2)==0 ) cycle
-        i = ii(k2)
-        j = jj(k2)
-        k = kk(k2)
-        l = ll(k2)
-        integral = ( TCSCF_density_matrix_ao_alpha(k,l) + TCSCF_density_matrix_ao_beta(k,l) ) * values(k1)
-        two_e_tc_hermit_integral_alpha_tmp(i,j) += integral
-        two_e_tc_hermit_integral_beta_tmp (i,j) += integral
-        integral = values(k1)
-        two_e_tc_hermit_integral_alpha_tmp(l,j) -= TCSCF_density_matrix_ao_alpha(k,i) * integral
-        two_e_tc_hermit_integral_beta_tmp (l,j) -= TCSCF_density_matrix_ao_beta (k,i) * integral
-      enddo
+!     call two_e_integrals_index_reverse(kk, ii, ll, jj, keys(k1))
+!     do k2 = 1, 8
+!       if( kk(k2)==0 ) cycle
+!       i = ii(k2)
+!       j = jj(k2)
+!       k = kk(k2)
+!       l = ll(k2)
+!       integral = ( TCSCF_density_matrix_ao_alpha(k,l) + TCSCF_density_matrix_ao_beta(k,l) ) * values(k1)
+!       two_e_tc_hermit_integral_alpha_tmp(i,j) += integral
+!       two_e_tc_hermit_integral_beta_tmp (i,j) += integral
+!       integral = values(k1)
+!       two_e_tc_hermit_integral_alpha_tmp(l,j) -= TCSCF_density_matrix_ao_alpha(k,i) * integral
+!       two_e_tc_hermit_integral_beta_tmp (l,j) -= TCSCF_density_matrix_ao_beta (k,i) * integral
+!     enddo
 
-    enddo
-  enddo
- !$OMP END DO NOWAIT
+!   enddo
+! enddo
+!!$OMP END DO NOWAIT
 
- !$OMP CRITICAL
-  two_e_tc_hermit_integral_alpha += two_e_tc_hermit_integral_alpha_tmp
-  two_e_tc_hermit_integral_beta  += two_e_tc_hermit_integral_beta_tmp
- !$OMP END CRITICAL
+!!$OMP CRITICAL
+! two_e_tc_hermit_integral_alpha += two_e_tc_hermit_integral_alpha_tmp
+! two_e_tc_hermit_integral_beta  += two_e_tc_hermit_integral_beta_tmp
+!!$OMP END CRITICAL
 
-  deallocate(keys, values, two_e_tc_hermit_integral_alpha_tmp, two_e_tc_hermit_integral_beta_tmp)
- !$OMP END PARALLEL
+! deallocate(keys, values, two_e_tc_hermit_integral_alpha_tmp, two_e_tc_hermit_integral_beta_tmp)
+!!$OMP END PARALLEL
 
 END_PROVIDER
 
@@ -101,11 +101,16 @@ END_PROVIDER
         do l = 1, ao_num
           density_a = TCSCF_density_matrix_ao_alpha(l,j)
           density_b = TCSCF_density_matrix_ao_beta (l,j)
+          density   = density_a
           density   = density_a + density_b                      !  rho(j,l)   *  < k l| T | i j>
-          two_e_tc_non_hermit_integral_alpha(k,i) += density   * ao_non_hermit_term_chemist(l,j,k,i)
-          two_e_tc_non_hermit_integral_beta(k,i)  += density   * ao_non_hermit_term_chemist(l,j,k,i)
-          two_e_tc_non_hermit_integral_alpha(k,i) -= density_a * ao_non_hermit_term_chemist(k,j,l,i)
-          two_e_tc_non_hermit_integral_beta(k,i)  -= density_b * ao_non_hermit_term_chemist(k,j,l,i)
+!          two_e_tc_non_hermit_integral_alpha(k,i) += density   * ao_non_hermit_term_chemist(l,j,k,i)
+!          two_e_tc_non_hermit_integral_beta(k,i)  += density   * ao_non_hermit_term_chemist(l,j,k,i)
+!          two_e_tc_non_hermit_integral_alpha(k,i) -= density_a * ao_non_hermit_term_chemist(k,j,l,i)
+!          two_e_tc_non_hermit_integral_beta(k,i)  -= density_b * ao_non_hermit_term_chemist(k,j,l,i)
+          two_e_tc_non_hermit_integral_alpha(k,i) += density   * ao_two_e_tc_tot(l,j,k,i)
+          two_e_tc_non_hermit_integral_beta(k,i)  += density   * ao_two_e_tc_tot(l,j,k,i)
+          two_e_tc_non_hermit_integral_alpha(k,i) -= density_a * ao_two_e_tc_tot(k,j,l,i)
+          two_e_tc_non_hermit_integral_beta(k,i)  -= density_b * ao_two_e_tc_tot(k,j,l,i)
         enddo
       enddo
 !!$OMP END DO
@@ -119,9 +124,8 @@ END_PROVIDER
 
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_alpha, (ao_num, ao_num)]
   implicit none
-  Fock_matrix_tc_ao_alpha = two_e_tc_non_hermit_integral_alpha &
-                          + two_e_tc_hermit_integral_alpha     &
-                          + ao_one_e_integrals
+  Fock_matrix_tc_ao_alpha =  ao_one_e_integrals                 &
+                           + two_e_tc_non_hermit_integral_alpha 
 END_PROVIDER 
 
 ! ---
