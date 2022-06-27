@@ -71,35 +71,39 @@ BEGIN_PROVIDER [double precision, diag_three_elem_hf]
  implicit none
  integer :: i,j,k,ipoint,mm
  double precision :: contrib,weight,four_third,one_third,two_third,exchange_int_231
- if(three_body_h_tc)then
- one_third = 1.d0/3.d0
- two_third = 2.d0/3.d0
- four_third = 4.d0/3.d0
- diag_three_elem_hf = 0.d0
- do i = 1, elec_beta_num
-  do j = 1, elec_beta_num
-   do k = 1, elec_beta_num
-    call  give_integrals_3_body(k,j,i,j,i,k,exchange_int_231)   
-    diag_three_elem_hf += two_third * exchange_int_231
+ if(.not.bi_ortho)then
+  if(three_body_h_tc)then
+  one_third = 1.d0/3.d0
+  two_third = 2.d0/3.d0
+  four_third = 4.d0/3.d0
+  diag_three_elem_hf = 0.d0
+  do i = 1, elec_beta_num
+   do j = 1, elec_beta_num
+    do k = 1, elec_beta_num
+     call  give_integrals_3_body(k,j,i,j,i,k,exchange_int_231)   
+     diag_three_elem_hf += two_third * exchange_int_231
+    enddo
    enddo
   enddo
- enddo
- do mm = 1, 3
-  do ipoint = 1, n_points_final_grid
-   weight = final_weight_at_r_vector(ipoint)                                                                          
-   contrib   = 3.d0 * fock_3_w_kk_sum(ipoint,mm) * fock_3_rho_beta(ipoint) * fock_3_w_kk_sum(ipoint,mm)  & 
-              -2.d0 * fock_3_w_kl_mo_k_mo_l(ipoint,mm) * fock_3_w_kk_sum(ipoint,mm)                                 & 
-              -1.d0 * fock_3_rho_beta(ipoint) * fock_3_w_kl_w_kl(ipoint,mm)
-   contrib  *= four_third
-   contrib  += -two_third  * fock_3_rho_beta(ipoint)     * fock_3_w_kl_w_kl(ipoint,mm) & 
-              - four_third * fock_3_w_kk_sum(ipoint,mm)  * fock_3_w_kl_mo_k_mo_l(ipoint,mm)
-   diag_three_elem_hf += weight * contrib
+  do mm = 1, 3
+   do ipoint = 1, n_points_final_grid
+    weight = final_weight_at_r_vector(ipoint)                                                                          
+    contrib   = 3.d0 * fock_3_w_kk_sum(ipoint,mm) * fock_3_rho_beta(ipoint) * fock_3_w_kk_sum(ipoint,mm)  & 
+               -2.d0 * fock_3_w_kl_mo_k_mo_l(ipoint,mm) * fock_3_w_kk_sum(ipoint,mm)                                 & 
+               -1.d0 * fock_3_rho_beta(ipoint) * fock_3_w_kl_w_kl(ipoint,mm)
+    contrib  *= four_third
+    contrib  += -two_third  * fock_3_rho_beta(ipoint)     * fock_3_w_kl_w_kl(ipoint,mm) & 
+               - four_third * fock_3_w_kk_sum(ipoint,mm)  * fock_3_w_kl_mo_k_mo_l(ipoint,mm)
+    diag_three_elem_hf += weight * contrib
+   enddo
   enddo
- enddo
- diag_three_elem_hf = - diag_three_elem_hf
- else 
-  diag_three_elem_hf = 0.D0
- endif
+  diag_three_elem_hf = - diag_three_elem_hf
+  else 
+   diag_three_elem_hf = 0.D0
+  endif
+ else
+   diag_three_elem_hf = 0.D0
+ endif 
 END_PROVIDER 
 
 

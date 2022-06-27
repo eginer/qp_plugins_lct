@@ -213,7 +213,7 @@
      print *,'State with largest LEFT  coefficient of HF ',igood_l
      print *,'coef of HF in LEFT  eigenvector = ',leigvec_tc_tmp(index_HF_psi_det,igood_l)
     endif
-    if(state_following)then
+    if(state_following_tc)then
      print *,'Following the states with the largest coef on HF'
      print *,'igood_r,igood_l',igood_r,igood_l
      i= igood_r
