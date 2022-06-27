@@ -813,7 +813,7 @@ subroutine non_hrmt_bieig_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
     print *, ' L & T bi-orthogonality: not imposed yet'
     print *, ' accu_nd = ', accu_nd
-    call impose_biorthog_qr( n, n, leigvec, reigvec, S )
+!    call impose_biorthog_qr( n, n, leigvec, reigvec, S )
     deallocate( S )
   
   endif
@@ -850,7 +850,7 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   double precision, allocatable :: Aw(:,:)
   double precision, allocatable :: WR(:), WI(:), VL(:,:), VR(:,:)
   double precision, allocatable :: S(:,:)
-  double precision :: r
+  double precision :: r,eps
 
 
   ! -------------------------------------------------------------------------------------
@@ -861,6 +861,20 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   Aw(:,:) = A(:,:)
   call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
+  double precision, allocatable :: im_part(:)
+  allocate(im_part(n))
+!  do i = 1, n
+!   iorder(i) = i
+!   im_part(i) = -dabs(WI(i))
+!  enddo
+!  call dsort(im_part, iorder, n)
+!  eps = dabs(im_part(1)) * 10.d0
+!  Aw = A
+!  do i = 1, n
+!    call RANDOM_NUMBER(r)
+!    Aw(i,i) += eps * r
+!  enddo
+!  call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
 
   ! -------------------------------------------------------------------------------------
   !                  track & sort the real eigenvalues 

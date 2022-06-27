@@ -18,15 +18,16 @@
 
   PROVIDE Fock_matrix_tc_mo_tot
 
-  !print*,'********'
-  !print*,'Diagonal values of Fock_matrix_tc_mo_tot'
-  !do i = 1, mo_num
-  ! write(*,'(100(F15.10,X))') Fock_matrix_tc_mo_tot(i,i)
-  !enddo
-  !print*,'********'
+!   print*,'********'
+!   print*,'Diagonal values of Fock_matrix_tc_mo_tot'
+!   do i = 1, mo_num
+!    write(*,'(100(F15.10,X))') Fock_matrix_tc_mo_tot(i,i)
+!   enddo
+!   print*,'********'
 
-!   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
-  call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot          &
+   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
+!   call non_hrmt_bieig_real_im( mo_num, Fock_matrix_tc_mo_tot &
+!  call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot          &
                      , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
                      , n_real_tc, eigval_right_tmp )
 
@@ -74,7 +75,7 @@
     do i = 1, mo_num
       write(*,'(100(F16.10,X))') overlap_fock_tc_eigvec_mo(i,:)
     enddo
-    stop
+!    stop
   endif
 
   if( dabs(accu_d - dble(mo_num)) .gt. 1e-7 ) then
@@ -151,7 +152,7 @@ END_PROVIDER
   enddo
   accu = accu / dble(mo_num**2)
 
-  if(dabs(accu).gt.1.d-10) then
+!  if(dabs(accu).gt.1.d-10) then
     print*,'Warning !! '
     print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
     print*,'an average of ', accu
@@ -164,11 +165,83 @@ END_PROVIDER
      do i = 1, mo_num
        write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
      enddo
-     stop
+!     stop
 
-  endif
+!  endif
 
 END_PROVIDER
 
 ! ---
+
+ BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_reigvec_mo, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_leigvec_mo, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, eigval_bi_ortho_fock_tc_mo, (mo_num)]
+ implicit none
+ integer :: n_real_tc
+ call non_hrmt_real_diag_new( mo_num, overlap_fock_tc_eigvec_ao&
+! call non_hrmt_bieig_real_im( mo_num, overlap_fock_tc_eigvec_ao&
+                    , bi_ortho_fock_tc_leigvec_mo, bi_ortho_fock_tc_reigvec_mo & 
+                    , n_real_tc, eigval_bi_ortho_fock_tc_mo)
+ do i = 1, mo_num
+  print*,eigval_bi_ortho_fock_tc_mo(i)
+ enddo
+ integer :: i,j,k,l
+ double precision, allocatable :: tmp(:,:)
+ allocate(tmp(mo_num,mo_num))
+ tmp = 0.d0
+ print*,'bi_ortho_fock_tc_leigvec_mo'
+ do i = 1, mo_num
+  write(*,'(100(F16.10,X))')bi_ortho_fock_tc_leigvec_mo(:,i)
+ enddo
+ print*,'bi_ortho_fock_tc_reigvec_mo'
+ do i = 1, mo_num
+  write(*,'(100(F16.10,X))')bi_ortho_fock_tc_reigvec_mo(:,i)
+ enddo
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do k = 1, mo_num
+    do l = 1, mo_num
+     tmp (j,i) += bi_ortho_fock_tc_leigvec_mo(l,j) * overlap_fock_tc_eigvec_ao(l,k) * bi_ortho_fock_tc_reigvec_mo(k,i)
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'tmp'
+do i = 1, mo_num
+ write(*,'(100(F16.10,X))')tmp(:,i)
+enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_reigvec_ao, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_leigvec_ao, (mo_num, mo_num)]
+ implicit none
+ double precision, allocatable :: reigvec(:,:),leigvec(:,:),overlap(:,:)
+ allocate(reigvec(ao_num, mo_num), leigvec(ao_num, mo_num), overlap(mo_num, mo_num))
+!  ! MO_R x R
+  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
+            , fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1)                   &
+            , bi_ortho_fock_tc_reigvec_mo, size(bi_ortho_fock_tc_reigvec_mo, 1) &
+            , 0.d0, reigvec, size(reigvec, 1) )
+!  ! MO_L x L
+  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
+            , fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1)                   &
+            , bi_ortho_fock_tc_leigvec_mo, size(bi_ortho_fock_tc_leigvec_mo, 1) &
+            , 0.d0, leigvec, size(leigvec, 1) )
+  integer :: i,j,p,q
+ overlap = 0.d0
+ do i = 1, mo_num
+  do j = 1, mo_num
+   do p = 1, ao_num
+    do q = 1, ao_num
+     overlap(j,i) += leigvec(q,j) * ao_overlap(q,p) * reigvec(p,i)
+    enddo
+   enddo
+  enddo
+ enddo
+ print*,'overlap = '
+ do i = 1, mo_num
+  write(*,'(100(F16.10,X))')overlap(:,i)
+ enddo
+
+END_PROVIDER 
 

@@ -39,8 +39,19 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_alpha, (ao_num, ao_num)]
   implicit none
   Fock_matrix_tc_ao_alpha =  ao_one_e_integrals                 &
                            + two_e_tc_non_hermit_integral_alpha 
+  integer :: i
+!  print*,'AO diag TC mat'
+!  do i = 1, ao_num
+!   write(35,'(100(F16.10,X))')Fock_matrix_tc_ao_alpha(:,i)
+!  enddo
 END_PROVIDER 
 
+! ---
+BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_beta, (ao_num, ao_num)]
+  implicit none
+  Fock_matrix_tc_ao_beta = ao_one_e_integrals                  &
+                         + two_e_tc_non_hermit_integral_beta 
+END_PROVIDER 
 ! ---
 
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_alpha, (mo_num, mo_num) ]
@@ -67,12 +78,6 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_beta, (mo_num,mo_num) ]
   endif
 END_PROVIDER
 
-! ---
-BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_beta, (ao_num, ao_num)]
-  implicit none
-  Fock_matrix_tc_ao_beta = ao_one_e_integrals                  &
-                         + two_e_tc_non_hermit_integral_beta 
-END_PROVIDER 
 
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
   implicit none

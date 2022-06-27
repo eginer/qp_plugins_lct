@@ -31,8 +31,9 @@
 
 
     allocate(reigvec_tc_bi_orth_tmp(N_det,N_det),leigvec_tc_bi_orth_tmp(N_det,N_det),eigval_right_tmp(N_det))
-    call non_hrmt_real_diag_new(N_det,htilde_matrix_elmt_bi_ortho,& 
+!    call non_hrmt_bieig(N_det,htilde_matrix_elmt_bi_ortho,& 
 !    call non_hrmt_bieig_real_im(N_det,htilde_matrix_elmt_bi_ortho,& 
+    call non_hrmt_real_diag_new(N_det,htilde_matrix_elmt_bi_ortho,& 
          leigvec_tc_bi_orth_tmp,reigvec_tc_bi_orth_tmp,& 
          n_real_tc_bi_orth_eigval_right,eigval_right_tmp)
     double precision, allocatable :: coef_hf_r(:),coef_hf_l(:)
@@ -45,6 +46,9 @@
     call dsort(coef_hf_r,iorder,N_det)
     igood_r = iorder(1)
     print*,'igood_r = ',igood_r
+    do i = 1, N_det
+     print*,i,iorder(i),coef_hf_r(i)
+    enddo
     do i = 1,N_det
      iorder(i) = i
      coef_hf_l(i) = -dabs(leigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
@@ -52,6 +56,9 @@
     call dsort(coef_hf_l,iorder,N_det)
     igood_l = iorder(1)
     print*,'igood_l = ',igood_l
+    do i = 1, N_det
+     print*,i,iorder(i),coef_hf_l(i)
+    enddo
 
     if(igood_r.ne.igood_l.and.igood_r.ne.1)then
      print *,''

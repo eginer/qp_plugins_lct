@@ -48,6 +48,32 @@ subroutine ao_to_mo_bi_ortho(A_ao, LDA_ao, A_mo, LDA_mo)
 
   allocate ( T(ao_num,mo_num) )
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: T
+  integer :: i,j,p,q
+! print*,'mo_r_coef'
+! do i = 1, mo_num
+!  write(33,'(100(F16.10,X))')mo_r_coef(:,i)
+! enddo
+! print*,'mo_l_coef'
+! do i = 1, mo_num
+!  write(34,'(100(F16.10,X))')mo_l_coef(:,i)
+! enddo
+! T = 0.d0
+! do i = 1, mo_num
+!  do p = 1, ao_num
+!   do q = 1, ao_num
+!    T(p,i) += A_ao(p,q) * mo_r_coef(q,i)
+!   enddo
+!  enddo
+! enddo
+! A_mo = 0.d0
+! do i = 1, mo_num
+!  do j = 1, ao_num
+!   do p = 1, ao_num
+!    A_mo(j,i) += T(p,i) * mo_l_coef(p,j)
+!   enddo
+!  enddo
+! enddo
+! 
 
   call dgemm('N', 'N', ao_num, mo_num, ao_num,  &
       1.d0, A_ao, LDA_ao,                       &

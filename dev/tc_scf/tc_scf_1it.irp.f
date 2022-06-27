@@ -23,10 +23,14 @@ subroutine routine_scf()
   integer          :: i, j, it
   double precision :: e_save, e_delta
 
-  mo_l_coef = fock_tc_leigvec_ao
-  mo_r_coef = fock_tc_reigvec_ao
-  call ezfio_set_bi_ortho_mos_mo_l_coef(mo_l_coef)
-  call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
+  print*,'TC HF total energy = ', TC_HF_energy
+!  provide fock_tc_reigvec_mo
+  provide bi_ortho_fock_tc_reigvec_ao
+
+!  mo_l_coef = fock_tc_leigvec_ao
+!  mo_r_coef = fock_tc_reigvec_ao
+!  call ezfio_set_bi_ortho_mos_mo_l_coef(mo_l_coef)
+!  call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
   
 end subroutine routine_scf
 
