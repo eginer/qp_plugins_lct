@@ -1,95 +1,4 @@
 
-! ---
-
-subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
-
-  BEGIN_DOC
-  !
-  ! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
-  !
-  ! of a non hermitian matrix A(n,n)
-  !
-  ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
-  !
-  END_DOC
-
-  implicit none
-
-  integer,          intent(in)  :: n
-  double precision, intent(in)  :: A(n,n)
-  integer,          intent(out) :: n_real_eigv
-  double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
-
-  integer                       :: i, j
-  integer                       :: n_good
-  double precision              :: thr
-  double precision              :: r
-  integer,          allocatable :: list_good(:), iorder(:)
-  double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:)
-  double precision, allocatable :: Aw(:,:)
-
-
-  thr = 1.d-5
-
-  print*,'Computing the left/right eigenvectors ...'
-
-  ! Eigvalue(n) = WR(n) + i * WI(n)
-  allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
-  Aw = A
-  do i = 1, n
-    call RANDOM_NUMBER(r)
-    Aw(i,i) += thr * r
-  enddo
-  call lapack_diag_non_sym_new(n,Aw,WR,WI,VL,VR)
-  deallocate( Aw )
-
-  ! You track the real eigenvalues 
-  n_good = 0
-  do i = 1, n
-    if(dabs(WI(i)).lt.thr)then
-      n_good += 1
-    else
-      print*,'Found an imaginary component to eigenvalue'
-      print*,'Re(i) + Im(i)',WR(i),WI(i)
-    endif
-  enddo
-
-  allocate( list_good(n_good), iorder(n_good) )
-  n_good = 0
-  do i = 1, n
-    if(dabs(WI(i)).lt.thr)then
-      n_good += 1
-      list_good(n_good) = i
-      eigval(n_good) = WR(i)
-    endif
-  enddo
-
-  deallocate( WR, WI )
-
-  n_real_eigv = n_good 
-  do i = 1, n_good
-    iorder(i) = i
-  enddo
-
-  ! You sort the real eigenvalues 
-  call dsort(eigval, iorder, n_good)
-
-  reigvec(:,:) = 0.d0 
-  leigvec(:,:) = 0.d0 
-  do i = 1, n_real_eigv
-    do j = 1, n
-      reigvec(j,i) = VR(j,list_good(iorder(i)))
-      leigvec(j,i) = Vl(j,list_good(iorder(i)))
-    enddo
-  enddo
-
-  deallocate( list_good, iorder )
-  deallocate( VL, VR )
-
-end subroutine non_hrmt_real_diag_new
-
-! ---
-
 subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
 
   BEGIN_DOC
@@ -212,6 +121,115 @@ subroutine lapack_diag_non_sym(n,A,WR,WI,VL,VR)
   endif
 end 
 
+! ---
+
+subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
+
+  BEGIN_DOC
+  !
+  ! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
+  !
+  ! of a non hermitian matrix A(n,n)
+  !
+  ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
+  !
+  END_DOC
+
+  implicit none
+
+  integer,          intent(in)  :: n
+  double precision, intent(in)  :: A(n,n)
+  integer,          intent(out) :: n_real_eigv
+  double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
+
+  integer                       :: i, j
+  integer                       :: n_good
+  double precision              :: shift,shift_current
+  double precision              :: r,thr
+  integer,          allocatable :: list_good(:), iorder(:)
+  double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:)
+  double precision, allocatable :: Aw(:,:)
+  double precision, allocatable :: im_part(:)
+
+
+
+  print*,'Computing the left/right eigenvectors ...'
+
+  ! Eigvalue(n) = WR(n) + i * WI(n)
+  shift = 1.d-10
+  do while(n_real_eigv.ne.n.or.shift.gt.1.d-3)
+   allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
+   Aw = A
+   call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
+   allocate(im_part(n), iorder(n))
+   do i = 1, n
+    im_part(i) = -dabs(WI(i))
+    iorder(i) = i
+   enddo
+   shift_current = max(10.d0 * dabs(im_part(1)),shift)
+   print*,'adding random number of magnitude ',shift_current
+   Aw = A
+   do i = 1, n
+     call RANDOM_NUMBER(r)
+     Aw(i,i) += shift_current * r
+   enddo
+   deallocate( im_part, iorder )
+   call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
+ 
+   ! You track the real eigenvalues 
+   thr = 1.d-10
+   n_good = 0
+   do i = 1, n
+     if(dabs(WI(i)).lt.thr)then
+       n_good += 1
+     else
+       print*,'Found an imaginary component to eigenvalue'
+       print*,'Re(i) + Im(i)',WR(i),WI(i)
+     endif
+   enddo
+ 
+   allocate( list_good(n_good), iorder(n_good) )
+   n_good = 0
+   do i = 1, n
+     if(dabs(WI(i)).lt.thr)then
+       n_good += 1
+       list_good(n_good) = i
+       eigval(n_good) = WR(i)
+     endif
+   enddo
+ 
+   deallocate( WR, WI )
+ 
+   n_real_eigv = n_good 
+   do i = 1, n_good
+     iorder(i) = i
+   enddo
+ 
+   ! You sort the real eigenvalues 
+   call dsort(eigval, iorder, n_good)
+ 
+   reigvec(:,:) = 0.d0 
+   leigvec(:,:) = 0.d0 
+   do i = 1, n_real_eigv
+     do j = 1, n
+       reigvec(j,i) = VR(j,list_good(iorder(i)))
+       leigvec(j,i) = Vl(j,list_good(iorder(i)))
+     enddo
+   enddo
+ 
+   deallocate( list_good, iorder )
+   deallocate( VL, VR, Aw)
+   shift *= 10.d0
+  enddo
+  if(shift.gt.1.d-3)then
+   print*,'shift > 1.d-3 !!'
+   print*,'Your matrix intrinsically contains complex eigenvalues'
+  endif
+
+end subroutine non_hrmt_real_diag_new
+
+! ---
+
 
 subroutine non_hrmt_real_diag(n,A,leigvec,reigvec,n_real_eigv,eigval)
  implicit none
@@ -266,16 +284,11 @@ subroutine non_hrmt_real_diag(n,A,leigvec,reigvec,n_real_eigv,eigval)
  enddo
  ! You sort the real eigenvalues 
  call dsort(eigval,iorder,n_good)
-! print*,'n_real_eigv = ',n_real_eigv
-! print*,'n           = ',n
  do i = 1, n_real_eigv
-!  print*,i,'eigval(i) = ',eigval(i) 
   do j = 1, n
    reigvec(j,i) = VR(j,list_good(iorder(i)))
    leigvec(j,i) = Vl(j,list_good(iorder(i)))
   enddo
-!  write(*,'(X,100(F16.10,X))')reigvec(:,i)
-!  write(*,'(X,100(F16.10,X))')leigvec(:,i)
  enddo
 end
 

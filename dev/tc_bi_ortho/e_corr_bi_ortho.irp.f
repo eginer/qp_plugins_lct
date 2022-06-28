@@ -27,6 +27,7 @@
    if(degree == 1)then
     e_pt2_tc_bi_orth_single += coef_pt1 * htilde_ij
    else 
+!    print*,'coef_pt1, e_pt2',coef_pt1,coef_pt1 * htilde_ij
     e_pt2_tc_bi_orth_double += coef_pt1 * htilde_ij
    endif
   endif
@@ -57,6 +58,7 @@
    e_corr_single_bi_orth += reigvec_tc_bi_orth(i,1) * htilde_ij/reigvec_tc_bi_orth(1,1)
   else if(degree == 2)then
    e_corr_double_bi_orth += reigvec_tc_bi_orth(i,1) * htilde_ij/reigvec_tc_bi_orth(1,1)
+!   print*,'coef_wf , e_cor',reigvec_tc_bi_orth(i,1)/reigvec_tc_bi_orth(1,1), reigvec_tc_bi_orth(i,1) * htilde_ij/reigvec_tc_bi_orth(1,1)
   endif
  enddo
  e_corr_bi_orth_proj = e_corr_single_bi_orth + e_corr_double_bi_orth

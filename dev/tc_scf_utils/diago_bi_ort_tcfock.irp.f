@@ -30,12 +30,16 @@
 !  call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot          &
                      , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
                      , n_real_tc, eigval_right_tmp )
+  if(n_real_tc .ne. mo_num)then
+   print*,'n_real_tc ne mo_num ! ',n_real_tc
+   stop
+  endif
 
   eigval_fock_tc_mo = eigval_right_tmp
-  !print*,'Eigenvalues of Fock_matrix_tc_mo_tot'
-  !do i = 1, mo_num
-  !  print*, i, eigval_fock_tc_mo(i)
-  !enddo
+  print*,'Eigenvalues of Fock_matrix_tc_mo_tot'
+  do i = 1, mo_num
+    print*, i, eigval_fock_tc_mo(i)
+  enddo
   deallocate( eigval_right_tmp )
 
   !overlap_fock_tc_eigvec_mo = 0.d0
@@ -71,10 +75,10 @@
   if( accu_nd .gt. 1d-7 ) then
     print *, ' bi-orthog failed'
     print*,'accu_nd MO = ', accu_nd
-    print*,'overlap_fock_tc_eigvec_mo = '
-    do i = 1, mo_num
-      write(*,'(100(F16.10,X))') overlap_fock_tc_eigvec_mo(i,:)
-    enddo
+!    print*,'overlap_fock_tc_eigvec_mo = '
+!    do i = 1, mo_num
+!      write(*,'(100(F16.10,X))') overlap_fock_tc_eigvec_mo(i,:)
+!    enddo
 !    stop
   endif
 
@@ -111,7 +115,7 @@ END_PROVIDER
 
   implicit none
   integer                       :: i, j, k, q, p
-  double precision              :: accu 
+  double precision              :: accu, accu_d
   double precision, allocatable :: tmp(:,:)
 
 
@@ -143,31 +147,57 @@ END_PROVIDER
   deallocate( tmp )
 
   ! ---
+  double precision :: norm
+  do i = 1, mo_num
+   norm = 1.d0/dsqrt(dabs(overlap_fock_tc_eigvec_ao(i,i)))
+   do j = 1, mo_num
+    fock_tc_reigvec_ao(j,i) *= norm
+    fock_tc_leigvec_ao(j,i) *= norm
+   enddo
+  enddo
 
+  allocate( tmp(mo_num,ao_num) )
+
+  ! tmp <-- L.T x S_ao
+  call dgemm( "T", "N", mo_num, ao_num, ao_num, 1.d0                                           &
+            , fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1), ao_overlap, size(ao_overlap, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+
+  ! S <-- tmp x R
+  call dgemm( "N", "N", mo_num, mo_num, ao_num, 1.d0                             &
+            , tmp, size(tmp, 1), fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) &
+            , 0.d0, overlap_fock_tc_eigvec_ao, size(overlap_fock_tc_eigvec_ao, 1) )
+
+  deallocate( tmp )
+
+  accu_d = 0.d0
   accu = 0.d0
   do i = 1, mo_num
+    accu_d += overlap_fock_tc_eigvec_ao(i,i)
     do j = 1, mo_num
       accu += dabs(overlap_fock_tc_eigvec_ao(j,i) - overlap_fock_tc_eigvec_mo(j,i))
     enddo
   enddo
+  print*,'Trace of the overlap_fock_tc_eigvec_ao = ',accu_d
+  print*,'mo_num                                 = ',mo_num
   accu = accu / dble(mo_num**2)
 
-!  if(dabs(accu).gt.1.d-10) then
+  if(dabs(accu).gt.1.d-10) then
     print*,'Warning !! '
     print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
     print*,'an average of ', accu
 
-     print*,'overlap_fock_tc_eigvec_ao = '
-     do i = 1, mo_num
-       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
-     enddo
-     print*,'overlap_fock_tc_eigvec_mo = '
-     do i = 1, mo_num
-       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
-     enddo
+!     print*,'overlap_fock_tc_eigvec_ao = '
+!     do i = 1, mo_num
+!       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
+!     enddo
+!     print*,'overlap_fock_tc_eigvec_mo = '
+!     do i = 1, mo_num
+!       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
+!     enddo
 !     stop
 
-!  endif
+  endif
 
 END_PROVIDER
 
