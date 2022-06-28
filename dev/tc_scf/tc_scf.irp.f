@@ -49,6 +49,7 @@ subroutine routine_scf()
    print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
    call save_good_hermit_tc_eigvectors
    TOUCH mo_coef 
+   call save_mos
   endif
 
   if(bi_ortho)then
@@ -71,7 +72,7 @@ subroutine routine_scf()
      TOUCH mo_l_coef mo_r_coef
    enddo
   else
-   do while( (grad_good_hermit_tc_fock_mat.gt.thresh_tcscf) .or. it .lt. n_it_tcscf_max )
+   do while( (grad_good_hermit_tc_fock_mat.gt.thresh_tcscf) .and. it .lt. n_it_tcscf_max )
       print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
       it += 1
       print*,'iteration = ', it
@@ -83,6 +84,7 @@ subroutine routine_scf()
       print*,'***'
       call save_good_hermit_tc_eigvectors
       TOUCH mo_coef 
+      call save_mos
    enddo
   endif
 

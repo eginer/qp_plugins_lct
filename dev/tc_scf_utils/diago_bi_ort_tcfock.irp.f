@@ -18,12 +18,6 @@
 
   PROVIDE Fock_matrix_tc_mo_tot
 
-!   print*,'********'
-!   print*,'Diagonal values of Fock_matrix_tc_mo_tot'
-!   do i = 1, mo_num
-!    write(*,'(100(F15.10,X))') Fock_matrix_tc_mo_tot(i,i)
-!   enddo
-!   print*,'********'
 
    call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_bieig_real_im( mo_num, Fock_matrix_tc_mo_tot &
@@ -36,20 +30,11 @@
   endif
 
   eigval_fock_tc_mo = eigval_right_tmp
-  print*,'Eigenvalues of Fock_matrix_tc_mo_tot'
-  do i = 1, mo_num
-    print*, i, eigval_fock_tc_mo(i)
-  enddo
-  deallocate( eigval_right_tmp )
-
-  !overlap_fock_tc_eigvec_mo = 0.d0
-  !do i = 1, mo_num
-  !  do k = 1, mo_num
-  !    do l = 1, mo_num
-  !      overlap_fock_tc_eigvec_mo(k,i) += fock_tc_leigvec_mo(l,k) * fock_tc_reigvec_mo(l,i) 
-  !    enddo
-  !  enddo
-  !enddo
+!  print*,'Eigenvalues of Fock_matrix_tc_mo_tot'
+!  do i = 1, mo_num
+!    print*, i, eigval_fock_tc_mo(i)
+!  enddo
+!  deallocate( eigval_right_tmp )
 
   ! L.T x R 
   call dgemm( "T", "N", mo_num, mo_num, mo_num, 1.d0          &
