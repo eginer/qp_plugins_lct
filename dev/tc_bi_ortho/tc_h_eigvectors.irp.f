@@ -123,5 +123,7 @@
    enddo
    print*,'norm l/r = ',accu
   enddo
+  eigval_right_tc_bi_orth += nuclear_repulsion
+  eigval_left_tc_bi_orth += nuclear_repulsion
 
 END_PROVIDER 

@@ -82,3 +82,21 @@
 
  END_PROVIDER 
 
+
+BEGIN_PROVIDER [ double precision, coef_pt1_bi_ortho, (N_det)]
+ implicit none
+ integer :: i,degree
+ double precision :: hmono,htwoe,hthree,htilde_ij,coef_pt1,e_i0,delta_e
+ do i = 1, N_det
+  call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
+  if(degree==0)then
+   coef_pt1_bi_ortho(i) = 1.d0
+  else
+   call htilde_mu_mat_bi_ortho(psi_det(1,1,i),HF_bitmask,N_int,hmono,htwoe,hthree,htilde_ij)
+   call htilde_mu_mat_bi_ortho(psi_det(1,1,i),psi_det(1,1,i),N_int,hmono,htwoe,hthree,e_i0)
+   delta_e = e_tilde_00 - e_i0
+   coef_pt1 = htilde_ij / delta_e
+   coef_pt1_bi_ortho(i)= coef_pt1
+  endif
+ enddo
+END_PROVIDER
