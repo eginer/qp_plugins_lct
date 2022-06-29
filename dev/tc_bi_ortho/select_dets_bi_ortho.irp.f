@@ -41,7 +41,7 @@ subroutine routine_test
   endif
  enddo
  call dsort(coef,iorder,N_det)
- thr = 1.d-12
+ thr = save_threshold
  n_good = 0
  do i = 1, N_det
   if(dabs(coef(i)).gt.thr)then

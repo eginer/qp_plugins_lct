@@ -1,3 +1,5 @@
+  use bitmasks
+
  BEGIN_PROVIDER [ integer, index_HF_psi_det]                                                                                                            
  implicit none
  integer :: i,degree
@@ -16,6 +18,7 @@
 &BEGIN_PROVIDER [double precision, eigval_left_tc_bi_orth, (N_states)]
 &BEGIN_PROVIDER [double precision, reigvec_tc_bi_orth, (N_det,N_states)]
 &BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth, (N_det,N_states)]
+&BEGIN_PROVIDER [double precision, norm_ground_left_right_bi_orth ]
 
   BEGIN_DOC
   ! eigenvalues, right and left eigenvectors of the transcorrelated Hamiltonian 
@@ -117,13 +120,63 @@
     reigvec_tc_bi_orth(j,i) *= accu 
    enddo
    print*,'leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i) = ',leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i)
-   accu = 0.d0
+   norm_ground_left_right_bi_orth = 0.d0
    do j = 1, N_det
-    accu += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
+    norm_ground_left_right_bi_orth += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
    enddo
-   print*,'norm l/r = ',accu
+   print*,'norm l/r = ',norm_ground_left_right_bi_orth
   enddo
   eigval_right_tc_bi_orth += nuclear_repulsion
   eigval_left_tc_bi_orth += nuclear_repulsion
 
 END_PROVIDER 
+
+
+ BEGIN_PROVIDER [double precision, reigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+&BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+
+   implicit none
+   integer                       :: i, j, k
+   integer, allocatable          :: iorder(:)
+   double precision, allocatable :: tmp_sort(:)
+
+   allocate ( tmp_sort(N_det), iorder(N_det) )
+
+   do i = 1, N_det
+     tmp_sort(i) = -dabs(reigvec_tc_bi_orth(i,1) * leigvec_tc_bi_orth(i,1))
+     iorder(i) = i
+   enddo
+   call dsort(tmp_sort, iorder, N_det)
+   deallocate(tmp_sort)
+
+   do k = 1, N_states
+     do i = 1, N_det
+       j = iorder(i)
+       reigvec_tc_bi_orth_sorted(i,k) = reigvec_tc_bi_orth(j,k)
+       leigvec_tc_bi_orth_sorted(i,k) = leigvec_tc_bi_orth(j,k)
+     enddo
+   enddo
+
+   reigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
+   leigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
+
+   deallocate(iorder)
+
+END_PROVIDER
+
+ ---
+
+ BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
+&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
+
+  implicit none
+  integer :: i, k
+
+  do i = 1, N_det_selectors
+    do k = 1, N_states
+      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
+      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
+    enddo
+  enddo
+
+END_PROVIDER

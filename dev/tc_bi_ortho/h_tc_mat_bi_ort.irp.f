@@ -266,9 +266,9 @@ subroutine single_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
   integer                       :: other_spin(2)
   integer(bit_kind)             :: key_j_core(Nint,2), key_i_core(Nint,2)
 
-  PROVIDE mo_two_e_integrals_tc_int_in_map mo_bi_ortho_tc_two_e
-
-  PROVIDE core_bitmask core_fock_operator mo_integrals_erf_map
+!  PROVIDE mo_two_e_integrals_tc_int_in_map mo_bi_ortho_tc_two_e
+!
+!  PROVIDE core_bitmask core_fock_operator mo_integrals_erf_map
 
 !  PROVIDE j1b_gauss
 
