@@ -219,7 +219,7 @@ subroutine get_e_components_htilde(psidet, psicoef, ndet, Nint, hmono_av, heff_a
 
 end subroutine get_e_components_htilde
 
-
+! ---
 
 subroutine get_htilde_psi(psidet, psicoef, ndet, Nint, htilde_psi)
 
@@ -256,7 +256,7 @@ subroutine get_htilde_psi(psidet, psicoef, ndet, Nint, htilde_psi)
 
 end subroutine get_htilde_psi
 
-
+! ---
 
 subroutine get_delta_tc_dagger_psi(psidet, psicoef, ndet, Nint, delta)
 
@@ -378,3 +378,121 @@ subroutine get_dressed_matrix(u0,dets_in,h_dressed,idress)
   h_dressed(i,idress) += delta_u0(i)
  enddo
 end
+
+! ---
+
+subroutine htc_calc_tdav(v, u, N_st, sze)
+
+  use bitmasks
+
+  BEGIN_DOC
+    !
+    ! v(i,istate) = \sum_j u(j,istate) H_TC(i,j), with: 
+    !   H_TC(i,j) = < Di | H_TC | Dj > 
+    !
+  END_DOC
+
+  implicit none
+
+  integer, intent(in)             :: N_st, sze
+  double precision, intent(in)    :: u(sze,N_st)
+  double precision, intent(inout) :: v(sze,N_st)
+
+  integer                         :: i, j, istate
+  double precision                :: htot
+
+  PROVIDE N_int 
+  PROVIDE psi_det
+
+
+!  double precision, allocatable :: H_tmp(:,:)
+!  allocate(H_tmp(sze,sze))
+!  do i = 1, sze
+!    do j = 1, sze
+!      H_tmp(j,i) += H_matrix_all_dets(j,i)
+!    enddo
+!  enddo
+!  do i = 1, sze-1, 2
+!    do j = i+1, sze, 3
+!      H_tmp(j,i) += 0.1d0 * dble(j)
+!    enddo
+!  enddo
+!  v = 0.d0
+!  do istate = 1, N_st
+!    do i = 1, sze
+!      do j = 1, sze
+!        v(i,istate) += H_tmp(i,j) * u(j,istate)
+!      enddo
+!    enddo
+!  enddo
+!  deallocate(H_tmp)
+
+  i = 1
+  j = 1
+  call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, htot)
+
+  v = 0.d0
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(N_st, sze, N_int, psi_det, u, v)       &
+ !$OMP PRIVATE(istate, i, j, htot)
+  do istate = 1, N_st
+    do i = 1, sze
+      do j = 1, sze
+        call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, htot)
+        v(i,istate) = v(i,istate) + htot * u(j,istate)
+      enddo
+    enddo 
+  enddo
+ !$OMP END PARALLEL DO
+
+end subroutine htc_calc_tdav
+
+! ---
+
+subroutine htcdag_calc_tdav(v, u, N_st, sze)
+
+  use bitmasks
+
+  BEGIN_DOC
+    !
+    ! v(i,istate) = \sum_j u(j,istate) H_TC(j,i), with: 
+    !   H_TC(i,j) = < Di | H_TC | Dj > 
+    !
+  END_DOC
+
+  implicit none
+
+  integer, intent(in)             :: N_st, sze
+  double precision, intent(in)    :: u(sze,N_st)
+  double precision, intent(inout) :: v(sze,N_st)
+
+  integer                         :: i, j, istate
+  double precision                :: htot
+
+  PROVIDE N_int 
+  PROVIDE psi_det
+
+  i = 1
+  j = 1
+  call htildedag_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, htot)
+
+  v = 0.d0
+
+ !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &
+ !$OMP SHARED(N_st, sze, N_int, psi_det, u, v)       &
+ !$OMP PRIVATE(istate, i, j, htot)
+  do istate = 1, N_st
+    do i = 1, sze
+      do j = 1, sze
+        !call htildedag_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, htot)
+        call htilde_mu_mat_tot(psi_det(1,1,j), psi_det(1,1,i), N_int, htot)
+        v(i,istate) = v(i,istate) + htot * u(j,istate)
+      enddo
+    enddo 
+  enddo
+ !$OMP END PARALLEL DO
+
+end subroutine htcdag_calc_tdav
+
+! ---
+
