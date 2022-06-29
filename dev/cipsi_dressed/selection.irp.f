@@ -675,10 +675,8 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
       !  endif
       !endif
 
-      ! MANU: ERREUR dans les calculs puisque < I | H | J > = 0 
-      ! n'implique pas < I | H_TC | J > = 0 ??
-      !val = maxval(abs(mat(1:N_states, p1, p2)))
-      !if( val == 0d0) cycle
+      val = dabs( mat_p(1,p1,p2) * mat_m(1,p1,p2) )
+      if( val == 0d0 ) cycle
 
       call apply_particles(mask, s1, p1, s2, p2, det, ok, N_int)
 
@@ -800,10 +798,11 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         ! -------------------------------------------
 
         istate = 1
-        call htilde_mu_mat_tot( det, det, N_int, Hii)
+        call htilde_mu_mat_tot(det, det, N_int, Hii)
         delta_E = E0(istate) - Hii + E_shift
 
-        call get_excitation_degree( HF_bitmask, det, degree, N_int)
+        ! TODO is it useful ?
+        call get_excitation_degree(HF_bitmask, det, degree, N_int)
 
         !psi_h_alpha = 0.d0
         !alpha_h_psi = 0.d0
@@ -816,7 +815,6 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         alpha_h_psi = mat_p(istate, p1, p2)
 
         coef(istate)   = alpha_h_psi / delta_E 
-!        e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
         e_pert(istate) = coef(istate) * psi_h_alpha
 
       elseif(cipsi_tc == "h_tc_2x2") then
@@ -829,20 +827,22 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         ! -------------------------------------------
 
         istate = 1
-        call htilde_mu_mat_tot( det, det, N_int, Hii)
+        call htilde_mu_mat_tot(det, det, N_int, Hii)
         delta_E = E0(istate) - Hii + E_shift
 
-        call get_excitation_degree( HF_bitmask, det, degree, N_int)
+        call get_excitation_degree(HF_bitmask, det, degree, N_int)
 
-        psi_h_alpha = 0.d0
-        alpha_h_psi = 0.d0
-        do iii = 1, N_det
-          call htilde_mu_mat_tot( psi_det(1,1,iii), det, N_int, i_h_alpha)
-          psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
+        !psi_h_alpha = 0.d0
+        !alpha_h_psi = 0.d0
+        !do iii = 1, N_det
+        !  call htilde_mu_mat_tot( psi_det(1,1,iii), det, N_int, i_h_alpha)
+        !  psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
+        !  call htilde_mu_mat_tot( det, psi_det(1,1,iii), N_int, alpha_h_i)
+        !  alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
+        !enddo
+        psi_h_alpha = mat_m(istate, p1, p2)
+        alpha_h_psi = mat_p(istate, p1, p2)
 
-          call htilde_mu_mat_tot( det, psi_det(1,1,iii), N_int, alpha_h_i)
-          alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
-        enddo
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = 0.5d0 * (-delta_E - dsqrt(delta_E*delta_E +  4.d0 * psi_h_alpha * alpha_h_psi))
 

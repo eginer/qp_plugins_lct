@@ -258,7 +258,7 @@
     enddo
 
     if(.not.converged)then
-      print*,'Stopping ... Davidson did not converge ...'
+      print*,'Stopping ... Davidson did not converge for right eigenvector ...'
       stop
     endif
 
@@ -279,6 +279,10 @@
           leigvec_tc(j,i) = reigvec_tc_tmp(j,i) 
         enddo
       enddo
+      if(.not.converged)then
+        print*,'Stopping ... Davidson did not converge for left eigenvector ...'
+        stop
+      endif
     else 
       do i = 1, N_states
         do j = 1, N_det
@@ -359,7 +363,7 @@ subroutine write_left_right()
 
 end subroutine write_left_right
 
-
+! ---
 
 subroutine iterative_davidson_tc(psidet, psicoef, ndet, Nint, N_st, N_st_diag, idx_dress, dagger, energies_out, converged)
 
@@ -385,91 +389,104 @@ subroutine iterative_davidson_tc(psidet, psicoef, ndet, Nint, N_st, N_st_diag, i
   ! converged   : if .False. it means that it did not converge 
   END_DOC
 
- use bitmasks
+  use bitmasks
 
- implicit none
- integer,           intent(in)   :: Nint, ndet, N_st, idx_dress, N_st_diag
- logical,           intent(in)   :: dagger
- integer(bit_kind), intent(in)   :: psidet(Nint,2,ndet)
- double precision, intent(inout) :: psicoef(ndet,N_st_diag),energies_out(N_st)
- logical, intent(out)            :: converged
- integer                         :: istate, j, i, n_iter_max 
- double precision, allocatable   :: H_jj(:), Dress_jj(:), Dressing_vec(:,:), energies(:)
- double precision, allocatable   :: htilde_psi(:)
- double precision                :: residual,u_dot_v,e_expect,e_before, delta_e
- external H_u_0_nstates_openmp
+  implicit none
+  integer,           intent(in)   :: Nint, ndet, N_st, idx_dress, N_st_diag
+  logical,           intent(in)   :: dagger
+  integer(bit_kind), intent(in)   :: psidet(Nint,2,ndet)
+  double precision, intent(inout) :: psicoef(ndet,N_st_diag),energies_out(N_st)
+  logical, intent(out)            :: converged
+  integer                         :: istate, j, i
+  double precision, allocatable   :: H_jj(:), Dress_jj(:), Dressing_vec(:,:), energies(:)
+  double precision, allocatable   :: htilde_psi(:)
+  double precision                :: residual,u_dot_v,e_expect,e_before, delta_e
+  external H_u_0_nstates_openmp
 
- n_iter_max = 1000
- allocate(H_jj(ndet), Dress_jj(ndet), Dressing_vec(ndet,N_st))
- allocate(energies(N_st_diag),htilde_psi(ndet))
- !!! Create a Guess 
- do istate = N_st + 1, N_st_diag
-  psicoef(istate,istate) = 1.d0
- enddo
- !!! H matrix diagonal elements and nul diagonal dressing 
- do j = 1, N_det
-  H_jj(j) = H_matrix_diag_all_dets(j)
-  Dress_jj(j) = 0.d0
- enddo
+  PROVIDE max_it_dav
 
- residual = 1.d0
- j = 0
- print*,'Iterative Meta Davidson diagonalization with vector dressing '
- print*,'************************************************************'
- if(dagger)then
-  print*,'Computing the LEFT eigenvector '
- else 
-  print*,'Computing the RIGHT eigenvector '
- endif
- print*,''
- e_before = 1.d0 
- delta_e = 1.d0
- converged = .False.
- do while (.not.converged)
-  j += 1
-  print*,'iteration = ',j
-  !!! Compute the dressing vector 
-  call get_dressing_tc_for_dav(psicoef(1,1), psidet, ndet, Nint, N_st, dagger, Dressing_vec)
-  !!! Call the Davidson for dressing vector 
-  call dav_double_dressed(psicoef,H_jj,Dress_jj,Dressing_vec,idx_dress,energies,ndet,N_st,N_st_diag,converged,H_u_0_nstates_openmp)
+  allocate(H_jj(ndet), Dress_jj(ndet), Dressing_vec(ndet,N_st))
+  allocate(energies(N_st_diag),htilde_psi(ndet))
+  !!! Create a Guess 
+  do istate = N_st + 1, N_st_diag
+    psicoef(istate,istate) = 1.d0
+   enddo
+  !!! H matrix diagonal elements and nul diagonal dressing 
+  do j = 1, N_det
+    H_jj(j) = H_matrix_diag_all_dets(j)
+    Dress_jj(j) = 0.d0
+  enddo
 
-  if(.not.dagger)then
-   !!! Compute htilde_psi = Htilde | psicoef >
-   call get_htilde_psi(psidet, psicoef, ndet, Nint, htilde_psi)
-  else
-   call get_htilde_dagger_psi(psidet, psicoef, ndet, Nint, htilde_psi)
+  residual = 1.d0
+  j = 0
+  print*,'Iterative Meta Davidson diagonalization with vector dressing '
+  print*,'************************************************************'
+  if(dagger) then
+    print*,'Computing the LEFT eigenvector '
+  else 
+    print*,'Computing the RIGHT eigenvector '
   endif
-  !!! Compute the expectation value < psicoef | Htilde | psicoef >
-  e_expect = u_dot_v(htilde_psi,psicoef(1,1),ndet)
-  if(j>1)then
-   delta_e = energies(1) - e_before 
-  endif
-  e_before = energies(1)
-  !!! Compute the residual < psicoef | (Htilde - E) | psicoef >
-  htilde_psi(1:ndet) += -energies(1) * psicoef(1:ndet,1)
-  residual = u_dot_v(psicoef(1,1),htilde_psi,ndet)
-  residual = dabs(residual)
-  print*, ' energies = ',energies(1)
-  if(j>1)then
-   print*,'  Delta E = ', delta_e
-  endif
-  print*, ' residual = ',residual
-  converged = residual.lt.threshold_davidson.or.dabs(delta_e).lt.thresh_it_dav
-  if(j>n_iter_max)then
-   converged = .False.
-   exit
-  endif
- enddo
- if(.not.converged)then
-  print*,'iterative_davidson_tc did not converge after ',n_iter_max,'iterations ...'
- endif
- print*,'Converged TC energy = ',energies(1)
- do i = 1, N_st
-  energies_out(i) = energies(i)
- enddo
-end
+  print*,''
+  e_before = 1.d0 
+  delta_e = 1.d0
+  converged = .False.
+  do while (.not.converged)
+    j += 1
+    print*,'iteration = ',j
 
+    !!! Compute the dressing vector 
+    call get_dressing_tc_for_dav(psicoef(1,1), psidet, ndet, Nint, N_st, dagger, Dressing_vec)
+    !!! Call the Davidson for dressing vector 
+    call dav_double_dressed(psicoef,H_jj,Dress_jj,Dressing_vec,idx_dress,energies,ndet,N_st,N_st_diag,converged,H_u_0_nstates_openmp)
 
+    if(.not.dagger)then
+      !!! Compute htilde_psi = Htilde | psicoef >
+      call get_htilde_psi(psidet, psicoef, ndet, Nint, htilde_psi)
+    else
+      call get_htilde_dagger_psi(psidet, psicoef, ndet, Nint, htilde_psi)
+    endif
+
+    !!! Compute the expectation value < psicoef | Htilde | psicoef >
+    e_expect = u_dot_v(htilde_psi,psicoef(1,1),ndet)
+    if(j>1) then
+      delta_e = energies(1) - e_before 
+    endif
+    e_before = energies(1)
+
+    !!! Compute the residual < psicoef | (Htilde - E) | psicoef >
+    htilde_psi(1:ndet) += -energies(1) * psicoef(1:ndet,1)
+    residual = u_dot_v(psicoef(1,1),htilde_psi,ndet)
+    residual = dabs(residual)
+    print*, ' energies = ',energies(1)
+    if(j>1) then
+      print*,'  Delta E = ', delta_e
+    endif
+    print*, ' residual = ', residual
+
+    converged = residual.lt.threshold_davidson.or.dabs(delta_e).lt.thresh_it_dav
+
+    if(j > max_it_dav) then
+      converged = .False.
+      exit
+    endif
+
+  enddo
+
+  if(.not.converged)then
+    print*, 'iterative_davidson_tc did not converge after ', j, 'iterations ...'
+    print*, 'max it = ', max_it_dav 
+    print*, 'residual, threshold_davidson = ', residual, threshold_davidson
+    print*, '|delta_e|, thresh_it_dav', dabs(delta_e), thresh_it_dav
+  endif
+  print*, 'Converged TC energy = ', energies(1)
+
+  do i = 1, N_st
+    energies_out(i) = energies(i)
+  enddo
+
+end subroutine iterative_davidson_tc
+
+! ---
 
  BEGIN_PROVIDER [ double precision, h_mono_comp_right_tc]
 &BEGIN_PROVIDER [ double precision, h_eff_comp_right_tc]
