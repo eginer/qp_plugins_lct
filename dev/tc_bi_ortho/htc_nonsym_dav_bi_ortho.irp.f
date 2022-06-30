@@ -21,7 +21,7 @@ program htc_nonsym_diag
   PROVIDE psi_det
   PROVIDE psi_coef 
 
-  !call check() 
+  call check() 
   call nonsym_test() 
 
 end 
@@ -34,15 +34,15 @@ subroutine nonsym_test()
   integer                       :: i, j
   logical                       :: converged
   double precision, allocatable :: u_in(:,:), H_jj(:), wr(:), wl(:)
-  external                         htc_calc_tdav 
-  external                         htcdag_calc_tdav
+  external                         htc_bi_ortho_calc_tdav 
+  external                         htcdag_bi_ortho_calc_tdav
 
   allocate( H_jj(N_det) )
   H_jj = 0.d0
   i = 1
-  call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
+  call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
   do i = 1, N_det
-    call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
+    call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
   enddo
 
   allocate( u_in(N_det,n_states_diag) )
@@ -56,7 +56,7 @@ subroutine nonsym_test()
   ! get right eigenvectors
   allocate( wr(n_states_diag) )
   print*, ' start right-eig calc'
-  call davidson_general_ext_rout_nonsym_b1space(u_in, H_jj, wr, N_det, n_states, n_states_diag, converged, htc_calc_tdav)
+  call davidson_general_ext_rout_nonsym_b1space(u_in, H_jj, wr, N_det, n_states, n_states_diag, converged, htc_bi_ortho_calc_tdav)
 
   do i = 1, n_states
     print *, ' right eigen-energy = ', wr(i)
@@ -71,7 +71,7 @@ subroutine nonsym_test()
   ! get left eigenvectors
   allocate( wl(n_states_diag) )
   print*, ' start left-eig calc'
-  call davidson_general_ext_rout_nonsym_b1space(u_in, H_jj, wl, N_det, n_states, n_states_diag, converged, htcdag_calc_tdav)
+  call davidson_general_ext_rout_nonsym_b1space(u_in, H_jj, wl, N_det, n_states, n_states_diag, converged, htcdag_bi_ortho_calc_tdav)
 
   do i = 1, n_states
     print *, ' left eigen-energy = ', wl(i)
@@ -112,11 +112,11 @@ subroutine check()
 !  enddo
   i = 1
   j = 1
-  call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, H_tmp(i,j))
+  call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, H_tmp(i,j))
   do i = 1, N_det
     do j = 1, N_det
       H_tmp(i,j) = 0.d0
-      call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, H_tmp(i,j))
+      call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, H_tmp(i,j))
     enddo
   enddo
 

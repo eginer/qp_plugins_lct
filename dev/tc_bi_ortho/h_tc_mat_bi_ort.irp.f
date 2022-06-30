@@ -16,8 +16,13 @@ subroutine htilde_mu_mat_bi_ortho_tot(key_j, key_i, Nint, htot)
   integer(bit_kind), intent(in) :: key_j(Nint,2),key_i(Nint,2)
   double precision, intent(out) :: htot
   double precision              :: hmono,htwoe,hthree
-
-  call htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
+  integer :: degree
+  call get_excitation_degree(key_j, key_i, degree, Nint)
+  if(degree.gt.2)then
+   htot = 0.d0
+  else
+   call htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
+  endif
 
 end subroutine htilde_mu_mat_tot
 
