@@ -32,12 +32,6 @@
 
   PROVIDE N_det N_int
 
-   do istate = 1, N_states
-    do i = 1, N_det
-     reigvec_tc_bi_orth(i,istate) = psi_r_coef_bi_ortho(i,istate)
-     leigvec_tc_bi_orth(i,istate) = psi_l_coef_bi_ortho(i,istate)
-    enddo
-   enddo
    if(n_det.le.N_det_max_full)then
     allocate(reigvec_tc_bi_orth_tmp(N_det,N_det),leigvec_tc_bi_orth_tmp(N_det,N_det),eigval_right_tmp(N_det))
     call non_hrmt_real_diag(N_det,htilde_matrix_elmt_bi_ortho,& 
