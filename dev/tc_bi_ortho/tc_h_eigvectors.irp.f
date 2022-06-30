@@ -25,14 +25,20 @@
   END_DOC
 
   implicit none
-  integer                       :: i, idx_dress, j
+  integer                       :: i, idx_dress, j, istate
   logical                       :: converged, dagger
   integer                       :: n_real_tc_bi_orth_eigval_right,igood_r,igood_l
   double precision, allocatable :: reigvec_tc_bi_orth_tmp(:,:),leigvec_tc_bi_orth_tmp(:,:),eigval_right_tmp(:)
 
   PROVIDE N_det N_int
 
-
+   do istate = 1, N_states
+    do i = 1, N_det
+     reigvec_tc_bi_orth(i,istate) = psi_r_coef_bi_ortho(i,istate)
+     leigvec_tc_bi_orth(i,istate) = psi_l_coef_bi_ortho(i,istate)
+    enddo
+   enddo
+   if(n_det.le.N_det_max_full)then
     allocate(reigvec_tc_bi_orth_tmp(N_det,N_det),leigvec_tc_bi_orth_tmp(N_det,N_det),eigval_right_tmp(N_det))
     call non_hrmt_real_diag(N_det,htilde_matrix_elmt_bi_ortho,& 
          leigvec_tc_bi_orth_tmp,reigvec_tc_bi_orth_tmp,& 
@@ -87,6 +93,42 @@
        enddo
      enddo
     endif
+   else 
+    double precision, allocatable :: H_jj(:),vec_tmp(:,:)
+    external                         htc_bi_ortho_calc_tdav
+    external                         htcdag_bi_ortho_calc_tdav
+    allocate(H_jj(N_det),vec_tmp(N_det,n_states_diag))
+    do i = 1, N_det
+      call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
+    enddo
+ !!!! Preparing the left-eigenvector
+    vec_tmp = 0.d0
+    do istate = 1, N_states
+     vec_tmp(:,istate) = psi_l_coef_bi_ortho(:,istate)
+    enddo
+    do istate = N_states+1, n_states_diag
+     vec_tmp(istate,istate) = 1.d0
+    enddo
+    call davidson_general_ext_rout_nonsym_b1space(vec_tmp, H_jj, eigval_left_tc_bi_orth, N_det, n_states, n_states_diag, converged, htcdag_bi_ortho_calc_tdav)
+    do istate = 1, N_states
+     leigvec_tc_bi_orth(:,istate) = vec_tmp(:,istate)
+    enddo
+
+ !!!! Preparing the right-eigenvector
+    vec_tmp = 0.d0
+    do istate = 1, N_states
+     vec_tmp(:,istate) = psi_r_coef_bi_ortho(:,istate)
+    enddo
+    do istate = N_states+1, n_states_diag
+     vec_tmp(istate,istate) = 1.d0
+    enddo
+    call davidson_general_ext_rout_nonsym_b1space(vec_tmp, H_jj, eigval_right_tc_bi_orth, N_det, n_states, n_states_diag, converged, htc_bi_ortho_calc_tdav)
+    do istate = 1, N_states
+     reigvec_tc_bi_orth(:,istate) = vec_tmp(:,istate)
+    enddo
+
+    deallocate(H_jj)
+   endif
 
   !!!! Normalization of the scalar product of the left/right eigenvectors
   double precision  :: accu, tmp 

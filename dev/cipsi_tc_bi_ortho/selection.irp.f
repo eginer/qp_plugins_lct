@@ -770,7 +770,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
         delta_E = E0(istate) - Hii + E_shift
 
-        call get_excitation_degree( HF_bitmask, det, degree, N_int)
+!        call get_excitation_degree( HF_bitmask, det, degree, N_int)
 
         !psi_h_alpha = 0.d0
         !alpha_h_psi = 0.d0

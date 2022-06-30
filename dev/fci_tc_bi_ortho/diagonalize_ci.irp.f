@@ -50,6 +50,8 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
   do j=1,N_states
     do i=1,N_det
       psi_coef(i,j) = reigvec_tc_bi_orth(i,j)
+      psi_l_coef_bi_ortho(i,j) = leigvec_tc_bi_orth(i,j)
+      psi_r_coef_bi_ortho(i,j) = reigvec_tc_bi_orth(i,j)
     enddo
   enddo
 !  do j=1,N_states
@@ -57,9 +59,9 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
 !      psi_left_guess(i,j) = leigvec_tc_bi_orth(i,j)
 !    enddo
 !  enddo
-  SOFT_TOUCH  eigval_left_tc_bi_orth  eigval_right_tc_bi_orth  leigvec_tc_bi_orth  norm_ground_left_right_bi_orth psi_coef reigvec_tc_bi_orth 
+  SOFT_TOUCH  eigval_left_tc_bi_orth  eigval_right_tc_bi_orth  leigvec_tc_bi_orth  norm_ground_left_right_bi_orth psi_coef reigvec_tc_bi_orth psi_l_coef_bi_ortho psi_r_coef_bi_ortho
 
-!  call routine_save_right 
+  call save_tc_bi_ortho_wavefunction
 end
 
 subroutine print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
@@ -107,5 +109,5 @@ subroutine print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 !  enddo
   SOFT_TOUCH  eigval_left_tc_bi_orth  eigval_right_tc_bi_orth  leigvec_tc_bi_orth  norm_ground_left_right_bi_orth  psi_coef  reigvec_tc_bi_orth 
 
-  !psi_left_guess
+
 end
