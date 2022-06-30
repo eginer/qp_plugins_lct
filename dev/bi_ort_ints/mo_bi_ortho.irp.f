@@ -69,30 +69,30 @@
   double precision              :: accu_d, accu_nd 
   double precision, allocatable :: tmp(:,:)
 
-  !overlap_bi_ortho = 0.d0
-  !do i = 1, mo_num
-  !  do k = 1, mo_num
-  !    do m = 1, ao_num
-  !      do n = 1, ao_num
-  !        overlap_bi_ortho(k,i) += ao_overlap(n,m) * mo_l_coef(n,k) * mo_r_coef(m,i)
-  !      enddo
-  !    enddo
-  !  enddo
-  !enddo
+  overlap_bi_ortho = 0.d0
+  do i = 1, mo_num
+    do k = 1, mo_num
+      do m = 1, ao_num
+        do n = 1, ao_num
+          overlap_bi_ortho(k,i) += ao_overlap(n,m) * mo_l_coef(n,k) * mo_r_coef(m,i)
+        enddo
+      enddo
+    enddo
+  enddo
 
-  allocate( tmp(mo_num,ao_num) )
-
-  ! tmp <-- L.T x S_ao
-  call dgemm( "T", "N", mo_num, ao_num, ao_num, 1.d0                         & 
-            , mo_l_coef, size(mo_l_coef, 1), ao_overlap, size(ao_overlap, 1) &
-            , 0.d0, tmp, size(tmp, 1) )
-
-  ! S <-- tmp x R
-  call dgemm( "N", "N", mo_num, mo_num, ao_num, 1.d0           & 
-            , tmp, size(tmp, 1), mo_r_coef, size(mo_r_coef, 1) &
-            , 0.d0, overlap_bi_ortho, size(overlap_bi_ortho, 1) )
-
-  deallocate( tmp )
+!  allocate( tmp(mo_num,ao_num) )
+!
+!  ! tmp <-- L.T x S_ao
+!  call dgemm( "T", "N", mo_num, ao_num, ao_num, 1.d0                         & 
+!            , mo_l_coef, size(mo_l_coef, 1), ao_overlap, size(ao_overlap, 1) &
+!            , 0.d0, tmp, size(tmp, 1) )
+!
+!  ! S <-- tmp x R
+!  call dgemm( "N", "N", mo_num, mo_num, ao_num, 1.d0           & 
+!            , tmp, size(tmp, 1), mo_r_coef, size(mo_r_coef, 1) &
+!            , 0.d0, overlap_bi_ortho, size(overlap_bi_ortho, 1) )
+!
+!  deallocate( tmp )
 
   do i = 1, mo_num
     overlap_diag_bi_ortho(i) = overlap_bi_ortho(i,i)

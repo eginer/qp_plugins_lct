@@ -10,15 +10,21 @@ program tc_bi_ortho
   read_wf = .True.
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-!  call routine_provide
   call routine_diag
-! call routine_three_e
-!  call test_whole_hij
+! call test
 end
 
-subroutine routine_provide
+subroutine test
  implicit none
- provide ao_two_e_tc_tot 
+ integer :: i,j 
+ double precision :: hmono,htwoe,hthree,htot
+ use bitmasks
+
+ print*,'test'
+! call htilde_mu_mat_bi_ortho(psi_det(1,1,1), psi_det(1,1,2), N_int, hmono, htwoe, hthree, htot)
+ call double_htilde_mu_mat_bi_ortho(N_int,psi_det(1,1,1), psi_det(1,1,2), hmono, htwoe, htot)
+ print*,hmono, htwoe,  htot
+
 end
 
 subroutine routine_diag
@@ -27,9 +33,8 @@ subroutine routine_diag
   provide overlap_bi_ortho
   provide htilde_matrix_elmt_bi_ortho
  integer ::i
- do i = 1,N_states
-  print*,'i,E(i)',i,eigval_right_tc_bi_orth(i)
- enddo
+ print*,'eigval_right_tc_bi_orth = ',eigval_right_tc_bi_orth(1)
+ print*,'e_tc_left_right         = ',e_tc_left_right
  print*,'e_tilde_bi_orth_00      = ',e_tilde_bi_orth_00
  print*,'e_pt2_tc_bi_orth        = ',e_pt2_tc_bi_orth
  print*,'e_pt2_tc_bi_orth_single = ',e_pt2_tc_bi_orth_single
@@ -45,113 +50,112 @@ subroutine routine_diag
  enddo
 end
 
-subroutine routine_three_e
- implicit none
- double precision :: new,ref, accu_diag,accu_single, accu_double
- double precision :: n_diag, n_single, n_double
- integer :: i,j,degree
- use bitmasks
- accu_diag = 0.d0
- accu_single = 0.d0
- accu_double = 0.d0
- n_diag = 0.d0
- n_single = 0.d0
- n_double = 0.D0
- do i = 1, N_det
-  do j = 1, N_det
+!subroutine routine_three_e
+! implicit none
+! double precision :: new,ref, accu_diag,accu_single, accu_double
+! double precision :: n_diag, n_single, n_double
+! integer :: i,j,degree
+! use bitmasks
+! accu_diag = 0.d0
+! accu_single = 0.d0
+! accu_double = 0.d0
+! n_diag = 0.d0
+! n_single = 0.d0
+! n_double = 0.D0
+! do i = 1, N_det
+!  do j = 1, N_det
+!   call get_excitation_degree(psi_det(1,1,i), psi_det(1,1,j), degree, N_int)
+!   if(degree==0)then
+!    n_diag += 1.d0
+!    call diag_htilde_three_body_ints_bi_ort(N_int, psi_det(1,1,i), new)
+!    call diag_htilde_mu_mat_three_body(N_int, psi_det(1,1,i), ref)
+!    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+!     print*,'Diagonal element '
+!     print*,'ref,new,de'
+!     print*,ref,new,ref-new
+!    endif
+!    accu_diag += dabs(ref-new)
+!   else if(degree == 1)then
+!    n_single += 1.d0
+!    call single_htilde_three_body_ints_bi_ort(N_int,psi_det(1,1,i), psi_det(1,1,j), new)
+!    call single_htilde_mu_mat_three_body(N_int,psi_det(1,1,i), psi_det(1,1,j), ref)
+!    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+!     print*,'Single excitation element'
+!     print*,'ref,new,de'
+!     print*,ref,new,ref-new
+!    endif
+!    accu_single += dabs(ref-new)
+!   else if(degree == 2)then
+!    n_double += 1.d0
+!    call double_htilde_mu_mat_three_body(N_int, psi_det(1,1,i), psi_det(1,1,j), new)
+!    call double_htilde_mu_mat_three_body(N_int, psi_det(1,1,i), psi_det(1,1,j), ref)
+!    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+!     print*,'Double excitation element'
+!     print*,'ref,new,de'
+!     print*,ref,new,ref-new
+!    endif
+!    accu_double += dabs(ref-new)
+!   endif
+!  enddo
+! enddo
+! 
+! print*,'accu_diag = ',accu_diag / n_diag
+! print*,'accu_singl= ',accu_single / n_single 
+! print*,'accu_doubl= ',accu_double / n_double
+!end
+!
+!subroutine test_whole_hij
+! implicit none
+! double precision :: new,ref, accu_diag,accu_single, accu_double
+! double precision :: n_diag, n_single, n_double
+! integer :: i,j,degree
+! use bitmasks
+! accu_diag = 0.d0
+! accu_single = 0.d0
+! accu_double = 0.d0
+! n_diag = 0.d0
+! n_single = 0.d0
+! n_double = 0.D0
+! do i = 1, N_det
+!  do j = 1, N_det
 !  do j = i, i
-   call get_excitation_degree(psi_det(1,1,i), psi_det(1,1,j), degree, N_int)
-   if(degree==0)then
-    n_diag += 1.d0
-    call diag_htilde_three_body_ints_bi_ort(N_int, psi_det(1,1,i), new)
-    call diag_htilde_mu_mat_three_body(N_int, psi_det(1,1,i), ref)
-    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
-     print*,'Diagonal element '
-     print*,'ref,new,de'
-     print*,ref,new,ref-new
-    endif
-    accu_diag += dabs(ref-new)
-   else if(degree == 1)then
-    n_single += 1.d0
-    call single_htilde_three_body_ints_bi_ort(N_int,psi_det(1,1,i), psi_det(1,1,j), new)
-    call single_htilde_mu_mat_three_body(N_int,psi_det(1,1,i), psi_det(1,1,j), ref)
-    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
-     print*,'Single excitation element'
-     print*,'ref,new,de'
-     print*,ref,new,ref-new
-    endif
-    accu_single += dabs(ref-new)
-   else if(degree == 2)then
-    n_double += 1.d0
-    call double_htilde_mu_mat_three_body(N_int, psi_det(1,1,i), psi_det(1,1,j), new)
-    call double_htilde_mu_mat_three_body(N_int, psi_det(1,1,i), psi_det(1,1,j), ref)
-    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
-     print*,'Double excitation element'
-     print*,'ref,new,de'
-     print*,ref,new,ref-new
-    endif
-    accu_double += dabs(ref-new)
-   endif
-  enddo
- enddo
- 
- print*,'accu_diag = ',accu_diag / n_diag
- print*,'accu_singl= ',accu_single / n_single 
- print*,'accu_doubl= ',accu_double / n_double
-end
-
-subroutine test_whole_hij
- implicit none
- double precision :: new,ref, accu_diag,accu_single, accu_double
- double precision :: n_diag, n_single, n_double
- integer :: i,j,degree
- use bitmasks
- accu_diag = 0.d0
- accu_single = 0.d0
- accu_double = 0.d0
- n_diag = 0.d0
- n_single = 0.d0
- n_double = 0.D0
- do i = 1, N_det
-  do j = 1, N_det
-!  do j = i, i
-   call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, new)
-   call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, ref)
-   call get_excitation_degree(psi_det(1,1,i), psi_det(1,1,j), degree, N_int)
-   if(degree==0)then
-    n_diag += 1.d0
-    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
-     print*,'Diagonal element '
-     print*,'ref,new,de'
-     print*,ref,new,ref-new
-     print*,i,j
-     stop
-    endif
-    accu_diag += dabs(ref-new)
-   else if(degree == 1)then
-    n_single += 1.d0
-    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
-     print*,'Single excitation element'
-     print*,'ref,new,de'
-     print*,ref,new,ref-new
-    endif
-    accu_single += dabs(ref-new)
-   else if(degree == 2)then
-    n_double += 1.d0
-    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
-     print*,'Double excitation element'
-     print*,'ref,new,de'
-     print*,ref,new,ref-new
-    endif
-    accu_double += dabs(ref-new)
-   endif
-  enddo
- enddo
- 
- print*,'accu_diag = ',accu_diag / n_diag
- print*,'accu_singl= ',accu_single / n_single 
- print*,'accu_doubl= ',accu_double / n_double
- 
-
-
-end
+!   call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, new)
+!   call htilde_mu_mat_tot(psi_det(1,1,i), psi_det(1,1,j), N_int, ref)
+!   call get_excitation_degree(psi_det(1,1,i), psi_det(1,1,j), degree, N_int)
+!   if(degree==0)then
+!    n_diag += 1.d0
+!    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+!     print*,'Diagonal element '
+!     print*,'ref,new,de'
+!     print*,ref,new,ref-new
+!     print*,i,j
+!     stop
+!    endif
+!    accu_diag += dabs(ref-new)
+!   else if(degree == 1)then
+!    n_single += 1.d0
+!    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+!     print*,'Single excitation element'
+!     print*,'ref,new,de'
+!     print*,ref,new,ref-new
+!    endif
+!    accu_single += dabs(ref-new)
+!   else if(degree == 2)then
+!    n_double += 1.d0
+!    if(dabs(ref - new).gt.1.d-10.and.dabs(ref).gt.1.d-10)then
+!     print*,'Double excitation element'
+!     print*,'ref,new,de'
+!     print*,ref,new,ref-new
+!    endif
+!    accu_double += dabs(ref-new)
+!   endif
+!  enddo
+! enddo
+! 
+! print*,'accu_diag = ',accu_diag / n_diag
+! print*,'accu_singl= ',accu_single / n_single 
+! print*,'accu_doubl= ',accu_double / n_double
+! 
+!
+!
+!end

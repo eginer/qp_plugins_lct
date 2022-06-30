@@ -2,26 +2,28 @@ BEGIN_PROVIDER [ double precision, fock_3_mat, (mo_num, mo_num)]
  implicit none
   integer :: i,j
   double precision :: contrib
-  call give_fock_ia_real_space_prov(1,1,contrib)
   fock_3_mat = 0.d0
-!  !$OMP PARALLEL                  &
-!  !$OMP DEFAULT (NONE)            &
-!  !$OMP PRIVATE (i,j,m,integral) & 
-!  !$OMP SHARED (mo_num,three_body_3_index)
-!  !$OMP DO SCHEDULE (guided) COLLAPSE(3)
-  do i = 1, mo_num
-   do j = 1, mo_num
-    call give_fock_ia_three_e_total(j,i,contrib)
-    fock_3_mat(j,i) = -contrib
+  if(.not.bi_ortho.and.three_body_h_tc)then
+   call give_fock_ia_real_space_prov(1,1,contrib)
+!!  !$OMP PARALLEL                  &
+!!  !$OMP DEFAULT (NONE)            &
+!!  !$OMP PRIVATE (i,j,m,integral) & 
+!!  !$OMP SHARED (mo_num,three_body_3_index)
+!!  !$OMP DO SCHEDULE (guided) COLLAPSE(3)
+   do i = 1, mo_num
+    do j = 1, mo_num
+     call give_fock_ia_three_e_total(j,i,contrib)
+     fock_3_mat(j,i) = -contrib
+    enddo
    enddo
-  enddo
-!  !$OMP END DO
-!  !$OMP END PARALLEL
-!  do i = 1, mo_num
-!   do j = 1, i-1
-!    mat_three(j,i) = mat_three(i,j)
-!   enddo
-!  enddo
+!!  !$OMP END DO
+!!  !$OMP END PARALLEL
+!!  do i = 1, mo_num
+!!   do j = 1, i-1
+!!    mat_three(j,i) = mat_three(i,j)
+!!   enddo
+!!  enddo
+ endif
 
 END_PROVIDER 
 
@@ -71,31 +73,39 @@ BEGIN_PROVIDER [double precision, diag_three_elem_hf]
  implicit none
  integer :: i,j,k,ipoint,mm
  double precision :: contrib,weight,four_third,one_third,two_third,exchange_int_231
- one_third = 1.d0/3.d0
- two_third = 2.d0/3.d0
- four_third = 4.d0/3.d0
- diag_three_elem_hf = 0.d0
- do i = 1, elec_beta_num
-  do j = 1, elec_beta_num
-   do k = 1, elec_beta_num
-    call  give_integrals_3_body(k,j,i,j,i,k,exchange_int_231)   
-    diag_three_elem_hf += two_third * exchange_int_231
+ if(.not.bi_ortho)then
+  if(three_body_h_tc)then
+  one_third = 1.d0/3.d0
+  two_third = 2.d0/3.d0
+  four_third = 4.d0/3.d0
+  diag_three_elem_hf = 0.d0
+  do i = 1, elec_beta_num
+   do j = 1, elec_beta_num
+    do k = 1, elec_beta_num
+     call  give_integrals_3_body(k,j,i,j,i,k,exchange_int_231)   
+     diag_three_elem_hf += two_third * exchange_int_231
+    enddo
    enddo
   enddo
- enddo
- do mm = 1, 3
-  do ipoint = 1, n_points_final_grid
-   weight = final_weight_at_r_vector(ipoint)                                                                          
-   contrib   = 3.d0 * fock_3_w_kk_sum(ipoint,mm) * fock_3_rho_beta(ipoint) * fock_3_w_kk_sum(ipoint,mm)  & 
-              -2.d0 * fock_3_w_kl_mo_k_mo_l(ipoint,mm) * fock_3_w_kk_sum(ipoint,mm)                                 & 
-              -1.d0 * fock_3_rho_beta(ipoint) * fock_3_w_kl_w_kl(ipoint,mm)
-   contrib  *= four_third
-   contrib  += -two_third  * fock_3_rho_beta(ipoint)     * fock_3_w_kl_w_kl(ipoint,mm) & 
-              - four_third * fock_3_w_kk_sum(ipoint,mm)  * fock_3_w_kl_mo_k_mo_l(ipoint,mm)
-   diag_three_elem_hf += weight * contrib
+  do mm = 1, 3
+   do ipoint = 1, n_points_final_grid
+    weight = final_weight_at_r_vector(ipoint)                                                                          
+    contrib   = 3.d0 * fock_3_w_kk_sum(ipoint,mm) * fock_3_rho_beta(ipoint) * fock_3_w_kk_sum(ipoint,mm)  & 
+               -2.d0 * fock_3_w_kl_mo_k_mo_l(ipoint,mm) * fock_3_w_kk_sum(ipoint,mm)                                 & 
+               -1.d0 * fock_3_rho_beta(ipoint) * fock_3_w_kl_w_kl(ipoint,mm)
+    contrib  *= four_third
+    contrib  += -two_third  * fock_3_rho_beta(ipoint)     * fock_3_w_kl_w_kl(ipoint,mm) & 
+               - four_third * fock_3_w_kk_sum(ipoint,mm)  * fock_3_w_kl_mo_k_mo_l(ipoint,mm)
+    diag_three_elem_hf += weight * contrib
+   enddo
   enddo
- enddo
- diag_three_elem_hf = - diag_three_elem_hf
+  diag_three_elem_hf = - diag_three_elem_hf
+  else 
+   diag_three_elem_hf = 0.D0
+  endif
+ else
+   diag_three_elem_hf = 0.D0
+ endif 
 END_PROVIDER 
 
 
@@ -111,7 +121,7 @@ BEGIN_PROVIDER [ double precision, fock_3_mat_a_op_sh, (mo_num, mo_num)]
    !F_a^{ab}(h,p) 
    do i = 1, elec_beta_num ! beta 
     do j = elec_beta_num+1, elec_alpha_num ! alpha
-     call  give_integrals_3_body(h,j,i,p,j,i,direct_int)   
+     call  give_integrals_3_body(h,j,i,p,j,i,direct_int)    ! <hji|pji>
      call  give_integrals_3_body(h,j,i,j,p,i,exch_int)   
      fock_3_mat_a_op_sh(h,p) -= direct_int - exch_int
     enddo

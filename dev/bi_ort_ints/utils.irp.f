@@ -48,6 +48,32 @@ subroutine ao_to_mo_bi_ortho(A_ao, LDA_ao, A_mo, LDA_mo)
 
   allocate ( T(ao_num,mo_num) )
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: T
+  integer :: i,j,p,q
+! print*,'mo_r_coef'
+! do i = 1, mo_num
+!  write(33,'(100(F16.10,X))')mo_r_coef(:,i)
+! enddo
+! print*,'mo_l_coef'
+! do i = 1, mo_num
+!  write(34,'(100(F16.10,X))')mo_l_coef(:,i)
+! enddo
+! T = 0.d0
+! do i = 1, mo_num
+!  do p = 1, ao_num
+!   do q = 1, ao_num
+!    T(p,i) += A_ao(p,q) * mo_r_coef(q,i)
+!   enddo
+!  enddo
+! enddo
+! A_mo = 0.d0
+! do i = 1, mo_num
+!  do j = 1, ao_num
+!   do p = 1, ao_num
+!    A_mo(j,i) += T(p,i) * mo_l_coef(p,j)
+!   enddo
+!  enddo
+! enddo
+! 
 
   call dgemm('N', 'N', ao_num, mo_num, ao_num,  &
       1.d0, A_ao, LDA_ao,                       &
@@ -63,66 +89,4 @@ subroutine ao_to_mo_bi_ortho(A_ao, LDA_ao, A_mo, LDA_mo)
   deallocate(T)
 
 end subroutine ao_to_mo_bi_ortho
-
-! ---
-
-!subroutine two_e_integrals_index_reverse_tc(i,j,k,l,i1)
-!  use map_module
-!  implicit none
-!  BEGIN_DOC
-!! Computes the 4 indices $i,j,k,l$ from a unique index $i_1$.
-!! For 2 indices $i,j$ and $i \le j$, we have
-!! $p = i(i-1)/2 + j$.
-!! The key point is that because $j < i$,
-!! $i(i-1)/2 < p \le i(i+1)/2$. So $i$ can be found by solving
-!! $i^2 - i - 2p=0$. One obtains $i=1 + \sqrt{1+8p}/2$
-!! and $j = p - i(i-1)/2$.
-!! This rule is applied 3 times. First for the symmetry of the
-!! pairs (i,k) and (j,l), and then for the symmetry within each pair.
-!  END_DOC
-!  integer, intent(out)           :: i(2),j(2),k(2),l(2)
-!  integer(key_kind), intent(in)  :: i1
-!  integer(key_kind)              :: i2,i3
-!
-!  i = 0
-!  i2   = ceiling(0.5d0*(dsqrt(dble(shiftl(i1,3)+1))-1.d0))
-!  l(1) = ceiling(0.5d0*(dsqrt(dble(shiftl(i2,3)+1))-1.d0))
-!  i3   = i1 - shiftr(i2*i2-i2,1)
-!  k(1) = ceiling(0.5d0*(dsqrt(dble(shiftl(i3,3)+1))-1.d0))
-!  j(1) = int(i2 - shiftr(l(1)*l(1)-l(1),1),4)
-!  i(1) = int(i3 - shiftr(k(1)*k(1)-k(1),1),4)
-!
-!              !ijkl
-!  i(2) = j(1) !jilk
-!  j(2) = i(1)
-!  k(2) = l(1)
-!  l(2) = k(1)
-!
-!  integer :: ii, jj
-!  ii = 2
-!  jj = 1
-!  if( (i(ii) == i(jj)).and. &
-!      (j(ii) == j(jj)).and. &
-!      (k(ii) == k(jj)).and. &
-!      (l(ii) == l(jj)) ) then
-!     i(ii) = 0
-!     exit
-!  endif
-!! This has been tested with up to 1000 AOs, and all the reverse indices are
-!! correct ! We can remove the test
-!!    do ii=1,8
-!!      if (i(ii) /= 0) then
-!!        call two_e_integrals_index(i(ii),j(ii),k(ii),l(ii),i2)
-!!        if (i1 /= i2) then
-!!          print *,  i1, i2
-!!          print *,  i(ii), j(ii), k(ii), l(ii)
-!!          stop 'two_e_integrals_index_reverse failed'
-!!        endif
-!!      endif
-!!    enddo
-!
-!
-!end
-
-! ---
 

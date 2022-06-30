@@ -1,3 +1,21 @@
+subroutine provide_all_three_ints_bi_ortho
+ implicit none
+ if(three_body_h_tc)then
+  PROVIDE three_e_3_idx_direct_bi_ort three_e_3_idx_cycle_1_bi_ort three_e_3_idx_cycle_2_bi_ort
+  PROVIDE three_e_3_idx_exch23_bi_ort three_e_3_idx_exch13_bi_ort three_e_3_idx_exch12_bi_ort
+  PROVIDE three_e_4_idx_direct_bi_ort three_e_4_idx_cycle_1_bi_ort three_e_4_idx_cycle_2_bi_ort
+  PROVIDE three_e_4_idx_exch23_bi_ort three_e_4_idx_exch13_bi_ort three_e_4_idx_exch12_bi_ort
+  PROVIDE three_e_5_idx_direct_bi_ort three_e_5_idx_cycle_1_bi_ort three_e_5_idx_cycle_2_bi_ort
+  PROVIDE three_e_5_idx_exch23_bi_ort three_e_5_idx_exch13_bi_ort three_e_5_idx_exch12_bi_ort
+ endif
+!if(.not.double_normal_ord)then
+! PROVIDE three_body_5_index three_body_5_index_132 three_body_5_index_312
+! PROVIDE three_body_5_index_exch_12 three_body_5_index_exch_13 three_body_5_index_exch_32
+!else
+! PROVIDE normal_two_body
+!endif
+end
+
 subroutine diag_htilde_three_body_ints_bi_ort(Nint, key_i, hthree)
 
   BEGIN_DOC
@@ -141,10 +159,10 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
    ! alpha/alpha/beta three-body
    if(Ne(1)+Ne(2).ge.3)then
      ! hole of spin s1 :: contribution from purely other spin 
-     ispin = other_spin(s1)
-     do i = 1, Ne(ispin)
-      ii = occ(i,ispin) 
-      do j = i+1, Ne(ispin)
+     ispin = other_spin(s1) ! ispin is the other spin than s1
+     do i = 1, Ne(ispin)  ! i is the orbitals of the other spin than s1  
+      ii = occ(i,ispin)  
+      do j = i+1, Ne(ispin) ! j has the same spin than s1 
        jj = occ(j,ispin) 
        !   is == ispin  in :::   s1 is is  s1 is is      s1 is is s1 is is
        !                       < h1 j  i | p1 j  i > - < h1 j  i | p1 i j >

@@ -213,7 +213,7 @@
      print *,'State with largest LEFT  coefficient of HF ',igood_l
      print *,'coef of HF in LEFT  eigenvector = ',leigvec_tc_tmp(index_HF_psi_det,igood_l)
     endif
-    if(state_following)then
+    if(state_following_tc)then
      print *,'Following the states with the largest coef on HF'
      print *,'igood_r,igood_l',igood_r,igood_l
      i= igood_r
@@ -332,59 +332,6 @@
   enddo
 
 END_PROVIDER 
-
-! ---
-
- BEGIN_PROVIDER [double precision, reigvec_tc_sorted, (psi_det_size, N_states)]
-&BEGIN_PROVIDER [double precision, leigvec_tc_sorted, (psi_det_size, N_states)]
-
-   implicit none
-   integer                       :: i, j, k
-   integer, allocatable          :: iorder(:)
-   double precision, allocatable :: tmp_sort(:)
-
-   allocate ( tmp_sort(N_det), iorder(N_det) )
-
-   do i = 1, N_det
-     tmp_sort(i) = -psi_average_norm_contrib(i)
-     iorder(i) = i
-   enddo
-   call dsort(tmp_sort, iorder, N_det)
-   deallocate(tmp_sort)
-
-   do k = 1, N_states
-     do i = 1, N_det
-       j = iorder(i)
-       reigvec_tc_sorted(i,k) = reigvec_tc(j,k)
-       leigvec_tc_sorted(i,k) = leigvec_tc(j,k)
-     enddo
-   enddo
-
-   reigvec_tc_sorted(N_det+1:psi_det_size,:) = 0.d0
-   leigvec_tc_sorted(N_det+1:psi_det_size,:) = 0.d0
-
-   deallocate(iorder)
-
-END_PROVIDER
-
-! ---
-
- BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_transp, (N_states, psi_det_size) ]
-&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_transp, (N_states, psi_det_size) ]
-
-  implicit none
-  integer :: i, k
-
-  do i = 1, N_det_selectors
-    do k = 1, N_states
-      psi_selectors_rcoef_transp(k,i) = reigvec_tc_sorted(i,k)
-      psi_selectors_lcoef_transp(k,i) = leigvec_tc_sorted(i,k)
-    enddo
-  enddo
-
-END_PROVIDER
-
-! ---
 
  BEGIN_PROVIDER [double precision, eigval_right_tc_nucl_rep, (N_states)]
 &BEGIN_PROVIDER [double precision, eigval_left_tc_nucl_rep, (N_states)]
@@ -576,6 +523,60 @@ BEGIN_PROVIDER [ double precision, psi_left_guess, (n_det_max_full,N_states)]
   psi_left_guess(i,i) = 1.d0
  enddo
 END_PROVIDER 
+
+! ---
+
+ BEGIN_PROVIDER [double precision, reigvec_tc_sorted, (psi_det_size, N_states)]
+&BEGIN_PROVIDER [double precision, leigvec_tc_sorted, (psi_det_size, N_states)]
+
+   implicit none
+   integer                       :: i, j, k
+   integer, allocatable          :: iorder(:)
+   double precision, allocatable :: tmp_sort(:)
+
+   allocate ( tmp_sort(N_det), iorder(N_det) )
+
+   do i = 1, N_det
+     tmp_sort(i) = -psi_average_norm_contrib(i)
+     iorder(i) = i
+   enddo
+   call dsort(tmp_sort, iorder, N_det)
+   deallocate(tmp_sort)
+
+   do k = 1, N_states
+     do i = 1, N_det
+       j = iorder(i)
+       reigvec_tc_sorted(i,k) = reigvec_tc(j,k)
+       leigvec_tc_sorted(i,k) = leigvec_tc(j,k)
+     enddo
+   enddo
+
+   reigvec_tc_sorted(N_det+1:psi_det_size,:) = 0.d0
+   leigvec_tc_sorted(N_det+1:psi_det_size,:) = 0.d0
+
+   deallocate(iorder)
+
+END_PROVIDER
+
+! ---
+
+ BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_transp, (N_states, psi_det_size) ]
+&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_transp, (N_states, psi_det_size) ]
+
+  implicit none
+  integer :: i, k
+
+  do i = 1, N_det_selectors
+    do k = 1, N_states
+      psi_selectors_rcoef_transp(k,i) = reigvec_tc_sorted(i,k)
+      psi_selectors_lcoef_transp(k,i) = leigvec_tc_sorted(i,k)
+    enddo
+  enddo
+
+END_PROVIDER
+
+! ---
+
 
 
  BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_r, (N_int,2,N_det) ]

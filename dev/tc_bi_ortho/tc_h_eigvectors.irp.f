@@ -1,80 +1,38 @@
-  use bitmasks ! you need to include the bitmasks_module.f90 features
+  use bitmasks
 
- BEGIN_PROVIDER [ double precision, e_pt2_tc_bi_orth]
-&BEGIN_PROVIDER [ double precision, e_pt2_tc_bi_orth_single]
-&BEGIN_PROVIDER [ double precision, e_pt2_tc_bi_orth_double]
- implicit none 
- integer :: i,degree
- double precision :: hmono,htwoe,hthree,htilde_ij,coef_pt1,e_i0,delta_e
- e_pt2_tc_bi_orth = 0.d0
- e_pt2_tc_bi_orth_single = 0.d0
- e_pt2_tc_bi_orth_double = 0.d0
- do i = 1, N_det
-  call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
-  if(degree == 1 .or. degree == 2)then
-   call htilde_mu_mat_bi_ortho(psi_det(1,1,i),HF_bitmask,N_int,hmono,htwoe,hthree,htilde_ij)
-   call htilde_mu_mat_bi_ortho(psi_det(1,1,i),psi_det(1,1,i),N_int,hmono,htwoe,hthree,e_i0)
-   delta_e = e_tilde_00 - e_i0
-   coef_pt1 = htilde_ij / delta_e
-   call htilde_mu_mat_bi_ortho(HF_bitmask,psi_det(1,1,i),N_int,hmono,htwoe,hthree,htilde_ij)
-   e_pt2_tc_bi_orth += coef_pt1 * htilde_ij
-   if(degree == 1)then
-    e_pt2_tc_bi_orth_single += coef_pt1 * htilde_ij
-   else 
-    e_pt2_tc_bi_orth_double += coef_pt1 * htilde_ij
-   endif
-  endif
- enddo
- END_PROVIDER 
-
- BEGIN_PROVIDER [ double precision, e_tilde_bi_orth_00]
+ BEGIN_PROVIDER [ integer, index_HF_psi_det]                                                                                                            
  implicit none
- double precision :: hmono,htwoe,hthree,htilde_ij
- call htilde_mu_mat_bi_ortho(HF_bitmask,HF_bitmask,N_int,hmono,htwoe,hthree,e_tilde_bi_orth_00)
- END_PROVIDER 
-
- BEGIN_PROVIDER [ double precision, e_corr_bi_orth ]
-&BEGIN_PROVIDER [ double precision, e_corr_bi_orth_proj ]
-&BEGIN_PROVIDER [ double precision, e_corr_single_bi_orth ]
-&BEGIN_PROVIDER [ double precision, e_corr_double_bi_orth ]
- implicit none 
  integer :: i,degree
- double precision :: hmono,htwoe,hthree,htilde_ij
- 
- e_corr_bi_orth = 0.d0
- e_corr_single_bi_orth = 0.d0
- e_corr_double_bi_orth = 0.d0
  do i = 1, N_det
-  call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
-  call htilde_mu_mat_bi_ortho(HF_bitmask,psi_det(1,1,i),N_int,hmono,htwoe,hthree,htilde_ij)
-  if(degree == 1)then
-   e_corr_single_bi_orth += reigvec_tc_bi_orth(i,1) * htilde_ij/reigvec_tc_bi_orth(1,1)
-  else if(degree == 2)then
-   e_corr_double_bi_orth += reigvec_tc_bi_orth(i,1) * htilde_ij/reigvec_tc_bi_orth(1,1)
-  endif
+   call get_excitation_degree(HF_bitmask,psi_det(1,1,i),degree,N_int)
+   if(degree == 0)then
+    index_HF_psi_det = i
+    exit
+   endif
  enddo
- e_corr_bi_orth_proj = e_corr_single_bi_orth + e_corr_double_bi_orth
- e_corr_bi_orth = eigval_right_tc_bi_orth(1) - e_tilde_bi_orth_00
- END_PROVIDER 
+ END_PROVIDER
+
+
 
  BEGIN_PROVIDER [double precision, eigval_right_tc_bi_orth, (N_states)]
 &BEGIN_PROVIDER [double precision, eigval_left_tc_bi_orth, (N_states)]
 &BEGIN_PROVIDER [double precision, reigvec_tc_bi_orth, (N_det,N_states)]
 &BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth, (N_det,N_states)]
+&BEGIN_PROVIDER [double precision, norm_ground_left_right_bi_orth ]
 
   BEGIN_DOC
   ! eigenvalues, right and left eigenvectors of the transcorrelated Hamiltonian 
   END_DOC
 
   implicit none
-  integer                       :: i, idx_dress, j
+  integer                       :: i, idx_dress, j, istate
   logical                       :: converged, dagger
   integer                       :: n_real_tc_bi_orth_eigval_right,igood_r,igood_l
   double precision, allocatable :: reigvec_tc_bi_orth_tmp(:,:),leigvec_tc_bi_orth_tmp(:,:),eigval_right_tmp(:)
 
   PROVIDE N_det N_int
 
-
+   if(n_det.le.N_det_max_full)then
     allocate(reigvec_tc_bi_orth_tmp(N_det,N_det),leigvec_tc_bi_orth_tmp(N_det,N_det),eigval_right_tmp(N_det))
     call non_hrmt_real_diag(N_det,htilde_matrix_elmt_bi_ortho,& 
          leigvec_tc_bi_orth_tmp,reigvec_tc_bi_orth_tmp,& 
@@ -88,12 +46,14 @@
     enddo
     call dsort(coef_hf_r,iorder,N_det)
     igood_r = iorder(1)
+    print*,'igood_r, coef_hf_r = ',igood_r,coef_hf_r(1)
     do i = 1,N_det
      iorder(i) = i
      coef_hf_l(i) = -dabs(leigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
     enddo
     call dsort(coef_hf_l,iorder,N_det)
     igood_l = iorder(1)
+    print*,'igood_l, coef_hf_l = ',igood_l,coef_hf_l(1)
 
     if(igood_r.ne.igood_l.and.igood_r.ne.1)then
      print *,''
@@ -104,7 +64,7 @@
      print *,'State with largest LEFT  coefficient of HF ',igood_l
      print *,'coef of HF in LEFT  eigenvector = ',leigvec_tc_bi_orth_tmp(index_HF_psi_det,igood_l)
     endif
-    if(state_following)then
+    if(state_following_tc)then
      print *,'Following the states with the largest coef on HF'
      print *,'igood_r,igood_l',igood_r,igood_l
      i= igood_r
@@ -127,6 +87,42 @@
        enddo
      enddo
     endif
+   else 
+    double precision, allocatable :: H_jj(:),vec_tmp(:,:)
+    external                         htc_bi_ortho_calc_tdav
+    external                         htcdag_bi_ortho_calc_tdav
+    allocate(H_jj(N_det),vec_tmp(N_det,n_states_diag))
+    do i = 1, N_det
+      call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
+    enddo
+ !!!! Preparing the left-eigenvector
+    vec_tmp = 0.d0
+    do istate = 1, N_states
+     vec_tmp(:,istate) = psi_l_coef_bi_ortho(:,istate)
+    enddo
+    do istate = N_states+1, n_states_diag
+     vec_tmp(istate,istate) = 1.d0
+    enddo
+    call davidson_general_ext_rout_nonsym_b1space(vec_tmp, H_jj, eigval_left_tc_bi_orth, N_det, n_states, n_states_diag, converged, htcdag_bi_ortho_calc_tdav)
+    do istate = 1, N_states
+     leigvec_tc_bi_orth(:,istate) = vec_tmp(:,istate)
+    enddo
+
+ !!!! Preparing the right-eigenvector
+    vec_tmp = 0.d0
+    do istate = 1, N_states
+     vec_tmp(:,istate) = psi_r_coef_bi_ortho(:,istate)
+    enddo
+    do istate = N_states+1, n_states_diag
+     vec_tmp(istate,istate) = 1.d0
+    enddo
+    call davidson_general_ext_rout_nonsym_b1space(vec_tmp, H_jj, eigval_right_tc_bi_orth, N_det, n_states, n_states_diag, converged, htc_bi_ortho_calc_tdav)
+    do istate = 1, N_states
+     reigvec_tc_bi_orth(:,istate) = vec_tmp(:,istate)
+    enddo
+
+    deallocate(H_jj)
+   endif
 
   !!!! Normalization of the scalar product of the left/right eigenvectors
   double precision  :: accu, tmp 
@@ -160,11 +156,48 @@
     reigvec_tc_bi_orth(j,i) *= accu 
    enddo
    print*,'leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i) = ',leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i)
-   accu = 0.d0
+   norm_ground_left_right_bi_orth = 0.d0
    do j = 1, N_det
-    accu += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
+    norm_ground_left_right_bi_orth += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
    enddo
-   print*,'norm l/r = ',accu
+   print*,'norm l/r = ',norm_ground_left_right_bi_orth
   enddo
+  eigval_right_tc_bi_orth += nuclear_repulsion
+  eigval_left_tc_bi_orth += nuclear_repulsion
 
 END_PROVIDER 
+
+
+ BEGIN_PROVIDER [double precision, reigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+&BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+
+   implicit none
+   integer                       :: i, j, k
+   integer, allocatable          :: iorder(:)
+   double precision, allocatable :: tmp_sort(:)
+
+   allocate ( tmp_sort(N_det), iorder(N_det) )
+
+   do i = 1, N_det
+     tmp_sort(i) = -dabs(reigvec_tc_bi_orth(i,1) * leigvec_tc_bi_orth(i,1))
+     iorder(i) = i
+   enddo
+   call dsort(tmp_sort, iorder, N_det)
+   deallocate(tmp_sort)
+
+   do k = 1, N_states
+     do i = 1, N_det
+       j = iorder(i)
+       reigvec_tc_bi_orth_sorted(i,k) = reigvec_tc_bi_orth(j,k)
+       leigvec_tc_bi_orth_sorted(i,k) = leigvec_tc_bi_orth(j,k)
+     enddo
+   enddo
+
+   reigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
+   leigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
+
+   deallocate(iorder)
+
+END_PROVIDER
+
+
