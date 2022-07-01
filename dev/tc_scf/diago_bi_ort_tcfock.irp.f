@@ -19,15 +19,19 @@
   PROVIDE Fock_matrix_tc_mo_tot
 
 
-   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
+! call non_hrmt_generalized_real_im(mo_num, Fock_matrix_tc_mo_tot, overlap_bi_ortho &
+!                     , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
+!                     , n_real_tc, eigval_right_tmp )
+   call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot &
+!   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_bieig_real_im( mo_num, Fock_matrix_tc_mo_tot &
 !  call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot          &
                      , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
                      , n_real_tc, eigval_right_tmp )
-  if(n_real_tc .ne. mo_num)then
-   print*,'n_real_tc ne mo_num ! ',n_real_tc
-   stop
-  endif
+!  if(n_real_tc .ne. mo_num)then
+!   print*,'n_real_tc ne mo_num ! ',n_real_tc
+!   stop
+!  endif
 
   eigval_fock_tc_mo = eigval_right_tmp
 !  print*,'Eigenvalues of Fock_matrix_tc_mo_tot'
@@ -57,14 +61,14 @@
   enddo
   accu_nd = dsqrt(accu_nd)
 
-  if( accu_nd .gt. 1d-7 ) then
+  if( accu_nd .gt. 1d-8 ) then
     print *, ' bi-orthog failed'
     print*,'accu_nd MO = ', accu_nd
-!    print*,'overlap_fock_tc_eigvec_mo = '
-!    do i = 1, mo_num
-!      write(*,'(100(F16.10,X))') overlap_fock_tc_eigvec_mo(i,:)
-!    enddo
-!    stop
+    print*,'overlap_fock_tc_eigvec_mo = '
+    do i = 1, mo_num
+      write(*,'(100(F16.10,X))') overlap_fock_tc_eigvec_mo(i,:)
+    enddo
+   stop
   endif
 
   if( dabs(accu_d - dble(mo_num)) .gt. 1e-7 ) then
