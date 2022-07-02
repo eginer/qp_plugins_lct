@@ -112,16 +112,16 @@ END_PROVIDER
    enddo
   enddo
  enddo
- print*,'Diagonal elements of the Fock matrix after '
- do i = 1, mo_num
-  write(*,*)i,fock_diag(i)
- enddo
  integer, allocatable :: iorder(:)
  allocate(iorder(mo_num))
  do i = 1, mo_num
   iorder(i) = i
  enddo 
  call dsort(fock_diag,iorder,mo_num)
+ print*,'Diagonal elements of the Fock matrix after '
+ do i = 1, mo_num
+  write(*,*)i,fock_diag(i)
+ enddo
  do i = 1, mo_num 
   fock_diag_sorted_v_natorb(i) = natorb_tc_eigval(iorder(i))
   do j = 1, mo_num
