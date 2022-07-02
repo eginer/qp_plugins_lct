@@ -10,6 +10,7 @@ program tc_bi_ortho
   read_wf = .True.
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
+  PROVIDE mo_bi_ortho_tc_two_e mo_bi_ortho_tc_one_e
   call routine_diag
 ! call test
 end
@@ -32,7 +33,7 @@ subroutine routine_diag
 ! provide eigval_right_tc_bi_orth
   provide overlap_bi_ortho
   provide htilde_matrix_elmt_bi_ortho
- integer ::i
+ integer ::i,j
  print*,'eigval_right_tc_bi_orth = ',eigval_right_tc_bi_orth(1)
  print*,'e_tc_left_right         = ',e_tc_left_right
  print*,'e_tilde_bi_orth_00      = ',e_tilde_bi_orth_00
@@ -48,6 +49,14 @@ subroutine routine_diag
  do i = 1,N_det
   write(*,'(I5,X,(100(F12.7,X)))')i,leigvec_tc_bi_orth(i,1),reigvec_tc_bi_orth(i,1)
  enddo
+ do j=1,N_states
+   do i=1,N_det
+     psi_l_coef_bi_ortho(i,j) = leigvec_tc_bi_orth(i,j)
+     psi_r_coef_bi_ortho(i,j) = reigvec_tc_bi_orth(i,j)
+   enddo
+ enddo
+ SOFT_TOUCH  psi_l_coef_bi_ortho psi_r_coef_bi_ortho
+ call routine_save_left_right_bi_ortho
 end
 
 !subroutine routine_three_e
