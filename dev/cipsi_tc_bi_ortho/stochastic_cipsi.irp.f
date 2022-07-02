@@ -16,6 +16,10 @@ subroutine run_stochastic_cipsi
   PROVIDE H_apply_buffer_allocated distributed_davidson mo_two_e_integrals_in_map
 
 !  call set_psi_coef_for_delta_to_psi_coef
+  print*,'Diagonal elements of the Fock matrix '
+  do i = 1, mo_num
+   write(*,*)i,Fock_matrix_tc_mo_tot(i,i)
+  enddo
   N_iter = 1
   threshold_generators = 1.d0
   SOFT_TOUCH threshold_generators

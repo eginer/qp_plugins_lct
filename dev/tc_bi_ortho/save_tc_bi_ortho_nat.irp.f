@@ -88,9 +88,51 @@ double precision :: accu
  enddo
  print*,'Trace of the overlap between TC natural orbitals     ',accu_d
  print*,'L1 norm of extra diagonal elements of overlap matrix ',accu_nd
- 
+
 
 END_PROVIDER 
+
+ BEGIN_PROVIDER [ double precision, fock_diag_sorted_r_natorb, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, fock_diag_sorted_l_natorb, (mo_num, mo_num)]
+&BEGIN_PROVIDER [ double precision, fock_diag_sorted_v_natorb, (mo_num)]
+ implicit none
+ integer ::i,j,k
+ print*,'Diagonal elements of the Fock matrix before '
+ do i = 1, mo_num
+  write(*,*)i,Fock_matrix_tc_mo_tot(i,i)
+ enddo
+ double precision, allocatable :: fock_diag(:)
+ allocate(fock_diag(mo_num))
+ fock_diag = 0.d0
+ do i = 1, mo_num
+  fock_diag(i) = 0.d0
+  do j = 1, mo_num
+   do k = 1, mo_num
+    fock_diag(i) += natorb_tc_leigvec_mo(k,i) * Fock_matrix_tc_mo_tot(k,j) * natorb_tc_reigvec_mo(j,i) 
+   enddo
+  enddo
+ enddo
+ print*,'Diagonal elements of the Fock matrix after '
+ do i = 1, mo_num
+  write(*,*)i,fock_diag(i)
+ enddo
+ integer, allocatable :: iorder(:)
+ allocate(iorder(mo_num))
+ do i = 1, mo_num
+  iorder(i) = i
+ enddo 
+ call dsort(fock_diag,iorder,mo_num)
+ do i = 1, mo_num 
+  fock_diag_sorted_v_natorb(i) = natorb_tc_eigval(iorder(i))
+  do j = 1, mo_num
+   fock_diag_sorted_r_natorb(j,i) = natorb_tc_reigvec_mo(j,iorder(i))
+   fock_diag_sorted_l_natorb(j,i) = natorb_tc_leigvec_mo(j,iorder(i))
+  enddo
+ enddo
+
+END_PROVIDER 
+
+
 
  BEGIN_PROVIDER [ double precision, natorb_tc_reigvec_ao, (ao_num, mo_num)]
 &BEGIN_PROVIDER [ double precision, natorb_tc_leigvec_ao, (ao_num, mo_num)]
@@ -111,13 +153,13 @@ END_PROVIDER
 !  ! MO_R x R
   call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
             , mo_r_coef, size(mo_r_coef, 1)                   &
-            , natorb_tc_reigvec_mo, size(natorb_tc_reigvec_mo, 1) &
+            , fock_diag_sorted_r_natorb, size(fock_diag_sorted_r_natorb, 1) &
             , 0.d0, natorb_tc_reigvec_ao, size(natorb_tc_reigvec_ao, 1) )
 !
   ! MO_L x L
   call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
             , mo_l_coef, size(mo_l_coef, 1)                   &
-            , natorb_tc_leigvec_mo, size(natorb_tc_leigvec_mo, 1) &
+            , fock_diag_sorted_l_natorb, size(fock_diag_sorted_l_natorb, 1) &
             , 0.d0, natorb_tc_leigvec_ao, size(natorb_tc_leigvec_ao, 1) )
 
 

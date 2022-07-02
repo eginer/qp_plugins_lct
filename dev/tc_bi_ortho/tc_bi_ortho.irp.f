@@ -10,7 +10,6 @@ program tc_bi_ortho
   read_wf = .True.
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  PROVIDE mo_bi_ortho_tc_two_e mo_bi_ortho_tc_one_e
   call routine_diag
 ! call test
 end
@@ -56,6 +55,7 @@ subroutine routine_diag
    enddo
  enddo
  SOFT_TOUCH  psi_l_coef_bi_ortho psi_r_coef_bi_ortho
+ call save_tc_bi_ortho_wavefunction
  call routine_save_left_right_bi_ortho
 end
 
