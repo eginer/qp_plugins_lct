@@ -1,19 +1,4 @@
 
- BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
-&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
-
-  implicit none
-  integer :: i, k
-
-  do i = 1, N_det_selectors
-    do k = 1, N_states
-      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
-      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
-    enddo
-  enddo
-
-END_PROVIDER
-
 subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
   use selection_types
   implicit none
@@ -26,6 +11,10 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
 !  eigenstates of the CI matrix
   END_DOC
   integer :: i,j
+ double precision :: pt2_tmp,pt1_norm,rpt2_tmp
+ pt2_tmp = pt2_data % pt2(1)
+ pt1_norm = pt2_data % overlap(1,1)
+ rpt2_tmp = pt2_tmp/(1.d0 + pt1_norm)
   print*,'*****'
   print*,'New wave function information'
   print*,'N_det tc               = ',N_det
@@ -37,11 +26,13 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
    print*,'*****'
    print*,'previous wave function info'
    print*,'norm(before)      = ',norm
-   print*,'E(before)         = ',E_tc + nuclear_repulsion
-   print*,'PT1 norm          = ',dsqrt(pt2_data % overlap(1,1))
-   print*,'E(before) + PT2   = ',E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm
-   print*,'PT2               = ',pt2_data % pt2(1)
-   print*,'Ndet, E_tc, E+PT2 = ',ndet,E_tc + nuclear_repulsion,E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm,dsqrt(pt2_data % overlap(1,1))
+   print*,'E(before)         = ',E_tc 
+   print*,'PT1 norm          = ',dsqrt(pt1_norm)
+   print*,'PT2               = ',pt2_tmp
+   print*,'rPT2              = ',rpt2_tmp
+   print*,'E(before) + PT2   = ',E_tc + pt2_tmp/norm
+   print*,'E(before) +rPT2   = ',E_tc + rpt2_tmp/norm
+   write(*,'(A22,X,I10,X,100(F16.8,X))')'Ndet,E,E+PT2,E+RPT2=',ndet,E_tc ,E_tc  + pt2_tmp/norm,E_tc  + rpt2_tmp/norm
    print*,'*****'
   endif
   E_tc  = eigval_right_tc_bi_orth(1)
@@ -111,3 +102,20 @@ subroutine print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 
 
 end
+
+ BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
+&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
+
+  implicit none
+  integer :: i, k
+
+  do i = 1, N_det_selectors
+    do k = 1, N_states
+!      psi_selectors_rcoef_bi_orth_transp(k,i) = psi_r_coef_bi_ortho(psi_det_sorted_gen_order(i),k)
+!      psi_selectors_lcoef_bi_orth_transp(k,i) = psi_l_coef_bi_ortho(psi_det_sorted_gen_order(i),k)
+      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(psi_det_sorted_order(i),k)
+      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(psi_det_sorted_order(i),k)
+    enddo
+  enddo
+
+END_PROVIDER

@@ -1,10 +1,7 @@
-
- BEGIN_PROVIDER [ double precision, trans_dipole_x, (N_states,N_states) ]
-&BEGIN_PROVIDER [ double precision, trans_dipole_y, (N_states,N_states) ]
-&BEGIN_PROVIDER [ double precision, trans_dipole_z, (N_states,N_states) ]
+ BEGIN_PROVIDER [ double precision, transition_matrix_transposed, (N_states,N_states,mo_num, mo_num) ]
   implicit none
   BEGIN_DOC
-  ! Dipole transition matrix 
+  ! Transition density matrix 
   END_DOC
 
   integer                        :: j,k,l,m,k_a,k_b,n
@@ -14,29 +11,25 @@
   integer                        :: h1,h2,p1,p2,s1,s2, degree
   integer(bit_kind)              :: tmp_det(N_int,2), tmp_det2(N_int)
   integer                        :: exc(0:2,2),n_occ(2)
-  double precision, allocatable  :: tmp_x(:,:), tmp_y(:,:), tmp_z(:,:)
+  double precision, allocatable  :: transi_mat_tmp(:,:,:,:)
   integer                        :: krow, kcol, lrow, lcol
 
   PROVIDE psi_det mo_dipole_x mo_dipole_y mo_dipole_z 
 
-  print*,'providing the trans_dipole  '
-  trans_dipole_x = 0.d0
-  trans_dipole_y = 0.d0
-  trans_dipole_z = 0.d0
+  print*,'providing the transition_matrix_transposed  '
+  transition_matrix_transposed = 0.d0
   !$OMP PARALLEL DEFAULT(NONE)                                      &
       !$OMP PRIVATE(j,k,n,k_a,k_b,l,m,occ,ck, cl, ckl,phase,h1,h2,p1,p2,s1,s2, degree,exc,&
-      !$OMP  tmp_x, tmp_y, tmp_z, n_occ, krow, kcol, lrow, lcol, tmp_det, tmp_det2)&
-      !$OMP SHARED(psi_det,psi_coef,N_int,N_states,elec_alpha_num, mo_dipole_x, mo_dipole_y, mo_dipole_z, &
-      !$OMP  elec_beta_num,trans_dipole_x,trans_dipole_y,trans_dipole_z,N_det,&
+      !$OMP   transi_mat_tmp, n_occ, krow, kcol, lrow, lcol, tmp_det, tmp_det2)&
+      !$OMP SHARED(psi_det,psi_coef,N_int,N_states,elec_alpha_num,mo_num, &
+      !$OMP  elec_beta_num,transition_matrix_transposed,N_det,&
       !$OMP  psi_bilinear_matrix_rows,psi_bilinear_matrix_columns,&
       !$OMP  psi_bilinear_matrix_transp_rows, psi_bilinear_matrix_transp_columns,&
       !$OMP  psi_bilinear_matrix_order_reverse, psi_det_alpha_unique, psi_det_beta_unique,&
       !$OMP  psi_bilinear_matrix_values, psi_bilinear_matrix_transp_values,&
       !$OMP  N_det_alpha_unique,N_det_beta_unique,irp_here)
-  allocate(tmp_x(N_states,N_states), tmp_y(N_states,N_states), tmp_z(N_states,N_states))
-  tmp_x = 0.d0
-  tmp_y = 0.d0
-  tmp_z = 0.d0
+  allocate(transi_mat_tmp(N_states,N_states,mo_num, mo_num))
+  transi_mat_tmp = 0.d0
   !$OMP DO SCHEDULE(dynamic,64)
   do k_a=1,N_det
     krow = psi_bilinear_matrix_rows(k_a)
@@ -57,9 +50,7 @@
        ck = psi_bilinear_matrix_values(k_a,m)*psi_bilinear_matrix_values(k_a,n)
        do l=1,elec_alpha_num
          j = occ(l,1)
-         tmp_x(n,m) += ck * mo_dipole_x(j,j)
-         tmp_y(n,m) += ck * mo_dipole_y(j,j)
-         tmp_z(n,m) += ck * mo_dipole_z(j,j)
+         transi_mat_tmp(n,m,j,j) += ck 
        enddo
       enddo
     enddo
@@ -79,13 +70,9 @@
         do m=1,N_states
          do n = 1,N_states
           ckl = psi_bilinear_matrix_values(k_a,m)*psi_bilinear_matrix_values(l,n) * phase
-          tmp_x(n,m) +=  ckl * mo_dipole_x(h1,p1)
-          tmp_y(n,m) +=  ckl * mo_dipole_y(h1,p1)
-          tmp_z(n,m) +=  ckl * mo_dipole_z(h1,p1)
+          transi_mat_tmp(n,m,h1,p1) +=  ckl 
           ckl = psi_bilinear_matrix_values(k_a,n)*psi_bilinear_matrix_values(l,m) * phase
-          tmp_x(n,m) +=  ckl * mo_dipole_x(h1,p1)
-          tmp_y(n,m) +=  ckl * mo_dipole_y(h1,p1)
-          tmp_z(n,m) +=  ckl * mo_dipole_z(h1,p1)
+          transi_mat_tmp(n,m,h1,p1) +=  ckl 
          enddo
         enddo
       endif
@@ -99,15 +86,11 @@
   !$OMP END DO NOWAIT
 
   !$OMP CRITICAL
-   trans_dipole_x += tmp_x 
-   trans_dipole_y += tmp_y
-   trans_dipole_z += tmp_z
+   transition_matrix_transposed += transi_mat_tmp
   !$OMP END CRITICAL
-  deallocate(tmp_x,tmp_y,tmp_z)
-  allocate(tmp_x(N_states,N_states), tmp_y(N_states,N_states), tmp_z(N_states,N_states))
-  tmp_x = 0.d0
-  tmp_y = 0.d0
-  tmp_z = 0.d0
+  deallocate(transi_mat_tmp)
+  allocate(transi_mat_tmp(N_states,N_states, mo_num, mo_num))
+  transi_mat_tmp = 0.d0
 
   !$OMP DO SCHEDULE(dynamic,64)
   do k_b=1,N_det
@@ -129,9 +112,7 @@
        ck = psi_bilinear_matrix_values(k_b,m)*psi_bilinear_matrix_values(k_b,n)
        do l=1,elec_beta_num
          j = occ(l,2)
-         tmp_x(n,m) += ck * mo_dipole_x(j,j)
-         tmp_y(n,m) += ck * mo_dipole_y(j,j)
-         tmp_z(n,m) += ck * mo_dipole_z(j,j)
+         transi_mat_tmp(n,m,j,j) += ck 
        enddo
       enddo
     enddo
@@ -151,13 +132,9 @@
         do m=1,N_states
          do n = 1,N_states
           ckl = psi_bilinear_matrix_transp_values(k_b,m)*psi_bilinear_matrix_transp_values(l,n) * phase
-          tmp_x(n,m) +=  ckl * mo_dipole_x(h1,p1)
-          tmp_y(n,m) +=  ckl * mo_dipole_y(h1,p1)
-          tmp_z(n,m) +=  ckl * mo_dipole_z(h1,p1)
+          transi_mat_tmp(n,m,h1,p1) +=  ckl 
           ckl = psi_bilinear_matrix_transp_values(k_b,n)*psi_bilinear_matrix_transp_values(l,m) * phase
-          tmp_x(n,m) +=  ckl * mo_dipole_x(h1,p1)
-          tmp_y(n,m) +=  ckl * mo_dipole_y(h1,p1)
-          tmp_z(n,m) +=  ckl * mo_dipole_z(h1,p1)
+          transi_mat_tmp(n,m,h1,p1) +=  ckl 
          enddo
         enddo
       endif
@@ -170,57 +147,68 @@
   enddo
   !$OMP END DO NOWAIT
   !$OMP CRITICAL
-   trans_dipole_x += tmp_x 
-   trans_dipole_y += tmp_y
-   trans_dipole_z += tmp_z
+   transition_matrix_transposed += transi_mat_tmp
   !$OMP END CRITICAL
 
-  deallocate(tmp_x,tmp_y,tmp_z)
+  deallocate(transi_mat_tmp)
   !$OMP END PARALLEL
-  print*,'provided the trans_dipole '
+  print*,'provided the transition_matrix_transposed '
 
 END_PROVIDER
 
- BEGIN_PROVIDER [double precision, trans_dipole_x_bourrin, (N_states,N_states)]
-&BEGIN_PROVIDER [double precision, trans_dipole_y_bourrin, (N_states,N_states)]
-&BEGIN_PROVIDER [double precision, trans_dipole_z_bourrin, (N_states,N_states)]
+ BEGIN_PROVIDER [ double precision, transition_matrix, (mo_num, mo_num,N_states,N_states) ]
  implicit none
- integer :: i,j,m,n
- double precision :: xij,yij,zij
-
- trans_dipole_x_bourrin = 0.d0
- trans_dipole_y_bourrin = 0.d0
- trans_dipole_z_bourrin = 0.d0
-
-  print*,'providing the trans_dipole_bourrin '
- do i = 1, N_det
-  do j = 1, N_det
-   call i_H_j_eff_pot(psi_det(1,1,i),psi_det(1,1,j),mo_dipole_x,mo_dipole_x,mo_num,N_int,xij)
-   call i_H_j_eff_pot(psi_det(1,1,i),psi_det(1,1,j),mo_dipole_y,mo_dipole_y,mo_num,N_int,yij)
-   call i_H_j_eff_pot(psi_det(1,1,i),psi_det(1,1,j),mo_dipole_z,mo_dipole_z,mo_num,N_int,zij)
-   do m = 1, N_states
-    do n = 1, N_states
-     trans_dipole_x_bourrin(n,m) += psi_coef(i,n) * psi_coef(j,m) * xij
-     trans_dipole_y_bourrin(n,m) += psi_coef(i,n) * psi_coef(j,m) * yij
-     trans_dipole_z_bourrin(n,m) += psi_coef(i,n) * psi_coef(j,m) * zij
+ integer :: i,j,istate,jstate,m,n,p,h
+! do i = 1, mo_num
+!  do j = 1, mo_num
+!   do istate = 1, N_states
+!    do jstate = 1, N_states
+!     transition_matrix(j,i,jstate,istate) = transition_matrix_transposed(jstate,istate,j,i)
+!    enddo
+!   enddo
+!  enddo
+! enddo
+ double precision :: phase
+ integer, allocatable           :: occ(:,:)
+ integer                        :: n_occ_ab(2),degree,exc(0:2,2,2)
+ allocate(occ(N_int*bit_kind_size,2))
+ transition_matrix = 0.d0
+ do istate = 1, N_states
+  do jstate = 1, N_states
+   do i = 1, N_det
+    do j = 1, N_det
+     call get_excitation_degree(psi_det(1,1,i),psi_det(1,1,j),degree,N_int)
+     if(degree.gt.1)then
+      cycle
+     else if (degree == 0)then
+      call bitstring_to_list_ab(psi_det(1,1,i), occ, n_occ_ab, N_int)
+      do p = 1, n_occ_ab(1) ! browsing the alpha electrons
+       m = occ(p,1)
+       transition_matrix(m,m,istate,jstate)+= psi_coef(i,istate) * psi_coef(j,jstate)
+      enddo
+      do p = 1, n_occ_ab(2) ! browsing the beta electrons
+       m = occ(p,1)
+       transition_matrix(m,m,istate,jstate)+= psi_coef(i,istate) * psi_coef(j,jstate)
+      enddo
+     else
+      call get_single_excitation(psi_det(1,1,j),psi_det(1,1,i),exc,phase,N_int)
+!      call debug_det(psi_det(1,1,j),N_int)
+!      call debug_det(psi_det(1,1,i),N_int)
+      if (exc(0,1,1) == 1) then
+        ! Single alpha
+        h = exc(1,1,1) ! hole in psi_det(1,1,j) 
+        p = exc(1,2,1) ! particle in psi_det(1,1,j) 
+      else
+        ! Single beta
+        h = exc(1,1,2) ! hole in psi_det(1,1,j) 
+        p = exc(1,2,2) ! particle in psi_det(1,1,j) 
+      endif
+!      print*,'h,p',h,p
+!      pause
+      transition_matrix(p,h,istate,jstate)+= phase * psi_coef(i,istate) * psi_coef(j,jstate)
+     endif
     enddo
    enddo
   enddo
  enddo
-  print*,'provided the trans_dipole_bourrin '
-
-
-END_PROVIDER 
-
-
-BEGIN_PROVIDER [double precision, oscillator_strength, (N_states)]
- implicit none
- integer :: istate
- oscillator_strength = 0.d0
- do istate = 2, N_states
-  oscillator_strength(istate) = 2.d0/3.d0 * dabs(CI_energy(1) - CI_energy(istate)) * & 
-            ( trans_dipole_x(1,istate)**2.d0 + trans_dipole_y(1,istate)**2.d0 + trans_dipole_z(1,istate)**2.d0 )
- enddo
-
-END_PROVIDER 
-
+ END_PROVIDER 
