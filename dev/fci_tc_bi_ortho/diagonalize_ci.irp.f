@@ -1,19 +1,4 @@
 
- BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
-&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
-
-  implicit none
-  integer :: i, k
-
-  do i = 1, N_det_selectors
-    do k = 1, N_states
-      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
-      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
-    enddo
-  enddo
-
-END_PROVIDER
-
 subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
   use selection_types
   implicit none
@@ -111,3 +96,20 @@ subroutine print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
 
 
 end
+
+ BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
+&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
+
+  implicit none
+  integer :: i, k
+
+  do i = 1, N_det_selectors
+    do k = 1, N_states
+!      psi_selectors_rcoef_bi_orth_transp(k,i) = psi_r_coef_bi_ortho(psi_det_sorted_gen_order(i),k)
+!      psi_selectors_lcoef_bi_orth_transp(k,i) = psi_l_coef_bi_ortho(psi_det_sorted_gen_order(i),k)
+      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)                 
+      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)                 
+    enddo
+  enddo
+
+END_PROVIDER

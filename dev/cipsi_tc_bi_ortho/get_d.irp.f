@@ -77,7 +77,7 @@ subroutine get_d3_htc(gen, bannedOrb, banned, mat_m, mat_p, mask, p, sp, rcoefs,
 
         call apply_particles(mask, 1, p1, 2, p2, det, ok, N_int)
         call htilde_mu_mat_bi_ortho_tot(gen, det, N_int, i_h_alpha)
-        call htilde_mu_mat_bi_ortho_tot( det,gen, N_int, alpha_h_i)
+        call htilde_mu_mat_bi_ortho_tot(det,gen, N_int, alpha_h_i)
 !        call hji_hij_mu_mat_tot(gen, det, N_int,i_h_alpha , alpha_h_i)
         if( dabs(alpha_h_i) .gt. 0.d0) then
           !DIR$ LOOP COUNT AVG(4)

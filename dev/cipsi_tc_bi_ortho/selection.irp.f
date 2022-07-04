@@ -82,6 +82,8 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
   PROVIDE psi_bilinear_matrix_rows psi_det_sorted_order psi_bilinear_matrix_order
   PROVIDE psi_bilinear_matrix_transp_rows_loc psi_bilinear_matrix_transp_columns
   PROVIDE psi_bilinear_matrix_transp_order psi_selectors_coef_transp
+  PROVIDE psi_selectors_rcoef_bi_orth_transp psi_selectors_lcoef_bi_orth_transp
+
   PROVIDE banned_excitation
 
   monoAdo = .true.
@@ -510,6 +512,8 @@ subroutine splash_pq(mask, sp, det, i_gen, N_sel, bannedOrb, banned, mat, intere
 
 
   PROVIDE psi_selectors_coef_transp psi_det_sorted
+  PROVIDE psi_selectors_rcoef_bi_orth_transp psi_selectors_lcoef_bi_orth_transp
+
 
   mat   = 0d0
   mat_p = 0d0
@@ -770,17 +774,18 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
         delta_E = E0(istate) - Hii + E_shift
 
-!        call get_excitation_degree( HF_bitmask, det, degree, N_int)
-
-        !psi_h_alpha = 0.d0
-        !alpha_h_psi = 0.d0
-        !do iii = 1, N_det
-        !  call hji_hij_mu_mat_tot(psi_det(1,1,iii), det, N_int, i_h_alpha, alpha_h_i)
-        !  psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
-        !  alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
-        !enddo
+        call get_excitation_degree( HF_bitmask, det, degree, N_int)
         psi_h_alpha = mat_m(istate, p1, p2)
         alpha_h_psi = mat_p(istate, p1, p2)
+
+!        psi_h_alpha = 0.d0
+!        alpha_h_psi = 0.d0
+!        do iii = 1, N_det
+!          call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,iii), det, N_int, i_h_alpha)
+!          call htilde_mu_mat_bi_ortho_tot(det, psi_det(1,1,iii), N_int, alpha_h_i)
+!          psi_h_alpha += i_h_alpha * leigvec_tc_bi_orth(iii,1)
+!          alpha_h_psi += alpha_h_i * reigvec_tc_bi_orth(iii,1) 
+!        enddo
 
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha

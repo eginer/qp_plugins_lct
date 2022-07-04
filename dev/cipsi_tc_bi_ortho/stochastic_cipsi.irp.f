@@ -13,9 +13,10 @@ subroutine run_stochastic_cipsi
 
   double precision :: rss
   double precision, external :: memory_of_double
+  double precision :: correlation_energy_ratio,E_denom,E_tc,norm
+  double precision, allocatable :: ept2(:), pt1(:),extrap_energy(:)
   PROVIDE H_apply_buffer_allocated distributed_davidson mo_two_e_integrals_in_map
 
-!  call set_psi_coef_for_delta_to_psi_coef
   print*,'Diagonal elements of the Fock matrix '
   do i = 1, mo_num
    write(*,*)i,Fock_matrix_tc_mo_tot(i,i)
@@ -58,8 +59,8 @@ subroutine run_stochastic_cipsi
   endif
 
   if (N_det > N_det_max) then
-    psi_det = psi_det_sorted
-    psi_coef = psi_coef_sorted
+    psi_det(1:N_int,1:2,1:N_det) = psi_det_sorted_gen(1:N_int,1:2,1:N_det)
+    psi_coef(1:N_det,1:N_states) = psi_coef_sorted_gen(1:N_det,1:N_states)
     N_det = N_det_max
     soft_touch N_det psi_det psi_coef
     if (s2_eig) then
@@ -70,8 +71,6 @@ subroutine run_stochastic_cipsi
 !    call routine_save_right
   endif
 
-  double precision :: correlation_energy_ratio,E_denom,E_tc,norm
-  double precision, allocatable :: ept2(:), pt1(:),extrap_energy(:)
   allocate(ept2(1000),pt1(1000),extrap_energy(100))
 
   correlation_energy_ratio = 0.d0

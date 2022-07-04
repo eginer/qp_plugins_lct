@@ -9,7 +9,7 @@ subroutine run_cipsi
 
   implicit none
 
-  integer                        :: i,j,k
+  integer                        :: i,j,k,ndet
   type(pt2_type)                 :: pt2_data, pt2_data_err
   double precision, allocatable  :: zeros(:)
   integer                        :: to_select
@@ -18,8 +18,14 @@ subroutine run_cipsi
   double precision :: threshold_generators_save
   double precision :: rss
   double precision, external :: memory_of_double
+  double precision :: correlation_energy_ratio,E_denom,E_tc,norm
 
-  PROVIDE H_apply_buffer_allocated
+  PROVIDE H_apply_buffer_allocated distributed_davidson
+
+  print*,'Diagonal elements of the Fock matrix '
+  do i = 1, mo_num
+   write(*,*)i,Fock_matrix_tc_mo_tot(i,i)
+  enddo
 
   N_iter = 1
   threshold_generators = 1.d0
@@ -33,7 +39,7 @@ subroutine run_cipsi
   call pt2_alloc(pt2_data_err, N_states)
 
   double precision               :: hf_energy_ref
-  logical                        :: has
+  logical                        :: has, print_pt2
   double precision               :: relative_error
 
   relative_error=PT2_relative_error
@@ -47,8 +53,8 @@ subroutine run_cipsi
   if (s2_eig) then
     call make_s2_eigenfunction
   endif
-  call diagonalize_CI
-  call save_wavefunction
+  print_pt2 = .False.
+  call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
 
   call ezfio_has_hartree_fock_energy(has)
   if (has) then
@@ -58,32 +64,32 @@ subroutine run_cipsi
   endif
 
   if (N_det > N_det_max) then
-    psi_det = psi_det_sorted
-    psi_coef = psi_coef_sorted
+    psi_det(1:N_int,1:2,1:N_det) = psi_det_sorted_gen(1:N_int,1:2,1:N_det)
+    psi_coef(1:N_det,1:N_states) = psi_coef_sorted_gen(1:N_det,1:N_states)
     N_det = N_det_max
     soft_touch N_det psi_det psi_coef
     if (s2_eig) then
       call make_s2_eigenfunction
     endif
-    call diagonalize_CI
-    call save_wavefunction
+    print_pt2 = .False.
+    call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
+!    call routine_save_right
   endif
-
-  double precision :: correlation_energy_ratio
 
   correlation_energy_ratio = 0.d0
 
+  print_pt2 = .True.
   do while (                                                         &
         (N_det < N_det_max) .and.                                    &
-        (maxval(abs(pt2_data % pt2(1:N_states))) > pt2_max) .and.               &
-        (maxval(abs(pt2_data % variance(1:N_states))) > variance_max) .and.     &
-        (correlation_energy_ratio <= correlation_energy_ratio_max)   &
+        (maxval(abs(pt2_data % pt2(1:N_states))) > pt2_max)          &
         )
       write(*,'(A)')  '--------------------------------------------------------------------------------'
 
 
     to_select = int(sqrt(dble(N_states))*dble(N_det)*selection_factor)
     to_select = max(N_states_diag, to_select)
+
+    E_denom = E_tc ! TC Energy of the current wave function 
     if (do_pt2) then
       call pt2_dealloc(pt2_data)
       call pt2_dealloc(pt2_data_err)
@@ -92,7 +98,7 @@ subroutine run_cipsi
       threshold_generators_save = threshold_generators
       threshold_generators = 1.d0
       SOFT_TOUCH threshold_generators
-      call ZMQ_pt2(psi_energy_with_nucl_rep,pt2_data,pt2_data_err,relative_error, 0) ! Stochastic PT2
+      call ZMQ_pt2(E_denom, pt2_data, pt2_data_err, relative_error,to_select) ! Stochastic PT2 and selection
       threshold_generators = threshold_generators_save
       SOFT_TOUCH threshold_generators
     else
@@ -101,18 +107,6 @@ subroutine run_cipsi
       call ZMQ_selection(to_select, pt2_data)
     endif
 
-    correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
-                    (psi_energy_with_nucl_rep(1) + pt2_data % rpt2(1) - hf_energy_ref)
-    correlation_energy_ratio = min(1.d0,correlation_energy_ratio)
-
-    call write_double(6,correlation_energy_ratio, 'Correlation ratio')
-    call print_summary(psi_energy_with_nucl_rep, &
-       pt2_data, pt2_data_err, N_det,N_configuration,N_states,psi_s2)
-
-    call save_energy(psi_energy_with_nucl_rep, pt2_data % pt2)
-
-    call save_iterations(psi_energy_with_nucl_rep(1:N_states),pt2_data % rpt2,N_det)
-    call print_extrapolated_energy()
     N_iter += 1
 
     if (qp_stop()) exit
@@ -128,41 +122,15 @@ subroutine run_cipsi
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted
 
-    call diagonalize_CI
-    call save_wavefunction
-    call save_energy(psi_energy_with_nucl_rep, zeros)
+    call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
     if (qp_stop()) exit
   enddo
 
-  if (.not.qp_stop()) then
-    if (N_det < N_det_max) then
-        call diagonalize_CI
-        call save_wavefunction
-        call save_energy(psi_energy_with_nucl_rep, zeros)
-    endif
-
-    if (do_pt2) then
-      call pt2_dealloc(pt2_data)
-      call pt2_dealloc(pt2_data_err)
-      call pt2_alloc(pt2_data, N_states)
-      call pt2_alloc(pt2_data_err, N_states)
-      threshold_generators = 1d0
-      SOFT_TOUCH threshold_generators
-      call ZMQ_pt2(psi_energy_with_nucl_rep, pt2_data, pt2_data_err, relative_error, 0) ! Stochastic PT2
-      SOFT_TOUCH threshold_generators
-    endif
-    print *,  'N_det             = ', N_det
-    print *,  'N_cfg             = ', N_configuration
-    print *,  'N_states          = ', N_states
-    print*,   'correlation_ratio = ', correlation_energy_ratio
-
-    call save_energy(psi_energy_with_nucl_rep, pt2_data % pt2)
-    call print_summary(psi_energy_with_nucl_rep(1:N_states), &
-      pt2_data, pt2_data_err, N_det,N_configuration,N_states,psi_s2)
-    call save_iterations(psi_energy_with_nucl_rep(1:N_states),pt2_data % rpt2,N_det)
-    call print_extrapolated_energy()
-  endif
   call pt2_dealloc(pt2_data)
   call pt2_dealloc(pt2_data_err)
+  call pt2_alloc(pt2_data, N_states)
+  call pt2_alloc(pt2_data_err, N_states)
+  call ZMQ_pt2(E_tc, pt2_data, pt2_data_err, relative_error,0) ! Stochastic PT2 and selection
+  call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
 
 end
