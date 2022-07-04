@@ -1,6 +1,7 @@
 subroutine provide_all_three_ints_bi_ortho
  implicit none
  if(three_body_h_tc)then
+  print*,'three_body_h_tc = ',three_body_h_tc
   PROVIDE three_e_3_idx_direct_bi_ort three_e_3_idx_cycle_1_bi_ort three_e_3_idx_cycle_2_bi_ort
   PROVIDE three_e_3_idx_exch23_bi_ort three_e_3_idx_exch13_bi_ort three_e_3_idx_exch12_bi_ort
   PROVIDE three_e_4_idx_direct_bi_ort three_e_4_idx_cycle_1_bi_ort three_e_4_idx_cycle_2_bi_ort

@@ -38,6 +38,7 @@
  implicit none
  double precision :: hmono,htwoe,hthree,htilde_ij
  call htilde_mu_mat_bi_ortho(HF_bitmask,HF_bitmask,N_int,hmono,htwoe,hthree,e_tilde_bi_orth_00)
+ e_tilde_bi_orth_00 += nuclear_repulsion
  END_PROVIDER 
 
  BEGIN_PROVIDER [ double precision, e_corr_bi_orth ]
@@ -78,7 +79,8 @@
    e_tc_left_right += htilde_ij * reigvec_tc_bi_orth(i,1) * leigvec_tc_bi_orth(j,1)
   enddo
  enddo
- e_tc_left_right *= 1.d0/accu
+ e_tc_left_right *= 1.d0/accu 
+ e_tc_left_right += nuclear_repulsion
 
  END_PROVIDER 
 

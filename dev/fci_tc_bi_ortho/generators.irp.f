@@ -69,3 +69,43 @@ BEGIN_PROVIDER [ integer, N_det_generators ]
  call write_int(6,N_det_generators,'Number of generators')
 END_PROVIDER
 
+
+ BEGIN_PROVIDER [double precision, reigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+&BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+
+   implicit none
+   integer                       :: i, j, k
+   reigvec_tc_bi_orth_sorted = 0.d0
+   leigvec_tc_bi_orth_sorted = 0.d0
+   do i = 1, N_det
+    reigvec_tc_bi_orth_sorted(i,1) = psi_r_coef_bi_ortho(psi_det_sorted_gen_order(i),1)
+    leigvec_tc_bi_orth_sorted(i,1) = psi_l_coef_bi_ortho(psi_det_sorted_gen_order(i),1)
+   enddo
+!   integer, allocatable          :: iorder(:)
+!   double precision, allocatable :: tmp_sort(:)
+!
+!   allocate ( tmp_sort(N_det), iorder(N_det) )
+!
+!   do i = 1, N_det
+!     tmp_sort(i) = -dabs(reigvec_tc_bi_orth(i,1) * leigvec_tc_bi_orth(i,1))
+!     iorder(i) = i
+!   enddo
+!   call dsort(tmp_sort, iorder, N_det)
+!   deallocate(tmp_sort)
+!
+!   do k = 1, N_states
+!     do i = 1, N_det
+!       j = iorder(i)
+!       reigvec_tc_bi_orth_sorted(i,k) = reigvec_tc_bi_orth(j,k)
+!       leigvec_tc_bi_orth_sorted(i,k) = leigvec_tc_bi_orth(j,k)
+!     enddo
+!   enddo
+!
+!   reigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
+!   leigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
+!
+!   deallocate(iorder)
+
+END_PROVIDER
+
+

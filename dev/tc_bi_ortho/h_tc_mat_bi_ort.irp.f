@@ -64,6 +64,9 @@ subroutine htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
    endif
  endif
  htot = hmono + htwoe + hthree
+ if(degree==0)then
+  htot += nuclear_repulsion
+ endif
  
 end
 

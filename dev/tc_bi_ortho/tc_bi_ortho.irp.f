@@ -56,7 +56,7 @@ subroutine routine_diag
  enddo
  SOFT_TOUCH  psi_l_coef_bi_ortho psi_r_coef_bi_ortho
  call save_tc_bi_ortho_wavefunction
- call routine_save_left_right_bi_ortho
+! call routine_save_left_right_bi_ortho
 end
 
 !subroutine routine_three_e

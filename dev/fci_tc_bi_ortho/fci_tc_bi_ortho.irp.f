@@ -61,7 +61,9 @@ subroutine run_cipsi_tc
     ! ---
     PROVIDE psi_det psi_coef mo_bi_ortho_tc_two_e mo_bi_ortho_tc_one_e
     if(elec_alpha_num+elec_beta_num.ge.3)then
-     call provide_all_three_ints_bi_ortho
+      if(three_body_h_tc)then
+        call provide_all_three_ints_bi_ortho
+      endif
     endif
     ! ---
 
@@ -78,7 +80,9 @@ subroutine run_cipsi_tc
     PROVIDE pt2_min_parallel_tasks 
     PROVIDE mo_bi_ortho_tc_two_e mo_bi_ortho_tc_one_e
     if(elec_alpha_num+elec_beta_num.ge.3)then
-     call provide_all_three_ints_bi_ortho
+      if(three_body_h_tc)then
+        call provide_all_three_ints_bi_ortho
+      endif
     endif
     ! ---
 
