@@ -525,7 +525,6 @@ subroutine splash_pq(mask, sp, det, i_gen, N_sel, bannedOrb, banned, mat, intere
   end do
 
   do i = 1, N_sel
-
     if(interesting(i) < 0) then
       stop 'prefetch interesting(i) and det(i)'
     endif

@@ -357,8 +357,8 @@ subroutine write_left_right()
     reigvec_tc_tmp(j,i) = reigvec_tc(j,i)
    enddo
   enddo
-  !call ezfio_set_tc_h_clean_reigvec_tc(reigvec_tc_tmp)
-  !call ezfio_set_tc_h_clean_leigvec_tc(leigvec_tc_tmp)
+  call ezfio_set_tc_h_clean_reigvec_tc(reigvec_tc_tmp)
+  call ezfio_set_tc_h_clean_leigvec_tc(leigvec_tc_tmp)
   deallocate( leigvec_tc_tmp , reigvec_tc_tmp )
 
 end subroutine write_left_right
