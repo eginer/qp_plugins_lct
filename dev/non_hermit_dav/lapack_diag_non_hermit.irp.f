@@ -121,7 +121,7 @@ subroutine lapack_diag_non_sym(n,A,WR,WI,VL,VR)
   endif
 end 
 
-! ---
+
 
 subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
 
@@ -716,7 +716,7 @@ subroutine non_hrmt_bieig_random_diag(n, A, leigvec, reigvec, n_real_eigv, eigva
 
 end 
 
-subroutine non_hrmt_bieig_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
+subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   BEGIN_DOC
   ! 
@@ -743,7 +743,6 @@ subroutine non_hrmt_bieig_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   double precision, allocatable :: S(:,:)
   double precision :: r
 
-
   ! -------------------------------------------------------------------------------------
   !
 
@@ -751,15 +750,20 @@ subroutine non_hrmt_bieig_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   allocate( WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n), iorder(n))
 
   Aw(:,:) = A(:,:)
-  call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
+   do i = 1, n
+     call RANDOM_NUMBER(r)
+     Aw(i,i) += 10.d-10* r
+   enddo
+  call lapack_diag_non_sym(n, Aw, WR, WI, VL, VR)
 
   ! -------------------------------------------------------------------------------------
   !                  track & sort the real eigenvalues 
 
   i = 1
-  thr    = 1.d-5
+  thr    = 1.d-15
   n_real_eigv = 0
   do while (i.le.n) 
+!    print*,i,dabs(WI(i))
     if( dabs(WI(i)).gt.thr ) then
       print*, 'Found an imaginary component to eigenvalue on i = ', i
       print*, 'Re(i) , Im(i)  ', WR(i), WI(i)
@@ -813,44 +817,21 @@ subroutine non_hrmt_bieig_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
     enddo
   enddo
   accu_nd = dsqrt(accu_nd)
-
-  if( accu_nd .lt. 1d-8 ) then
-    ! L x R is already bi-orthogonal
-
-    print *, ' L & T bi-orthogonality: ok'
-    deallocate( S )
-    return
-
-  else
-    ! impose bi-orthogonality 
-
-    print *, ' L & T bi-orthogonality: not imposed yet'
-    print *, ' accu_nd = ', accu_nd
-!    call impose_biorthog_qr( n, n, leigvec, reigvec, S )
-    deallocate( S )
-  
-  endif
-
-  !
-  ! -------------------------------------------------------------------------------------
-
-  return
-
 end 
 
-subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
+subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, eigval)
 
   BEGIN_DOC
   ! 
   ! routine which returns the EIGENVALUES sorted the REAL part and corresponding LEFT/RIGHT eigenvetors 
-  ! of a non hermitian matrix A(n,n)
+  ! for A R = lambda B R and A^\dagger L = lambda B^\dagger L
   !
   ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
   !
   END_DOC
   implicit none
   integer,          intent(in)  :: n
-  double precision, intent(in)  :: A(n,n)
+  double precision, intent(in)  :: A(n,n),B(n,n)
   integer,          intent(out) :: n_real_eigv
   double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
 
@@ -860,56 +841,42 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   double precision              :: accu_nd
 
   integer,          allocatable :: iorder(:)
-  double precision, allocatable :: Aw(:,:)
-  double precision, allocatable :: WR(:), WI(:), VL(:,:), VR(:,:)
+  double precision, allocatable :: Aw(:,:),Bw(:,:)
+  double precision, allocatable :: WR(:), WI(:), VL(:,:), VR(:,:), beta(:)
   double precision, allocatable :: S(:,:)
-  double precision :: r,eps
-
+  double precision :: r
 
   ! -------------------------------------------------------------------------------------
   !
 
   print *, 'Computing the left/right eigenvectors ...'
-  allocate( WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n), iorder(n))
+  allocate( WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n), Bw(n,n),iorder(n),beta(n))
 
   Aw(:,:) = A(:,:)
-  call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
-  double precision, allocatable :: im_part(:)
-  allocate(im_part(n))
-!  do i = 1, n
-!   iorder(i) = i
-!   im_part(i) = -dabs(WI(i))
-!  enddo
-!  call dsort(im_part, iorder, n)
-!  eps = dabs(im_part(1)) * 10.d0
-!  Aw = A
-!  do i = 1, n
-!    call RANDOM_NUMBER(r)
-!    Aw(i,i) += eps * r
-!  enddo
-!  call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
+  Bw(:,:) = B(:,:)
+  call lapack_diag_general_non_sym(n,Aw,Bw,WR,beta,WI,VL,VR)
 
   ! -------------------------------------------------------------------------------------
   !                  track & sort the real eigenvalues 
 
   i = 1
-  thr    = 1.d-5
+  thr    = 1.d-10
   n_real_eigv = 0
   do while (i.le.n) 
     if( dabs(WI(i)).gt.thr ) then
       print*, 'Found an imaginary component to eigenvalue on i = ', i
       print*, 'Re(i) , Im(i)  ', WR(i), WI(i)
       iorder(i) = i
-      eigval(i) = WR(i)
+      eigval(i) = WR(i)/(beta(i) + 1.d-10)
       i+=1
       print*, 'Re(i+1),Im(i+1)',WR(i), WI(i)
       iorder(i) = i
-      eigval(i) = WR(i)
+      eigval(i) = WR(i)/(beta(i) + 1.d-10)
       i+=1
     else  
       n_real_eigv += 1
       iorder(i) = i
-      eigval(i) = WR(i)
+      eigval(i) = WR(i)/(beta(i) + 1.d-10)
       i+=1
     endif
   enddo
@@ -949,28 +916,6 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
     enddo
   enddo
   accu_nd = dsqrt(accu_nd)
-
-  if( accu_nd .lt. 1d-8 ) then
-    ! L x R is already bi-orthogonal
-
-    print *, ' L & T bi-orthogonality: ok'
-    deallocate( S )
-    return
-
-  else
-    ! impose bi-orthogonality 
-
-    print *, ' L & T bi-orthogonality: not ok !'
-    print *, ' accu_nd = ', accu_nd
-    deallocate( S )
-  
-  endif
-
-  !
-  ! -------------------------------------------------------------------------------------
-
-  return
-
 end 
 
 subroutine impose_biorthog_qr(m, n, Vl, Vr, S)

@@ -64,6 +64,9 @@ subroutine htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
    endif
  endif
  htot = hmono + htwoe + hthree
+ if(degree==0)then
+  htot += nuclear_repulsion
+ endif
  
 end
 
@@ -91,20 +94,20 @@ subroutine diag_htilde_mu_mat_bi_ortho(Nint, key_i, hmono, htwoe, htot)
 !
 !  PROVIDE j1b_gauss
 
-  if(core_tc_op)then
-   print*,'core_tc_op not already taken into account for bi ortho'
-   print*,'stopping ...'
-   stop
-   do i = 1, Nint
-    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
-    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
-   enddo
-   call bitstring_to_list_ab(key_i_core, occ, Ne, Nint)
-   hmono = core_energy - nuclear_repulsion
-  else
+!  if(core_tc_op)then
+!   print*,'core_tc_op not already taken into account for bi ortho'
+!   print*,'stopping ...'
+!   stop
+!   do i = 1, Nint
+!    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
+!    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
+!   enddo
+!   call bitstring_to_list_ab(key_i_core, occ, Ne, Nint)
+!   hmono = core_energy - nuclear_repulsion
+!  else
    call bitstring_to_list_ab(key_i, occ, Ne, Nint)
    hmono = 0.d0
-  endif
+!  endif
   htwoe= 0.d0
   htot = 0.d0
 
@@ -122,12 +125,12 @@ subroutine diag_htilde_mu_mat_bi_ortho(Nint, key_i, hmono, htwoe, htot)
 !             + mo_j1b_gauss_nonherm(ii,ii)
     endif
 
-    if(core_tc_op)then
-   print*,'core_tc_op not already taken into account for bi ortho'
-   print*,'stopping ...'
-   stop
-     hmono += core_fock_operator(ii,ii) ! add the usual Coulomb - Exchange from the core 
-    endif
+!    if(core_tc_op)then
+!   print*,'core_tc_op not already taken into account for bi ortho'
+!   print*,'stopping ...'
+!   stop
+!     hmono += core_fock_operator(ii,ii) ! add the usual Coulomb - Exchange from the core 
+!    endif
    enddo
   enddo
 
@@ -207,18 +210,18 @@ subroutine double_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
    return
   endif
 
-  if(core_tc_op)then
-   print*,'core_tc_op not already taken into account for bi ortho'
-   print*,'stopping ...'
-   stop
-   do i = 1, Nint
-    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
-    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
-   enddo
-   call bitstring_to_list_ab(key_i_core, occ, Ne, Nint)
-  else
+!  if(core_tc_op)then
+!   print*,'core_tc_op not already taken into account for bi ortho'
+!   print*,'stopping ...'
+!   stop
+!   do i = 1, Nint
+!    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
+!    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
+!   enddo
+!   call bitstring_to_list_ab(key_i_core, occ, Ne, Nint)
+!  else
    call bitstring_to_list_ab(key_i, occ, Ne, Nint)
-  endif
+!  endif
   call get_double_excitation(key_i, key_j, exc, phase, Nint)
   call decode_exc(exc, 2, h1, p1, h2, p2, s1, s2)
 
@@ -287,20 +290,20 @@ subroutine single_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
   if(degree.ne.1)then
    return
   endif
-  if(core_tc_op)then
-   print*,'core_tc_op not already taken into account for bi ortho'
-   print*,'stopping ...'
-   stop
-   do i = 1, Nint
-    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
-    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
-    key_j_core(i,1) = xor(key_j(i,1),core_bitmask(i,1))
-    key_j_core(i,2) = xor(key_j(i,2),core_bitmask(i,2))
-   enddo
-   call bitstring_to_list_ab(key_i_core, occ, Ne, Nint)
-  else
+!  if(core_tc_op)then
+!   print*,'core_tc_op not already taken into account for bi ortho'
+!   print*,'stopping ...'
+!   stop
+!   do i = 1, Nint
+!    key_i_core(i,1) = xor(key_i(i,1),core_bitmask(i,1))
+!    key_i_core(i,2) = xor(key_i(i,2),core_bitmask(i,2))
+!    key_j_core(i,1) = xor(key_j(i,1),core_bitmask(i,1))
+!    key_j_core(i,2) = xor(key_j(i,2),core_bitmask(i,2))
+!   enddo
+!   call bitstring_to_list_ab(key_i_core, occ, Ne, Nint)
+!  else
    call bitstring_to_list_ab(key_i, occ, Ne, Nint)
-  endif
+!  endif
 
   call get_single_excitation(key_i, key_j, exc, phase, Nint)
   call decode_exc(exc,1,h1,p1,h2,p2,s1,s2)
@@ -316,12 +319,12 @@ subroutine single_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
 !             + mo_j1b_gauss_nonherm(h1,p1) ) * phase
   endif
 
-  if(core_tc_op)then
-   print*,'core_tc_op not already taken into account for bi ortho'
-   print*,'stopping ...'
-   stop
-   hmono += phase * core_fock_operator(h1,p1)
-  endif
+!  if(core_tc_op)then
+!   print*,'core_tc_op not already taken into account for bi ortho'
+!   print*,'stopping ...'
+!   stop
+!   hmono += phase * core_fock_operator(h1,p1)
+!  endif
   
    ! alpha/beta two-body 
    ispin = other_spin(s1)
