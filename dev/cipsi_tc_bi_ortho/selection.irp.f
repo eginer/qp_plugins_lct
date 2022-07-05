@@ -772,15 +772,15 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
 !        call get_excitation_degree( HF_bitmask, det, degree, N_int)
 
-        !psi_h_alpha = 0.d0
-        !alpha_h_psi = 0.d0
-        !do iii = 1, N_det
-        !  call hji_hij_mu_mat_tot(psi_det(1,1,iii), det, N_int, i_h_alpha, alpha_h_i)
-        !  psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
-        !  alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
-        !enddo
-        psi_h_alpha = mat_m(istate, p1, p2)
-        alpha_h_psi = mat_p(istate, p1, p2)
+        psi_h_alpha = 0.d0
+        alpha_h_psi = 0.d0
+        do iii = 1, N_det
+          call hji_hij_mu_mat_tot(psi_det(1,1,iii), det, N_int, i_h_alpha, alpha_h_i)
+          psi_h_alpha += i_h_alpha * leigvec_tc(iii,1)
+          alpha_h_psi += alpha_h_i * reigvec_tc(iii,1) 
+        enddo
+        !psi_h_alpha = mat_m(istate, p1, p2)
+        !alpha_h_psi = mat_p(istate, p1, p2)
 
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha
