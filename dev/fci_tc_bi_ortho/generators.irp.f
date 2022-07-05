@@ -30,7 +30,8 @@ use bitmasks
  call dsort(coef,iorder,N_det)
  do i = 1, N_det
   psi_det_sorted_gen_order(i) = iorder(i)
-  psi_coef_sorted_gen(i,1) = -coef(i)
+  !psi_coef_sorted_gen(i,1) = -coef(i)
+  psi_coef_sorted_gen(i,1) = -coef(iorder(i))
   psi_det_sorted_gen(1:N_int,1:2,i) = psi_det(1:N_int,1:2,iorder(i))
  enddo
 END_PROVIDER 
@@ -75,36 +76,24 @@ END_PROVIDER
 
    implicit none
    integer                       :: i, j, k
+   integer, allocatable          :: iorder(:)
+   double precision, allocatable :: tmp_sort(:)
+
    reigvec_tc_bi_orth_sorted = 0.d0
    leigvec_tc_bi_orth_sorted = 0.d0
-   do i = 1, N_det
-    reigvec_tc_bi_orth_sorted(i,1) = psi_r_coef_bi_ortho(psi_det_sorted_gen_order(i),1)
-    leigvec_tc_bi_orth_sorted(i,1) = psi_l_coef_bi_ortho(psi_det_sorted_gen_order(i),1)
+
+   allocate ( iorder(N_det), tmp_sort(N_det) )
+   do i=1,N_det
+     tmp_sort(i) = -psi_average_norm_contrib(i)
+     iorder(i) = i
    enddo
-!   integer, allocatable          :: iorder(:)
-!   double precision, allocatable :: tmp_sort(:)
-!
-!   allocate ( tmp_sort(N_det), iorder(N_det) )
-!
-!   do i = 1, N_det
-!     tmp_sort(i) = -dabs(reigvec_tc_bi_orth(i,1) * leigvec_tc_bi_orth(i,1))
-!     iorder(i) = i
-!   enddo
-!   call dsort(tmp_sort, iorder, N_det)
-!   deallocate(tmp_sort)
-!
-!   do k = 1, N_states
-!     do i = 1, N_det
-!       j = iorder(i)
-!       reigvec_tc_bi_orth_sorted(i,k) = reigvec_tc_bi_orth(j,k)
-!       leigvec_tc_bi_orth_sorted(i,k) = leigvec_tc_bi_orth(j,k)
-!     enddo
-!   enddo
-!
-!   reigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
-!   leigvec_tc_bi_orth_sorted(N_det+1:psi_det_size,:) = 0.d0
-!
-!   deallocate(iorder)
+   call dsort(tmp_sort,iorder,N_det)
+   do i = 1, N_det
+    reigvec_tc_bi_orth_sorted(i,1) = reigvec_tc_bi_orth(iorder(i),1)
+    leigvec_tc_bi_orth_sorted(i,1) = leigvec_tc_bi_orth(iorder(i),1)
+   enddo
+   deallocate ( iorder, tmp_sort )
+
 
 END_PROVIDER
 

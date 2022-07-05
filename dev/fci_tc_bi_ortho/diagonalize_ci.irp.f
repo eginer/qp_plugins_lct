@@ -109,12 +109,20 @@ end
   implicit none
   integer :: i, k
 
+  psi_selectors_rcoef_bi_orth_transp = 0.d0
+  psi_selectors_lcoef_bi_orth_transp = 0.d0
+
+  print*,'N_det,N_det_selectors',N_det,N_det_selectors
   do i = 1, N_det_selectors
     do k = 1, N_states
-!      psi_selectors_rcoef_bi_orth_transp(k,i) = psi_r_coef_bi_ortho(psi_det_sorted_gen_order(i),k)
-!      psi_selectors_lcoef_bi_orth_transp(k,i) = psi_l_coef_bi_ortho(psi_det_sorted_gen_order(i),k)
-      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(psi_det_sorted_order(i),k)
-      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(psi_det_sorted_order(i),k)
+!      psi_selectors_rcoef_bi_orth_transp(k,i) = psi_r_coef_bi_ortho(i,k)
+!      psi_selectors_lcoef_bi_orth_transp(k,i) = psi_l_coef_bi_ortho(i,k)
+
+!      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth(psi_det_sorted_order(i),k)
+!      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth(psi_det_sorted_order(i),k)
+
+      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
+      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
     enddo
   enddo
 
