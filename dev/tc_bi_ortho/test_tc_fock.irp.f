@@ -10,11 +10,11 @@ program test_tc_fock
   read_wf = .True.
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  call routine
+  call routine_1
 end
 
 
-subroutine routine
+subroutine routine_0
  implicit none
   use bitmasks ! you need to include the bitmasks_module.f90 features
  integer :: i,a,j,m,i_ok
@@ -56,4 +56,23 @@ subroutine routine
  enddo
  print*,'accu = ',accu
 
+end
+
+
+subroutine routine_1
+ implicit none
+ integer ::  i,a
+ double precision :: accu
+ accu = 0.d0
+ do i = 1, mo_num
+   do a = 1, mo_num
+    accu += dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) )
+!    if(dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) ) .gt. 1.d-10)then
+     print*,i,a
+     print*,dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) ), &
+                  fock_3_mat_a_op_sh_bi_orth_old(a,i) , fock_3_mat_a_op_sh_bi_orth(a,i)
+!    endif
+   enddo
+ enddo
+ print*,'accu = ',accu
 end
