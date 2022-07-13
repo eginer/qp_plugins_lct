@@ -59,7 +59,7 @@ subroutine give_integrals_3_body_bi_ort(n,l,k,m,j,i,integral)
  integer, intent(in) :: n,l,k,m,j,i
  double precision :: weight
  BEGIN_DOC
-! <n l k|L|m j i> with a BI ORTHONORMAL ORBITALS 
+! <n l k|-L|m j i> with a BI ORTHONORMAL ORBITALS 
  END_DOC
  integer :: ipoint,mm
  integral = 0.d0
