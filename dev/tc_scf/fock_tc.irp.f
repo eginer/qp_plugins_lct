@@ -54,6 +54,12 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_beta, (ao_num, ao_num)]
 END_PROVIDER 
 ! ---
 
+BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_tot, (ao_num, ao_num)]
+  implicit none
+  Fock_matrix_tc_ao_tot  = Fock_matrix_tc_ao_beta + Fock_matrix_tc_ao_alpha
+END_PROVIDER 
+
+
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_alpha, (mo_num, mo_num) ]
   implicit none
   if(bi_ortho)then
