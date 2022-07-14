@@ -35,7 +35,6 @@ subroutine routine_scf()
   print*,'TC HF 3 body       = ', diag_three_elem_hf
   endif
   print*,'***'
-
   e_delta = 10.d0
   e_save  = TC_HF_energy
 
@@ -53,14 +52,13 @@ subroutine routine_scf()
   endif
 
   if(bi_ortho)then
-   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. thresh_tcscf))
+   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)))
      it += 1
      print*,'iteration = ', it
      print*,'***'
      print*,'TC HF total energy = ', TC_HF_energy
      print*,'TC HF 1 e   energy = ', TC_HF_one_electron_energy
      print*,'TC HF 2 non hermit = ', TC_HF_two_e_energy
-!     print*,'TC HF 3 body       = ', diag_three_elem_hf
      print*,'***'
      e_delta = dabs( TC_HF_energy - e_save )
      print*, 'it, delta E = ', it, e_delta
@@ -72,7 +70,7 @@ subroutine routine_scf()
      TOUCH mo_l_coef mo_r_coef
    enddo
   else
-   do while( (grad_good_hermit_tc_fock_mat.gt.thresh_tcscf) .and. it .lt. n_it_tcscf_max )
+   do while( (grad_good_hermit_tc_fock_mat.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
       print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
       it += 1
       print*,'iteration = ', it

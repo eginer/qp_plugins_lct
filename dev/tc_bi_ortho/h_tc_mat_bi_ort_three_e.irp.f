@@ -158,6 +158,7 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
   call decode_exc(exc, 1, h1, p1, h2, p2, s1, s2)
 
    ! alpha/alpha/beta three-body
+!   print*,'IN SLAT RULES'
    if(Ne(1)+Ne(2).ge.3)then
      ! hole of spin s1 :: contribution from purely other spin 
      ispin = other_spin(s1) ! ispin is the other spin than s1
@@ -168,7 +169,7 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
        !   is == ispin  in :::   s1 is is  s1 is is      s1 is is s1 is is
        !                       < h1 j  i | p1 j  i > - < h1 j  i | p1 i j >
        !                                                   
-!      direct_int = three_body_ints_bi_ort(jj,ii,p1,jj,ii,h1) ! USES THE 6-IDX tensor 
+!      direct_int =   three_body_ints_bi_ort(jj,ii,p1,jj,ii,h1) ! USES THE 6-IDX tensor 
 !      exchange_int = three_body_ints_bi_ort(jj,ii,p1,ii,jj,h1) ! USES THE 6-IDX tensor 
        direct_int   = three_e_4_idx_direct_bi_ort(jj,ii,p1,h1)  
        exchange_int = three_e_4_idx_exch23_bi_ort(jj,ii,p1,h1) 
@@ -187,6 +188,8 @@ subroutine single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
        exchange_int = three_e_4_idx_exch13_bi_ort(jj,ii,p1,h1)
        !              < h1 j  i | p1 j i > - < h1 j i | j p1 i >
        hthree += direct_int - exchange_int
+!       print*,'h1,p1,ii,jj = ',h1,p1,ii,jj
+!       print*,direct_int, exchange_int
       enddo
      enddo
 !

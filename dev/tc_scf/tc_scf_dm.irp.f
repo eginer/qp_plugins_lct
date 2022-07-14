@@ -15,3 +15,11 @@ BEGIN_PROVIDER [ double precision, TCSCF_density_matrix_ao_alpha, (ao_num, ao_nu
   TCSCF_density_matrix_ao_alpha  = SCF_density_matrix_ao_alpha
  endif
 END_PROVIDER 
+
+
+BEGIN_PROVIDER [ double precision, TCSCF_density_matrix_ao_tot, (ao_num, ao_num) ]
+ implicit none
+  TCSCF_density_matrix_ao_tot  = TCSCF_density_matrix_ao_beta + TCSCF_density_matrix_ao_alpha
+END_PROVIDER 
+
+
