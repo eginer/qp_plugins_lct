@@ -10,9 +10,13 @@ program test_tc_fock
   read_wf = .True.
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
+
   call routine_1
+  !call routine_2
+
 end
 
+! ---
 
 subroutine routine_0
  implicit none
@@ -56,23 +60,54 @@ subroutine routine_0
  enddo
  print*,'accu = ',accu
 
-end
+end subroutine routine_0
 
+! ---
 
 subroutine routine_1
- implicit none
- integer ::  i,a
- double precision :: accu
- accu = 0.d0
- do i = 1, mo_num
-   do a = 1, mo_num
-    accu += dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) )
-!    if(dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) ) .gt. 1.d-10)then
-     print*,i,a
-     print*,dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) ), &
-                  fock_3_mat_a_op_sh_bi_orth_old(a,i) , fock_3_mat_a_op_sh_bi_orth(a,i)
-!    endif
-   enddo
- enddo
- print*,'accu = ',accu
-end
+
+  implicit none
+  integer          :: i, a
+  double precision :: accu
+
+  accu = 0.d0
+  do i = 1, mo_num
+    do a = 1, mo_num
+      accu += dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) )
+      !if(dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) ) .gt. 1.d-10)then
+        print*, i, a
+        print*, dabs( fock_3_mat_a_op_sh_bi_orth_old(a,i) - fock_3_mat_a_op_sh_bi_orth(a,i) ) &
+              , fock_3_mat_a_op_sh_bi_orth_old(a,i), fock_3_mat_a_op_sh_bi_orth(a,i)
+      !endif
+    enddo
+  enddo
+
+  print *, 'accu = ', accu
+
+end subroutine routine_1
+
+! ---
+
+subroutine routine_2
+
+  implicit none
+  integer          :: i, a
+  double precision :: accu
+
+  accu = 0.d0
+  do i = 1, mo_num
+    do a = 1, mo_num
+      accu += dabs( fock_3_mat_a_sa_sh_bi_orth_old(a,i) - fock_3_mat_a_sa_sh_bi_orth(a,i) )
+      !if(dabs( fock_3_mat_a_sa_sh_bi_orth_old(a,i) - fock_3_mat_a_sa_sh_bi_orth(a,i) ) .gt. 1.d-10)then
+        print*, i, a
+        print*, dabs( fock_3_mat_a_sa_sh_bi_orth_old(a,i) - fock_3_mat_a_sa_sh_bi_orth(a,i) ) &
+              , fock_3_mat_a_sa_sh_bi_orth_old(a,i), fock_3_mat_a_sa_sh_bi_orth(a,i)
+      !endif
+    enddo
+  enddo
+
+  print *, 'accu = ', accu
+
+end subroutine routine_2
+
+! ---
