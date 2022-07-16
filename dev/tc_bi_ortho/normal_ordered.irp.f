@@ -51,12 +51,21 @@ BEGIN_PROVIDER [ double precision, normal_two_body_bi_orth, (mo_num, mo_num, mo_
           ! opposite spin double excitations 
           call give_aba_contraction(N_int, h1, h2, p1, p2, Ne, occ, hthree_aba)
           ! same spin double excitations with opposite spin contributions 
-          call give_aab_contraction(N_int, h1, h2, p1, p2, Ne, occ, hthree_aab)
-          ! same spin double excitations with same spin contributions 
-          if(Ne(2).ge.3)then
-            call give_aaa_contraction(N_int, h1, h2, p1, p2, Ne, occ, hthree_aaa)
+          if(h1<h2.and.p1.gt.p2)then
+           call give_aab_contraction(N_int, h2, h1, p1, p2, Ne, occ, hthree_aab) ! exchange h1<->h2
+           ! same spin double excitations with same spin contributions 
+           if(Ne(2).ge.3)then
+             call give_aaa_contraction(N_int, h2, h1, p1, p2, Ne, occ, hthree_aaa) ! exchange h1<->h2
+           else
+             hthree_aaa = 0.d0
+           endif
           else
-            hthree_aaa = 0.d0
+           call give_aab_contraction(N_int, h1, h2, p1, p2, Ne, occ, hthree_aab)
+           if(Ne(2).ge.3)then
+             call give_aaa_contraction(N_int, h1, h2, p1, p2, Ne, occ, hthree_aaa)
+           else
+             hthree_aaa = 0.d0
+           endif
           endif
           normal_two_body_bi_orth(p2,h2,p1,h1) = 0.5d0*(hthree_aba + hthree_aab + hthree_aaa)
         enddo
@@ -210,7 +219,7 @@ BEGIN_PROVIDER [ double precision, normal_two_body_bi_orth_aa_bb, (n_act_orb, n_
           if(h1<h2.and.p1.gt.p2)then
            call give_aab_contraction(N_int, h2, h1, p1, p2, Ne, occ, hthree_aab) ! exchange h1<->h2
            if(Ne(2).ge.3)then
-             call give_aaa_contraction(N_int, h2, h1, p1, p2, Ne, occ, hthree_aaa)
+             call give_aaa_contraction(N_int, h2, h1, p1, p2, Ne, occ, hthree_aaa) ! exchange h1<->h2
            else
              hthree_aaa = 0.d0
            endif

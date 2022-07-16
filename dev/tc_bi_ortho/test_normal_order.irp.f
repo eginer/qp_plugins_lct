@@ -61,7 +61,7 @@ subroutine test
      call get_excitation_degree(ref_bitmask,det_i,degree,N_int)
      call get_excitation(ref_bitmask,det_i,exc,degree,phase,N_int)
      hthree *= phase
-     normal = normal_two_body_bi_orth_aa_bb(p1,h2,p2,h1)
+     normal = normal_two_body_bi_orth_aa_bb(p2,h2,p1,h1)
      accu += dabs(hthree-normal)
     enddo
    enddo
