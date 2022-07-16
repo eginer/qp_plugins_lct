@@ -109,18 +109,34 @@ END_PROVIDER
 
 
 !  ! MO_R x R
-  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
-            , mo_r_coef, size(mo_r_coef, 1)                   &
-            , fock_tc_reigvec_mo, size(fock_tc_reigvec_mo, 1) &
-            , 0.d0, fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) )
-!
-  ! MO_L x L
-  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
-            , mo_l_coef, size(mo_l_coef, 1)                   &
-            , fock_tc_leigvec_mo, size(fock_tc_leigvec_mo, 1) &
-            , 0.d0, fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1) )
+   call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
+             , mo_r_coef, size(mo_r_coef, 1)                   &
+             , fock_tc_reigvec_mo, size(fock_tc_reigvec_mo, 1) &
+             , 0.d0, fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1) )
 
-
+   ! MO_L x L
+   call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
+             , mo_l_coef, size(mo_l_coef, 1)                   &
+             , fock_tc_leigvec_mo, size(fock_tc_leigvec_mo, 1) &
+             , 0.d0, fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1) )
+   integer :: n_real_eigv
+   double precision, allocatable :: reigvec(:, :), leigvec(:, :), eigval(:)
+!   allocate(reigvec(ao_num, mo_num), leigvec(ao_num, mo_num),eigval(mo_num))
+!   call non_hrmt_generalized_real_im(ao_num, Fock_matrix_tc_ao_tot, ao_overlap, & 
+!   leigvec, reigvec, n_real_eigv, eigval)
+!   if(n_real_eigv .ge. mo_num)then
+!    do i = 1, mo_num
+!     print*,'eigval(i) = ',eigval(i)
+!     fock_tc_leigvec_ao(1:ao_num,i) = leigvec(1:ao_num,i)
+!     fock_tc_reigvec_ao(1:ao_num,i) = reigvec(1:ao_num,i)
+!    enddo
+!   else 
+!    print*,'n_real_eigv = ',n_real_eigv
+!    print*,'Not enough MOs !!'
+!    stop
+!   endif
+ 
+ 
   allocate( tmp(mo_num,ao_num) )
 
   ! tmp <-- L.T x S_ao
@@ -159,22 +175,22 @@ END_PROVIDER
 
   deallocate( tmp )
 
-  accu_d = 0.d0
-  accu = 0.d0
-  do i = 1, mo_num
-    accu_d += overlap_fock_tc_eigvec_ao(i,i)
-    do j = 1, mo_num
-      accu += dabs(overlap_fock_tc_eigvec_ao(j,i) - overlap_fock_tc_eigvec_mo(j,i))
-    enddo
-  enddo
-  print*,'Trace of the overlap_fock_tc_eigvec_ao = ',accu_d
-  print*,'mo_num                                 = ',mo_num
-  accu = accu / dble(mo_num**2)
+!  accu_d = 0.d0
+!  accu = 0.d0
+!  do i = 1, mo_num
+!    accu_d += overlap_fock_tc_eigvec_ao(i,i)
+!    do j = 1, mo_num
+!      accu += dabs(overlap_fock_tc_eigvec_ao(j,i) - overlap_fock_tc_eigvec_mo(j,i))
+!    enddo
+!  enddo
+!  print*,'Trace of the overlap_fock_tc_eigvec_ao = ',accu_d
+!  print*,'mo_num                                 = ',mo_num
+!  accu = accu / dble(mo_num**2)
 
-  if(dabs(accu).gt.1.d-10) then
-    print*,'Warning !! '
-    print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
-    print*,'an average of ', accu
+!  if(dabs(accu).gt.1.d-10) then
+!    print*,'Warning !! '
+!    print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
+!    print*,'an average of ', accu
 
 !     print*,'overlap_fock_tc_eigvec_ao = '
 !     do i = 1, mo_num
@@ -186,7 +202,7 @@ END_PROVIDER
 !     enddo
 !     stop
 
-  endif
+!  endif
 
 END_PROVIDER
 

@@ -96,6 +96,7 @@
       call htilde_mu_mat_bi_ortho_tot(psi_det(1,1,i), psi_det(1,1,i), N_int, H_jj(i))
     enddo
  !!!! Preparing the left-eigenvector
+    print*,'Computing the left-eigenvector '
     vec_tmp = 0.d0
     do istate = 1, N_states
      vec_tmp(:,istate) = psi_l_coef_bi_ortho(:,istate)
@@ -108,6 +109,7 @@
      leigvec_tc_bi_orth(:,istate) = vec_tmp(:,istate)
     enddo
 
+    print*,'Computing the right-eigenvector '
  !!!! Preparing the right-eigenvector
     vec_tmp = 0.d0
     do istate = 1, N_states
