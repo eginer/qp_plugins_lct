@@ -1,5 +1,5 @@
 
-subroutine lapack_diag_non_sym_new(n,A,WR,WI,VL,VR)
+subroutine lapack_diag_non_sym_new(n, A, WR, WI, VL, VR)
 
   BEGIN_DOC
   !
@@ -76,7 +76,7 @@ end subroutine lapack_diag_non_sym_new
 
 ! ---
 
-subroutine lapack_diag_non_sym(n,A,WR,WI,VL,VR)
+subroutine lapack_diag_non_sym(n, A, WR, WI, VL, VR)
  implicit none
   BEGIN_DOC
 ! You enter with a general non hermitian matrix A(n,n) 
@@ -443,7 +443,8 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   allocate( WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n) )
   Aw(:,:) = A(:,:)
 
-  call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
+  call lapack_diag_non_sym(n, Aw, WR, WI, VL, VR)
+  !call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
 
   deallocate( Aw )
 
@@ -497,6 +498,9 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   deallocate( list_good, iorder )
   deallocate( VL, VR )
 
+  !print *, ' check_EIGVEC before QR:'
+  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+
   !
   ! -------------------------------------------------------------------------------------
 
@@ -524,17 +528,22 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   if( accu_nd .lt. 1d-8 ) then
     ! L x R is already bi-orthogonal
 
-    !print *, ' L & T bi-orthogonality: ok'
+    print *, ' L & T bi-orthogonality: ok'
+    print *, ' accu_nd = ', accu_nd
     deallocate( S )
     return
 
   else
     ! impose bi-orthogonality 
 
-    !print *, ' L & T bi-orthogonality: not imposed yet'
-    !print *, ' accu_nd = ', accu_nd
-    call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec, S)
+    print *, ' L & T bi-orthogonality: not imposed yet'
+    print *, ' accu_nd = ', accu_nd
+    !call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec, S)
+    call impose_biorthog_lu(n, n_real_eigv, leigvec, reigvec, S)
     deallocate( S )
+
+    !print *, ' check_EIGVEC after QR:'
+    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
   
   endif
 
@@ -546,6 +555,7 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
 end subroutine non_hrmt_bieig
 
 ! ---
+
 subroutine non_hrmt_bieig_random_diag(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   BEGIN_DOC
@@ -556,6 +566,7 @@ subroutine non_hrmt_bieig_random_diag(n, A, leigvec, reigvec, n_real_eigv, eigva
   ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
   !
   END_DOC
+
   implicit none
   integer,          intent(in)  :: n
   double precision, intent(in)  :: A(n,n)
@@ -716,6 +727,8 @@ subroutine non_hrmt_bieig_random_diag(n, A, leigvec, reigvec, n_real_eigv, eigva
 
 end 
 
+! ---
+
 subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   BEGIN_DOC
@@ -726,6 +739,7 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
   !
   END_DOC
+
   implicit none
   integer,          intent(in)  :: n
   double precision, intent(in)  :: A(n,n)
@@ -806,6 +820,7 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
        leigvec(j,i) = VL(j,iorder(i))
      enddo
    enddo
+<<<<<<< HEAD
     !
     ! -------------------------------------------------------------------------------------
     
@@ -858,6 +873,7 @@ subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, 
   ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
   !
   END_DOC
+
   implicit none
   integer,          intent(in)  :: n
   double precision, intent(in)  :: A(n,n),B(n,n)
@@ -927,6 +943,9 @@ subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, 
   deallocate( iorder )
   deallocate( VL, VR )
 
+  !print *, ' check_EIGVEC :'
+  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+
   !
   ! -------------------------------------------------------------------------------------
 
@@ -950,7 +969,12 @@ subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, 
     enddo
   enddo
   accu_nd = dsqrt(accu_nd)
-end 
+
+  deallocate( S )
+
+end subroutine non_hrmt_generalized_real_im
+
+! ---
 
 subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
 
@@ -1069,6 +1093,169 @@ subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
 
   return
 end subroutine impose_biorthog_qr
+
+! ---
+
+subroutine impose_biorthog_lu(m, n, Vl, Vr, S)
+
+  implicit none 
+  integer, intent(in)             :: m, n
+  double precision, intent(inout) :: Vl(m,n), Vr(m,n), S(n,n)
+
+  integer                         :: i, j
+  integer                         :: INFO
+  double precision                :: nrm
+  integer,          allocatable   :: IPIV(:)
+  double precision, allocatable   :: L(:,:), tmp(:,:), vectmp(:)
+  !double precision, allocatable   :: T(:,:), ll(:,:), rr(:,:), tt(:,:)
+
+  !allocate( T(n,n) )
+  !T(:,:) = S(:,:)
+
+  print *, ' apply LU decomposition ...'
+
+  ! -------------------------------------------------------------------------------------
+  !                           LU factorization of S: S = P x L x U
+
+  allocate( IPIV(n) )
+
+  call dgetrf(n, n, S, n, IPIV, INFO)
+  if(INFO .ne. 0) then
+    print*, 'dgetrf failed !!', INFO
+    stop
+  endif
+
+  ! check | S - P x L x U |
+  !allocate( ll(n,n), rr(n,n), tmp(n,n) )
+  !ll = S
+  !rr = S
+  !do i = 1, n-1
+  !  ll(i,i) = 1.d0
+  !  do j = i+1, n
+  !    ll(i,j) = 0.d0
+  !    rr(j,i) = 0.d0
+  !  enddo
+  !enddo
+  !ll(n,n) = 1.d0
+  !call dgemm( 'N', 'N', n, n, n, 1.d0          &
+  !          , ll, size(ll, 1), rr, size(rr, 1) &
+  !          , 0.d0, tmp, size(tmp, 1) )
+  ! deallocate(ll, rr)
+  !allocate( vectmp(n) )
+  !do j = n-1, 1, -1
+  !  i = IPIV(j)
+  !  if(i.ne.j) then
+  !    print *, j, i
+  !    vectmp(:) = tmp(i,:)
+  !    tmp(i,:)  = tmp(j,:)
+  !    tmp(j,:)  = vectmp(:)
+  !  endif
+  !enddo
+  !deallocate( vectmp )
+  !nrm = 0.d0
+  !do i = 1, n
+  !  do j = 1, n
+  !    nrm += dabs(tmp(j,i) - T(j,i))
+  !  enddo
+  !enddo
+  !deallocate( tmp )
+  !print*, '|L.T x R - S| =', nrm
+  !stop
+
+  ! ------
+  ! inv(L) 
+  ! ------
+
+  allocate( L(n,n) )
+  L(:,:) = S(:,:)
+
+  call dtrtri("L", "U", n, L, n, INFO)
+  if(INFO .ne. 0) then
+    print*,  'dtrtri failed !!', INFO
+    stop
+  endif
+  do i = 1, n-1
+    L(i,i) = 1.d0
+    do j = i+1, n
+      L(i,j) = 0.d0
+    enddo
+  enddo
+  L(n,n) = 1.d0
+
+  ! ------
+  ! inv(U) 
+  ! ------
+  
+  call dtrtri("U", "N", n, S, n, INFO)
+  if(INFO .ne. 0) then
+    print*,  'dtrtri failed !!', INFO
+    stop
+  endif
+
+  do i = 1, n-1
+    do j = i+1, n
+      S(j,i) = 0.d0
+    enddo
+  enddo
+
+  !
+  ! -------------------------------------------------------------------------------------
+
+  ! ---
+
+  ! -------------------------------------------------------------------------------------
+  !                               get bi-orhtog left & right vectors:
+  !                                           Vr' = Vr x inv(U) 
+  !                                           Vl' = inv(L) x inv(P) x Vl
+
+  ! inv(P) x Vl
+  allocate( vectmp(n) )
+  do j = n-1, 1, -1
+    i = IPIV(j)
+    if(i.ne.j) then
+      vectmp(:) = L(:,j)
+      L(:,j)    = L(:,i)
+      L(:,i)    = vectmp(:)
+    endif
+  enddo
+  deallocate( vectmp )
+
+  ! Vl'
+  allocate( tmp(m,n) )
+  call dgemm( 'N', 'T', m, n, n, 1.d0        &
+            , Vl, size(Vl, 1), L, size(L, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  deallocate(L)
+
+  Vl = tmp
+  deallocate(tmp)
+
+  ! ---
+
+  ! Vr x inv(U) 
+  allocate( tmp(m,n) )
+  call dgemm( 'N', 'N', m, n, n, 1.d0        &
+            , Vr, size(Vr, 1), S, size(S, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  Vr = tmp
+  deallocate(tmp)
+
+  !allocate( tmp(n,n) )
+  !call dgemm( 'T', 'N', n, n, m, 1.d0          &
+  !          , Vl, size(Vl, 1), Vr, size(Vr, 1) &
+  !          , 0.d0, tmp, size(tmp, 1) )
+  !nrm = 0.d0
+  !do i = 1, n
+  !  do j = 1, n
+  !    nrm += dabs(tmp(j,i))
+  !  enddo
+  !enddo
+  !deallocate( tmp )
+  !print*, '|L.T x R| =', nrm
+  !stop
+
+  return
+end subroutine impose_biorthog_lu
 
 ! ---
 
@@ -1207,3 +1394,78 @@ subroutine non_hrmt_bieig_fullvect(n, A, leigvec, reigvec, n_real_eigv, eigval)
 end subroutine non_hrmt_bieig_fullvect
 
 ! ---
+
+subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec)
+
+  implicit none
+  integer,          intent(in)  :: n, m
+  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m)
+ 
+  integer                       :: i, j
+  double precision              :: tmp, tmp_all, tmp_nrm
+  double precision              :: V_nrm
+  double precision, allocatable :: Mtmp(:,:)
+ 
+  allocate( Mtmp(n,m) )
+  
+  ! ---
+
+  print *, ' check right eigvec : '
+
+  call dgemm( 'N', 'N', n, m, n, 1.d0                  &
+            , A, size(A, 1), reigvec, size(reigvec, 1) &
+            , 0.d0, Mtmp, size(Mtmp, 1) )
+
+  V_nrm   = 0.d0
+  tmp_nrm = 0.d0
+  tmp_all = 0.d0
+  do j = 1, m
+    tmp = 0.d0
+    do i = 1, n
+      tmp     = tmp     + dabs(Mtmp(i,j) - eigval(j) * reigvec(i,j))
+      tmp_nrm = tmp_nrm + dabs(Mtmp(i,j))
+      V_nrm   = V_nrm   + dabs(reigvec(i,j))
+    enddo
+    tmp_all = tmp_all + tmp
+    print *, j, tmp
+  enddo
+  print *, ' err estim = ', tmp_all/tmp_nrm
+  print *, ' CR norm   = ', V_nrm 
+
+  Mtmp = 0.d0
+
+  ! ---
+
+  print *, ' check left eigvec : '
+
+  call dgemm( 'T', 'N', n, m, n, 1.d0                  &
+            , A, size(A, 1), leigvec, size(leigvec, 1) &
+            , 0.d0, Mtmp, size(Mtmp, 1) )
+
+  V_nrm   = 0.d0
+  tmp_nrm = 0.d0
+  tmp_all = 0.d0
+  do j = 1, m
+    tmp = 0.d0
+    do i = 1, n
+      tmp     = tmp     + dabs(Mtmp(i,j) - eigval(j) * leigvec(i,j))
+      tmp_nrm = tmp_nrm + dabs(Mtmp(i,j))
+      V_nrm   = V_nrm   + dabs(leigvec(i,j))
+    enddo
+    tmp_all = tmp_all + tmp
+    print *, j, tmp
+  enddo
+  print *, ' err estim = ', tmp_all/tmp_nrm
+  print *, ' CL norm   = ', V_nrm 
+
+  ! ---
+
+  deallocate( Mtmp )
+
+end subroutine check_EIGVEC
+
+! ---
+
+
+
+
