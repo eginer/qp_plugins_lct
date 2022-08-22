@@ -109,55 +109,105 @@ BEGIN_PROVIDER [ double precision, mo_x_v_ki_bi_ortho_erf_rk_cst_mu, ( mo_num, m
 
 END_PROVIDER 
 
+! ---
 
-BEGIN_PROVIDER [ double precision, x_W_ki_bi_ortho_erf_rk, ( n_points_final_grid,3,mo_num, mo_num)]
- implicit none
- BEGIN_DOC
-! W_ki_bi_ortho^X(R) = \int dr phi_k(r) (1 - erf(mu |r-R|)) (x-X) phi_i(r) 
- END_DOC
- include 'constants.include.F'
- integer :: ipoint,m,i,k
- double precision :: xyz,cst
- double precision :: wall0, wall1
+BEGIN_PROVIDER [ double precision, x_W_ki_bi_ortho_erf_rk, (n_points_final_grid, 3, mo_num, mo_num)]
 
- cst = 0.5d0 * inv_sq_pi
- print*,'providing x_W_ki_bi_ortho_erf_rk ...'
- call wall_time(wall0)
- !$OMP PARALLEL                  &
- !$OMP DEFAULT (NONE)            &
+  BEGIN_DOC
+  ! W_ki_bi_ortho^X(R) = \int dr phi_k(r) (1 - erf(mu |r-R|)) (x-X) phi_i(r) 
+  END_DOC
+ 
+  implicit none
+  include 'constants.include.F'
+ 
+  integer          :: ipoint, m, i, k
+  double precision :: xyz
+  double precision :: wall0, wall1
+ 
+  print*,'providing x_W_ki_bi_ortho_erf_rk ...'
+  call wall_time(wall0)
+
+ !$OMP PARALLEL                   &
+ !$OMP DEFAULT (NONE)             &
  !$OMP PRIVATE (ipoint,m,i,k,xyz) & 
  !$OMP SHARED (x_W_ki_bi_ortho_erf_rk,n_points_final_grid,mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp,mo_v_ki_bi_ortho_erf_rk_cst_mu_transp,mo_num,final_grid_points) 
  !$OMP DO SCHEDULE (dynamic)
- do i = 1, mo_num
-  do k = 1, mo_num
-   do m = 1, 3
-    do ipoint = 1, n_points_final_grid
-     xyz = final_grid_points(m,ipoint)
-     x_W_ki_bi_ortho_erf_rk(ipoint,m,k,i)  =  mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,m,k,i) - xyz * mo_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,k,i)
+  do i = 1, mo_num
+    do k = 1, mo_num
+      do m = 1, 3
+        do ipoint = 1, n_points_final_grid
+          xyz = final_grid_points(m,ipoint)
+          x_W_ki_bi_ortho_erf_rk(ipoint,m,k,i) = mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,m,k,i) - xyz * mo_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,k,i)
+        enddo
+      enddo
     enddo
-   enddo
   enddo
- enddo
+
  !$OMP END DO
  !$OMP END PARALLEL
-! FREE mo_v_ki_bi_ortho_erf_rk_cst_mu_transp 
-! FREE mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp
- call wall_time(wall1)
- print*,'time to provide x_W_ki_bi_ortho_erf_rk = ',wall1 - wall0
+
+ ! FREE mo_v_ki_bi_ortho_erf_rk_cst_mu_transp 
+ ! FREE mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp
+
+  call wall_time(wall1)
+  print*,'time to provide x_W_ki_bi_ortho_erf_rk = ',wall1 - wall0
 
 END_PROVIDER 
 
-BEGIN_PROVIDER [ double precision, mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp, (n_points_final_grid,3, mo_num, mo_num)]
- implicit none
- integer :: i,j,m,ipoint
- do i = 1, mo_num
-  do j = 1, mo_num
-   do m = 1, 3
-    do ipoint = 1, n_points_final_grid
-     mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,m,j,i) = mo_x_v_ki_bi_ortho_erf_rk_cst_mu(j,i,m,ipoint)
+! ---
+
+BEGIN_PROVIDER [ double precision, x_W_ki_bi_ortho_erf_rk_diag, (n_points_final_grid, 3, mo_num)]
+
+  implicit none
+  include 'constants.include.F'
+ 
+  integer          :: ipoint, m, i
+  double precision :: xyz
+  double precision :: wall0, wall1
+ 
+  print*,'providing x_W_ki_bi_ortho_erf_rk_diag ...'
+  call wall_time(wall0)
+
+ !$OMP PARALLEL                 &
+ !$OMP DEFAULT (NONE)           &
+ !$OMP PRIVATE (ipoint,m,i,xyz) & 
+ !$OMP SHARED (x_W_ki_bi_ortho_erf_rk_diag,n_points_final_grid,mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp,mo_v_ki_bi_ortho_erf_rk_cst_mu_transp,mo_num,final_grid_points) 
+ !$OMP DO SCHEDULE (dynamic)
+  do i = 1, mo_num
+    do m = 1, 3
+      do ipoint = 1, n_points_final_grid
+        xyz = final_grid_points(m,ipoint)
+        x_W_ki_bi_ortho_erf_rk_diag(ipoint,m,i) = mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,m,i,i) - xyz * mo_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,i,i)
+      enddo
     enddo
-   enddo
   enddo
- enddo
+
+ !$OMP END DO
+ !$OMP END PARALLEL
+
+  call wall_time(wall1)
+  print*,'time to provide x_W_ki_bi_ortho_erf_rk_diag = ',wall1 - wall0
 
 END_PROVIDER 
+
+! ---
+
+BEGIN_PROVIDER [ double precision, mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp, (n_points_final_grid, 3, mo_num, mo_num)]
+
+  implicit none
+  integer :: i, j, m, ipoint
+ 
+  do i = 1, mo_num
+    do j = 1, mo_num
+      do m = 1, 3
+        do ipoint = 1, n_points_final_grid
+          mo_x_v_ki_bi_ortho_erf_rk_cst_mu_transp(ipoint,m,j,i) = mo_x_v_ki_bi_ortho_erf_rk_cst_mu(j,i,m,ipoint)
+        enddo
+      enddo
+    enddo
+  enddo
+
+END_PROVIDER 
+
+! ---
+
