@@ -1,4 +1,138 @@
 
+subroutine non_sym_diag_inv_right(n,A,leigvec,reigvec,n_real_eigv,eigval)
+ implicit none
+ BEGIN_DOC
+! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
+!
+! of a non hermitian matrix A(n,n)
+!
+! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
+ END_DOC
+ integer, intent(in) :: n
+ double precision, intent(in) :: A(n,n)
+ double precision, intent(out) :: reigvec(n,n),leigvec(n,n),eigval(n)
+ double precision, allocatable :: Aw(:,:)
+ integer, intent(out) :: n_real_eigv
+ print*,'Computing the left/right eigenvectors ...'
+ character*1 :: JOBVL,JOBVR
+ JOBVL = "V" ! computes the left  eigenvectors 
+ JOBVR = "V" ! computes the right eigenvectors 
+ double precision, allocatable :: WR(:),WI(:),Vl(:,:),VR(:,:),S(:,:),inv_reigvec(:,:)
+ integer :: i,j
+ integer :: n_good
+ integer, allocatable :: list_good(:), iorder(:)
+ double precision :: thr
+ thr = 1.d-10
+ ! Eigvalue(n) = WR(n) + i * WI(n)
+ allocate(WR(n),WI(n),VL(n,n),VR(n,n),Aw(n,n))
+ Aw = A
+ do i = 1, n
+  do j = i+1, n
+   if(dabs(Aw(j,j)-Aw(i,i)).lt.thr)then
+     Aw(j,j)+= thr
+     Aw(i,i)-= thr
+!    if(Aw(j,i) * A(i,j) .lt.0d0  )then
+!     if(dabs(Aw(j,i) * A(i,j)).lt.thr**(1.5d0))then
+!      print*,Aw(j,j),Aw(i,i)
+!      print*,Aw(j,i) , A(i,j)
+      Aw(j,i) = 0.d0
+      Aw(i,j) = Aw(j,i)
+!     endif
+!    endif
+   endif
+  enddo
+ enddo
+ call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
+ ! You track the real eigenvalues 
+ n_good = 0
+! do i = 1, n
+!  write(*,'(100(F16.12,X))')A(:,i)
+! enddo
+ do i = 1, n
+  print*,'Im part of lambda = ',dabs(WI(i))
+  if(dabs(WI(i)).lt.thr)then
+   n_good += 1
+  else
+   print*,'Found an imaginary component to eigenvalue'
+   print*,'Re(i) + Im(i)',WR(i),WI(i)
+   write(*,'(100(F10.5,X))')VR(:,i)
+   write(*,'(100(F10.5,X))')VR(:,i+1)
+   write(*,'(100(F10.5,X))')VL(:,i)
+   write(*,'(100(F10.5,X))')VL(:,i+1)
+  endif
+ enddo
+ allocate(list_good(n_good),iorder(n_good))
+ n_good = 0
+ do i = 1, n
+  if(dabs(WI(i)).lt.thr)then
+   n_good += 1
+   list_good(n_good) = i
+   eigval(n_good) = WR(i)
+  endif
+ enddo
+ n_real_eigv = n_good 
+ do i = 1, n_good
+  iorder(i) = i
+ enddo
+ ! You sort the real eigenvalues 
+ call dsort(eigval,iorder,n_good)
+ do i = 1, n_real_eigv
+  do j = 1, n
+   reigvec(j,i) = VR(j,list_good(iorder(i)))
+   leigvec(j,i) = VL(j,list_good(iorder(i)))
+  enddo
+ enddo
+ allocate(inv_reigvec(n_real_eigv,n_real_eigv))
+! call get_pseudo_inverse(reigvec,n_real_eigv,n_real_eigv,n_real_eigv,inv_reigvec,n_real_eigv,thr)
+! do i = 1, n_real_eigv
+!  do j = 1, n
+!   leigvec(j,i) = inv_reigvec(i,j)
+!  enddo
+! enddo
+ allocate( S(n_real_eigv,n_real_eigv) )
+
+  ! S = VL x VR
+  call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n_real_eigv, 1.d0                              &
+            , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
+            , 0.d0, S, size(S, 1) )
+   do i = 1,n_real_eigv
+    write(*,'(100(F10.5,X))')S(:,i)
+   enddo
+! call lapack_diag_non_sym(n,S,WR,WI,VL,VR)
+! print*,'Eigenvalues of S'
+! do i = 1, n
+!  print*,WR(i),dabs(WI(i))
+! enddo
+  call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n_real_eigv, 1.d0                              &
+            , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
+            , 0.d0, S, size(S, 1) )
+! call get_inv_half_svd(S, n_real_eigv, inv_reigvec)
+
+  double precision :: accu_d,accu_nd
+  accu_nd = 0.d0
+  accu_d = 0.d0
+  do i = 1, n_real_eigv
+    do j = 1, n_real_eigv
+      if(i==j) then
+       accu_d += S(j,i) * S(j,i)
+      else
+       accu_nd = accu_nd + S(j,i) * S(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+
+  print*,'accu_nd = ',accu_nd
+  if( accu_nd .lt. 1d-10 ) then
+    ! L x R is already bi-orthogonal
+    !print *, ' L & T bi-orthogonality: ok'
+    return
+  else
+   print*,'PB with bi-orthonormality!!'
+   stop
+  endif
+end
+
 subroutine lapack_diag_non_sym_new(n, A, WR, WI, VL, VR)
 
   BEGIN_DOC

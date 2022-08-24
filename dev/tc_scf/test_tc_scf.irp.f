@@ -13,8 +13,19 @@ program tc_scf
   my_n_pt_a_grid = 50
   touch my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
 
-  call routine_test
+  bi_ortho = .True.
+  touch bi_ortho
+  call print_fock
 
+end
+
+subroutine print_fock
+ implicit none
+ integer :: i,j
+ print*,'Fock matrix '
+ do i = 1, mo_num
+  write(*,'(100(F16.10,X))')Fock_matrix_tc_mo_tot(:,i)
+ enddo
 end
 
 subroutine routine_test
