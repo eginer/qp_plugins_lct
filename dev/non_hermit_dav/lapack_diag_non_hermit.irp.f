@@ -1,3 +1,58 @@
+subroutine lapack_diag_non_sym(n, A, WR, WI, VL, VR)
+
+  BEGIN_DOC
+  ! You enter with a general non hermitian matrix A(n,n) 
+  !
+  ! You get out with the real WR and imaginary part WI of the eigenvalues 
+  !
+  ! Eigvalue(n) = WR(n) + i * WI(n)
+  !
+  ! And the left VL and right VR eigenvectors 
+  !
+  ! VL(i,j) = <i|Psi_left(j)>  :: projection on the basis element |i> on the jth left  eigenvector 
+  !
+  ! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
+  END_DOC
+
+  implicit none
+
+  integer,          intent(in)  :: n
+  double precision, intent(in)  :: A(n,n)
+  double precision, intent(out) :: WR(n), WI(n), VL(n,n), VR(n,n)
+
+  integer                       :: lda, ldvl, ldvr, LWORK, INFO
+  double precision, allocatable :: Atmp(:,:), WORK(:)
+
+  lda  = n
+  ldvl = n
+  ldvr = n
+
+  allocate( Atmp(n,n) )
+  Atmp(1:n,1:n) = A(1:n,1:n)
+
+  allocate(WORK(1))
+  LWORK = -1 ! to ask for the optimal size of WORK
+  call dgeev('V', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
+  if(INFO.gt.0)then
+    print*,'dgeev failed !!',INFO
+    stop
+  endif
+  LWORK = max(int(WORK(1)), 1) ! this is the optimal size of WORK 
+  deallocate(WORK)
+
+  allocate(WORK(LWORK))
+
+  ! Actual diagonalization 
+  call dgeev('V', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
+  if(INFO.ne.0) then
+    print*,'dgeev failed !!', INFO
+    stop
+  endif
+
+  deallocate(Atmp, WORK)
+
+end subroutine lapack_diag_non_sym
+
 
 subroutine non_sym_diag_inv_right(n,A,leigvec,reigvec,n_real_eigv,eigval)
  implicit none
@@ -210,52 +265,57 @@ end subroutine lapack_diag_non_sym_new
 
 ! ---
 
-subroutine lapack_diag_non_sym(n, A, WR, WI, VL, VR)
- implicit none
-  BEGIN_DOC
-! You enter with a general non hermitian matrix A(n,n) 
-!
-! You get out with the real WR and imaginary part WI of the eigenvalues 
-!
-! Eigvalue(n) = WR(n) + i * WI(n)
-!
-! And the left VL and right VR eigenvectors 
-!
-! VL(i,j) = <i|Psi_left(j)>  :: projection on the basis element |i> on the jth left  eigenvector 
-!
-! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
-  END_DOC
- integer, intent(in) :: n
- double precision, intent(in) :: A(n,n)
- double precision, intent(out):: WR(n),WI(n),VL(n,n),VR(n,n)
-  character*1 :: JOBVL,JOBVR
-  JOBVL = "V" ! computes the left  eigenvectors 
-  JOBVR = "V" ! computes the right eigenvectors 
-  integer     :: lda,ldvl,ldvr,LWORK,INFO
-  double precision, allocatable :: WORK(:)
-  integer :: n_good
+subroutine lapack_diag_non_sym_right(n, A, WR, WI, VR)
+
+  implicit none
+
+  integer,          intent(in)  :: n
+  double precision, intent(in)  :: A(n,n)
+  double precision, intent(out) :: WR(n), WI(n), VR(n,n)
+
+  integer                       :: i, lda, ldvl, ldvr, LWORK, INFO
+  double precision, allocatable :: Atmp(:,:), WORK(:), VL(:,:)
+
   lda  = n
-  ldvl = n
+  ldvl = 1
   ldvr = n
+
+  allocate( Atmp(n,n), VL(1,1) )
+  Atmp(1:n,1:n) = A(1:n,1:n)
+
   allocate(WORK(1))
-  LWORK = -1 ! to ask for the optimal size of WORK
-  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
+  LWORK = -1
+  call dgeev('N', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
   if(INFO.gt.0)then
-   print*,'dgeev failed !!',INFO
-   stop
+    print*,'dgeev failed !!',INFO
+    stop
   endif
-  LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
+
+  LWORK = max(int(WORK(1)), 1) ! this is the optimal size of WORK 
   deallocate(WORK)
+
   allocate(WORK(LWORK))
+
   ! Actual diagonalization 
-  call dgeev('V','V',n,A,lda,WR,WI,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
-  if(INFO.ne.0)then
-   print*,'dgeev failed !!',INFO
-   stop
+  call dgeev('N', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
+  if(INFO.ne.0) then
+    print*,'dgeev failed !!', INFO
+    stop
   endif
-end 
 
+  deallocate(Atmp, WORK, VL)
 
+  print *, ' JOBL = F'
+  print *, ' eigenvalues'
+  do i = 1, n
+    write(*, '(1000(F16.10,X))') WR(i), WI(i)
+  enddo
+  print *, ' right eigenvect' 
+  do i = 1, n
+    write(*, '(1000(F16.10,X))') VR(:,i)
+  enddo
+
+end subroutine lapack_diag_non_sym_right
 
 subroutine non_hrmt_real_diag_new(n,A,leigvec,reigvec,n_real_eigv,eigval)
 
@@ -450,24 +510,34 @@ subroutine lapack_diag_general_non_sym(n,A,B,WR,beta,WI,VL,VR)
   integer     :: lda,ldvl,ldvr,LWORK,INFO
   double precision, allocatable :: WORK(:)
   integer :: n_good
+
+  double precision, allocatable :: Atmp(:,:)
+
   lda  = n
   ldvl = n
   ldvr = n
+
+  allocate( Atmp(n,n) )
+  Atmp(1:n,1:n) = A(1:n,1:n)
+
   allocate(WORK(1))
   LWORK = -1 ! to ask for the optimal size of WORK
-  call dggev('V','V',n,A,lda,B,lda,WR,WI,beta,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
+  call dgeev('V', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
   if(INFO.gt.0)then
-   print*,'dgeev failed !!',INFO
-   stop
+    print*,'dgeev failed !!',INFO
+    stop
   endif
-  LWORK = max(int(work(1)), 1) ! this is the optimal size of WORK 
+
+  LWORK = max(int(WORK(1)), 1) ! this is the optimal size of WORK 
   deallocate(WORK)
+
   allocate(WORK(LWORK))
+
   ! Actual diagonalization 
-  call dggev('V','V',n,A,lda,B,lda,WR,WI,beta,VL,ldvl,VR,ldvr,WORK,LWORK,INFO)
-  if(INFO.ne.0)then
-   print*,'dgeev failed !!',INFO
-   stop
+  call dgeev('V', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
+  if(INFO.ne.0) then
+    print*,'dgeev failed !!', INFO
+    stop
   endif
 end 
 
@@ -1079,7 +1149,7 @@ subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, 
 
   deallocate( S )
 
-end subroutine non_hrmt_generalized_real_im
+end 
 
 ! ---
 
@@ -1573,6 +1643,194 @@ end subroutine check_EIGVEC
 
 ! ---
 
+subroutine check_degen(n, m, eigval, leigvec, reigvec)
 
+  implicit none
+  integer,          intent(in)    :: n, m
+  double precision, intent(in)    :: eigval(m)
+  double precision, intent(inout) :: leigvec(n,m), reigvec(n,m)
+ 
+  integer                         :: i, j
+  double precision                :: ei, ej, de, de_thr, accu_nd
+  double precision, allocatable   :: S(:,:)
 
+  de_thr = 1d-7
+
+  do i = 1, m-1
+    ei = eigval(i)
+
+    do j = i+1, m
+      ej = eigval(j)
+      de = dabs(ei - ej)
+
+      if(de .gt. de_thr) then
+
+        leigvec(:,i) = 0.d0
+        leigvec(:,j) = 0.d0
+        leigvec(i,i) = 1.d0
+        leigvec(j,j) = 1.d0
+
+        reigvec(:,i) = 0.d0
+        reigvec(:,j) = 0.d0
+        reigvec(i,i) = 1.d0
+        reigvec(j,j) = 1.d0
+
+      endif
+
+    enddo
+  enddo
+
+  ! ---
+
+  allocate( S(m,m) )
+
+  ! S = VL x VR
+  call dgemm( 'T', 'N', m, m, n, 1.d0                              &
+            , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  accu_nd = 0.d0
+  do i = 1, m
+    do j = 1, m
+      if(i==j) cycle
+      accu_nd = accu_nd + S(j,i) * S(j,i)
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+
+  deallocate( S )
+
+  print *, ' check_degen: L & T bi-orthogonality: ok'
+  print *, ' accu_nd = ', accu_nd
+
+  if( accu_nd .lt. 1d-8 ) then
+    return
+  else
+    stop
+  endif
+
+end subroutine check_degen
+
+! ---
+
+subroutine rotate_degen_eigvec(n, C)
+
+  implicit none
+
+  integer,          intent(in)    :: n
+  double precision, intent(inout) :: C(n,n)
+
+  integer                         :: i
+  double precision, allocatable   :: S(:,:), tmp(:,:)
+  
+  allocate(S(n,n))
+  ! S = C.T x C
+  call dgemm( 'T', 'N', n, n, n, 1.d0      &
+            , C, size(C, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' eigenvec overlap: '
+  do i = 1, n
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+ 
+  call get_halfinv_svd(n, S)
+
+  allocate(tmp(n,n))
+  ! C <-- C x S^-1/2
+  call dgemm( 'N', 'N', n, n, n, 1.d0      &
+            , C, size(C, 1), S, size(S, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+
+  C(1:n,1:n) = tmp(1:n,1:n) 
+
+  deallocate(S, tmp)
+
+end subroutine rotate_degen_eigvec
+
+! ---
+
+subroutine get_halfinv_svd(n, S)
+
+  implicit none
+
+  integer,          intent(in)    :: n
+  double precision, intent(inout) :: S(n,n)
+
+  integer                         :: num_linear_dependencies
+  integer                         :: i, j, k
+  double precision                :: accu_d, accu_nd, thresh
+  double precision, parameter     :: threshold = 1.d-6
+  double precision, allocatable   :: U(:,:), Vt(:,:), D(:)
+  double precision, allocatable   :: S0(:,:), Stmp(:,:), Stmp2(:,:)
+
+  allocate( S0(n,n) )
+  S0(1:n,1:n) = S(1:n,1:n)
+
+  allocate(U(n,n), Vt(n,n), D(n))
+  call svd(S, n, U, n, D, Vt, n, n, n)
+
+  num_linear_dependencies = 0
+  do i = 1, n
+    if(abs(D(i)) <= threshold) then
+      D(i) = 0.d0
+      num_linear_dependencies += 1
+    else
+      ASSERT (D(i) > 0.d0)
+      D(i) = 1.d0 / dsqrt(D(i))
+    endif
+  enddo
+  write(*,*) ' linear dependencies', num_linear_dependencies
+
+  S(:,:) = 0.d0
+  do k = 1, n
+    if(D(k) /= 0.d0) then
+      do j = 1, n
+        do i = 1, n
+          S(i,j) = S(i,j) + U(i,k) * D(k) * Vt(k,j)
+        enddo
+      enddo
+    endif
+  enddo
+  deallocate(U, D, Vt)
+
+  allocate( Stmp(n,n), Stmp2(n,n) )
+  Stmp  = 0.d0
+  Stmp2 = 0.d0
+  ! S^-1/2 x S
+  call dgemm( 'N', 'N', n, n, n, 1.d0        &
+            , S, size(S, 1), S0, size(S0, 1) &
+            , 0.d0, Stmp, size(Stmp, 1) )
+  ! ( S^-1/2 x S ) x S^-1/2
+  call dgemm( 'N', 'N', n, n, n, 1.d0            &
+            , Stmp, size(Stmp, 1), S, size(S, 1) &
+            , 0.d0, Stmp2, size(Stmp2, 1) )
+
+  accu_nd = 0.d0
+  accu_d  = 0.d0
+  thresh  = 1.d-10
+  do i = 1, n
+    do j = 1, n
+      if(i==j) then
+       accu_d += Stmp2(j,i)
+      else 
+       accu_nd = accu_nd + Stmp2(j,i) * Stmp2(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+  if( accu_nd.gt.thresh .or. dabs(accu_d-dble(n)).gt.thresh) then
+    print*, ' after S^-1/2: sum of off-diag S elements = ', accu_nd
+    print*, ' after S^-1/2: sum of     diag S elements = ', accu_d
+    do i = 1, n
+      write(*,'(1000(F16.10,X))') Stmp2(i,:)
+    enddo
+    stop
+  endif
+
+  deallocate(S0, Stmp, Stmp2)
+
+end subroutine get_halfinv_svd
+
+! ---
 
