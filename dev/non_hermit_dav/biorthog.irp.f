@@ -141,7 +141,7 @@ subroutine non_hrmt_diag_split_degen(n, A, leigvec, reigvec, n_real_eigv, eigval
    enddo
   enddo
 
-end subroutine non_hrmt_real_diag_new
+end subroutine non_hrmt_diag_split_degen
 
 
 ! ---
