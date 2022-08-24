@@ -623,7 +623,7 @@ subroutine check_degen(n, m, eigval, leigvec, reigvec)
       ej = eigval(j)
       de = dabs(ei - ej)
 
-      if(de .gt. de_thr) then
+      if(de .lt. de_thr) then
 
         leigvec(:,i) = 0.d0
         leigvec(:,j) = 0.d0

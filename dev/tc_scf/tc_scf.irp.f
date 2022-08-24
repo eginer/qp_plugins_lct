@@ -52,7 +52,7 @@ subroutine routine_scf()
   endif
 
   if(bi_ortho)then
-   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)))
+   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. (thresh_tcscf)))
      it += 1
      print*,'iteration = ', it
      print*,'***'
