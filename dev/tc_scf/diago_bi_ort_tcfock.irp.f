@@ -18,12 +18,11 @@
 
   PROVIDE Fock_matrix_tc_mo_tot
 
-
 ! call non_hrmt_generalized_real_im(mo_num, Fock_matrix_tc_mo_tot, overlap_bi_ortho &
    !call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_real_diag( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
-   !call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
+!   call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_bieig_real_im( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_bieiginv( mo_num, Fock_matrix_tc_mo_tot &
    call non_sym_diag_inv_right( mo_num, Fock_matrix_tc_mo_tot &
