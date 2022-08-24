@@ -85,6 +85,11 @@ subroutine routine_scf()
       call save_mos
    enddo
   endif
+  print*,'Energy converged !'
+  print*,'Diagonal Fock elements '
+  do i = 1, mo_num
+   print*,i,Fock_matrix_tc_mo_tot(i,i)
+  enddo
 
 end subroutine routine_scf
 

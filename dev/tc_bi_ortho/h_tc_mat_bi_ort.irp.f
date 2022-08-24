@@ -54,9 +54,9 @@ subroutine htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
  endif
  if(three_body_h_tc) then
    if(degree == 2) then
-!     if(.not.double_normal_ord) then
+     if(.not.double_normal_ord) then
        call double_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
-!     endif
+     endif
    else if(degree == 1)then
      call single_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
    else if(degree == 0)then
@@ -229,19 +229,19 @@ subroutine double_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
    ! opposite spin two-body 
 !   key_j, key_i
     htwoe  = mo_bi_ortho_tc_two_e(p2,p1,h2,h1) 
-!    if(double_normal_ord.and.+Ne(1).gt.2)then
-!     heff += normal_two_body(h1,p1,h2,p2)
-!    endif
+    if(double_normal_ord.and.+Ne(1).gt.2)then
+     htwoe += normal_two_body_bi_orth(p2,h2,p1,h1)
+    endif
   else
    ! same spin two-body 
    ! direct terms 
    htwoe  = mo_bi_ortho_tc_two_e(p2,p1,h2,h1)  
    ! exchange terms 
    htwoe -= mo_bi_ortho_tc_two_e(p1,p2,h2,h1) 
-!   if(double_normal_ord.and.+Ne(1).gt.2)then
-!    heff -= normal_two_body(h2,p1,h1,p2)
-!    heff += normal_two_body(h1,p1,h2,p2)
-!   endif
+   if(double_normal_ord.and.+Ne(1).gt.2)then
+    htwoe -= normal_two_body_bi_orth(h2,p1,h1,p2)
+    htwoe += normal_two_body_bi_orth(h1,p1,h2,p2)
+   endif
   endif
   htwoe *= phase
   htot =  htwoe 
