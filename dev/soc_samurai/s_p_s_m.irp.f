@@ -61,7 +61,7 @@ end
 subroutine s_plus_det(det_in,det_out,phase,ndet_out)
  implicit none
  BEGIN_DOC
-! a^dagger_orb_j_up a_orb_j_down | det_in > = phase * | det_out >
+! \sum_j a^dagger_orb_j_up a_orb_j_down | det_in > = \sum_I=1,ndet_out phase_I * | det_out_I >
  END_DOC
   use bitmasks ! you need to include the bitmasks_module.f90 features
  integer(bit_kind), intent(in)  :: det_in(N_int,2)

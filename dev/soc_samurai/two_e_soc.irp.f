@@ -234,3 +234,17 @@ BEGIN_PROVIDER [ double precision, One_body_mu_nu_find_a_better_name, (3,nucl_nu
   enddo
  enddo
 END_PROVIDER
+
+
+BEGIN_PROVIDER [ double precision, v_soc_tot_mo, (mo_num, mo_num,3)]
+ implicit none
+ BEGIN_DOC
+ ! total one-body spin orbit operator on the MO basis 
+ ! v_soc_tot_mo(i,j,k) = <ph_i| V_so^k | phi_j>
+ ! k = 1 = +
+ ! k = 2 = -
+ ! k = 3 = z
+ END_DOC
+ v_soc_tot_mo = 0.d0
+
+END_PROVIDER 
