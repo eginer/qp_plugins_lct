@@ -1,37 +1,6 @@
 
 ! ---
 
-subroutine rotate_mo_coef(mo_coef_old, mo_mo_coef, mo_mo_overlap, mo_coef_new)
-
-  BEGIN_DOC
-  ! You have mo_coef_new which is based on a MO->MO transformation through mo_mo_coef
-  END_DOC
-
-  implicit none
-  double precision, intent(in)  :: mo_coef_old(ao_num, mo_num)
-  double precision, intent(in)  :: mo_mo_coef(mo_num, mo_num), mo_mo_overlap(mo_num, mo_num)
-  double precision, intent(out) :: mo_coef_new(ao_num, mo_num)
-
-! call dgemm('N','N',ao_num,mo_num,mo_num,1.d0,mo_coef_old,size(mo_coef_old,1),& 
-!      mo_mo_coef,size(mo_mo_coef,1),&
-!      0.d0,mo_coef_new,size(mo_coef_new,1))
-
-  integer :: i, j, q, k
-  mo_coef_new = 0.d0
-  do i = 1, mo_num
-    do j = 1, mo_num
-      do k = 1, mo_num
-        do q = 1, ao_num
-          mo_coef_new(q,i) += mo_coef_old(q,j) * mo_mo_overlap(k,j) * mo_mo_coef(j,i) 
-        enddo
-      enddo
-    enddo
-  enddo
-
-end subroutine rotate_mo_coef
-
-! ---
-
 subroutine ao_to_mo_bi_ortho(A_ao, LDA_ao, A_mo, LDA_mo)
 
   BEGIN_DOC
@@ -49,31 +18,6 @@ subroutine ao_to_mo_bi_ortho(A_ao, LDA_ao, A_mo, LDA_mo)
   allocate ( T(ao_num,mo_num) )
   !DIR$ ATTRIBUTES ALIGN : $IRP_ALIGN :: T
   integer :: i,j,p,q
-! print*,'mo_r_coef'
-! do i = 1, mo_num
-!  write(33,'(100(F16.10,X))')mo_r_coef(:,i)
-! enddo
-! print*,'mo_l_coef'
-! do i = 1, mo_num
-!  write(34,'(100(F16.10,X))')mo_l_coef(:,i)
-! enddo
-! T = 0.d0
-! do i = 1, mo_num
-!  do p = 1, ao_num
-!   do q = 1, ao_num
-!    T(p,i) += A_ao(p,q) * mo_r_coef(q,i)
-!   enddo
-!  enddo
-! enddo
-! A_mo = 0.d0
-! do i = 1, mo_num
-!  do j = 1, ao_num
-!   do p = 1, ao_num
-!    A_mo(j,i) += T(p,i) * mo_l_coef(p,j)
-!   enddo
-!  enddo
-! enddo
-! 
 
   call dgemm('N', 'N', ao_num, mo_num, ao_num,  &
       1.d0, A_ao, LDA_ao,                       &

@@ -1,20 +1,17 @@
 subroutine provide_all_three_ints_bi_ortho
  implicit none
  if(three_body_h_tc)then
-  print*,'three_body_h_tc = ',three_body_h_tc
   PROVIDE three_e_3_idx_direct_bi_ort three_e_3_idx_cycle_1_bi_ort three_e_3_idx_cycle_2_bi_ort
   PROVIDE three_e_3_idx_exch23_bi_ort three_e_3_idx_exch13_bi_ort three_e_3_idx_exch12_bi_ort
   PROVIDE three_e_4_idx_direct_bi_ort three_e_4_idx_cycle_1_bi_ort three_e_4_idx_cycle_2_bi_ort
   PROVIDE three_e_4_idx_exch23_bi_ort three_e_4_idx_exch13_bi_ort three_e_4_idx_exch12_bi_ort
+ endif
+if(.not.double_normal_ord)then
   PROVIDE three_e_5_idx_direct_bi_ort three_e_5_idx_cycle_1_bi_ort three_e_5_idx_cycle_2_bi_ort
   PROVIDE three_e_5_idx_exch23_bi_ort three_e_5_idx_exch13_bi_ort three_e_5_idx_exch12_bi_ort
- endif
-!if(.not.double_normal_ord)then
-! PROVIDE three_body_5_index three_body_5_index_132 three_body_5_index_312
-! PROVIDE three_body_5_index_exch_12 three_body_5_index_exch_13 three_body_5_index_exch_32
-!else
-! PROVIDE normal_two_body
-!endif
+else
+ PROVIDE normal_two_body_bi_orth
+endif
 end
 
 subroutine diag_htilde_three_body_ints_bi_ort(Nint, key_i, hthree)
@@ -260,19 +257,22 @@ subroutine double_htilde_three_body_ints_bi_ort(Nint, key_j, key_i, hthree)
     if(Ne(1)+Ne(2).ge.3)then
      if(s1==s2)then ! same spin excitation 
       ispin = other_spin(s1)
-      do m = 1, Ne(ispin) ! direct(other_spin) - exchange(s1)
-       mm = occ(m,ispin)
-!      direct_int = three_body_ints_bi_ort(mm,p2,p1,mm,h2,h1)
-!      exchange_int = three_body_ints_bi_ort(mm,p2,p1,mm,h1,h2)
-       direct_int = three_e_5_idx_direct_bi_ort(mm,p2,h2,p1,h1) 
-       exchange_int = three_e_5_idx_exch12_bi_ort(mm,p2,h2,p1,h1)
-       hthree += direct_int - exchange_int
-      enddo
-      do m = 1, Ne(s1) ! pure contribution from s1 
-       mm = occ(m,s1)
-!       ref = sym_3_e_int_from_6_idx_tensor(mm,p1,p1,mm,h2,h1) USES THE 6-IDX tensor 
-       hthree += three_e_double_parrallel_spin(mm,p2,h2,p1,h1)
-      enddo 
+!      print*,'htilde ij'
+     do m = 1, Ne(ispin) ! direct(other_spin) - exchange(s1)
+      mm = occ(m,ispin)
+!!    direct_int = three_body_ints_bi_ort(mm,p2,p1,mm,h2,h1)
+!!    exchange_int = three_body_ints_bi_ort(mm,p2,p1,mm,h1,h2)
+      direct_int = three_e_5_idx_direct_bi_ort(mm,p2,h2,p1,h1) 
+      exchange_int = three_e_5_idx_exch12_bi_ort(mm,p2,h2,p1,h1)
+!      print*,direct_int,exchange_int
+      hthree += direct_int - exchange_int
+     enddo
+     do m = 1, Ne(s1) ! pure contribution from s1 
+      mm = occ(m,s1)
+! !  !!ref = sym_3_e_int_from_6_idx_tensor(mm,p1,p1,mm,h2,h1) USES THE 6-IDX tensor 
+      hthree += three_e_double_parrallel_spin(mm,p2,h2,p1,h1)
+     enddo 
+!     print*,'hthree,phase',hthree,phase
      else ! different spin excitation 
        do m = 1, Ne(s1)
         mm = occ(m,s1) ! 

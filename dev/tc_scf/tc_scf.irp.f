@@ -52,7 +52,7 @@ subroutine routine_scf()
   endif
 
   if(bi_ortho)then
-   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)))
+   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. (thresh_tcscf)))
      it += 1
      print*,'iteration = ', it
      print*,'***'
@@ -85,6 +85,11 @@ subroutine routine_scf()
       call save_mos
    enddo
   endif
+  print*,'Energy converged !'
+  print*,'Diagonal Fock elements '
+  do i = 1, mo_num
+   print*,i,Fock_matrix_tc_mo_tot(i,i)
+  enddo
 
 end subroutine routine_scf
 
