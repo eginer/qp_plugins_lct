@@ -359,7 +359,7 @@ end subroutine non_hrmt_real_diag
 ! ---
 
 subroutine lapack_diag_general_non_sym(n,A,B,WR,beta,WI,VL,VR)
-
+ implicit none
   BEGIN_DOC
 ! You enter with a general non hermitian matrix A(n,n) and another B(n,n)
 !
@@ -373,8 +373,6 @@ subroutine lapack_diag_general_non_sym(n,A,B,WR,beta,WI,VL,VR)
 !
 ! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
   END_DOC
-
- implicit none
  integer, intent(in) :: n
  double precision, intent(in) :: A(n,n),B(n,n)
  double precision, intent(out):: WR(n),WI(n),beta(n),VL(n,n),VR(n,n)
@@ -808,7 +806,7 @@ subroutine non_hrmt_bieiginv(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
     print *, ' L & T bi-orthogonality: not imposed yet'
     print *, ' accu_nd = ', accu_nd
-    call impose_biorthog_inv(n, n_real_eigv, leigvec, reigvec)
+!    call impose_biorthog_inv(n, n_real_eigv, leigvec, reigvec)
 
     ! S = VL x VR
     allocate( S(n_real_eigv,n_real_eigv) )
