@@ -19,6 +19,7 @@
   rho_a_hf = one_e_dm_and_grad_alpha_in_r(4,ipoint,1)
   rho_b_hf = one_e_dm_and_grad_beta_in_r(4,ipoint,1)
   rho_hf = rho_a_hf + rho_b_hf
+  rho_hf = max(rho_hf,1.D-10)
   mu_tmp = mu_rs_c(rho_hf)
   if(damped_mu_of_r)then
    mu = damped_mu(mu_tmp,mu_min)
@@ -27,7 +28,7 @@
    mu = mu_tmp
   endif
   if(rescaled_on_top_mu)then
-   mu = mu *dsqrt(0.25d0 *  (rho_a_hf+rho_b_hf)**2/(rho_a_hf*rho_b_hf+1.d-12))
+   mu = mu *dsqrt(0.25d0 *  (rho_hf+rho_hf)**2/(rho_a_hf*rho_b_hf+1.d-12))
   else 
    mu=mu
   endif
@@ -82,11 +83,13 @@ subroutine get_grad_mu_rsc(r,dx,grad_mu)
    r_tmp(m) += dx 
    call dm_dft_alpha_beta_at_r(r_tmp,rho_a_hf,rho_b_hf)
    rho_hf = rho_a_hf + rho_b_hf
+   rho_hf = max(rho_hf,1.D-10)
    mu_plus = mu_rs_c(rho_hf)
    r_tmp = r 
    r_tmp(m) -= dx 
    call dm_dft_alpha_beta_at_r(r_tmp,rho_a_hf,rho_b_hf)
    rho_hf = rho_a_hf + rho_b_hf
+   rho_hf = max(rho_hf,1.D-10)
    mu_minus = mu_rs_c(rho_hf)
 
    grad_mu(m) = (mu_plus - mu_minus)/(2.d0 * dx)
@@ -105,12 +108,14 @@ subroutine get_grad_damped_mu_rsc(r,mu_min,dx,grad_mu)
    r_tmp(m) += dx 
    call dm_dft_alpha_beta_at_r(r_tmp,rho_a_hf,rho_b_hf)
    rho_hf = rho_a_hf + rho_b_hf
+   rho_hf = max(rho_hf,1.D-10)
    mu_plus = damped_mu_rs_c(rho_hf,mu_min)
 
    r_tmp = r 
    r_tmp(m) -= dx 
    call dm_dft_alpha_beta_at_r(r_tmp,rho_a_hf,rho_b_hf)
    rho_hf = rho_a_hf + rho_b_hf
+   rho_hf = max(rho_hf,1.D-10)
    mu_minus = damped_mu_rs_c(rho_hf,mu_min)
 
    grad_mu(m) = (mu_plus - mu_minus)/(2.d0 * dx)
@@ -135,6 +140,7 @@ end
   r(:) = final_grid_points_extra(:,ipoint)
   call dm_dft_alpha_beta_at_r(r,rho_a_hf,rho_b_hf)
   rho_hf = rho_a_hf + rho_b_hf
+  rho_hf = max(rho_hf,1.D-10)
   mu_tmp = mu_rs_c(rho_hf)
   if(damped_mu_of_r)then
    mu = damped_mu(mu_tmp,mu_min)
