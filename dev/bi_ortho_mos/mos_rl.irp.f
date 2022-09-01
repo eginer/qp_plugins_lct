@@ -69,7 +69,7 @@ BEGIN_PROVIDER [ double precision, mo_l_coef, (ao_num, mo_num) ]
   PROVIDE ezfio_filename
 
   if (mpi_master) then
-    call ezfio_has_bi_ortho_mos_mo_r_coef(exists)
+    call ezfio_has_bi_ortho_mos_mo_l_coef(exists)
   endif
   IRP_IF MPI_DEBUG
     print *,  irp_here, mpi_rank
