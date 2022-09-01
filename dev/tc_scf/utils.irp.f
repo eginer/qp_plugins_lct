@@ -32,20 +32,20 @@ subroutine get_inv_half_svd(matrix, n, matrix_inv_half)
 
   call svd(matrix, LDA, U, LDC, D, Vt, LDA, n, n)
 
-  print*, ' U'
-  do i = 1, n
-   write(*, '(100(F16.10,x))') U(:,i)
-  enddo
-
-  print*, ' Vt'
-  do i = 1, n
-   write(*, '(100(F16.10,x))') Vt(:,i)
-  enddo
-
-  print*, ' D'
-  do i = 1,n
-   write(*, '(100(F16.10,x))') D(i)
-  enddo
+!  print*, ' U'
+!  do i = 1, n
+!   write(*, '(100(F16.10,x))') U(:,i)
+!  enddo
+!
+!  print*, ' Vt'
+!  do i = 1, n
+!   write(*, '(100(F16.10,x))') Vt(:,i)
+!  enddo
+!
+!  print*, ' D'
+!  do i = 1,n
+!   write(*, '(100(F16.10,x))') D(i)
+!  enddo
 
   num_linear_dependencies = 0
   do i = 1, n
@@ -86,16 +86,16 @@ subroutine get_inv_half_svd(matrix, n, matrix_inv_half)
             , 0.d0, Stmp, size(Stmp, 1) )
 
   ! ( S^-1/2 x S ) x S^-1/2
-  !Stmp2 = 0.d0
-  !call dgemm( 'N', 'N', n, n, n, 1.d0                                        &
-  !          , Stmp, size(Stmp, 1), matrix_inv_half, size(matrix_inv_half, 1) &
-  !          , 0.d0, Stmp2, size(Stmp2, 1) )
-
-  ! S^-1/2 x ( S^-1/2 x S )
   Stmp2 = 0.d0
   call dgemm( 'N', 'N', n, n, n, 1.d0                                        &
-            , matrix_inv_half, size(matrix_inv_half, 1), Stmp, size(Stmp, 1) &
+            , Stmp, size(Stmp, 1), matrix_inv_half, size(matrix_inv_half, 1) &
             , 0.d0, Stmp2, size(Stmp2, 1) )
+
+  ! S^-1/2 x ( S^-1/2 x S )
+!  Stmp2 = 0.d0
+!  call dgemm( 'N', 'N', n, n, n, 1.d0                                        &
+!            , matrix_inv_half, size(matrix_inv_half, 1), Stmp, size(Stmp, 1) &
+!            , 0.d0, Stmp2, size(Stmp2, 1) )
  
   double precision :: accu_d,accu_nd
   accu_nd = 0.d0

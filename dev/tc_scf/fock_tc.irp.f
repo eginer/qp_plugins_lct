@@ -90,11 +90,12 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_beta, (ao_num, ao_num)]
 END_PROVIDER 
 ! ---
 
-BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_tot, (ao_num, ao_num)]
+BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_tot, (ao_num, ao_num) ]
   implicit none
-  Fock_matrix_tc_ao_tot  = Fock_matrix_tc_ao_beta + Fock_matrix_tc_ao_alpha
-END_PROVIDER 
+  Fock_matrix_tc_ao_tot = 0.5d0 * (Fock_matrix_tc_ao_alpha + Fock_matrix_tc_ao_beta)
+END_PROVIDER
 
+! ---
 
 BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_alpha, (mo_num, mo_num) ]
   implicit none
@@ -129,13 +130,6 @@ BEGIN_PROVIDER [ double precision, Fock_matrix_tc_mo_tot, (mo_num, mo_num)]
   endif
   !call restore_symmetry(mo_num, mo_num, Fock_matrix_tc_mo_tot, mo_num, 1.d-10)
 END_PROVIDER 
-
-! ---
-
-!BEGIN_PROVIDER [ double precision, Fock_matrix_tc_ao_tot, (ao_num, ao_num) ]
-!  implicit none
-!  Fock_matrix_tc_ao_tot = 0.5d0 * (Fock_matrix_tc_ao_alpha + Fock_matrix_tc_ao_beta)
-!END_PROVIDER
 
 ! ---
 
