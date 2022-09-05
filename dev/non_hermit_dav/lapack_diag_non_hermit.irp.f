@@ -57,15 +57,11 @@ end subroutine lapack_diag_non_sym
 subroutine non_sym_diag_inv_right(n,A,leigvec,reigvec,n_real_eigv,eigval)
  implicit none
  BEGIN_DOC
-! routine which returns the sorted EIGENVALUES and the corresponding LEFT/RIGHT eigenvetors 
+! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
 !
 ! of a non hermitian matrix A(n,n)
 !
 ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
-!
-! THE LEFT EIGENVECTORS ARE TAKEN AS THE TRANSPOSED OF THE INVERSE MATRIX OF THE RIGHT EIGENVECTORS
-!
-! THIS GUARANTEES BI-ORTHONORMALITY 
  END_DOC
  integer, intent(in) :: n
  double precision, intent(in) :: A(n,n)
@@ -90,64 +86,88 @@ subroutine non_sym_diag_inv_right(n,A,leigvec,reigvec,n_real_eigv,eigval)
    if(dabs(Aw(j,j)-Aw(i,i)).lt.thr)then
      Aw(j,j)+= thr
      Aw(i,i)-= thr
-     Aw(j,i) = 0.d0
-     Aw(i,j) = Aw(j,i)
+!    if(Aw(j,i) * A(i,j) .lt.0d0  )then
+!     if(dabs(Aw(j,i) * A(i,j)).lt.thr**(1.5d0))then
+!      print*,Aw(j,j),Aw(i,i)
+!      print*,Aw(j,i) , A(i,j)
+      Aw(j,i) = 0.d0
+      Aw(i,j) = Aw(j,i)
+!     endif
+!    endif
    endif
   enddo
  enddo
  call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
  ! You track the real eigenvalues 
  n_good = 0
+! do i = 1, n
+!  write(*,'(100(F16.12,X))')A(:,i)
+! enddo
  do i = 1, n
+  print*,'Im part of lambda = ',dabs(WI(i))
   if(dabs(WI(i)).lt.thr)then
    n_good += 1
   else
    print*,'Found an imaginary component to eigenvalue'
    print*,'Re(i) + Im(i)',WR(i),WI(i)
+   write(*,'(100(F10.5,X))')VR(:,i)
+   write(*,'(100(F10.5,X))')VR(:,i+1)
+   write(*,'(100(F10.5,X))')VL(:,i)
+   write(*,'(100(F10.5,X))')VL(:,i+1)
+  endif
+ enddo
+ allocate(list_good(n_good),iorder(n_good))
+ n_good = 0
+ do i = 1, n
+  if(dabs(WI(i)).lt.thr)then
+   n_good += 1
+   list_good(n_good) = i
+   eigval(n_good) = WR(i)
   endif
  enddo
  n_real_eigv = n_good 
- allocate(iorder(n))
- do i = 1, n
-   eigval(i) = WR(i)
-   iorder(i) = i
+ do i = 1, n_good
+  iorder(i) = i
  enddo
  ! You sort the real eigenvalues 
  call dsort(eigval,iorder,n_good)
- do i = 1, n
-  do j = 1, n
-   reigvec(j,i) = VR(j,iorder(i))
-   leigvec(j,i) = VL(j,iorder(i))
-  enddo
- enddo
- allocate(inv_reigvec(n,n))
- call get_pseudo_inverse(reigvec,n,n,n,inv_reigvec,n,thr)
  do i = 1, n_real_eigv
   do j = 1, n
-   leigvec(j,i) = inv_reigvec(i,j)
+   reigvec(j,i) = VR(j,list_good(iorder(i)))
+   leigvec(j,i) = VL(j,list_good(iorder(i)))
   enddo
  enddo
- allocate( S(n,n) )
+ allocate(inv_reigvec(n_real_eigv,n_real_eigv))
+! call get_pseudo_inverse(reigvec,n_real_eigv,n_real_eigv,n_real_eigv,inv_reigvec,n_real_eigv,thr)
+! do i = 1, n_real_eigv
+!  do j = 1, n
+!   leigvec(j,i) = inv_reigvec(i,j)
+!  enddo
+! enddo
+ allocate( S(n_real_eigv,n_real_eigv) )
 
   ! S = VL x VR
-  call dgemm( 'T', 'N', n, n, n, 1.d0                              &
+  call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n_real_eigv, 1.d0                              &
             , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
             , 0.d0, S, size(S, 1) )
-! do i = 1,n
-!  write(*,'(100(F10.5,X))')S(:,i)
+   do i = 1,n_real_eigv
+    write(*,'(100(F10.5,X))')S(:,i)
+   enddo
+! call lapack_diag_non_sym(n,S,WR,WI,VL,VR)
+! print*,'Eigenvalues of S'
+! do i = 1, n
+!  print*,WR(i),dabs(WI(i))
 ! enddo
-!call lapack_diag_non_sym(n,S,WR,WI,VL,VR)
-!print*,'Eigenvalues of S'
-!do i = 1, n
-! print*,WR(i),dabs(WI(i))
-!enddo
+  call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n_real_eigv, 1.d0                              &
+            , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
+            , 0.d0, S, size(S, 1) )
 ! call get_inv_half_svd(S, n_real_eigv, inv_reigvec)
 
   double precision :: accu_d,accu_nd
   accu_nd = 0.d0
   accu_d = 0.d0
-  do i = 1, n
-    do j = 1, n
+  do i = 1, n_real_eigv
+    do j = 1, n_real_eigv
       if(i==j) then
        accu_d += S(j,i) * S(j,i)
       else
@@ -163,12 +183,7 @@ subroutine non_sym_diag_inv_right(n,A,leigvec,reigvec,n_real_eigv,eigval)
     !print *, ' L & T bi-orthogonality: ok'
     return
   else
-   print*,'WARNING PB with bi-orthonormality!!'
-   print*,'it might come from the fact that you obtained complex eigenvalues'
-   print*,'n = ',n
-   print*,'n_real_eigv = ',n_real_eigv
-   print*,'If the imaginary parts of the eigenvalues are really small (1^-10)'
-   print*,'You can use the routine non_hrmt_diag_split_degen which might give you only real eigenvalues'
+   print*,'PB with bi-orthonormality!!'
    stop
   endif
 end
@@ -202,6 +217,10 @@ subroutine lapack_diag_non_sym_new(n, A, WR, WI, VL, VR)
   double precision              :: ABNRM
   integer,          allocatable :: IWORK(:)
   double precision, allocatable :: WORK(:), SCALE_array(:), RCONDE(:), RCONDV(:)
+  double precision, allocatable :: Atmp(:,:)
+
+  allocate( Atmp(n,n) )
+  Atmp(1:n,1:n) = A(1:n,1:n)
 
   JOBVL  = "V" ! computes the left  eigenvectors 
   JOBVR  = "V" ! computes the right eigenvectors 
@@ -213,7 +232,7 @@ subroutine lapack_diag_non_sym_new(n, A, WR, WI, VL, VR)
   allocate(WORK(1),SCALE_array(n),RCONDE(n),RCONDV(n),IWORK(2*n-2))
   LWORK = -1 ! to ask for the optimal size of WORK
   call dgeevx(BALANC,JOBVL,JOBVR,SENSE,&  ! CHARACTERS 
-              n,A,lda,                 &  ! MATRIX TO DIAGONALIZE
+              n,Atmp,lda,              &  ! MATRIX TO DIAGONALIZE
               WR,WI,                   &  ! REAL AND IMAGINARY PART OF EIGENVALUES 
               VL,ldvl,VR,ldvr,         &  ! LEFT AND RIGHT EIGENVECTORS 
               ILO,IHI,SCALE_array,ABNRM,RCONDE,RCONDV, & ! OUTPUTS OF OPTIMIZATION
@@ -231,7 +250,7 @@ subroutine lapack_diag_non_sym_new(n, A, WR, WI, VL, VR)
   allocate(WORK(LWORK))
   ! Actual dnon_hrmt_real_diag_newiagonalization 
   call dgeevx(BALANC,JOBVL,JOBVR,SENSE,&  ! CHARACTERS 
-              n,A,lda,                 &  ! MATRIX TO DIAGONALIZE
+              n,Atmp,lda,              &  ! MATRIX TO DIAGONALIZE
               WR,WI,                   &  ! REAL AND IMAGINARY PART OF EIGENVALUES 
               VL,ldvl,VR,ldvr,         &  ! LEFT AND RIGHT EIGENVECTORS 
               ILO,IHI,SCALE_array,ABNRM,RCONDE,RCONDV, & ! OUTPUTS OF OPTIMIZATION
@@ -244,6 +263,7 @@ subroutine lapack_diag_non_sym_new(n, A, WR, WI, VL, VR)
     stop
   endif
 
+  deallocate( Atmp )
   deallocate( WORK, SCALE_array, RCONDE, RCONDV, IWORK )
 
 end subroutine lapack_diag_non_sym_new
@@ -302,7 +322,246 @@ subroutine lapack_diag_non_sym_right(n, A, WR, WI, VR)
 
 end subroutine lapack_diag_non_sym_right
 
+! ---
 
+subroutine non_hrmt_real_diag(n, A, leigvec, reigvec, n_real_eigv, eigval)
+
+  BEGIN_DOC
+  !
+  ! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
+  !
+  ! of a non hermitian matrix A(n,n)
+  !
+  ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
+  !
+  END_DOC
+
+  implicit none
+  integer,          intent(in)  :: n
+  double precision, intent(in)  :: A(n,n)
+  integer,          intent(out) :: n_real_eigv
+  double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
+
+  integer                       :: i, j, n_good
+  double precision              :: thr, threshold, accu_d, accu_nd
+  integer,          allocatable :: list_good(:), iorder(:)
+  double precision, allocatable :: Aw(:,:)
+  double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:), S(:,:), S_inv_half_tmp(:,:)
+
+  print*, ' Computing the left/right eigenvectors ...'
+
+  ! Eigvalue(n) = WR(n) + i * WI(n)
+  allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
+  Aw = A
+  call lapack_diag_non_sym(n, Aw, WR, WI, VL, VR)
+
+  ! ---
+  ! You track the real eigenvalues 
+
+  thr = 1d-15
+
+  n_good = 0
+  do i = 1, n
+    if(dabs(WI(i)).lt.thr) then
+      n_good += 1
+    else
+      print*, ' Found an imaginary component to eigenvalue'
+      print*, ' Re(i) + Im(i)', WR(i), WI(i)
+    endif
+  enddo
+
+  allocate(list_good(n_good), iorder(n_good))
+  n_good = 0
+  do i = 1, n
+    if(dabs(WI(i)).lt.thr) then
+      n_good += 1
+      list_good(n_good) = i
+      eigval(n_good) = WR(i)
+    endif
+  enddo
+  n_real_eigv = n_good
+  do i = 1, n_good
+   iorder(i) = i
+  enddo
+
+  ! You sort the real eigenvalues 
+  call dsort(eigval, iorder, n_good)
+  do i = 1, n_real_eigv
+    do j = 1, n
+      reigvec(j,i) = VR(j,list_good(iorder(i)))
+      leigvec(j,i) = Vl(j,list_good(iorder(i)))
+    enddo
+  enddo
+
+  ! ---
+
+  allocate( S(n_real_eigv,n_real_eigv), S_inv_half_tmp(n_real_eigv,n_real_eigv) )
+
+  ! S = VL x VR
+  call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n_real_eigv, 1.d0 &
+            , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1)  &
+            , 0.d0, S, size(S, 1) )
+
+  accu_nd = 0.d0
+  accu_d  = 0.d0
+  do i = 1, n_real_eigv
+    do j = 1, n_real_eigv
+      if(i==j) then
+        accu_d += S(j,i)
+      else
+        accu_nd = accu_nd + S(j,i) * S(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+
+  threshold = 1.d-15
+  if( (accu_nd .gt. threshold) .or. (dabs(accu_d-dble(n_real_eigv)) .gt. threshold) ) then
+
+    print*, ' sum of off-diag S elements = ', accu_nd
+    print*, ' Should be zero '
+    print*, ' sum of     diag S elements = ', accu_d
+    print*, ' Should be ',n
+    print*, ' Not bi-orthonormal !!'
+    print*, ' Notice that if you are interested in ground state it is not a problem :)'
+  endif
+
+end subroutine non_hrmt_real_diag
+
+! ---
+
+subroutine lapack_diag_general_non_sym(n, A, B, WR, WI, VL, VR)
+
+  BEGIN_DOC
+  ! You enter with a general non hermitian matrix A(n,n) and another B(n,n)
+  !
+  ! You get out with the real WR and imaginary part WI of the eigenvalues 
+  !
+  ! Eigvalue(n) = (WR(n) + i * WI(n))
+  !
+  ! And the left VL and right VR eigenvectors 
+  !
+  ! VL(i,j) = <i|Psi_left(j)>  :: projection on the basis element |i> on the jth left  eigenvector 
+  !
+  ! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
+  END_DOC
+
+  implicit none
+  integer,          intent(in)  :: n
+  double precision, intent(in)  :: A(n,n), B(n,n)
+  double precision, intent(out) :: WR(n), WI(n), VL(n,n), VR(n,n)
+
+  integer                       :: lda, ldvl, ldvr, LWORK, INFO
+  integer                       :: n_good
+  double precision, allocatable :: WORK(:)
+  double precision, allocatable :: Atmp(:,:)
+
+  lda  = n
+  ldvl = n
+  ldvr = n
+
+  allocate( Atmp(n,n) )
+  Atmp(1:n,1:n) = A(1:n,1:n)
+
+  allocate(WORK(1))
+  LWORK = -1 
+  call dgeev('V', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
+  if(INFO.gt.0) then
+    print*,'dgeev failed !!',INFO
+    stop
+  endif
+
+  LWORK = max(int(WORK(1)), 1) 
+  deallocate(WORK)
+
+  allocate(WORK(LWORK))
+
+  call dgeev('V', 'V', n, Atmp, lda, WR, WI, VL, ldvl, VR, ldvr, WORK, LWORK, INFO)
+  if(INFO.ne.0) then
+    print*,'dgeev failed !!', INFO
+    stop
+  endif
+
+  deallocate( WORK, Atmp )
+
+end subroutine lapack_diag_general_non_sym
+
+! ---
+
+subroutine non_hrmt_general_real_diag(n, A, B, reigvec, leigvec, n_real_eigv, eigval)
+
+  BEGIN_DOC
+  ! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
+  !
+  ! of a non hermitian matrix A(n,n) and B(n,n) 
+  !
+  ! A reigvec = eigval * B * reigvec
+  !
+  ! (A)^\dagger leigvec = eigval * B * leigvec
+  !
+  ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
+  END_DOC
+
+  implicit none
+  integer,          intent(in)  :: n
+  double precision, intent(in)  :: A(n,n), B(n,n)
+  integer,          intent(out) :: n_real_eigv
+  double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
+
+  integer                       :: i, j
+  integer                       :: n_good
+  integer, allocatable          :: list_good(:), iorder(:)
+  double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:)
+  double precision, allocatable :: Aw(:,:), Bw(:,:)
+
+  print*,'Computing the left/right eigenvectors ...'
+
+  allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n), Bw(n,n))
+  Aw = A
+  Bw = B
+
+  call lapack_diag_general_non_sym(n, A, B, WR, WI, VL, VR)
+
+  ! You track the real eigenvalues 
+  n_good = 0
+  do i = 1, n
+    if(dabs(WI(i)) .lt. 1.d-12) then
+      n_good += 1
+    else
+      print*,'Found an imaginary component to eigenvalue'
+      print*,'Re(i) + Im(i)',WR(i),WI(i)
+    endif
+  enddo
+
+  allocate(list_good(n_good), iorder(n_good))
+  n_good = 0
+  do i = 1, n
+    if(dabs(WI(i)).lt.1.d-12)then
+      n_good += 1
+      list_good(n_good) = i
+      eigval(n_good) = WR(i)
+    endif
+  enddo
+  n_real_eigv = n_good 
+  do i = 1, n_good
+   iorder(i) = i
+  enddo
+
+  ! You sort the real eigenvalues 
+  call dsort(eigval, iorder, n_good)
+  print*,'n_real_eigv = ', n_real_eigv
+  print*,'n           = ', n
+  do i = 1, n_real_eigv
+    print*,i,'eigval(i) = ', eigval(i) 
+    do j = 1, n
+      reigvec(j,i) = VR(j,list_good(iorder(i)))
+      leigvec(j,i) = Vl(j,list_good(iorder(i)))
+    enddo
+  enddo
+
+end subroutine non_hrmt_general_real_diag
+
+! ---
 
 subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
 
@@ -403,6 +662,12 @@ subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
       R(j,i) = 0.d0
     enddo
   enddo
+
+  !print *, ' inv(R):'
+  !do i = 1, n
+  !  write(*, '(1000(F16.10,X))') R(i,:)
+  !enddo
+
 
   ! Vr x inv(R) 
   allocate( tmp(m,n) )
@@ -594,9 +859,11 @@ subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec)
   double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m)
  
   integer                       :: i, j
-  double precision              :: tmp, tmp_all, tmp_nrm
-  double precision              :: V_nrm
+  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel, thr
+  double precision              :: V_nrm, U_nrm
   double precision, allocatable :: Mtmp(:,:)
+
+  thr = 1d-10
  
   allocate( Mtmp(n,m) )
   
@@ -604,51 +871,85 @@ subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec)
 
   print *, ' check right eigvec : '
 
+  Mtmp = 0.d0
   call dgemm( 'N', 'N', n, m, n, 1.d0                  &
             , A, size(A, 1), reigvec, size(reigvec, 1) &
             , 0.d0, Mtmp, size(Mtmp, 1) )
 
   V_nrm   = 0.d0
   tmp_nrm = 0.d0
-  tmp_all = 0.d0
+  tmp_abs = 0.d0
   do j = 1, m
-    tmp = 0.d0
+    
+    tmp   = 0.d0
+    U_nrm = 0.d0
     do i = 1, n
       tmp     = tmp     + dabs(Mtmp(i,j) - eigval(j) * reigvec(i,j))
       tmp_nrm = tmp_nrm + dabs(Mtmp(i,j))
-      V_nrm   = V_nrm   + dabs(reigvec(i,j))
+      !V_nrm   = V_nrm   + dabs(reigvec(i,j))
+      U_nrm   = U_nrm   + reigvec(i,j) * reigvec(i,j)
     enddo
-    tmp_all = tmp_all + tmp
-    print *, j, tmp
+
+    tmp_abs = tmp_abs + tmp
+    V_nrm   = V_nrm   + U_nrm 
+    print *, j, tmp, U_nrm
+
   enddo
-  print *, ' err estim = ', tmp_all/tmp_nrm
+
+  tmp_rel = tmp_abs / tmp_nrm
+  V_nrm   = dsqrt(V_nrm)
+
+  print *, ' err estim = ', tmp_abs, tmp_rel
   print *, ' CR norm   = ', V_nrm 
 
-  Mtmp = 0.d0
+  if(tmp_rel .gt. thr) then
+    print *, ' error in right-eigenvectors'
+    !print *, ' err estim = ', tmp_abs, tmp_rel
+    !print *, ' CR norm   = ', V_nrm 
+    stop
+  endif
 
   ! ---
 
   print *, ' check left eigvec : '
 
+  Mtmp = 0.d0
   call dgemm( 'T', 'N', n, m, n, 1.d0                  &
             , A, size(A, 1), leigvec, size(leigvec, 1) &
             , 0.d0, Mtmp, size(Mtmp, 1) )
 
   V_nrm   = 0.d0
   tmp_nrm = 0.d0
-  tmp_all = 0.d0
+  tmp_abs = 0.d0
   do j = 1, m
-    tmp = 0.d0
+
+    tmp   = 0.d0
+    U_nrm = 0.d0
     do i = 1, n
       tmp     = tmp     + dabs(Mtmp(i,j) - eigval(j) * leigvec(i,j))
       tmp_nrm = tmp_nrm + dabs(Mtmp(i,j))
-      V_nrm   = V_nrm   + dabs(leigvec(i,j))
+      !V_nrm   = V_nrm   + dabs(leigvec(i,j))
+      U_nrm   = U_nrm   + leigvec(i,j) * leigvec(i,j)
     enddo
-    tmp_all = tmp_all + tmp
-    print *, j, tmp
+
+    tmp_abs = tmp_abs + tmp
+    V_nrm   = V_nrm   + U_nrm 
+    print *, j, tmp, U_nrm
+
   enddo
-  print *, ' err estim = ', tmp_all/tmp_nrm
+
+  tmp_rel = tmp_abs / tmp_nrm
+  V_nrm   = dsqrt(V_nrm)
+
+  print *, ' err estim = ', tmp_abs, tmp_rel
   print *, ' CL norm   = ', V_nrm 
+
+  if(tmp_rel .gt. thr) then
+    print *, ' error in left-eigenvectors'
+    !print *, ' err estim = ', tmp_abs, tmp_rel
+    !print *, ' CR norm   = ', V_nrm 
+    stop
+  endif
 
   ! ---
 
@@ -728,40 +1029,312 @@ end subroutine check_degen
 
 ! ---
 
-subroutine rotate_degen_eigvec(n, C)
+subroutine impose_orthog_svd(n, m, C)
+
+  implicit none
+
+  integer,          intent(in)    :: n, m
+  double precision, intent(inout) :: C(n,m)
+
+  integer                         :: i, j, num_linear_dependencies
+  double precision                :: threshold
+  double precision, allocatable   :: S(:,:), tmp(:,:)
+  double precision, allocatable   :: U(:,:), Vt(:,:), D(:)
+
+  print *, ''
+  print *, ' apply SVD to orthogonalize vectors'
+  print *, ''
+
+  ! ---
+
+  allocate(S(m,m))
+
+  ! S = C.T x C
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , C, size(C, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' eigenvec overlap bef SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  ! ---
+ 
+  allocate(U(m,m), Vt(m,m), D(m))
+
+  call svd(S, m, U, m, D, Vt, m, m, m)
+
+  deallocate(S)
+
+  threshold               = 1.d-6
+  num_linear_dependencies = 0
+  do i = 1, m
+    if(abs(D(i)) <= threshold) then
+      D(i) = 0.d0
+      num_linear_dependencies += 1
+    else
+      ASSERT (D(i) > 0.d0)
+      D(i) = 1.d0 / dsqrt(D(i))
+    endif
+  enddo
+  if(num_linear_dependencies > 0) then
+    write(*,*) ' linear dependencies = ', num_linear_dependencies
+    write(*,*) ' m                   = ', m
+    stop
+  endif
+
+  ! ---
+
+  allocate(tmp(n,m))
+
+  ! tmp <-- C x U
+  call dgemm( 'N', 'N', n, m, m, 1.d0      &
+            , C, size(C, 1), U, size(U, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+
+  deallocate(U, Vt)
+
+  ! C <-- tmp x sigma^-0.5
+  do j = 1, m
+    do i = 1, n
+      C(i,j) = tmp(i,j) * D(j)
+    enddo
+  enddo
+
+  deallocate(D, tmp)
+
+  ! ---
+
+  allocate(S(m,m))
+
+  ! S = C.T x C
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , C, size(C, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' eigenvec overlap aft SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  deallocate(S)
+
+  ! ---
+
+end subroutine impose_orthog_svd
+
+! ---
+
+subroutine impose_orthog_GramSchmidt(n, m, C)
+
+  implicit none
+
+  integer,          intent(in)    :: n, m
+  double precision, intent(inout) :: C(n,m)
+
+  integer                         :: i, j, k
+  double precision                :: Ojk, Ojj, fact_ct
+  double precision, allocatable   :: S(:,:)
+
+  print *, ''
+  print *, ' apply Gram-Schmidt to orthogonalize vectors'
+  print *, ''
+
+  ! ---
+
+  allocate(S(m,m))
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , C, size(C, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' eigenvec overlap bef Gram-Schmidt: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  ! ---
+
+  do k = 2, m
+    do j = 1, k-1
+
+      Ojk = 0.d0    
+      Ojj = 0.d0    
+      do i = 1, n
+        Ojk = Ojk + C(i,j) * C(i,k)
+        Ojj = Ojj + C(i,j) * C(i,j)
+      enddo
+      fact_ct = Ojk / Ojj
+
+      do i = 1, n
+        C(i,k) = C(i,k) - fact_ct * C(i,j)
+      enddo
+
+    enddo
+  enddo
+
+  do k = 1, m
+    fact_ct = 0.d0    
+    do i = 1, n
+      fact_ct = fact_ct + C(i,k) * C(i,k)
+    enddo
+    fact_ct = dsqrt(fact_ct)
+    do i = 1, n
+      C(i,k) = C(i,k) / fact_ct
+    enddo
+  enddo
+
+  ! ---
+
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , C, size(C, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' eigenvec overlap aft Gram-Schmidt: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  deallocate(S)
+
+  ! ---
+
+end subroutine impose_orthog_GramSchmidt
+
+! ---
+
+subroutine impose_orthog_ones(n, deg_num, C)
+
 
   implicit none
 
   integer,          intent(in)    :: n
+  integer,          intent(in)    :: deg_num(n)
   double precision, intent(inout) :: C(n,n)
 
-  integer                         :: i
-  double precision, allocatable   :: S(:,:), tmp(:,:)
-  
-  allocate(S(n,n))
-  ! S = C.T x C
-  call dgemm( 'T', 'N', n, n, n, 1.d0      &
-            , C, size(C, 1), C, size(C, 1) &
-            , 0.d0, S, size(S, 1) )
+  integer                         :: i, j, ii, di, dj
 
-  print *, ' eigenvec overlap: '
+  print *, ''
+  print *, ' orthogonalize vectors by hand'
+  print *, ''
+
+  do i = 1, n-1
+    di = deg_num(i)
+
+    if(di .gt. 1) then
+
+      do ii = 1, di
+        C(:     ,i+ii-1) = 0.d0
+        C(i+ii-1,i+ii-1) = 1.d0
+      enddo
+
+      do j = i+di+1, n
+        dj = deg_num(j)
+        if(dj .eq. di) then
+          do ii = 1, dj
+            C(:,     j+ii-1) = 0.d0
+            C(j+ii-1,j+ii-1) = 1.d0
+          enddo
+        endif
+      enddo
+
+    endif
+  enddo 
+
+end subroutine impose_orthog_ones
+
+! ---
+
+subroutine impose_orthog_degen_eigvec(n, e0, C0)
+
+  implicit none
+
+  integer,          intent(in)    :: n
+  double precision, intent(in)    :: e0(n)
+  double precision, intent(inout) :: C0(n,n)
+
+  integer                         :: i, j, k, m
+  double precision                :: ei, ej, de, de_thr
+  integer,          allocatable   :: deg_num(:)
+  double precision, allocatable   :: C(:,:)
+
+  ! ---
+
+  allocate( deg_num(n) )
   do i = 1, n
-    write(*, '(1000(F16.10,X))') S(i,:)
+    deg_num(i) = 1
   enddo
- 
-  call get_halfinv_svd(n, S)
 
-  allocate(tmp(n,n))
-  ! C <-- C x S^-1/2
-  call dgemm( 'N', 'N', n, n, n, 1.d0      &
-            , C, size(C, 1), S, size(S, 1) &
-            , 0.d0, tmp, size(tmp, 1) )
+  de_thr = 1d-10
 
-  C(1:n,1:n) = tmp(1:n,1:n) 
+  do i = 1, n-1
+    ei = e0(i)
 
-  deallocate(S, tmp)
+    ! already considered in degen vectors
+    if(deg_num(i).eq.0) cycle
 
-end subroutine rotate_degen_eigvec
+    do j = i+1, n
+      ej = e0(j)
+      de = dabs(ei - ej)
+
+      if(de .lt. de_thr) then
+        deg_num(i) = deg_num(i) + 1 
+        deg_num(j) = 0
+      endif
+
+    enddo
+  enddo
+
+  
+  do i = 1, n
+    if(deg_num(i).gt.1) then
+      print *, ' degen on', i, deg_num(i)
+    endif
+  enddo
+
+  ! ---
+
+!  call impose_orthog_ones(n, deg_num, C0)
+
+  do i = 1, n
+    m = deg_num(i)
+
+    if(m .gt. 1) then
+    !if(m.eq.3) then
+  
+      allocate(C(n,m))
+      do j = 1, m
+        C(1:n,j) = C0(1:n,i+j-1)
+      enddo
+
+      ! ---
+
+      ! C <= C U sigma^-0.5
+      !call impose_orthog_svd(n, m, C)
+
+      ! ---
+
+      ! C = I
+      !C = 0.d0
+      !do j = 1, m
+      !  C(i+j-1,j) = 1.d0
+      !enddo
+
+      ! ---
+
+      call impose_orthog_GramSchmidt(n, m, C)
+
+      ! ---
+
+      do j = 1, m
+        C0(1:n,i+j-1) = C(1:n,j)
+      enddo
+      deallocate(C)
+
+    endif
+  enddo
+
+end subroutine impose_orthog_degen_eigvec 
 
 ! ---
 
@@ -849,214 +1422,87 @@ end subroutine get_halfinv_svd
 
 ! ---
 
-subroutine non_sym_diag_inv_right_split_degen(n,A,leigvec,reigvec,n_real_eigv,eigval)
- implicit none
-  BEGIN_DOC
-  !
-  ! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
-  !
-  ! of a non hermitian matrix A(n,n)
-  !
-  ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
-  !
-  END_DOC
+subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S)
 
-  integer,          intent(in)  :: n
-  double precision, intent(in)  :: A(n,n)
-  integer,          intent(out) :: n_real_eigv
-  double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
-  double precision              :: reigvec_tmp(n,n), leigvec_tmp(n,n)
+  implicit none
+  
+  integer,          intent(in)  :: n, m
+  double precision, intent(in)  :: Vl(n,m), Vr(n,m)
+  double precision, intent(out) :: accu_d, accu_nd, S(m,m)
 
-  integer                       :: i, j, k , iteration,l
-  integer                       :: n_good
-  double precision              :: shift,shift_current
-  double precision              :: r,thr
-  integer,          allocatable :: list_good(:), iorder_origin(:),iorder(:)
-  double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:),S(:,:)
-  double precision, allocatable :: Aw(:,:),diag_elem(:),A_save(:,:)
-  double precision, allocatable :: im_part(:),re_part(:),inv_reigvec(:,:)
+  integer                       :: i, j
 
+  S = 0.d0
+  call dgemm( 'T', 'N', m, m, n, 1.d0          &
+            , Vl, size(Vl, 1), Vr, size(Vr, 1) &
+            , 0.d0, S, size(S, 1) )
 
-  print*,'Computing the left/right eigenvectors ...'
-  print*,'Using the degeneracy splitting algorithm'
-
-
-  ! pre-processing the matrix :: sorting by diagonal elements
-  allocate(diag_elem(n),iorder_origin(n),A_save(n,n))
-  do i = 1, n
-   iorder_origin(i) = i
-   diag_elem(i) = A(i,i)
+  print *, ''
+  print *, ' overlap matrix:'
+  do i = 1, m
+    write(*,'(1000(F16.10,X))') S(i,:)
   enddo
-  call dsort(diag_elem, iorder_origin, n)
-  do i = 1, n
-   do j = 1, n
-    A_save(j,i) = A(iorder_origin(j),iorder_origin(i))
-   enddo
-  enddo
+  print *, ''
 
-  shift = 1.d-15
-  shift_current = shift
-  iteration = 1 
-  logical :: good_ortho
-  good_ortho = .False.
-  do while(n_real_eigv.ne.n.or. .not.good_ortho)
-    if(shift.gt.1.d-3)then
-     print*,'shift > 1.d-3 !!'
-     print*,'Your matrix intrinsically contains complex eigenvalues'
-     stop
-    endif
-    print*,'***** iteration = ',iteration
-    print*,'shift = ',shift
-    allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
-    Aw = A_save
-    do i = 1, n
-     do j = 1, n
-      if(dabs(Aw(j,i)).lt.shift)then
-       Aw(j,i) = 0.d0
-      endif
-     enddo
-    enddo
-    call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
-    allocate(im_part(n),iorder(n))
-    do i = 1, n
-     im_part(i) = -dabs(WI(i))
-     iorder(i) = i
-    enddo
-    call dsort(im_part, iorder, n)
-    shift_current = max(10.d0 * dabs(im_part(1)),shift)
-    print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
-    print*,'Splitting the degeneracies by ',shift_current
-    Aw = A_save
-    call split_matrix_degen(Aw,n,shift_current)
-    deallocate( im_part, iorder )
-    call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
-    ! You track the real eigenvalues 
-    n_good = 0
-    do i = 1, n
-      if(dabs(WI(i)).lt.1.d-20)then
-        n_good += 1
+  accu_d  = 0.d0
+  accu_nd = 0.d0
+  do i = 1, m
+    do j = 1, m
+      if(i==j) then
+        accu_d = accu_d + dabs(S(i,i))
       else
-        print*,'Found an imaginary component to eigenvalue'
-        print*,'Re(i) + Im(i)',WR(i),WI(i)
+        accu_nd = accu_nd + S(j,i) * S(j,i)
       endif
     enddo
-    allocate( list_good(n_good), iorder(n_good) )
-    n_good = 0
-    do i = 1, n
-      if(dabs(WI(i)).lt.1.d-20)then
-        n_good += 1
-        list_good(n_good) = i
-        eigval(n_good) = WR(i)
+  enddo
+  accu_nd = dsqrt(accu_nd)
+
+  !print*, '    diag acc: ', accu_d
+  !print*, ' nondiag acc: ', accu_nd
+
+end subroutine check_biorthog
+
+! ---
+
+subroutine check_orthog(n, m, V, accu_d, accu_nd, S)
+
+  implicit none
+  
+  integer,          intent(in)  :: n, m
+  double precision, intent(in)  :: V(n,m)
+  double precision, intent(out) :: accu_d, accu_nd, S(m,m)
+
+  integer                       :: i, j
+
+  S = 0.d0
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , V, size(V, 1), V, size(V, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ''
+  print *, ' overlap matrix:'
+  do i = 1, m
+    write(*,'(1000(F16.10,X))') S(i,:)
+  enddo
+  print *, ''
+
+  accu_d  = 0.d0
+  accu_nd = 0.d0
+  do i = 1, m
+    do j = 1, m
+      if(i==j) then
+        accu_d = accu_d + dabs(S(i,i))
+      else
+        accu_nd = accu_nd + S(j,i) * S(j,i)
       endif
     enddo
-    deallocate( WR, WI )
-    
-    n_real_eigv = n_good 
-    do i = 1, n_good
-      iorder(i) = i
-    enddo
-    
-    ! You sort the real eigenvalues 
-    call dsort(eigval, iorder, n_good)
-    
-    reigvec(:,:) = 0.d0 
-    leigvec(:,:) = 0.d0 
-    do i = 1, n_real_eigv
-      do j = 1, n
-        reigvec_tmp(j,i) = VR(j,list_good(iorder(i)))
-        leigvec_tmp(j,i) = Vl(j,list_good(iorder(i)))
-      enddo
-    enddo
-    
-    if(n_real_eigv == n)then
-      allocate(S(n,n))
-      call check_bi_ortho(reigvec_tmp,leigvec_tmp,n,S,accu_nd)
-      print*,'accu_nd = ',accu_nd
-      double precision :: accu_nd
-      good_ortho = accu_nd .lt. 1.d-10
-      deallocate(S)
-    endif
- 
-   deallocate( list_good, iorder )
-   deallocate( VL, VR, Aw)
-   shift *= 10.d0
-   iteration += 1
   enddo
+  accu_nd = dsqrt(accu_nd)
 
-  double precision :: shift_degen
-  integer,allocatable ::list_degen(:,:)
-  integer :: n_list,n_degen,i_degen
-  allocate(list_degen(2,n))
-  shift_degen = max(1.d-9,shift_current)
- 
-  call give_degeneracies(eigval,n,shift_degen,n_list,list_degen)
-  print*,'passed the give_degeneracies'
-  do i = 1, n
-   print*,'e(i) = ',i,eigval(i)
-  enddo
-  do i = 1, n_list
-   i_degen = list_degen(1,i)
-   n_degen = list_degen(2,i)
-   print*,'i_degen,n_degen',i_degen,n_degen
-   double precision, allocatable :: mat_tmp(:,:)
-   allocate(inv_reigvec(n_degen,n),mat_tmp(n,n_degen))
-   k = 1
-   do j = i_degen,i_degen+n_degen-1
-    mat_tmp(:,k) =  reigvec_tmp(:,j)
-    k+= 1
-   enddo 
-   thr = 1.d-10
-   print*,'in the pseudo_inverse'
-   call get_pseudo_inverse(mat_tmp,n,n,n_degen,inv_reigvec,n_degen,thr)
-   print*,'passed the pseudo_inverse'
-   k = 1
-   do j = i_degen,i_degen+n_degen-1
-    do l = 1, n
-     leigvec_tmp(l,j) = inv_reigvec(k,l)
-    enddo
-    k+= 1
-   enddo
-   double precision, allocatable :: test(:,:)
-   allocate(test(n,n))
-   test = 0.d0
-   do l = i_degen,i_degen+n_degen-1
-    do j = i_degen,i_degen+n_degen-1
-     do k = 1, n
-      test(j,l) += leigvec_tmp(k,j) * reigvec_tmp(k,l)
-     enddo
-    enddo
-   enddo
-   print*,'id mat'
-   do l = 1, n
-    write(*,'(100(F16.10,X))')test(:,l)
-   enddo
-   deallocate(test)
-   deallocate(inv_reigvec,mat_tmp)
-  enddo
-  deallocate(list_degen)
-  print*,'passed all the inversions'
+  !print*, '    diag acc: ', accu_d
+  !print*, ' nondiag acc: ', accu_nd
 
-  allocate( S(n,n) )
-  call check_bi_ortho(reigvec_tmp,leigvec_tmp,n,S,accu_nd)
-  print*,'accu_nd = ',accu_nd
-  good_ortho = accu_nd .lt. 1.d-10
-  deallocate(S)
-  print*,'accu_nd = ',accu_nd
-  if( accu_nd .gt. 1d-10 ) then
-   print*,'WARNING PB with bi-orthonormality!!'
-   print*,'it might come from the fact that you obtained complex eigenvalues'
-   print*,'n = ',n
-   print*,'n_real_eigv = ',n_real_eigv
-   print*,'If the imaginary parts of the eigenvalues are really small (1^-10)'
-   print*,'You can use the routine non_hrmt_diag_split_degen which might give you only real eigenvalues'
-   stop
-  endif
+end subroutine check_orthog
 
-  do i = 1, n
-   do j = 1, n
-    reigvec(iorder_origin(j),i) = reigvec_tmp(j,i)
-    leigvec(iorder_origin(j),i) = leigvec_tmp(j,i)
-   enddo
-  enddo
+! ---
 
-end

@@ -1,3 +1,6 @@
+
+! ---
+
  BEGIN_PROVIDER [ double precision, two_e_tc_non_hermit_integral_alpha, (ao_num, ao_num)]
 &BEGIN_PROVIDER [ double precision, two_e_tc_non_hermit_integral_beta , (ao_num, ao_num)]
 
@@ -28,6 +31,39 @@
       enddo
 !!$OMP END DO
 !!$OMP END PARALLEL
+    enddo
+  enddo
+
+END_PROVIDER 
+
+! ---
+
+ BEGIN_PROVIDER [ double precision, two_e_tc_non_hermit_integral_alpha_deb, (ao_num, ao_num)]
+&BEGIN_PROVIDER [ double precision, two_e_tc_non_hermit_integral_beta_deb , (ao_num, ao_num)]
+
+  implicit none
+  integer          :: p, q, r, s
+  double precision :: density_a, density_b
+  double precision :: integ
+
+  two_e_tc_non_hermit_integral_alpha_deb = 0.d0
+  two_e_tc_non_hermit_integral_beta_deb  = 0.d0
+
+  do p = 1, ao_num
+    do q = 1, ao_num
+      do r = 1, ao_num
+        do s = 1, ao_num
+
+          density_a = TCSCF_density_matrix_ao_alpha(s,r)
+          density_b = TCSCF_density_matrix_ao_beta (s,r)
+
+          !             < p s || q r >     -       < p s || q r >
+          integ = ao_two_e_tc_tot(p,q,s,r) - ao_two_e_tc_tot(p,r,s,q) 
+
+          two_e_tc_non_hermit_integral_alpha_deb(p,q) += density_a * integ 
+          two_e_tc_non_hermit_integral_beta_deb (p,q) += density_b * integ 
+        enddo
+      enddo
     enddo
   enddo
 
