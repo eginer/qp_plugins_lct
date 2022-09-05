@@ -1310,7 +1310,7 @@ subroutine impose_orthog_degen_eigvec(n, e0, C0)
       ! ---
 
       ! C <= C U sigma^-0.5
-      !call impose_orthog_svd(n, m, C)
+      call impose_orthog_svd(n, m, C)
 
       ! ---
 
@@ -1322,7 +1322,7 @@ subroutine impose_orthog_degen_eigvec(n, e0, C0)
 
       ! ---
 
-      call impose_orthog_GramSchmidt(n, m, C)
+!      call impose_orthog_GramSchmidt(n, m, C)
 
       ! ---
 
