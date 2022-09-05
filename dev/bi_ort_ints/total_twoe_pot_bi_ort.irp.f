@@ -68,6 +68,8 @@ BEGIN_PROVIDER [double precision, mo_bi_ortho_tc_two_e, (mo_num, mo_num, mo_num,
  implicit none
  BEGIN_DOC
 ! mo_bi_ortho_tc_two_e(k,l,i,j) = <k l| V(r_12) |i j> where i,j are right MOs and k,l are left MOs
+!
+! the potential V(r_12) contains ALL TWO-E CONTRIBUTION OF THE TC-HAMILTONIAN
  END_DOC
  integer :: i,j,k,l
  do j = 1, mo_num

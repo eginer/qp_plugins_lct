@@ -36,7 +36,7 @@ double precision function bi_ortho_mo_ints(l,k,j,i)
   do p = 1, ao_num
    do n = 1, ao_num
     do q = 1, ao_num
-     !                                   p1p2h1h2   l1                  l2              r1               r2
+     !                                   p1h1p2h2   l1                  l2              r1               r2
      bi_ortho_mo_ints += ao_two_e_tc_tot(n,q,m,p) * mo_l_coef(m,l) * mo_l_coef(n,k) * mo_r_coef(p,j) * mo_r_coef(q,i)
     enddo
    enddo
