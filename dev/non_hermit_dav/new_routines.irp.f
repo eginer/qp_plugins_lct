@@ -39,12 +39,9 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   do i = 1, n
    iorder_origin(i) = i
    diag_elem(i) = A(i,i)
-   print*,'diag_elem(i) = ',i,diag_elem(i)
   enddo
   call dsort(diag_elem, iorder_origin, n)
   do i = 1, n
-  print*,i,iorder_origin(i),diag_elem(i)
-!   iorder_origin(i) = i
    do j = 1, n
     A_save(j,i) = A(iorder_origin(j),iorder_origin(i))
    enddo
@@ -80,81 +77,84 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
     iorder(i) = i
    enddo
    call dsort(im_part, iorder, n)
-   shift_current = max(10.d0 * dabs(im_part(1)),shift)
-   print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
-   print*,'Splitting the degeneracies by ',shift_current
-   Aw = A_save
-   call split_matrix_degen(Aw,n,shift_current)
-   call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
-   ! You track the real eigenvalues 
-   n_good = 0
-   do i = 1, n
-     print*,'WR(i) = ',WR(i)
-     if(dabs(WI(i)).lt.1.d-20)then
-       n_good += 1
-     else
-       print*,'Found an imaginary component to eigenvalue'
-       print*,'Re(i) + Im(i)',WR(i),WI(i)
-     endif
-   enddo
-   call check_EIGVEC(n, n, Aw, WR, VL, VR)
-
-   if(n_good == n)then
-!!!!! ONCE ALL EIGENVALUES ARE REAL ::: CHECK BI-ORTHONORMALITY
-    print*,'All eigenvalues are real !'
-    n_real_eigv = n
-    reigvec_tmp(:,:) = 0.d0 
-    leigvec_tmp(:,:) = 0.d0 
+   if(dabs(im_part(1)).gt.1.d-20)then
+     shift_current = max(10.d0 * dabs(im_part(1)),shift)
+     print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
+     print*,'shift,shift_current',shift,shift_current
+     print*,'Splitting the degeneracies by ',shift_current
+     Aw = A_save
+     call split_matrix_degen(Aw,n,shift_current)
+     call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
+     shift = shift_current * 10.d0
+   else
+    ! You track the real eigenvalues 
+    n_good = 0
     do i = 1, n
-      eigval(i) = WR(i)
-      do j = 1, n
-        reigvec_tmp(j,i) = VR(j,i)
-        leigvec_tmp(j,i) = Vl(j,i)
-      enddo
-      print*,'WR(i) = ',WR(i)
-    enddo
-    call check_EIGVEC(n, n, Aw, eigval, leigvec_tmp, reigvec_tmp)
-    ! -------------------------------------------------------------------------------------
-    !                               check bi-orthogonality
-    call check_biorthog(n, n_real_eigv, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
-    print *, ' accu_nd bi-orthog = ', accu_nd
-  
-    if( accu_nd .lt. 1d-10 ) then
-  
-      print *, ' bi-orthogonality: ok'
-  
-    else
-  
-      print *, ' '
-      print *, ' bi-orthogonality: not imposed yet'
-      print *, ' '
-  
-      ! ---
-  
-      print *, ' '
-      print *, ' orthog between degen eigenvect' 
-      print *, ' '
-  
-      call impose_orthog_degen_eigvec(n, eigval, reigvec_tmp)
-      print *, ' right eigenvect aft orthog' 
-      do i = 1, n
-        write(*, '(1000(F16.10,X))') reigvec_tmp(:,i)
-      enddo
-  
-      call impose_orthog_degen_eigvec(n, eigval, leigvec_tmp)
-      print *, ' left eigenvect aft orthog' 
-      do i = 1, n
-        write(*, '(1000(F16.10,X))') leigvec_tmp(:,i)
-      enddo
-  
-  
-      call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
-      if( accu_nd .lt. 1d-10 ) then
-        print *, ' bi-orthogonality: ok'
+      if(dabs(WI(i)).lt.1.d-20)then
+        n_good += 1
+      else
+        print*,'Found an imaginary component to eigenvalue'
+        print*,'Re(i) + Im(i)',WR(i),WI(i)
       endif
-    endif
+    enddo
    endif
-   shift *= 10.d0
+!   call check_EIGVEC(n, n, Aw, WR, VL, VR)
+
+     if(n_good == n)then
+!!!!!!! ONCE ALL EIGENVALUES ARE REAL ::: CHECK BI-ORTHONORMALITY
+      print*,'All eigenvalues are real !'
+      n_real_eigv = n
+      reigvec_tmp(:,:) = 0.d0 
+      leigvec_tmp(:,:) = 0.d0 
+      do i = 1, n
+        eigval(i) = WR(i)
+        do j = 1, n
+          reigvec_tmp(j,i) = VR(j,i)
+          leigvec_tmp(j,i) = Vl(j,i)
+        enddo
+        print*,'WR(i) = ',WR(i)
+      enddo
+      call check_EIGVEC(n, n, Aw, eigval, leigvec_tmp, reigvec_tmp)
+      ! -------------------------------------------------------------------------------------
+      !                               check bi-orthogonality
+      call check_biorthog(n, n_real_eigv, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+      print *, ' accu_nd bi-orthog = ', accu_nd
+    
+      if( accu_nd .lt. 1d-10 ) then
+    
+        print *, ' bi-orthogonality: ok'
+    
+      else
+    
+        print *, ' '
+        print *, ' bi-orthogonality: not imposed yet'
+        print *, ' '
+    
+        ! ---
+    
+        print *, ' '
+        print *, ' orthog between degen eigenvect' 
+        print *, ' '
+    
+        call impose_orthog_degen_eigvec(n, eigval, reigvec_tmp)
+!!!      print *, ' right eigenvect aft orthog' 
+!!!      do i = 1, n
+!!!        write(*, '(1000(F16.10,X))') reigvec_tmp(:,i)
+!!!      enddo
+    
+        call impose_orthog_degen_eigvec(n, eigval, leigvec_tmp)
+!!!      print *, ' left eigenvect aft orthog' 
+!!!      do i = 1, n
+!!!        write(*, '(1000(F16.10,X))') leigvec_tmp(:,i)
+!!!      enddo
+    
+    
+        call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+        if( accu_nd .lt. 1d-10 ) then
+          print *, ' bi-orthogonality: ok'
+        endif
+      endif
+     endif
    iteration += 1
   enddo
   deallocate( im_part, list_good, iorder )
@@ -162,11 +162,7 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   deallocate( S )
 
   allocate(S(n,n),WR(n),iorder(n),VR(n,n),VL(n,n))
-  print*,'Final check '
-  print*,'First with A_save'
-  call check_EIGVEC(n, n, A_save, eigval, leigvec_tmp, reigvec_tmp)
-  WR = 0.d0
-  double precision :: tmp1,tmp2
+!  call check_EIGVEC(n, n, A_save, eigval, leigvec_tmp, reigvec_tmp)
  
   do i = 1, n
    do j = 1, n
@@ -175,45 +171,42 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
    enddo
   enddo
 
+  eigval = 0.d0
   do i = 1, n
    iorder(i) = i
-   tmp1 = 0.d0
-   tmp2 = 0.d0
-   accu = 0.d0
    do j = 1, n
-    accu += VL(j,i) * VR(j,i)
-    tmp1 += reigvec_tmp(j,i) * leigvec_tmp(j,i)
+    accu += VL(j,i) * VR(j,i) 
     do k = 1, n
-     WR(i) +=  VL(j,i) * A(j,k) * VR(k,i) 
-     tmp2 += leigvec_tmp(j,i) * A_save(j,k) * reigvec_tmp(k,i)
+     eigval(i) +=  VL(j,i) * A(j,k) * VR(k,i) 
     enddo
    enddo
-   tmp2 *= 1.d0/tmp1
-   WR(i) *= 1.d0/accu
-   print*,'WR(i)/eigval/error ',WR(i),eigval(i),dabs(WR(i)-eigval(i))
-   print*,'tmp  /eigval/error ',tmp2 ,eigval(i),dabs(tmp2 -eigval(i))
+   eigval(i) *= 1.d0/accu
   enddo
   ! sorting the 
   call check_EIGVEC(n, n, A, WR, VL, VR)
   call check_biorthog(n, n, VL, VR, accu_d, accu_nd, S)
   print*,'accu_nd = ',accu_nd
-  call dsort(WR, iorder, n)
+  call dsort(eigval, iorder, n)
   do i = 1, n
-   print*,'WR(i) = ',WR(i)
+!   print*,'WR(i) = ',WR(i)
    do j = 1, n
     reigvec(j,i) = VR(j,iorder(i))
     leigvec(j,i) = VL(j,iorder(i))
    enddo
   enddo
   print*,'Checking for final reigvec/leigvec'
-  call check_EIGVEC(n, n, A, WR, leigvec, reigvec)
+  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec)
   call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S)
   print*,'accu_nd = ',accu_nd
   
      if( accu_nd .lt. 1d-10 ) then
        print *, ' bi-orthogonality: ok'
+     else 
+      print*,'Something went wrong in non_hrmt_diag_split_degen_bi_orthog'
+      print*,'Eigenvectors are not bi orthonormal ..'
+      print*,'accu_nd = ',accu_nd
+      stop
      endif
- stop
 
 end subroutine non_hrmt_diag_split_degen
 

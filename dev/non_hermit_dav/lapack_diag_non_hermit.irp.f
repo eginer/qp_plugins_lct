@@ -1437,12 +1437,12 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S)
             , Vl, size(Vl, 1), Vr, size(Vr, 1) &
             , 0.d0, S, size(S, 1) )
 
-  print *, ''
-  print *, ' overlap matrix:'
-  do i = 1, m
-    write(*,'(1000(F16.10,X))') S(i,:)
-  enddo
-  print *, ''
+!  print *, ''
+!  print *, ' overlap matrix:'
+!  do i = 1, m
+!    write(*,'(1000(F16.10,X))') S(i,:)
+!  enddo
+!  print *, ''
 
   accu_d  = 0.d0
   accu_nd = 0.d0
