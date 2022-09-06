@@ -1212,18 +1212,39 @@ subroutine split_matrix_degen(aw,n,shift)
  double precision,intent(in)    :: shift
  integer, intent(in) :: n
  integer :: i,j,n_degen
+ logical :: keep_on
  i=1
  do while(i.lt.n)
   if(dabs(Aw(i,i)-Aw(i+1,i+1)).lt.shift)then
    j=1
-   do while(dabs(Aw(i,i)-Aw(i+j,i+j)).lt.shift.and.i+j.le.n)
-    j+=1
+   keep_on = .True.
+   do while(keep_on)
+    if(i+j.gt.n)then
+     keep_on = .False.
+     exit
+    endif
+    if(dabs(Aw(i,i)-Aw(i+j,i+j)).lt.shift)then
+     j+=1
+    else
+     keep_on=.False.
+     exit
+    endif
    enddo
    n_degen = j
    j=0
-   do while(dabs(Aw(i+j,i+j)-Aw(i+j+1,i+j+1)).lt.shift.and.i+j+1.lt.n)
-    Aw(i+j,i+j) += (j-n_degen/2) * shift
-    j+=1
+   keep_on = .True.
+   do while(keep_on)
+    if(i+j+1.gt.n)then
+     keep_on = .False.
+     exit
+    endif
+    if(dabs(Aw(i+j,i+j)-Aw(i+j+1,i+j+1)).lt.shift)then
+     Aw(i+j,i+j) += (j-n_degen/2) * shift
+     j+=1
+    else 
+     keep_on = .False.
+     exit
+    endif
    enddo
    Aw(i+n_degen-1,i+n_degen-1) += (n_degen-1-n_degen/2) * shift
    i+=n_degen

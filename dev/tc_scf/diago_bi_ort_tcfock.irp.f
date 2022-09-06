@@ -18,6 +18,10 @@
 
   PROVIDE Fock_matrix_tc_mo_tot
 
+!  print*,'Fock matrix'
+!  do i = 1, mo_num
+!   write(*,'(100(F16.10,X))')Fock_matrix_tc_mo_tot(:,i)
+!  enddo
 !   call non_hrmt_diag_split_degen( mo_num, Fock_matrix_tc_mo_tot &
 !  call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
   call non_hrmt_diag_split_degen_bi_orthog( mo_num, Fock_matrix_tc_mo_tot &
