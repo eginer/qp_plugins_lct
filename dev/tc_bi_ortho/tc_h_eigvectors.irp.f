@@ -40,14 +40,14 @@
     double precision, allocatable :: coef_hf_r(:),coef_hf_l(:)
     integer, allocatable :: iorder(:)
     allocate(coef_hf_r(N_det),coef_hf_l(N_det),iorder(N_det))
-    do i = 1, N_det
-     print*,'***'
-     call debug_det(psi_det(1,1,i),n_int)
-     print*,i,reigvec_tc_bi_orth_tmp(i,1),htilde_matrix_elmt_bi_ortho(i,i)
-    enddo
+   !do i = 1, N_det
+   ! print*,'***'
+   ! call debug_det(psi_det(1,1,i),n_int)
+   ! print*,i,reigvec_tc_bi_orth_tmp(i,1),htilde_matrix_elmt_bi_ortho(i,i)
+   !enddo
     do i = 1,N_det
-     print*,'eigval_right_tmp,coef',eigval_right_tmp(i)
-     print*,dabs(leigvec_tc_bi_orth_tmp(index_HF_psi_det,i)),dabs(reigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
+   ! print*,'eigval_right_tmp,coef',eigval_right_tmp(i)
+   ! print*,dabs(leigvec_tc_bi_orth_tmp(index_HF_psi_det,i)),dabs(reigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
      iorder(i) = i
      coef_hf_r(i) = -dabs(reigvec_tc_bi_orth_tmp(index_HF_psi_det,i))
     enddo

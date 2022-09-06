@@ -22,7 +22,8 @@
    !call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_real_diag( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
-   call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
+!  call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
+   call non_hrmt_diag_split_degen_bi_orthog( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_bieig_real_im( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_bieiginv( mo_num, Fock_matrix_tc_mo_tot &
 !   call non_hrmt_diag_split_degen( mo_num, Fock_matrix_tc_mo_tot &
