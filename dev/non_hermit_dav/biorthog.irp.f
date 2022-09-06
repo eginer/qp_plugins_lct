@@ -1,4 +1,3 @@
-
 subroutine non_hrmt_diag_split_degen(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   BEGIN_DOC
@@ -17,7 +16,7 @@ subroutine non_hrmt_diag_split_degen(n, A, leigvec, reigvec, n_real_eigv, eigval
   double precision, intent(in)  :: A(n,n)
   integer,          intent(out) :: n_real_eigv
   double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
-  double precision              :: reigvec_tmp(n,n), leigvec_tmp(n,n)
+  double precision, allocatable :: reigvec_tmp(:,:), leigvec_tmp(:,:)
 
   integer                       :: i, j, n_degen,k , iteration
   integer                       :: n_good
@@ -34,6 +33,7 @@ subroutine non_hrmt_diag_split_degen(n, A, leigvec, reigvec, n_real_eigv, eigval
 
 
   ! pre-processing the matrix :: sorting by diagonal elements
+  allocate(reigvec_tmp(n,n), leigvec_tmp(n,n))
   allocate(diag_elem(n),iorder_origin(n),A_save(n,n))
   do i = 1, n
    iorder_origin(i) = i
@@ -75,6 +75,7 @@ subroutine non_hrmt_diag_split_degen(n, A, leigvec, reigvec, n_real_eigv, eigval
     iorder(i) = i
    enddo
    call dsort(im_part, iorder, n)
+
    shift_current = max(10.d0 * dabs(im_part(1)),shift)
    print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
    print*,'Splitting the degeneracies by ',shift_current
@@ -314,7 +315,8 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   print *, ' '
 
   !print *, ' check_EIGVEC after diag:'
-  call check_EIGVEC(n, n, A, WR, VL, VR)
+  thr = 1.d-10
+  call check_EIGVEC(n, n, A, WR, VL, VR,thr)
 
   !call rotate_degen_eigvec(n, VR)
   !call rotate_degen_eigvec(n, VL)
@@ -396,7 +398,9 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   print *, ' '
 
   !print *, ' check_EIGVEC before QR:'
-  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+  ! double precision :: thr 
+  ! thr = 1.d-10
+  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 
   !
   ! -------------------------------------------------------------------------------------
@@ -443,7 +447,9 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
       write(*, '(1000(F16.10,X))') leigvec(:,i)
     enddo
 
-    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+!   double precision :: thr
+!   thr = 1.d-10
+    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 
     call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S)
     if( accu_nd .lt. 1d-8 ) then
@@ -471,7 +477,8 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
     ! ---
 
     !print *, ' check_EIGVEC after QR:'
-    call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+    thr = 1.d-10
+    call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 
     call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S)
     deallocate( S )
@@ -583,7 +590,9 @@ end subroutine non_hrmt_bieig
 !  deallocate( VL, VR )
 !
 !  !print *, ' check_EIGVEC before QR:'
-!  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+!    double precision :: thr
+!    thr = 1.d-10
+!  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 !
 !  !
 !  ! -------------------------------------------------------------------------------------
@@ -643,7 +652,9 @@ end subroutine non_hrmt_bieig
 !    print *, ' accu_nd = ', accu_nd
 !
 !    !print *, ' check_EIGVEC after QR:'
-!    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+!    double precision :: thr
+!    thr = 1.d-10
+!    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 !  
 !  endif
 !
@@ -909,7 +920,9 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   deallocate( VL, VR )
 
   !print *, ' check_EIGVEC :'
-  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+!    double precision :: thr
+!    thr = 1.d-10
+  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 
   !
   ! -------------------------------------------------------------------------------------
@@ -1017,7 +1030,9 @@ subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, 
   deallocate( VL, VR )
 
   !print *, ' check_EIGVEC :'
-  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec)
+!    double precision :: thr
+!    thr = 1.d-10
+  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 
   !
   ! -------------------------------------------------------------------------------------
@@ -1217,6 +1232,26 @@ subroutine split_matrix_degen(aw,n,shift)
   endif
  enddo
 
+end
+
+subroutine cancel_small_elmts(aw,n,shift)
+ implicit none
+ BEGIN_DOC
+ ! subroutines that splits the degeneracies of a matrix by adding a splitting of magnitude thr * n_degen/2
+ !
+ ! WARNING !! THE MATRIX IS ASSUMED TO BE PASSED WITH INCREASING DIAGONAL ELEMENTS
+ END_DOC
+ double precision,intent(inout) :: Aw(n,n)
+ double precision,intent(in)    :: shift
+ integer, intent(in) :: n
+ integer :: i,j
+ do i = 1, n
+  do j = 1, n
+   if(dabs(Aw(j,i)).lt.shift)then
+    Aw(j,i) = 0.d0
+   endif
+  enddo
+ enddo
 end
 
 subroutine check_bi_ortho(reigvec,leigvec,n,S,accu_nd)

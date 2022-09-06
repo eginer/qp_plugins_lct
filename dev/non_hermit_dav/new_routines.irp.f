@@ -19,18 +19,22 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   double precision, allocatable :: reigvec_tmp(:,:), leigvec_tmp(:,:)
 
   integer                       :: i, j, n_degen,k , iteration
-  integer                       :: n_good
-  double precision              :: shift,shift_current
+  double precision              :: shift_current
   double precision              :: r,thr,accu_d, accu_nd
-  integer,          allocatable :: list_good(:), iorder_origin(:),iorder(:)
+  integer,          allocatable :: iorder_origin(:),iorder(:)
   double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:),S(:,:)
   double precision, allocatable :: Aw(:,:),diag_elem(:),A_save(:,:)
   double precision, allocatable :: im_part(:),re_part(:)
-  double precision :: accu
+  double precision :: accu,thr_cut
 
 
+  thr_cut = 1.d-15
   print*,'Computing the left/right eigenvectors ...'
   print*,'Using the degeneracy splitting algorithm'
+ ! initialization
+  shift_current = 1.d-15
+  iteration = 0 
+  print*,'***** iteration = ',iteration
 
 
   ! pre-processing the matrix :: sorting by diagonal elements
@@ -50,119 +54,128 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
   allocate(im_part(n),iorder(n))
   allocate( S(n,n) )
-  allocate( list_good(n))
 
-  shift = 1.d-15
-  shift_current = shift
-  iteration = 1 
+
+  Aw = A_save
+  call cancel_small_elmts(aw,n,thr_cut)
+  call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
+  do i = 1, n
+   im_part(i) = -dabs(WI(i))
+   iorder(i) = i
+  enddo
+  call dsort(im_part, iorder, n)
+  n_real_eigv = 0
+  do i = 1, n
+    if(dabs(WI(i)).lt.1.d-20)then
+      n_real_eigv += 1
+    else
+!      print*,'Found an imaginary component to eigenvalue'
+!      print*,'Re(i) + Im(i)',WR(i),WI(i)
+    endif
+  enddo
+  if(n_real_eigv.ne.n)then
+   shift_current = max(10.d0 * dabs(im_part(1)),shift_current*10.d0)
+   print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
+   print*,'Splitting the degeneracies by ',shift_current
+  else
+   print*,'All eigenvalues are real !'
+  endif
+
+
   do while(n_real_eigv.ne.n)
-   if(shift.gt.1.d-3)then
-    print*,'shift > 1.d-3 !!'
+   iteration += 1
+   print*,'***** iteration = ',iteration
+   if(shift_current.gt.1.d-3)then
+    print*,'shift_current > 1.d-3 !!'
     print*,'Your matrix intrinsically contains complex eigenvalues'
     stop
    endif
-   print*,'***** iteration = ',iteration
-   print*,'shift = ',shift
    Aw = A_save
-   do i = 1, n
-    do j = 1, n
-     if(dabs(Aw(j,i)).lt.shift)then
-      Aw(j,i) = 0.d0
-     endif
-    enddo
-   enddo
+   call cancel_small_elmts(Aw,n,thr_cut)
+   call split_matrix_degen(Aw,n,shift_current)
    call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
+   n_real_eigv = 0
    do i = 1, n
-    im_part(i) = -dabs(WI(i))
-    iorder(i) = i
-   enddo
-   call dsort(im_part, iorder, n)
-   if(dabs(im_part(1)).gt.1.d-20)then
-     shift_current = max(10.d0 * dabs(im_part(1)),shift)
-     print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
-     print*,'shift,shift_current',shift,shift_current
-     print*,'Splitting the degeneracies by ',shift_current
-     Aw = A_save
-     call split_matrix_degen(Aw,n,shift_current)
-     call lapack_diag_non_sym(n,Aw,WR,WI,VL,VR)
-     shift = shift_current * 10.d0
-   else
-    ! You track the real eigenvalues 
-    n_good = 0
-    do i = 1, n
-      if(dabs(WI(i)).lt.1.d-20)then
-        n_good += 1
-      else
-        print*,'Found an imaginary component to eigenvalue'
-        print*,'Re(i) + Im(i)',WR(i),WI(i)
-      endif
-    enddo
-   endif
-!   call check_EIGVEC(n, n, Aw, WR, VL, VR)
-
-     if(n_good == n)then
-!!!!!!! ONCE ALL EIGENVALUES ARE REAL ::: CHECK BI-ORTHONORMALITY
-      print*,'All eigenvalues are real !'
-      n_real_eigv = n
-      reigvec_tmp(:,:) = 0.d0 
-      leigvec_tmp(:,:) = 0.d0 
-      do i = 1, n
-        eigval(i) = WR(i)
-        do j = 1, n
-          reigvec_tmp(j,i) = VR(j,i)
-          leigvec_tmp(j,i) = Vl(j,i)
-        enddo
-        print*,'WR(i) = ',WR(i)
-      enddo
-      call check_EIGVEC(n, n, Aw, eigval, leigvec_tmp, reigvec_tmp)
-      ! -------------------------------------------------------------------------------------
-      !                               check bi-orthogonality
-      call check_biorthog(n, n_real_eigv, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
-      print *, ' accu_nd bi-orthog = ', accu_nd
-    
-      if( accu_nd .lt. 1d-10 ) then
-    
-        print *, ' bi-orthogonality: ok'
-    
-      else
-    
-        print *, ' '
-        print *, ' bi-orthogonality: not imposed yet'
-        print *, ' '
-    
-        ! ---
-    
-        print *, ' '
-        print *, ' orthog between degen eigenvect' 
-        print *, ' '
-    
-        call impose_orthog_degen_eigvec(n, eigval, reigvec_tmp)
-!!!      print *, ' right eigenvect aft orthog' 
-!!!      do i = 1, n
-!!!        write(*, '(1000(F16.10,X))') reigvec_tmp(:,i)
-!!!      enddo
-    
-        call impose_orthog_degen_eigvec(n, eigval, leigvec_tmp)
-!!!      print *, ' left eigenvect aft orthog' 
-!!!      do i = 1, n
-!!!        write(*, '(1000(F16.10,X))') leigvec_tmp(:,i)
-!!!      enddo
-    
-    
-        call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
-        if( accu_nd .lt. 1d-10 ) then
-          print *, ' bi-orthogonality: ok'
-        endif
-      endif
+     if(dabs(WI(i)).lt.1.d-20)then
+       n_real_eigv+= 1
+     else
+!       print*,'Found an imaginary component to eigenvalue'
+!       print*,'Re(i) + Im(i)',WR(i),WI(i)
      endif
-   iteration += 1
-  enddo
-  deallocate( im_part, list_good, iorder )
-  deallocate(WR, WI, VL, VR, Aw)
-  deallocate( S )
+   enddo
+   if(n_real_eigv.ne.n)then
+    do i = 1, n
+     im_part(i) = -dabs(WI(i))
+     iorder(i) = i
+    enddo
+    call dsort(im_part, iorder, n)
+    shift_current = max(10.d0 * dabs(im_part(1)),shift_current*10.d0)
+    print*,'Largest imaginary part found in eigenvalues = ',im_part(1)
+    print*,'Splitting the degeneracies by ',shift_current
+   else
+    print*,'All eigenvalues are real !'
+   endif
 
-  allocate(S(n,n),WR(n),iorder(n),VR(n,n),VL(n,n))
-!  call check_EIGVEC(n, n, A_save, eigval, leigvec_tmp, reigvec_tmp)
+  enddo
+
+!!! ONCE ALL EIGENVALUES ARE REAL ::: CHECK BI-ORTHONORMALITY
+  n_real_eigv = n
+  reigvec_tmp(:,:) = 0.d0 
+  leigvec_tmp(:,:) = 0.d0 
+  do i = 1, n
+    eigval(i) = WR(i)
+    do j = 1, n
+      reigvec_tmp(j,i) = VR(j,i)
+      leigvec_tmp(j,i) = Vl(j,i)
+    enddo
+!    print*,'WR(i) = ',WR(i)
+  enddo
+!  print*,'Checking the eigenvectors ...'
+!  print*,'Thr for eigenvectors = ',shift_current
+!  call check_EIGVEC(n, n, Aw, eigval, leigvec_tmp, reigvec_tmp,shift_current)
+  ! -------------------------------------------------------------------------------------
+  !                               check bi-orthogonality
+  call check_biorthog(n, n_real_eigv, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+  print *, ' accu_nd bi-orthog = ', accu_nd
+  
+  if( accu_nd .lt. 1d-10 ) then
+  
+    print *, ' bi-orthogonality: ok'
+  
+  else
+  
+    print *, ' '
+    print *, ' bi-orthogonality: not imposed yet'
+    print *, ' '
+  
+    ! ---
+  
+    print *, ' '
+    print *, ' orthog between degen eigenvect' 
+    print *, ' '
+  
+    call impose_orthog_degen_eigvec(n, eigval, reigvec_tmp)
+!!   print *, ' right eigenvect aft orthog' 
+!!   do i = 1, n
+!!     write(*, '(1000(F16.10,X))') reigvec_tmp(:,i)
+!!   enddo
+  
+    call impose_orthog_degen_eigvec(n, eigval, leigvec_tmp)
+!!   print *, ' left eigenvect aft orthog' 
+!!   do i = 1, n
+!!     write(*, '(1000(F16.10,X))') leigvec_tmp(:,i)
+!!   enddo
+  
+  
+    call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+    if( accu_nd .lt. 1d-10 ) then
+      print *, ' bi-orthogonality: ok'
+    endif
+  endif
+
+!  print*,'Rechecking the eigenvectors ...'
+!  print*,'Thr for eigenvectors = ',shift_current
+!  call check_EIGVEC(n, n, A_save, eigval, leigvec_tmp, reigvec_tmp,shift_current)
  
   do i = 1, n
    do j = 1, n
@@ -174,6 +187,7 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   eigval = 0.d0
   do i = 1, n
    iorder(i) = i
+   accu = 0.d0
    do j = 1, n
     accu += VL(j,i) * VR(j,i) 
     do k = 1, n
@@ -181,32 +195,35 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
     enddo
    enddo
    eigval(i) *= 1.d0/accu
+!   print*,'eigval(i) = ',eigval(i)
   enddo
   ! sorting the 
-  call check_EIGVEC(n, n, A, WR, VL, VR)
-  call check_biorthog(n, n, VL, VR, accu_d, accu_nd, S)
-  print*,'accu_nd = ',accu_nd
   call dsort(eigval, iorder, n)
+!  print*,'Rechecking the eigenvectors again ...'
+!  print*,'Thr for eigenvectors = ',shift_current
+!  call check_EIGVEC(n, n, A, eigval, VL, VR,shift_current)
+!  call check_biorthog(n, n, VL, VR, accu_d, accu_nd, S)
+!  print*,'accu_nd = ',accu_nd
   do i = 1, n
-!   print*,'WR(i) = ',WR(i)
    do j = 1, n
     reigvec(j,i) = VR(j,iorder(i))
     leigvec(j,i) = VL(j,iorder(i))
    enddo
   enddo
   print*,'Checking for final reigvec/leigvec'
-  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec)
+  print*,'Thr for eigenvectors = ',shift_current
+  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec,shift_current)
   call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S)
-  print*,'accu_nd = ',accu_nd
+  print *, ' accu_nd bi-orthog = ', accu_nd
   
-     if( accu_nd .lt. 1d-10 ) then
-       print *, ' bi-orthogonality: ok'
-     else 
-      print*,'Something went wrong in non_hrmt_diag_split_degen_bi_orthog'
-      print*,'Eigenvectors are not bi orthonormal ..'
-      print*,'accu_nd = ',accu_nd
-      stop
-     endif
+  if( accu_nd .lt. 1d-10 ) then
+    print *, ' bi-orthogonality: ok'
+  else 
+   print*,'Something went wrong in non_hrmt_diag_split_degen_bi_orthog'
+   print*,'Eigenvectors are not bi orthonormal ..'
+   print*,'accu_nd = ',accu_nd
+   stop
+  endif
 
 end subroutine non_hrmt_diag_split_degen
 

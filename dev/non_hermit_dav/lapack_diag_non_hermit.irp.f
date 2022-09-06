@@ -852,18 +852,17 @@ end subroutine impose_biorthog_lu
 
 ! ---
 
-subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec)
+subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec,thr)
 
   implicit none
   integer,          intent(in)  :: n, m
-  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m)
+  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m), thr
  
   integer                       :: i, j
-  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel, thr
+  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel
   double precision              :: V_nrm, U_nrm
   double precision, allocatable :: Mtmp(:,:)
 
-  thr = 1d-10
  
   allocate( Mtmp(n,m) )
   
