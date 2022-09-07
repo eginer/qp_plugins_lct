@@ -9,10 +9,10 @@ program tc_scf
   print *, 'starting ...'
 
   my_grid_becke  = .True.
-!  my_n_pt_r_grid = 30
-!  my_n_pt_a_grid = 50
-  my_n_pt_r_grid = 10 ! small grid for quick debug
-  my_n_pt_a_grid = 26 ! small grid for quick debug
+  my_n_pt_r_grid = 30
+  my_n_pt_a_grid = 50
+!  my_n_pt_r_grid = 10 ! small grid for quick debug
+!  my_n_pt_a_grid = 26 ! small grid for quick debug
   touch my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
 
   !call create_guess
@@ -96,8 +96,8 @@ subroutine routine_scf()
   endif
 
   if(bi_ortho)then
-   !do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)) )
-   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. thresh_tcscf) )
+   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)) )
+!   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. thresh_tcscf) )
      it += 1
      print*,'iteration = ', it
      print*,'***'

@@ -12,6 +12,9 @@ subroutine lapack_diag_non_sym(n, A, WR, WI, VL, VR)
   ! VL(i,j) = <i|Psi_left(j)>  :: projection on the basis element |i> on the jth left  eigenvector 
   !
   ! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
+  !
+  ! The real part of the matrix A can be written as A = VR D VL^T
+  !
   END_DOC
 
   implicit none
