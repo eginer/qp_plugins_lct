@@ -10,32 +10,42 @@ program compute_deltamu
   read_wf = .True.
   touch read_wf
 
-  PROVIDE N_int
+  PROVIDE N_int 
   call delta_dmcdressing
 
 end
 
+! ---
 
 subroutine delta_dmcdressing()
 
   implicit none
-  double precision, allocatable :: delta(:) 
+  integer                       :: k
+  double precision, allocatable :: delta(:,:) 
 
   print *, j1b_gauss
   print *, j1b_gauss_pen
   print *, mu_erf
 
-  allocate( delta(N_det) )
+  allocate( delta(N_det,N_states) )
+  delta = 0.d0
 
-  ! get < I | H_mu - H | psi > 
-  call get_delta_tc_psi(psi_det, psi_coef, N_det, N_int, delta)
+  do k = 1, N_states
 
-  ! order as QMCCHEM
-  call dset_order(delta, psi_bilinear_matrix_order, N_det)
+    ! get < I | H_mu - H | psi > 
+    call get_delta_tc_psi(psi_det, psi_coef(:,k), N_det, N_int, delta(:,k))
 
-!  call ezfio_set_dmc_dress_dmc_delta_h(delta)
+    ! order as QMCCHEM
+    call dset_order(delta(:,k), psi_bilinear_matrix_order, N_det)
+
+  enddo
+
+  call ezfio_set_dmc_dress_dmc_delta_h(delta)
 
   deallocate(delta)
 
   return
 end subroutine delta_dmcdressing
+
+! ---
+
