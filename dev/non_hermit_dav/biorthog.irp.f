@@ -423,21 +423,23 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
     print *, ' '
     print *, ' bi-orthogonality: not imposed yet'
-    print *, ' '
 
     ! ---
 
-    print *, ' '
     print *, ' orthog between degen eigenvect' 
-    print *, ' '
 
-    call impose_orthog_degen_eigvec(n, eigval, reigvec)
+    !call impose_orthog_degen_eigvec(n, eigval, reigvec)
+    !call impose_orthog_degen_eigvec(n, eigval, leigvec)
+
+    !call impose_orthog_biorthog_degen_eigvec(n, eigval, leigvec, reigvec)
+
+    call impose_unique_biorthog_degen_eigvec(n, eigval, mo_coef, leigvec, reigvec)
+
+
     print *, ' right eigenvect aft orthog' 
     do i = 1, n
       write(*, '(1000(F16.10,X))') reigvec(:,i)
     enddo
-
-    call impose_orthog_degen_eigvec(n, eigval, leigvec)
     print *, ' left eigenvect aft orthog' 
     do i = 1, n
       write(*, '(1000(F16.10,X))') leigvec(:,i)

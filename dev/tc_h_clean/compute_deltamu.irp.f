@@ -31,6 +31,7 @@ subroutine delta_dmcdressing()
   delta = 0.d0
 
   do k = 1, N_states
+  !do k = 1, 1
 
     ! get < I | H_mu - H | psi > 
     call get_delta_tc_psi(psi_det, psi_coef(:,k), N_det, N_int, delta(:,k))

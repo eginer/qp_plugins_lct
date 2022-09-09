@@ -65,8 +65,8 @@ subroutine get_delta_tc_psi(psidet, psicoef, ndet, Nint, delta)
   call htilde_mu_mat(psidet(1,1,i), psidet(1,1,j), Nint, hmono, heff, hderiv, hthree, htilde_ij)
   call i_H_j(psidet(1,1,i), psidet(1,1,j), Nint, hij)
 
-  print *, hmono, heff, hderiv, hthree 
-  print *, hij+nuclear_repulsion, htilde_ij+nuclear_repulsion
+  !print *, hmono, heff, hderiv, hthree 
+  !print *, hij+nuclear_repulsion, htilde_ij+nuclear_repulsion
 
   delta = 0.d0
  !$OMP PARALLEL DO DEFAULT(NONE) SCHEDULE(dynamic,8) &

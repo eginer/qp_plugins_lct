@@ -348,7 +348,7 @@ subroutine non_hrmt_real_diag(n, A, leigvec, reigvec, n_real_eigv, eigval)
   double precision, allocatable :: Aw(:,:)
   double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:), S(:,:), S_inv_half_tmp(:,:)
 
-  print*, ' Computing the left/right eigenvectors ...'
+  print*, ' Computing the left/right eigenvectors with lapack ...'
 
   ! Eigvalue(n) = WR(n) + i * WI(n)
   allocate(WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n))
@@ -391,6 +391,13 @@ subroutine non_hrmt_real_diag(n, A, leigvec, reigvec, n_real_eigv, eigval)
       reigvec(j,i) = VR(j,list_good(iorder(i)))
       leigvec(j,i) = Vl(j,list_good(iorder(i)))
     enddo
+  enddo
+
+  print *, ' ordered eigenvalues'
+  print *, ' right eigenvect' 
+  do i = 1, n
+    print *, i, eigval(i)
+    write(*, '(1000(F16.10,X))') reigvec(:,i)
   enddo
 
   ! ---
@@ -682,7 +689,6 @@ subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
     enddo
   enddo
   deallocate(tmp)
-
 
   return
 end subroutine impose_biorthog_qr
@@ -1503,6 +1509,406 @@ subroutine check_orthog(n, m, V, accu_d, accu_nd, S)
   !print*, ' nondiag acc: ', accu_nd
 
 end subroutine check_orthog
+
+! ---
+
+subroutine impose_orthog_biorthog_degen_eigvec(n, e0, L0, R0)
+
+  implicit none
+
+  integer,          intent(in)    :: n
+  double precision, intent(in)    :: e0(n)
+  double precision, intent(inout) :: L0(n,n), R0(n,n)
+
+  integer                         :: i, j, k, m
+  double precision                :: ei, ej, de, de_thr
+  integer,          allocatable   :: deg_num(:)
+  double precision, allocatable   :: L(:,:), R(:,:), S(:,:)
+
+  ! ---
+
+  allocate( deg_num(n) )
+  do i = 1, n
+    deg_num(i) = 1
+  enddo
+
+  de_thr = 1d-10
+
+  do i = 1, n-1
+    ei = e0(i)
+
+    ! already considered in degen vectors
+    if(deg_num(i).eq.0) cycle
+
+    do j = i+1, n
+      ej = e0(j)
+      de = dabs(ei - ej)
+
+      if(de .lt. de_thr) then
+        deg_num(i) = deg_num(i) + 1 
+        deg_num(j) = 0
+      endif
+
+    enddo
+  enddo
+  
+  do i = 1, n
+    if(deg_num(i).gt.1) then
+      print *, ' degen on', i, deg_num(i)
+    endif
+  enddo
+
+  ! ---
+
+  do i = 1, n
+    m = deg_num(i)
+
+    if(m .gt. 1) then
+  
+      allocate(L(n,m))
+      allocate(R(n,m))
+
+      do j = 1, m
+        L(1:n,j) = L0(1:n,i+j-1)
+        R(1:n,j) = R0(1:n,i+j-1)
+      enddo
+
+      ! ---
+
+      call impose_orthog_svd(n, m, L)
+      call impose_orthog_svd(n, m, R)
+
+      ! ---
+  
+      allocate(S(m,m))
+
+      call dgemm( 'T', 'N', m, m, n, 1.d0      &
+                , L, size(L, 1), R, size(R, 1) &
+                , 0.d0, S, size(S, 1) )
+      print *, ' deg eigenvec overlap bef QR: '
+      do k = 1, m
+        write(*, '(1000(F16.10,X))') S(k,:)
+      enddo
+
+      call impose_biorthog_qr(n, m, L, R, S)
+
+      call dgemm( 'T', 'N', m, m, n, 1.d0      &
+                , L, size(L, 1), R, size(R, 1) &
+                , 0.d0, S, size(S, 1) )
+      print *, ' deg eigenvec overlap aft QR: '
+      do k = 1, m
+        write(*, '(1000(F16.10,X))') S(k,:)
+      enddo
+
+      deallocate(S)
+
+      ! ---
+
+      do j = 1, m
+        L0(1:n,i+j-1) = L(1:n,j)
+        R0(1:n,i+j-1) = R(1:n,j)
+      enddo
+
+      deallocate(L, R)
+
+    endif
+  enddo
+
+end subroutine impose_orthog_biorthog_degen_eigvec 
+
+! ---
+
+subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, L0, R0)
+
+  implicit none
+
+  integer,          intent(in)    :: n
+  double precision, intent(in)    :: e0(n)
+  double precision, intent(inout) :: C0(n,n), L0(n,n), R0(n,n)
+
+  integer                         :: i, j, k, m
+  double precision                :: ei, ej, de, de_thr
+  integer,          allocatable   :: deg_num(:)
+  double precision, allocatable   :: L(:,:), R(:,:), C(:,:)
+
+  ! ---
+
+  allocate( deg_num(n) )
+  do i = 1, n
+    deg_num(i) = 1
+  enddo
+
+  de_thr = 1d-10
+
+  do i = 1, n-1
+    ei = e0(i)
+
+    ! already considered in degen vectors
+    if(deg_num(i).eq.0) cycle
+
+    do j = i+1, n
+      ej = e0(j)
+      de = dabs(ei - ej)
+
+      if(de .lt. de_thr) then
+        deg_num(i) = deg_num(i) + 1 
+        deg_num(j) = 0
+      endif
+
+    enddo
+  enddo
+  
+  do i = 1, n
+    if(deg_num(i).gt.1) then
+      print *, ' degen on', i, deg_num(i)
+    endif
+  enddo
+
+  ! ---
+
+  do i = 1, n
+    m = deg_num(i)
+
+    if(m .gt. 1) then
+  
+      allocate(L(n,m))
+      allocate(R(n,m))
+      allocate(C(n,m))
+
+      do j = 1, m
+        L(1:n,j) = L0(1:n,i+j-1)
+        R(1:n,j) = R0(1:n,i+j-1)
+        C(1:n,j) = C0(1:n,i+j-1)
+      enddo
+
+      ! ---
+
+      call impose_orthog_svd(n, m, L)
+      call impose_orthog_svd(n, m, R)
+
+      ! ---
+
+      ! TODO:
+      ! select C correctly via overlap
+      ! or via selecting degen in HF
+
+      call max_overlap_qr(n, m, C, L)
+      call max_overlap_qr(n, m, C, R)
+
+      ! ---
+  
+      ! TODO: S^{-1/2}
+
+      call impose_biorthog_svd(n, m, L, R)
+
+      ! ---
+
+      do j = 1, m
+        L0(1:n,i+j-1) = L(1:n,j)
+        R0(1:n,i+j-1) = R(1:n,j)
+      enddo
+
+      deallocate(L, R, C)
+
+    endif
+  enddo
+
+end subroutine impose_unique_biorthog_degen_eigvec 
+
+! ---
+
+subroutine max_overlap_qr(m, n, V0, V)
+
+  implicit none 
+  integer,          intent(in)    :: m, n
+  double precision, intent(in)    :: V0(m,n)
+  double precision, intent(inout) :: V(m,n)
+
+  integer                         :: i, j
+  integer                         :: LWORK, INFO
+  double precision, allocatable   :: TAU(:), WORK(:)
+  double precision, allocatable   :: S(:,:), tmp(:,:)
+
+  ! ---
+
+  allocate(S(n,n))
+
+  call dgemm( 'T', 'N', n, n, m, 1.d0        &
+            , V, size(V, 1), V0, size(V0, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  ! ---
+
+  allocate( TAU(n), WORK(1) )
+
+  LWORK = -1
+  call dgeqrf(n, n, S, n, TAU, WORK, LWORK, INFO)
+  if(INFO .ne. 0) then
+    print*,'dgeqrf failed !!', INFO
+    stop
+  endif
+
+  LWORK = max(n, int(WORK(1)))
+  deallocate(WORK)
+
+  allocate( WORK(LWORK) )
+  call dgeqrf(n, n, S, n, TAU, WORK, LWORK, INFO)
+  if(INFO .ne. 0) then
+    print*,'dgeqrf failed !!', INFO
+    stop
+  endif
+
+  ! get Q in S matrix
+  LWORK = -1
+  call dorgqr(n, n, n, S, n, TAU, WORK, LWORK, INFO)
+  if(INFO .ne. 0) then
+    print*,'dorgqr failed !!', INFO
+    stop
+  endif
+
+  LWORK = max(n, int(WORK(1)))
+  deallocate(WORK)
+
+  allocate( WORK(LWORK) )
+  call dorgqr(n, n, n, S, n, TAU, WORK, LWORK, INFO)
+  if(INFO .ne. 0) then
+    print*,'dorgqr failed !!', INFO
+    stop
+  endif
+
+  deallocate( WORK, TAU )
+
+  ! ---
+
+  ! V0.T <-- Q.T x V0.T, where Q = S
+
+  allocate( tmp(n,m) )
+
+  call dgemm( 'T', 'T', n, m, n, 1.d0      &
+            , S, size(S, 1), V, size(V, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+
+  deallocate(S)
+
+  do i = 1, n
+    do j = 1, m
+      V(j,i) = tmp(i,j)
+    enddo
+  enddo
+
+  deallocate(tmp)
+
+  ! ---
+
+  return
+end subroutine max_overlap_qr
+
+! ---
+
+subroutine impose_biorthog_svd(n, m, L, R)
+
+  implicit none
+
+  integer,          intent(in)    :: n, m
+  double precision, intent(inout) :: L(n,m), R(n,m)
+
+  integer                         :: i, j, num_linear_dependencies
+  double precision                :: threshold
+  double precision, allocatable   :: S(:,:), tmp(:,:)
+  double precision, allocatable   :: U(:,:), V(:,:), Vt(:,:), D(:)
+
+  ! ---
+
+  allocate(S(m,m))
+
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , L, size(L, 1), R, size(R, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' overlap bef SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  ! ---
+ 
+  allocate(U(m,m), Vt(m,m), D(m))
+
+  call svd(S, m, U, m, D, Vt, m, m, m)
+
+  deallocate(S)
+
+  threshold               = 1.d-6
+  num_linear_dependencies = 0
+  do i = 1, m
+    if(abs(D(i)) <= threshold) then
+      D(i) = 0.d0
+      num_linear_dependencies += 1
+    else
+      ASSERT (D(i) > 0.d0)
+      D(i) = 1.d0 / dsqrt(D(i))
+    endif
+  enddo
+  if(num_linear_dependencies > 0) then
+    write(*,*) ' linear dependencies = ', num_linear_dependencies
+    write(*,*) ' m                   = ', m
+    stop
+  endif
+
+  allocate(V(m,m))
+  do i = 1, m
+    do j = 1, m
+      V(j,i) = Vt(i,j)
+    enddo
+  enddo
+  deallocate(Vt)
+
+  ! ---
+
+  allocate(tmp(n,m))
+
+  ! tmp <-- R x V
+  call dgemm( 'N', 'N', n, m, m, 1.d0      &
+            , R, size(R, 1), V, size(V, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  deallocate(V)
+  ! R <-- tmp x sigma^-0.5
+  do j = 1, m
+    do i = 1, n
+      R(i,j) = tmp(i,j) * D(j)
+    enddo
+  enddo
+
+  ! tmp <-- L x U
+  call dgemm( 'N', 'N', n, m, m, 1.d0      &
+            , L, size(L, 1), U, size(U, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  deallocate(U)
+  ! L <-- tmp x sigma^-0.5
+  do j = 1, m
+    do i = 1, n
+      L(i,j) = tmp(i,j) * D(j)
+    enddo
+  enddo
+
+  deallocate(D, tmp)
+
+  ! ---
+
+  allocate(S(m,m))
+  call dgemm( 'T', 'N', m, m, n, 1.d0      &
+            , L, size(L, 1), R, size(R, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  print *, ' overlap aft SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+  deallocate(S)
+
+  ! ---
+
+end subroutine impose_biorthog_svd
 
 ! ---
 
