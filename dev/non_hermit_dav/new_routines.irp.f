@@ -361,7 +361,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
   else
     print *, ' '
     print *, ' bi-orthogonality: not imposed yet'
-!    call get_inv_half_diago(S, n, S_nh_inv_half,complex_root)
+!    call get_inv_half_nonsymmat_diago(S, n, S_nh_inv_half,complex_root)
     complex_root = .True.
     if(complex_root)then 
      print *, ' '
@@ -376,7 +376,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
        print *, ' bi-orthogonality: ok'
      else 
       print*,'New vectors not bi-orthonormals at ',accu_nd
-      call get_inv_half_diago(S, n, S_nh_inv_half,complex_root)
+      call get_inv_half_nonsymmat_diago(S, n, S_nh_inv_half,complex_root)
       if(complex_root)then 
        call impose_biorthog_qr(n, n, leigvec_tmp, reigvec_tmp, S) ! bi-orthonormalization using QR
       else
