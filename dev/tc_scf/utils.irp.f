@@ -193,7 +193,7 @@ end subroutine get_inv_half_svd
 subroutine get_inv_half_diago(matrix, n, matrix_inv_half,complex_root)
 
   BEGIN_DOC
-  !   :math:`X = S^{-1/2}` obtained by SVD
+  !   :math:`X = S^{-1/2}` obtained by diagonalization 
   END_DOC
 
   implicit none
