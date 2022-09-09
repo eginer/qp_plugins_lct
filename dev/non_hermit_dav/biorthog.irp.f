@@ -271,7 +271,7 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   integer                       :: i, j
   integer                       :: n_good
-  double precision              :: thr
+  double precision              :: thr, thr_cut
   double precision              :: accu_d, accu_nd
 
   integer,          allocatable :: list_good(:), iorder(:)
@@ -294,6 +294,9 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
     write(*, '(1000(F16.10,X))') A(i,:)
   enddo
   print *, ' '
+
+  !thr_cut = 1.d-15
+  !call cancel_small_elmts(A, n, thr_cut)
 
   !call lapack_diag_non_sym_right(n, A, WR, WI, VR)
   call lapack_diag_non_sym(n, A, WR, WI, VL, VR)

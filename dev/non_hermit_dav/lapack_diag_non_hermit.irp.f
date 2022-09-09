@@ -1628,10 +1628,12 @@ subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, L0, R0)
   double precision, intent(in)    :: e0(n)
   double precision, intent(inout) :: C0(n,n), L0(n,n), R0(n,n)
 
+  logical                         :: complex_root
   integer                         :: i, j, k, m
   double precision                :: ei, ej, de, de_thr
   integer,          allocatable   :: deg_num(:)
   double precision, allocatable   :: L(:,:), R(:,:), C(:,:)
+  double precision, allocatable   :: S(:,:), S_inv_half(:,:)
 
   ! ---
 
@@ -1699,9 +1701,15 @@ subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, L0, R0)
 
       ! ---
   
-      ! TODO: S^{-1/2}
+      allocate(S(m,m), S_inv_half(m,m))
+      call dgemm( 'T', 'N', m, m, n, 1.d0      &
+                , L, size(L, 1), R, size(R, 1) &
+                , 0.d0, S, size(S, 1) )
+      call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
+      call bi_ortho_s_inv_half(m, L, R, S_inv_half)
+      deallocate(S, S_inv_half)
 
-      call impose_biorthog_svd(n, m, L, R)
+      !call impose_biorthog_svd(n, m, L, R)
 
       ! ---
 
