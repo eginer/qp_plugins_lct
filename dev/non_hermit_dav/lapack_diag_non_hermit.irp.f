@@ -12,6 +12,9 @@ subroutine lapack_diag_non_sym(n, A, WR, WI, VL, VR)
   ! VL(i,j) = <i|Psi_left(j)>  :: projection on the basis element |i> on the jth left  eigenvector 
   !
   ! VR(i,j) = <i|Psi_right(j)> :: projection on the basis element |i> on the jth right eigenvector 
+  !
+  ! The real part of the matrix A can be written as A = VR D VL^T
+  !
   END_DOC
 
   implicit none
@@ -858,18 +861,17 @@ end subroutine impose_biorthog_lu
 
 ! ---
 
-subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec)
+subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec,thr)
 
   implicit none
   integer,          intent(in)  :: n, m
-  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m)
+  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m), thr
  
   integer                       :: i, j
-  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel, thr
+  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel
   double precision              :: V_nrm, U_nrm
   double precision, allocatable :: Mtmp(:,:)
 
-  thr = 1d-10
  
   allocate( Mtmp(n,m) )
   
@@ -1316,7 +1318,7 @@ subroutine impose_orthog_degen_eigvec(n, e0, C0)
       ! ---
 
       ! C <= C U sigma^-0.5
-      !call impose_orthog_svd(n, m, C)
+      call impose_orthog_svd(n, m, C)
 
       ! ---
 
@@ -1328,7 +1330,7 @@ subroutine impose_orthog_degen_eigvec(n, e0, C0)
 
       ! ---
 
-      call impose_orthog_GramSchmidt(n, m, C)
+!      call impose_orthog_GramSchmidt(n, m, C)
 
       ! ---
 
@@ -1443,12 +1445,12 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S)
             , Vl, size(Vl, 1), Vr, size(Vr, 1) &
             , 0.d0, S, size(S, 1) )
 
-  print *, ''
-  print *, ' overlap matrix:'
-  do i = 1, m
-    write(*,'(1000(F16.10,X))') S(i,:)
-  enddo
-  print *, ''
+!  print *, ''
+!  print *, ' overlap matrix:'
+!  do i = 1, m
+!    write(*,'(1000(F16.10,X))') S(i,:)
+!  enddo
+!  print *, ''
 
   accu_d  = 0.d0
   accu_nd = 0.d0

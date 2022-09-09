@@ -212,3 +212,38 @@ double precision function fit_1_erf_x_2(x)
  enddo
 
 end
+
+subroutine inv_r_times_poly(r, dist_r, dist_vec, poly)
+ implicit none
+ BEGIN_DOC
+! returns 
+!
+! poly(1) = x / sqrt(x^2+y^2+z^2), poly(2) = y / sqrt(x^2+y^2+z^2), poly(3) = z / sqrt(x^2+y^2+z^2)
+!
+! with the arguments  
+!
+! r(1)  = x, r(2) = y, r(3) = z, dist_r = sqrt(x^2+y^2+z^2)
+!
+! dist_vec(1) = sqrt(y^2+z^2), dist_vec(2) = sqrt(x^2+z^2), dist_vec(3) = sqrt(x^2+y^2)
+ END_DOC
+ double precision, intent(in) :: r(3), dist_r, dist_vec(3)
+ double precision, intent(out):: poly(3)
+ double precision :: inv_dist
+ integer :: i
+ if (dist_r.gt. 1.d-8)then
+  inv_dist = 1.d0/dist_r
+  do i = 1, 3
+   poly(i) = r(i) * inv_dist 
+  enddo
+ else
+  do i = 1, 3
+   if(dabs(r(i)).lt.dist_vec(i))then
+    inv_dist = 1.d0/dist_r
+    poly(i) = r(i) * inv_dist 
+   else !if(dabs(r(i)))then
+    poly(i) = 1.d0 
+!    poly(i) = 0.d0 
+   endif
+  enddo
+ endif
+end                      

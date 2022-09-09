@@ -4,36 +4,62 @@ program test_det
  touch read_wf 
 ! call routine
 ! call test_conf
- call test_prov_s_p
+! call test_prov_s_p
  call test_prov_s_m
 end
 
 subroutine test_prov_s_p
  implicit none
- integer :: i,j
- do i = 1, N_configuration
-  do j = 1, n_det_per_conf_s_p(i) 
-   call debug_det(psi_det_s_p(1,1,j,i),N_int)
-   print*,'coef = ',psi_coef_s_p(j,i,:)
+ integer :: i,j,k,istate
+ print*,'Initial wave function '
+ do istate = 1,N_states
+  print*,'********************'
+  print*,'state ',istate
+  print*,' S values ',s_values(istate)
+  do i = 1, N_configuration
+   do j =  psi_configuration_to_psi_det(1,i), psi_configuration_to_psi_det(2,i)
+    k = psi_configuration_to_psi_det_data(j) ! index of the determinant "j" in the configuration i 
+    print*,'coef = ',psi_coef(k,istate)
+    call debug_det(psi_det(1,1,k),N_int)
+   enddo 
   enddo
+  print*,'Applying S^+ on the state'
+  do i = 1, N_configuration
+   do j = 1, n_det_per_conf_s_p(i) 
+    call debug_det(psi_det_s_p(1,1,j,i),N_int)
+    print*,'coef = ',psi_coef_s_p(j,i,istate)
+   enddo
+  enddo
+  print*,'psi_norm_s_p',psi_norm_s_p(istate)
+  print*,'s2_values',s2_values
+  print*,'s_values ',s_values
  enddo
- print*,'psi_norm_s_p',psi_norm_s_p
- print*,'s2_values',s2_values
- print*,'s_values ',s_values
 end
 
 subroutine test_prov_s_m
  implicit none
- integer :: i,j
- do i = 1, N_configuration
-  do j = 1, n_det_per_conf_s_m(i) 
-   call debug_det(psi_det_s_m(1,1,j,i),N_int)
-   print*,'coef = ',psi_coef_s_m(j,i,:)
+ integer :: i,j,k,istate
+ print*,'Initial wave function '
+ do istate = 1,N_states
+  print*,'********************'
+  print*,'state ',istate
+  print*,' S values ',s_values(istate)
+  do i = 1, N_configuration
+   do j =  psi_configuration_to_psi_det(1,i), psi_configuration_to_psi_det(2,i)
+    k = psi_configuration_to_psi_det_data(j) ! index of the determinant "j" in the configuration i 
+    print*,'coef = ',psi_coef(k,istate)
+    call debug_det(psi_det(1,1,k),N_int)
+   enddo 
   enddo
+  print*,'Applying S^- on the state'
+  do i = 1, N_configuration
+   do j = 1, n_det_per_conf_s_m(i) 
+    call debug_det(psi_det_s_m(1,1,j,i),N_int)
+    print*,'coef = ',psi_coef_s_m(j,i,istate)
+   enddo
+  enddo
+  print*,'psi_norm_s_m',psi_norm_s_m(istate)
  enddo
- print*,'psi_norm_s_m',psi_norm_s_m
- print*,'s2_values',s2_values
- print*,'s_values ',s_values
 end
 
 subroutine test_conf

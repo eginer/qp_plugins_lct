@@ -18,14 +18,14 @@
 
   PROVIDE Fock_matrix_tc_mo_tot
 
-! call non_hrmt_generalized_real_im(mo_num, Fock_matrix_tc_mo_tot, overlap_bi_ortho &
-   !call non_hrmt_real_im( mo_num, Fock_matrix_tc_mo_tot &
-!   call non_hrmt_real_diag( mo_num, Fock_matrix_tc_mo_tot &
-!   call non_hrmt_real_diag_new( mo_num, Fock_matrix_tc_mo_tot &
-   call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
-!   call non_hrmt_bieig_real_im( mo_num, Fock_matrix_tc_mo_tot &
-!   call non_hrmt_bieiginv( mo_num, Fock_matrix_tc_mo_tot &
+!  print*,'Fock matrix'
+!  do i = 1, mo_num
+!   write(*,'(100(F16.10,X))')Fock_matrix_tc_mo_tot(:,i)
+!  enddo
 !   call non_hrmt_diag_split_degen( mo_num, Fock_matrix_tc_mo_tot &
+!  call non_hrmt_bieig( mo_num, Fock_matrix_tc_mo_tot &
+  call non_hrmt_diag_split_degen_bi_orthog( mo_num, Fock_matrix_tc_mo_tot &
+!  call non_hrmt_diag_split_degen_s_inv_half( mo_num, Fock_matrix_tc_mo_tot &
                      , fock_tc_leigvec_mo, fock_tc_reigvec_mo & 
                      , n_real_tc, eigval_right_tmp )
 
@@ -57,6 +57,9 @@
       else
         accu_tmp = overlap_fock_tc_eigvec_mo(k,i)
         accu_nd += accu_tmp * accu_tmp
+        if(dabs(overlap_fock_tc_eigvec_mo(k,i)).gt.1.d-10)then
+         print*,'k,i',k,i,overlap_fock_tc_eigvec_mo(k,i)
+        endif
       endif
     enddo 
   enddo
@@ -120,23 +123,6 @@ END_PROVIDER
              , mo_l_coef, size(mo_l_coef, 1)                   &
              , fock_tc_leigvec_mo, size(fock_tc_leigvec_mo, 1) &
              , 0.d0, fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1) )
-   integer :: n_real_eigv
-   double precision, allocatable :: reigvec(:, :), leigvec(:, :), eigval(:)
-!   allocate(reigvec(ao_num, mo_num), leigvec(ao_num, mo_num),eigval(mo_num))
-!   call non_hrmt_generalized_real_im(ao_num, Fock_matrix_tc_ao_tot, ao_overlap, & 
-!   leigvec, reigvec, n_real_eigv, eigval)
-!   if(n_real_eigv .ge. mo_num)then
-!    do i = 1, mo_num
-!     print*,'eigval(i) = ',eigval(i)
-!     fock_tc_leigvec_ao(1:ao_num,i) = leigvec(1:ao_num,i)
-!     fock_tc_reigvec_ao(1:ao_num,i) = reigvec(1:ao_num,i)
-!    enddo
-!   else 
-!    print*,'n_real_eigv = ',n_real_eigv
-!    print*,'Not enough MOs !!'
-!    stop
-!   endif
- 
  
   allocate( tmp(mo_num,ao_num) )
 
@@ -176,108 +162,5 @@ END_PROVIDER
 
   deallocate( tmp )
 
-!  accu_d = 0.d0
-!  accu = 0.d0
-!  do i = 1, mo_num
-!    accu_d += overlap_fock_tc_eigvec_ao(i,i)
-!    do j = 1, mo_num
-!      accu += dabs(overlap_fock_tc_eigvec_ao(j,i) - overlap_fock_tc_eigvec_mo(j,i))
-!    enddo
-!  enddo
-!  print*,'Trace of the overlap_fock_tc_eigvec_ao = ',accu_d
-!  print*,'mo_num                                 = ',mo_num
-!  accu = accu / dble(mo_num**2)
-
-!  if(dabs(accu).gt.1.d-10) then
-!    print*,'Warning !! '
-!    print*,'overlap_fock_tc_eigvec_ao and overlap_fock_tc_eigvec_mo are different at '
-!    print*,'an average of ', accu
-
-!     print*,'overlap_fock_tc_eigvec_ao = '
-!     do i = 1, mo_num
-!       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_ao(i,:)
-!     enddo
-!     print*,'overlap_fock_tc_eigvec_mo = '
-!     do i = 1, mo_num
-!       write(*,'(100(F16.10,X))')overlap_fock_tc_eigvec_mo(i,:)
-!     enddo
-!     stop
-
-!  endif
-
 END_PROVIDER
-
-! ---
-
- BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_reigvec_mo, (mo_num, mo_num)]
-&BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_leigvec_mo, (mo_num, mo_num)]
-&BEGIN_PROVIDER [ double precision, eigval_bi_ortho_fock_tc_mo, (mo_num)]
- implicit none
- integer :: n_real_tc
- call non_hrmt_real_diag_new( mo_num, overlap_fock_tc_eigvec_ao&
-! call non_hrmt_bieig_real_im( mo_num, overlap_fock_tc_eigvec_ao&
-                    , bi_ortho_fock_tc_leigvec_mo, bi_ortho_fock_tc_reigvec_mo & 
-                    , n_real_tc, eigval_bi_ortho_fock_tc_mo)
- do i = 1, mo_num
-  print*,eigval_bi_ortho_fock_tc_mo(i)
- enddo
- integer :: i,j,k,l
- double precision, allocatable :: tmp(:,:)
- allocate(tmp(mo_num,mo_num))
- tmp = 0.d0
- print*,'bi_ortho_fock_tc_leigvec_mo'
- do i = 1, mo_num
-  write(*,'(100(F16.10,X))')bi_ortho_fock_tc_leigvec_mo(:,i)
- enddo
- print*,'bi_ortho_fock_tc_reigvec_mo'
- do i = 1, mo_num
-  write(*,'(100(F16.10,X))')bi_ortho_fock_tc_reigvec_mo(:,i)
- enddo
- do i = 1, mo_num
-  do j = 1, mo_num
-   do k = 1, mo_num
-    do l = 1, mo_num
-     tmp (j,i) += bi_ortho_fock_tc_leigvec_mo(l,j) * overlap_fock_tc_eigvec_ao(l,k) * bi_ortho_fock_tc_reigvec_mo(k,i)
-    enddo
-   enddo
-  enddo
- enddo
- print*,'tmp'
-do i = 1, mo_num
- write(*,'(100(F16.10,X))')tmp(:,i)
-enddo
-END_PROVIDER 
-
- BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_reigvec_ao, (mo_num, mo_num)]
-&BEGIN_PROVIDER [ double precision, bi_ortho_fock_tc_leigvec_ao, (mo_num, mo_num)]
- implicit none
- double precision, allocatable :: reigvec(:,:),leigvec(:,:),overlap(:,:)
- allocate(reigvec(ao_num, mo_num), leigvec(ao_num, mo_num), overlap(mo_num, mo_num))
-!  ! MO_R x R
-  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
-            , fock_tc_reigvec_ao, size(fock_tc_reigvec_ao, 1)                   &
-            , bi_ortho_fock_tc_reigvec_mo, size(bi_ortho_fock_tc_reigvec_mo, 1) &
-            , 0.d0, reigvec, size(reigvec, 1) )
-!  ! MO_L x L
-  call dgemm( 'N', 'N', ao_num, mo_num, mo_num, 1.d0          &
-            , fock_tc_leigvec_ao, size(fock_tc_leigvec_ao, 1)                   &
-            , bi_ortho_fock_tc_leigvec_mo, size(bi_ortho_fock_tc_leigvec_mo, 1) &
-            , 0.d0, leigvec, size(leigvec, 1) )
-  integer :: i,j,p,q
- overlap = 0.d0
- do i = 1, mo_num
-  do j = 1, mo_num
-   do p = 1, ao_num
-    do q = 1, ao_num
-     overlap(j,i) += leigvec(q,j) * ao_overlap(q,p) * reigvec(p,i)
-    enddo
-   enddo
-  enddo
- enddo
- print*,'overlap = '
- do i = 1, mo_num
-  write(*,'(100(F16.10,X))')overlap(:,i)
- enddo
-
-END_PROVIDER 
 

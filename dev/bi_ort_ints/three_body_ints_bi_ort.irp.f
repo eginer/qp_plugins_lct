@@ -66,11 +66,11 @@ subroutine give_integrals_3_body_bi_ort(n,l,k,m,j,i,integral)
  do mm = 1, 3
   do ipoint = 1, n_points_final_grid
    weight = final_weight_at_r_vector(ipoint)                                                                          
-   integral += weight * mos_r_in_r_array_transp(ipoint,i) * mos_l_in_r_array_transp(ipoint,k) & 
+   integral += weight * mos_l_in_r_array_transp(ipoint,k) * mos_r_in_r_array_transp(ipoint,i) & 
                       * x_W_ki_bi_ortho_erf_rk(ipoint,mm,n,m) * x_W_ki_bi_ortho_erf_rk(ipoint,mm,l,j) 
-   integral += weight * mos_r_in_r_array_transp(ipoint,j) * mos_l_in_r_array_transp(ipoint,l) & 
+   integral += weight * mos_l_in_r_array_transp(ipoint,l) * mos_r_in_r_array_transp(ipoint,j) & 
                       * x_W_ki_bi_ortho_erf_rk(ipoint,mm,n,m) * x_W_ki_bi_ortho_erf_rk(ipoint,mm,k,i) 
-   integral += weight * mos_r_in_r_array_transp(ipoint,m) * mos_l_in_r_array_transp(ipoint,n) & 
+   integral += weight * mos_l_in_r_array_transp(ipoint,n) * mos_r_in_r_array_transp(ipoint,m) & 
                       * x_W_ki_bi_ortho_erf_rk(ipoint,mm,l,j) * x_W_ki_bi_ortho_erf_rk(ipoint,mm,k,i) 
   enddo
  enddo

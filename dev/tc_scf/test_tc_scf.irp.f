@@ -22,40 +22,13 @@ end
 subroutine print_fock
  implicit none
  integer :: i,j
+ print*,'Diagonal of Fock matrix'
+ do i = 1, mo_num
+  print*,i,Fock_matrix_tc_mo_tot(i,i)
+ enddo
  print*,'Fock matrix '
  do i = 1, mo_num
   write(*,'(100(F16.10,X))')Fock_matrix_tc_mo_tot(:,i)
  enddo
 end
 
-subroutine routine_test
- implicit none
- integer :: i,j 
- do i = 1, mo_num
-  print*,eigval_f_mat_ortho_basis(i),eigval_fock_tc_mo(i),dabs(eigval_f_mat_ortho_basis(i)-eigval_fock_tc_mo(i))
- enddo
- do i = 1, mo_num
-  do j = 1, mo_num
-   if(i==j)cycle
-   if(dabs(overlap_fock_tc_eigvec_mo(i,j)).gt.1.d-8)then
-    print*,i,j,overlap_fock_tc_eigvec_mo(i,j)
-   endif
-  enddo
- enddo
- double precision :: accu
- accu = 0.d0
- do i = 1, mo_num
-  do j = 1, mo_num
-   accu += dabs(overlap_rleigv_f_mat_ortho_basis(j,i)) - dabs(overlap_fock_tc_eigvec_mo(j,i))
-  enddo
- enddo
- print*,'accu = ',accu
- print*,'overlap_fock_tc_eigvec_mo'
- do i = 1, mo_num
-  write(*,'(100(F8.4,X))')overlap_fock_tc_eigvec_mo(:,i)
- enddo
- print*,'overlap_rleigv_f_mat_ortho_basis'
- do i = 1, mo_num
-  write(*,'(100(F8.4,X))')overlap_rleigv_f_mat_ortho_basis(:,i)
- enddo
-end
