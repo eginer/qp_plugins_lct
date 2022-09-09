@@ -218,18 +218,17 @@ subroutine get_inv_half_nonsymmat_diago(matrix, n, matrix_inv_half, complex_root
   complex_root = .False.
 
   matrix_inv_half = 0.D0
+  print*,'Computing S^{-1/2}'
 
   allocate(WR(n), WI(n), VL(n,n), VR(n,n))
   call lapack_diag_non_sym(n, matrix, WR, WI, VL, VR)
-  !do i = 1, n
-  ! print *, WR(i), WI(i)
-  !enddo
 
   allocate(S(n,n))
   call check_biorthog(n, n, VL, VR, accu_d, accu_nd, S)
-  print*,'accu_nd S^{-1/2}'
+  print*,'accu_nd S^{-1/2}',accu_nd
   if(accu_nd.gt.1.d-10) then
     complex_root = .True. ! if vectors are not bi-orthogonal return 
+    print*,'Eigenvectors of S are not bi-orthonormal, skipping S^{-1/2}'
     return
   endif
 
@@ -238,6 +237,10 @@ subroutine get_inv_half_nonsymmat_diago(matrix, n, matrix_inv_half, complex_root
     S_diag(i) = 1.d0/dsqrt(S(i,i))
     if(dabs(WI(i)).gt.1.d-20.or.WR(i).lt.0.d0)then ! check that eigenvalues are real and positive 
      complex_root = .True.
+     print*,'Eigenvalues of S have imaginary part '
+     print*,'WR(i),WI(i)',WR(i), WR(i)
+     print*,'Skipping S^{-1/2}'
+     return
     endif
   enddo
   deallocate(S)

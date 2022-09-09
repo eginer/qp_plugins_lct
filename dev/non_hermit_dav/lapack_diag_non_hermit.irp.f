@@ -1706,10 +1706,13 @@ subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, L0, R0)
                 , L, size(L, 1), R, size(R, 1) &
                 , 0.d0, S, size(S, 1) )
       call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
-      call bi_ortho_s_inv_half(m, L, R, S_inv_half)
+      if(complex_root)then
+       call impose_biorthog_svd(n, m, L, R)
+      else
+       call bi_ortho_s_inv_half(m, L, R, S_inv_half)
+      endif
       deallocate(S, S_inv_half)
 
-      !call impose_biorthog_svd(n, m, L, R)
 
       ! ---
 
