@@ -771,6 +771,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         istate = 1
         call htilde_mu_mat_bi_ortho_tot(det, det, N_int, Hii)
         delta_E = E0(istate) - Hii + E_shift
+        !delta_E = 1.d0
 
 !        call get_excitation_degree( HF_bitmask, det, degree, N_int)
 

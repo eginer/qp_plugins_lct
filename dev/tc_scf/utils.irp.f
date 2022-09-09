@@ -188,75 +188,97 @@ end subroutine get_inv_half_svd
 
 ! ---
 
-
-
-subroutine get_inv_half_diago(matrix, n, matrix_inv_half,complex_root)
+subroutine get_inv_half_nonsymmat_diago(matrix, n, matrix_inv_half, complex_root)
 
   BEGIN_DOC
-  !   :math:`X = S^{-1/2}` obtained by diagonalization 
+  ! input:  S = matrix
+  ! output: S^{-1/2} = matrix_inv_half obtained by diagonalization
+  !
+  ! S = VR D VL^T
+  !   = VR D^{1/2} D^{1/2} VL^T
+  !   = VR D^{1/2} VL^T VR D^{1/2} VL^T
+  !   = S^{1/2} S^{1/2} with S = VR D^{1/2} VL^T 
+  !
+  ! == > S^{-1/2} = VR D^{-1/2} VL^T
+  !
   END_DOC
 
   implicit none
 
   integer,          intent(in)  :: n
   double precision, intent(in)  :: matrix(n,n)
+  logical,          intent(out) :: complex_root
   double precision, intent(out) :: matrix_inv_half(n,n)
-  logical, intent(out) :: complex_root
 
-  integer                       :: num_linear_dependencies
-  integer                       :: i, j, k, l
-  double precision, parameter   :: threshold = 1.d-6
-  double precision :: accu_d,accu_nd
+  integer                       :: i, j
+  double precision              :: accu_d, accu_nd
+  double precision, allocatable :: WR(:), WI(:), VL(:,:), VR(:,:), S(:,:), S_diag(:)
+  double precision, allocatable :: tmp1(:,:), D_mat(:,:)
 
   complex_root = .False.
+
   matrix_inv_half = 0.D0
-  double precision,allocatable :: WR(:),WI(:),VL(:,:),VR(:,:),S(:,:),S_diag(:)
-  allocate(WR(n),WI(n),VL(n,n),VR(n,n),S(n,n),S_diag(n))
-  call lapack_diag_non_sym(n,matrix,WR,WI,VL,VR)
-  do i = 1, n
-   print*,WR(i),WI(i)
-  enddo
+
+  allocate(WR(n), WI(n), VL(n,n), VR(n,n))
+  call lapack_diag_non_sym(n, matrix, WR, WI, VL, VR)
+  !do i = 1, n
+  ! print *, WR(i), WI(i)
+  !enddo
+
+  allocate(S(n,n))
   call check_biorthog(n, n, VL, VR, accu_d, accu_nd, S)
   print*,'accu_nd S^{-1/2}'
-  if(accu_nd.gt.1.d-10)then
-   complex_root = .True. ! if vectors are not bi-orthogonal return 
-   return
+  if(accu_nd.gt.1.d-10) then
+    complex_root = .True. ! if vectors are not bi-orthogonal return 
+    return
   endif
+
+  allocate(S_diag(n))
   do i = 1, n
     S_diag(i) = 1.d0/dsqrt(S(i,i))
     if(dabs(WI(i)).gt.1.d-20.or.WR(i).lt.0.d0)then ! check that eigenvalues are real and positive 
      complex_root = .True.
     endif
   enddo
-  if(complex_root)return
+  deallocate(S)
+
+  if(complex_root) return
+
   ! normalization of vectors 
   do i = 1, n
-   do j = 1,n
-    VL(j,i) *= S_diag(i)
-    VR(j,i) *= S_diag(i)
-   enddo
+    if(S_diag(i).eq.1.d0) cycle
+    do j = 1,n
+      VL(j,i) *= S_diag(i)
+      VR(j,i) *= S_diag(i)
+    enddo
   enddo
-  ! matrix = VR D VL^T
-   double precision, allocatable :: tmp1(:,:),tmp2(:,:),D_mat(:,:)
-   allocate(tmp1(n,n),tmp2(n,n),D_mat(n,n))
-   D_mat = 0.d0
-   do i = 1, n
+  deallocate(S_diag)
+
+  allocate(tmp1(n,n), D_mat(n,n))
+
+  D_mat = 0.d0
+  do i = 1, n
     D_mat(i,i) = 1.d0/dsqrt(WR(i))
-   enddo
-   tmp1 = 0.d0
-  ! S^{-1/2} = VR D^{-1/2} VL^T
+  enddo
+  deallocate(WR, WI)
+
   ! tmp1 = VR D^{-1/2} 
-   call dgemm( 'N', 'N', n, n, n, 1.d0                                            &
-             , VR, size(VR, 1), D_mat, size(D_mat, 1) &
-             , 0.d0, tmp1, size(tmp1, 1) )
-   ! S^{-1/2}= tmp1 X VL^T 
-   matrix_inv_half = 0.d0
-   call dgemm( 'N', 'T', n, n, n, 1.d0                                            &
-             , tmp1, size(tmp1, 1), VL, size(VL, 1) &
-             , 0.d0, matrix_inv_half, size(matrix_inv_half, 1) )
+  tmp1 = 0.d0
+  call dgemm( 'N', 'N', n, n, n, 1.d0                &
+            , VR, size(VR, 1), D_mat, size(D_mat, 1) &
+            , 0.d0, tmp1, size(tmp1, 1) )
+  deallocate(VR, D_mat)
+
+  ! S^{-1/2} = tmp1 X VL^T 
+  matrix_inv_half = 0.d0
+  call dgemm( 'N', 'T', n, n, n, 1.d0              &
+            , tmp1, size(tmp1, 1), VL, size(VL, 1) &
+            , 0.d0, matrix_inv_half, size(matrix_inv_half, 1) )
+  deallocate(tmp1, VL)
 
 end
 
+! ---
 
 subroutine bi_ortho_s_inv_half(n,leigvec,reigvec,S_nh_inv_half)
  implicit  none
