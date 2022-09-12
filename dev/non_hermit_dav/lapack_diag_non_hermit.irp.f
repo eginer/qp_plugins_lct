@@ -313,15 +313,15 @@ subroutine lapack_diag_non_sym_right(n, A, WR, WI, VR)
 
   deallocate(Atmp, WORK, VL)
 
-  print *, ' JOBL = F'
-  print *, ' eigenvalues'
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') WR(i), WI(i)
-  enddo
-  print *, ' right eigenvect' 
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') VR(:,i)
-  enddo
+! print *, ' JOBL = F'
+! print *, ' eigenvalues'
+! do i = 1, n
+!   write(*, '(1000(F16.10,X))') WR(i), WI(i)
+! enddo
+! print *, ' right eigenvect' 
+! do i = 1, n
+!   write(*, '(1000(F16.10,X))') VR(:,i)
+! enddo
 
 end subroutine lapack_diag_non_sym_right
 
@@ -396,12 +396,12 @@ subroutine non_hrmt_real_diag(n, A, leigvec, reigvec, n_real_eigv, eigval)
     enddo
   enddo
 
-  print *, ' ordered eigenvalues'
-  print *, ' right eigenvect' 
-  do i = 1, n
-    print *, i, eigval(i)
-    write(*, '(1000(F16.10,X))') reigvec(:,i)
-  enddo
+! print *, ' ordered eigenvalues'
+! print *, ' right eigenvect' 
+! do i = 1, n
+!   print *, i, eigval(i)
+!   write(*, '(1000(F16.10,X))') reigvec(:,i)
+! enddo
 
   ! ---
 

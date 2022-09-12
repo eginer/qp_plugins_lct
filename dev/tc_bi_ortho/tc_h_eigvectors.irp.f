@@ -45,6 +45,7 @@
    ! call debug_det(psi_det(1,1,i),n_int)
    ! print*,i,reigvec_tc_bi_orth_tmp(i,1),htilde_matrix_elmt_bi_ortho(i,i)
    !enddo
+    print*,'index_HF_psi_det = ',index_HF_psi_det
     do i = 1,N_det
    ! print*,'eigval_right_tmp,coef',eigval_right_tmp(i)
    ! print*,dabs(leigvec_tc_bi_orth_tmp(index_HF_psi_det,i)),dabs(reigvec_tc_bi_orth_tmp(index_HF_psi_det,i))

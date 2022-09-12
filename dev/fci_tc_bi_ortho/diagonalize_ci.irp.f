@@ -40,17 +40,14 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
   ndet  = N_det
   do j=1,N_states
     do i=1,N_det
-      psi_coef(i,j) = reigvec_tc_bi_orth(i,j)
       psi_l_coef_bi_ortho(i,j) = leigvec_tc_bi_orth(i,j)
       psi_r_coef_bi_ortho(i,j) = reigvec_tc_bi_orth(i,j)
+      psi_coef(i,j) = dabs(psi_l_coef_bi_ortho(i,j) * psi_r_coef_bi_ortho(i,j))   
     enddo
   enddo
-!  do j=1,N_states
-!    do i=1,min(N_det,n_det_max_full)
-!      psi_left_guess(i,j) = leigvec_tc_bi_orth(i,j)
-!    enddo
-!  enddo
-  SOFT_TOUCH  eigval_left_tc_bi_orth  eigval_right_tc_bi_orth  leigvec_tc_bi_orth  norm_ground_left_right_bi_orth psi_coef reigvec_tc_bi_orth psi_l_coef_bi_ortho psi_r_coef_bi_ortho
+  SOFT_TOUCH  eigval_left_tc_bi_orth  eigval_right_tc_bi_orth  leigvec_tc_bi_orth  reigvec_tc_bi_orth norm_ground_left_right_bi_orth psi_coef  psi_l_coef_bi_ortho psi_r_coef_bi_ortho
+
+
 
   call save_tc_bi_ortho_wavefunction
 end
@@ -93,37 +90,7 @@ subroutine print_CI_dressed(ndet, E_tc,norm,pt2_data,print_pt2)
       psi_coef(i,j) = reigvec_tc_bi_orth(i,j)
     enddo
   enddo
-!  do j=1,N_states
-!    do i=1,min(N_det,n_det_max_full)
-!      psi_left_guess(i,j) = leigvec_tc_bi_orth(i,j)
-!    enddo
-!  enddo
   SOFT_TOUCH  eigval_left_tc_bi_orth  eigval_right_tc_bi_orth  leigvec_tc_bi_orth  norm_ground_left_right_bi_orth  psi_coef  reigvec_tc_bi_orth 
-
 
 end
 
- BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
-&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
-
-  implicit none
-  integer :: i, k
-
-  psi_selectors_rcoef_bi_orth_transp = 0.d0
-  psi_selectors_lcoef_bi_orth_transp = 0.d0
-
-  print*,'N_det,N_det_selectors',N_det,N_det_selectors
-  do i = 1, N_det_selectors
-    do k = 1, N_states
-!      psi_selectors_rcoef_bi_orth_transp(k,i) = psi_r_coef_bi_ortho(i,k)
-!      psi_selectors_lcoef_bi_orth_transp(k,i) = psi_l_coef_bi_ortho(i,k)
-
-!      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth(psi_det_sorted_order(i),k)
-!      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth(psi_det_sorted_order(i),k)
-
-      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
-      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
-    enddo
-  enddo
-
-END_PROVIDER

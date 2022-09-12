@@ -18,7 +18,7 @@ subroutine ZMQ_selection(N_in, pt2_data)
   if (.True.) then
     PROVIDE pt2_e0_denominator nproc
     PROVIDE psi_bilinear_matrix_columns_loc psi_det_alpha_unique psi_det_beta_unique
-    PROVIDE psi_bilinear_matrix_rows psi_det_sorted_order psi_bilinear_matrix_order
+    PROVIDE psi_bilinear_matrix_rows psi_det_sorted_tc_order psi_bilinear_matrix_order
     PROVIDE psi_bilinear_matrix_transp_rows_loc psi_bilinear_matrix_transp_columns
     PROVIDE psi_bilinear_matrix_transp_order selection_weight pseudo_sym
     PROVIDE n_act_orb n_inact_orb n_core_orb n_virt_orb n_del_orb seniority_max
