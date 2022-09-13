@@ -141,8 +141,10 @@ subroutine ZMQ_pt2(E, pt2_data, pt2_data_err, relative_error, N_in)
   endif
 
   if (N_det <= max(4,N_states) .or. pt2_N_teeth < 2) then
+    print*,'ZMQ_selection'
     call ZMQ_selection(N_in, pt2_data)
   else
+    print*,'else ZMQ_selection'
 
     N = max(N_in,1) * N_states
     state_average_weight_save(:) = state_average_weight(:)
