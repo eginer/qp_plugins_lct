@@ -45,8 +45,15 @@ END_PROVIDER
        psi_det_sorted_tc(j,1,i) = psi_det(j,1,iorder(i))
        psi_det_sorted_tc(j,2,i) = psi_det(j,2,iorder(i))
      enddo
+     double precision :: accu
+     accu = 0.d0
      do k=1,N_states
-       psi_coef_sorted_tc(i,k) = psi_coef(iorder(i),k)
+       psi_coef_sorted_tc(i,k) = dabs(psi_l_coef_bi_ortho(iorder(i),k)*psi_l_coef_bi_ortho(iorder(i),k))
+       accu += psi_coef_sorted_tc(i,k)
+     enddo
+     accu = 1.d0/accu
+     do k=1,N_states
+       psi_coef_sorted_tc(i,k) *= accu
      enddo
      psi_average_norm_contrib_sorted_tc(i) = -psi_average_norm_contrib_sorted_tc(i)
    enddo

@@ -33,7 +33,7 @@ END_PROVIDER
   implicit none
   logical, external :: testTeethBuilding
 
-  if(N_det_generators < 1024) then
+  if(N_det_generators < 500) then
     pt2_minDetInFirstTeeth = 1
     pt2_N_teeth = 1
   else

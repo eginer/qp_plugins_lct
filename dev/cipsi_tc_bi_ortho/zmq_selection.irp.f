@@ -61,6 +61,7 @@ subroutine ZMQ_selection(N_in, pt2_data)
   ipos=1
   task = ' '
 
+ 
  do i= 1, N_det_generators
     do j=1,pt2_F(i)
       write(task(ipos:ipos+30),'(I9,1X,I9,1X,I9,''|'')') j, i, N
