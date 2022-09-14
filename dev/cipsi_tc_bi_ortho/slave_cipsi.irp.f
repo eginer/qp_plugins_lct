@@ -309,9 +309,9 @@ subroutine run_slave_main
 
           PROVIDE global_selection_buffer pt2_N_teeth pt2_F N_det_generators
           PROVIDE psi_bilinear_matrix_columns_loc psi_det_alpha_unique psi_det_beta_unique
-          PROVIDE psi_bilinear_matrix_rows psi_det_sorted_order psi_bilinear_matrix_order
+          PROVIDE psi_bilinear_matrix_rows psi_det_sorted_tc_order psi_bilinear_matrix_order
           PROVIDE psi_bilinear_matrix_transp_rows_loc psi_bilinear_matrix_transp_columns
-          PROVIDE psi_bilinear_matrix_transp_order psi_selectors_coef_transp psi_det_sorted
+          PROVIDE psi_bilinear_matrix_transp_order psi_selectors_coef_transp psi_det_sorted_tc
           PROVIDE psi_selectors_rcoef_bi_orth_transp psi_selectors_lcoef_bi_orth_transp
 
           PROVIDE psi_det_hii selection_weight pseudo_sym pt2_min_parallel_tasks

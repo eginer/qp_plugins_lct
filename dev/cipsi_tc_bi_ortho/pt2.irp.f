@@ -54,8 +54,8 @@ subroutine print_tc_pt2
   endif
 
   if (N_det > N_det_max) then
-    psi_det = psi_det_sorted
-    psi_coef = psi_coef_sorted
+    psi_det = psi_det_sorted_tc
+    psi_coef = psi_coef_sorted_tc
     N_det = N_det_max
     soft_touch N_det psi_det psi_coef
     if (s2_eig) then
@@ -92,7 +92,7 @@ subroutine print_tc_pt2
 
 !    PROVIDE  psi_coef
 !    PROVIDE  psi_det
-!    PROVIDE  psi_det_sorted
+!    PROVIDE  psi_det_sorted_tc
 !
     print *,'******'
     print *,'norm = ',norm

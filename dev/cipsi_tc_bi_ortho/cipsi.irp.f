@@ -64,8 +64,8 @@ subroutine run_cipsi
   endif
 
   if (N_det > N_det_max) then
-    psi_det(1:N_int,1:2,1:N_det) = psi_det_sorted_gen(1:N_int,1:2,1:N_det)
-    psi_coef(1:N_det,1:N_states) = psi_coef_sorted_gen(1:N_det,1:N_states)
+    psi_det(1:N_int,1:2,1:N_det) = psi_det_sorted_tc_gen(1:N_int,1:2,1:N_det)
+    psi_coef(1:N_det,1:N_states) = psi_coef_sorted_tc_gen(1:N_det,1:N_states)
     N_det = N_det_max
     soft_touch N_det psi_det psi_coef
     if (s2_eig) then
@@ -120,7 +120,7 @@ subroutine run_cipsi
 
     PROVIDE  psi_coef
     PROVIDE  psi_det
-    PROVIDE  psi_det_sorted
+    PROVIDE  psi_det_sorted_tc
 
     call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
     if (qp_stop()) exit

@@ -38,7 +38,7 @@ end subroutine select_connected
 subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock_diag_tmp, E0, pt2_data, buf, subset, csubset)
 
   BEGIN_DOC
-  !  WARNING /!\ : It is assumed that the generators and selectors are psi_det_sorted
+  !  WARNING /!\ : It is assumed that the generators and selectors are psi_det_sorted_tc
   END_DOC
 
   use bitmasks
@@ -79,7 +79,7 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
 
 
   PROVIDE psi_bilinear_matrix_columns_loc psi_det_alpha_unique psi_det_beta_unique
-  PROVIDE psi_bilinear_matrix_rows psi_det_sorted_order psi_bilinear_matrix_order
+  PROVIDE psi_bilinear_matrix_rows psi_det_sorted_tc_order psi_bilinear_matrix_order
   PROVIDE psi_bilinear_matrix_transp_rows_loc psi_bilinear_matrix_transp_columns
   PROVIDE psi_bilinear_matrix_transp_order psi_selectors_coef_transp
   PROVIDE psi_selectors_rcoef_bi_orth_transp psi_selectors_lcoef_bi_orth_transp
@@ -114,8 +114,8 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
     do l_a = psi_bilinear_matrix_columns_loc(j), psi_bilinear_matrix_columns_loc(j+1)-1
       i = psi_bilinear_matrix_rows(l_a)
       if(nt + exc_degree(i) <= 4) then
-        idx = psi_det_sorted_order(psi_bilinear_matrix_order(l_a))
-        if (psi_average_norm_contrib_sorted(idx) > norm_thr) then
+        idx = psi_det_sorted_tc_order(psi_bilinear_matrix_order(l_a))
+        if (psi_average_norm_contrib_sorted_tc(idx) > norm_thr) then
           indices(k) = idx
           k = k + 1
         endif
@@ -137,10 +137,10 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
       i = psi_bilinear_matrix_transp_columns(l_a)
       if(exc_degree(i) < 3) cycle
       if(nt + exc_degree(i) <= 4) then
-        idx = psi_det_sorted_order(                                  &
+        idx = psi_det_sorted_tc_order(                                  &
             psi_bilinear_matrix_order(                               &
             psi_bilinear_matrix_transp_order(l_a)))
-        if(psi_average_norm_contrib_sorted(idx) > norm_thr) then
+        if(psi_average_norm_contrib_sorted_tc(idx) > norm_thr) then
           indices(k) = idx
           k = k + 1
         endif
@@ -166,12 +166,12 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
   do k = 1, nmax
 
     i = indices(k)
-    mobMask(1,1) = iand(negMask(1,1), psi_det_sorted(1,1,i))
-    mobMask(1,2) = iand(negMask(1,2), psi_det_sorted(1,2,i))
+    mobMask(1,1) = iand(negMask(1,1), psi_det_sorted_tc(1,1,i))
+    mobMask(1,2) = iand(negMask(1,2), psi_det_sorted_tc(1,2,i))
     nt = popcnt(mobMask(1, 1)) + popcnt(mobMask(1, 2))
     do j = 2, N_int
-      mobMask(j,1) = iand(negMask(j,1), psi_det_sorted(j,1,i))
-      mobMask(j,2) = iand(negMask(j,2), psi_det_sorted(j,2,i))
+      mobMask(j,1) = iand(negMask(j,1), psi_det_sorted_tc(j,1,i))
+      mobMask(j,2) = iand(negMask(j,2), psi_det_sorted_tc(j,2,i))
       nt = nt + popcnt(mobMask(j, 1)) + popcnt(mobMask(j, 2))
     enddo
 
@@ -245,17 +245,17 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
         i = preinteresting(ii)
         select case(N_int)
           case(1)
-            mobMask(1,1) = iand(negMask(1,1), psi_det_sorted(1,1,i))
-            mobMask(1,2) = iand(negMask(1,2), psi_det_sorted(1,2,i))
+            mobMask(1,1) = iand(negMask(1,1), psi_det_sorted_tc(1,1,i))
+            mobMask(1,2) = iand(negMask(1,2), psi_det_sorted_tc(1,2,i))
             nt = popcnt(mobMask(1, 1)) + popcnt(mobMask(1, 2))
           case(2)
-            mobMask(1:2,1) = iand(negMask(1:2,1), psi_det_sorted(1:2,1,i))
-            mobMask(1:2,2) = iand(negMask(1:2,2), psi_det_sorted(1:2,2,i))
+            mobMask(1:2,1) = iand(negMask(1:2,1), psi_det_sorted_tc(1:2,1,i))
+            mobMask(1:2,2) = iand(negMask(1:2,2), psi_det_sorted_tc(1:2,2,i))
             nt = popcnt(mobMask(1, 1)) + popcnt(mobMask(1, 2)) +     &
                 popcnt(mobMask(2, 1)) + popcnt(mobMask(2, 2))
           case(3)
-            mobMask(1:3,1) = iand(negMask(1:3,1), psi_det_sorted(1:3,1,i))
-            mobMask(1:3,2) = iand(negMask(1:3,2), psi_det_sorted(1:3,2,i))
+            mobMask(1:3,1) = iand(negMask(1:3,1), psi_det_sorted_tc(1:3,1,i))
+            mobMask(1:3,2) = iand(negMask(1:3,2), psi_det_sorted_tc(1:3,2,i))
             nt = 0
             do j = 3, 1, -1
               if (mobMask(j,1) /= 0_bit_kind) then
@@ -268,8 +268,8 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
               endif
             enddo
           case(4)
-            mobMask(1:4,1) = iand(negMask(1:4,1), psi_det_sorted(1:4,1,i))
-            mobMask(1:4,2) = iand(negMask(1:4,2), psi_det_sorted(1:4,2,i))
+            mobMask(1:4,1) = iand(negMask(1:4,1), psi_det_sorted_tc(1:4,1,i))
+            mobMask(1:4,2) = iand(negMask(1:4,2), psi_det_sorted_tc(1:4,2,i))
             nt = 0
             do j = 4, 1, -1
               if (mobMask(j,1) /= 0_bit_kind) then
@@ -282,8 +282,8 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
               endif
             enddo
           case default
-            mobMask(1:N_int,1) = iand(negMask(1:N_int,1), psi_det_sorted(1:N_int,1,i))
-            mobMask(1:N_int,2) = iand(negMask(1:N_int,2), psi_det_sorted(1:N_int,2,i))
+            mobMask(1:N_int,1) = iand(negMask(1:N_int,1), psi_det_sorted_tc(1:N_int,1,i))
+            mobMask(1:N_int,2) = iand(negMask(1:N_int,2), psi_det_sorted_tc(1:N_int,2,i))
             nt = 0
             do j = N_int, 1, -1
               if (mobMask(j,1) /= 0_bit_kind) then
@@ -329,13 +329,13 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
       do ii = 1, prefullinteresting(0)
         i = prefullinteresting(ii)
         nt = 0
-        mobMask(1,1) = iand(negMask(1,1), psi_det_sorted(1,1,i))
-        mobMask(1,2) = iand(negMask(1,2), psi_det_sorted(1,2,i))
+        mobMask(1,1) = iand(negMask(1,1), psi_det_sorted_tc(1,1,i))
+        mobMask(1,2) = iand(negMask(1,2), psi_det_sorted_tc(1,2,i))
         nt = popcnt(mobMask(1, 1)) + popcnt(mobMask(1, 2))
         if (nt > 2) cycle
         do j=N_int,2,-1
-          mobMask(j,1) = iand(negMask(j,1), psi_det_sorted(j,1,i))
-          mobMask(j,2) = iand(negMask(j,2), psi_det_sorted(j,2,i))
+          mobMask(j,1) = iand(negMask(j,1), psi_det_sorted_tc(j,1,i))
+          mobMask(j,2) = iand(negMask(j,2), psi_det_sorted_tc(j,2,i))
           nt = nt+ popcnt(mobMask(j, 1)) + popcnt(mobMask(j, 2))
           if (nt > 2) exit
         end do
@@ -360,15 +360,15 @@ subroutine select_singles_and_doubles(i_generator, hole_mask,particle_mask, fock
 
       do i = 1, fullinteresting(0)
         do k = 1, N_int
-          fullminilist(k,1,i) = psi_det_sorted(k,1,fullinteresting(i))
-          fullminilist(k,2,i) = psi_det_sorted(k,2,fullinteresting(i))
+          fullminilist(k,1,i) = psi_det_sorted_tc(k,1,fullinteresting(i))
+          fullminilist(k,2,i) = psi_det_sorted_tc(k,2,fullinteresting(i))
         enddo
       enddo
 
       do i = 1, interesting(0)
         do k = 1, N_int
-          minilist(k,1,i) = psi_det_sorted(k,1,interesting(i))
-          minilist(k,2,i) = psi_det_sorted(k,2,interesting(i))
+          minilist(k,1,i) = psi_det_sorted_tc(k,1,interesting(i))
+          minilist(k,2,i) = psi_det_sorted_tc(k,2,interesting(i))
         enddo
       enddo
 
@@ -511,7 +511,7 @@ subroutine splash_pq(mask, sp, det, i_gen, N_sel, bannedOrb, banned, mat, intere
   integer(bit_kind)               :: phasemask(N_int,2)
 
 
-  PROVIDE psi_selectors_coef_transp psi_det_sorted
+  PROVIDE psi_selectors_coef_transp psi_det_sorted_tc
   PROVIDE psi_selectors_rcoef_bi_orth_transp psi_selectors_lcoef_bi_orth_transp
 
 
@@ -576,7 +576,7 @@ subroutine splash_pq(mask, sp, det, i_gen, N_sel, bannedOrb, banned, mat, intere
         !end do
         !call bitstring_to_list_in_selection(perMask(1,1), h(1,1), h(0,1), N_int)
         !call bitstring_to_list_in_selection(perMask(1,2), h(1,2), h(0,2), N_int)
-        !call get_mask_phase(psi_det_sorted(1,1,interesting(i)), phasemask,N_int)
+        !call get_mask_phase(psi_det_sorted_tc(1,1,interesting(i)), phasemask,N_int)
         !if(nt == 4) then
         !  call get_d2 (det(1,1,i), phasemask, bannedOrb, banned, mat,          mask, h, p, sp, psi_selectors_coef_transp(1, interesting(i)))
         !  call get_pm2(det(1,1,i), phasemask, bannedOrb, banned, mat_p, mat_m, mask, h, p, sp, psi_selectors_coef_transp(1, interesting(i)))

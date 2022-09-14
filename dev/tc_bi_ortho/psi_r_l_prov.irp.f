@@ -11,7 +11,7 @@ BEGIN_PROVIDER [ double precision, psi_l_coef_bi_ortho, (N_det,N_states) ]
   logical                        :: exists
   character*(64)                 :: label
 
-  PROVIDE read_wf N_det mo_label ezfio_filename
+  PROVIDE read_wf N_det mo_label ezfio_filename nproc
   psi_l_coef_bi_ortho = 0.d0
   do i=1,min(N_states,N_det)
     psi_l_coef_bi_ortho(i,i) = 1.d0
@@ -70,7 +70,7 @@ BEGIN_PROVIDER [ double precision, psi_r_coef_bi_ortho, (N_det,N_states) ]
   logical                        :: exists
   character*(64)                 :: label
 
-  PROVIDE read_wf N_det mo_label ezfio_filename
+  PROVIDE read_wf N_det mo_label ezfio_filename nproc
   psi_r_coef_bi_ortho = 0.d0
   do i=1,min(N_states,N_det)
     psi_r_coef_bi_ortho(i,i) = 1.d0

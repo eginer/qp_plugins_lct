@@ -11,14 +11,14 @@ subroutine ZMQ_selection(N_in, pt2_data)
   integer, external              :: omp_get_thread_num
   type(pt2_type), intent(inout)  :: pt2_data
 
-!  PROVIDE psi_det psi_coef N_det qp_max_mem N_states pt2_F s2_eig N_det_generators
+  PROVIDE psi_det psi_coef N_det qp_max_mem N_states pt2_F s2_eig N_det_generators
 
   N = max(N_in,1)
   N = min(N, (elec_alpha_num * (mo_num-elec_alpha_num))**2)
   if (.True.) then
     PROVIDE pt2_e0_denominator nproc
     PROVIDE psi_bilinear_matrix_columns_loc psi_det_alpha_unique psi_det_beta_unique
-    PROVIDE psi_bilinear_matrix_rows psi_det_sorted_order psi_bilinear_matrix_order
+    PROVIDE psi_bilinear_matrix_rows psi_det_sorted_tc_order psi_bilinear_matrix_order
     PROVIDE psi_bilinear_matrix_transp_rows_loc psi_bilinear_matrix_transp_columns
     PROVIDE psi_bilinear_matrix_transp_order selection_weight pseudo_sym
     PROVIDE n_act_orb n_inact_orb n_core_orb n_virt_orb n_del_orb seniority_max
@@ -61,6 +61,7 @@ subroutine ZMQ_selection(N_in, pt2_data)
   ipos=1
   task = ' '
 
+ 
  do i= 1, N_det_generators
     do j=1,pt2_F(i)
       write(task(ipos:ipos+30),'(I9,1X,I9,1X,I9,''|'')') j, i, N

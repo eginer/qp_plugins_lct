@@ -33,7 +33,7 @@ END_PROVIDER
   implicit none
   logical, external :: testTeethBuilding
 
-  if(N_det_generators < 1024) then
+  if(N_det_generators < 500) then
     pt2_minDetInFirstTeeth = 1
     pt2_N_teeth = 1
   else
@@ -66,8 +66,8 @@ logical function testTeethBuilding(minF, N)
   double precision :: norm2
   norm2 = 0.d0
   do i=N_det_generators,1,-1
-    tilde_w(i)  = psi_coef_sorted_gen(i,pt2_stoch_istate) * &
-                  psi_coef_sorted_gen(i,pt2_stoch_istate)
+    tilde_w(i)  = psi_coef_sorted_tc_gen(i,pt2_stoch_istate) * &
+                  psi_coef_sorted_tc_gen(i,pt2_stoch_istate)
     norm2 = norm2 + tilde_w(i)
   enddo
 
@@ -128,9 +128,9 @@ subroutine ZMQ_pt2(E, pt2_data, pt2_data_err, relative_error, N_in)
   type(selection_buffer)         :: b
 
   PROVIDE psi_bilinear_matrix_columns_loc psi_det_alpha_unique psi_det_beta_unique
-  PROVIDE psi_bilinear_matrix_rows psi_det_sorted_order psi_bilinear_matrix_order
+  PROVIDE psi_bilinear_matrix_rows psi_det_sorted_tc_order psi_bilinear_matrix_order
   PROVIDE psi_bilinear_matrix_transp_rows_loc psi_bilinear_matrix_transp_columns
-  PROVIDE psi_bilinear_matrix_transp_order psi_selectors_coef_transp psi_det_sorted
+  PROVIDE psi_bilinear_matrix_transp_order psi_selectors_coef_transp psi_det_sorted_tc
   PROVIDE psi_det_hii selection_weight pseudo_sym
   PROVIDE n_act_orb n_inact_orb n_core_orb n_virt_orb n_del_orb seniority_max
   PROVIDE excitation_beta_max  excitation_alpha_max excitation_max
@@ -141,8 +141,10 @@ subroutine ZMQ_pt2(E, pt2_data, pt2_data_err, relative_error, N_in)
   endif
 
   if (N_det <= max(4,N_states) .or. pt2_N_teeth < 2) then
+    print*,'ZMQ_selection'
     call ZMQ_selection(N_in, pt2_data)
   else
+    print*,'else ZMQ_selection'
 
     N = max(N_in,1) * N_states
     state_average_weight_save(:) = state_average_weight(:)
@@ -802,7 +804,7 @@ END_PROVIDER
      tilde_cW(0) = 0d0
 
      do i=1,N_det_generators
-       tilde_w(i)  = psi_coef_sorted_gen(i,pt2_stoch_istate)**2 !+ 1.d-20
+       tilde_w(i)  = psi_coef_sorted_tc_gen(i,pt2_stoch_istate)**2 !+ 1.d-20
      enddo
 
      double precision               :: norm2

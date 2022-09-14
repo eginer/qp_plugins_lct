@@ -313,15 +313,15 @@ subroutine lapack_diag_non_sym_right(n, A, WR, WI, VR)
 
   deallocate(Atmp, WORK, VL)
 
-  print *, ' JOBL = F'
-  print *, ' eigenvalues'
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') WR(i), WI(i)
-  enddo
-  print *, ' right eigenvect' 
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') VR(:,i)
-  enddo
+! print *, ' JOBL = F'
+! print *, ' eigenvalues'
+! do i = 1, n
+!   write(*, '(1000(F16.10,X))') WR(i), WI(i)
+! enddo
+! print *, ' right eigenvect' 
+! do i = 1, n
+!   write(*, '(1000(F16.10,X))') VR(:,i)
+! enddo
 
 end subroutine lapack_diag_non_sym_right
 
@@ -396,12 +396,12 @@ subroutine non_hrmt_real_diag(n, A, leigvec, reigvec, n_real_eigv, eigval)
     enddo
   enddo
 
-  print *, ' ordered eigenvalues'
-  print *, ' right eigenvect' 
-  do i = 1, n
-    print *, i, eigval(i)
-    write(*, '(1000(F16.10,X))') reigvec(:,i)
-  enddo
+! print *, ' ordered eigenvalues'
+! print *, ' right eigenvect' 
+! do i = 1, n
+!   print *, i, eigval(i)
+!   write(*, '(1000(F16.10,X))') reigvec(:,i)
+! enddo
 
   ! ---
 
@@ -1953,17 +1953,18 @@ subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, W0, L0, R0)
 
       ! ---
   
-      !allocate(S(m,m), S_inv_half(m,m))
-      !call dgemm( 'T', 'N', m, m, n, 1.d0      &
-      !          , L, size(L, 1), R, size(R, 1) &
-      !          , 0.d0, S, size(S, 1) )
-      !call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
-      !call bi_ortho_s_inv_half(m, L, R, S_inv_half)
-      !deallocate(S, S_inv_half)
-
-      !call impose_biorthog_svd(n, m, L, R)
-
-      call impose_biorthog_qr(n, m, L, R)
+      allocate(S(m,m), S_inv_half(m,m))
+      call dgemm( 'T', 'N', m, m, n, 1.d0      &
+                , L, size(L, 1), R, size(R, 1) &
+                , 0.d0, S, size(S, 1) )
+      call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
+      if(complex_root)then
+        call impose_biorthog_svd(n, m, L, R)
+        !call impose_biorthog_qr(n, m, L, R)
+      else
+        call bi_ortho_s_inv_half(m, L, R, S_inv_half)
+      endif
+      deallocate(S, S_inv_half)
 
       ! ---
 
