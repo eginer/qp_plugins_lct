@@ -288,12 +288,10 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   allocate( WR(n), WI(n), VL(n,n), VR(n,n) ) 
   
-  print *, ' '
   print *, ' fock matrix'
   do i = 1, n
     write(*, '(1000(F16.10,X))') A(i,:)
   enddo
-  print *, ' '
 
   !thr_cut = 1.d-15
   !call cancel_small_elmts(A, n, thr_cut)
@@ -315,22 +313,9 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   !do i = 1, n
   !  write(*, '(1000(F16.10,X))') VL(:,i)
   !enddo
-  print *, ' '
 
-  !print *, ' check_EIGVEC after diag:'
-  thr = 1.d-10
-  call check_EIGVEC(n, n, A, WR, VL, VR,thr)
-
-  !call rotate_degen_eigvec(n, VR)
-  !call rotate_degen_eigvec(n, VL)
-  !print *, ' right eigenvect aft' 
-  !do i = 1, n
-  !  write(*, '(1000(F16.10,X))') VR(:,i)
-  !enddo
-  !print *, ' left eigenvect aft'
-  !do i = 1, n
-  !  write(*, '(1000(F16.10,X))') VL(:,i)
-  !enddo
+  thr = 1d-10
+  call check_EIGVEC(n, n, A, WR, VL, VR, thr, .true.)
 
   !
   ! -------------------------------------------------------------------------------------
@@ -385,111 +370,61 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   ASSERT(n==n_real_eigv)
 
-  print *, ' '
-  print *, ' eigenvalues'
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') eigval(i)
-  enddo
-  print *, ' right eigenvect aft ord' 
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') reigvec(:,i)
-  enddo
-  print *, ' left eigenvect aft ord'
-  do i = 1, n
-    write(*, '(1000(F16.10,X))') leigvec(:,i)
-  enddo
-  print *, ' '
-
-  !print *, ' check_EIGVEC before QR:'
-  ! double precision :: thr 
-  ! thr = 1.d-10
-  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
+  !print *, ' eigenvalues'
+  !do i = 1, n
+  !  write(*, '(1000(F16.10,X))') eigval(i)
+  !enddo
+  !print *, ' right eigenvect aft ord' 
+  !do i = 1, n
+  !  write(*, '(1000(F16.10,X))') reigvec(:,i)
+  !enddo
+  !print *, ' left eigenvect aft ord'
+  !do i = 1, n
+  !  write(*, '(1000(F16.10,X))') leigvec(:,i)
+  !enddo
 
   !
   ! -------------------------------------------------------------------------------------
 
   ! ---
 
-  !call check_degen(n, n_real_eigv, eigval, leigvec, reigvec)
-
-
   ! -------------------------------------------------------------------------------------
   !                               check bi-orthogonality
 
   allocate( S(n_real_eigv,n_real_eigv) )
-  call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S)
-  !print *, ' accu_nd = ', accu_nd
-
+  call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S, .false.)
   if( accu_nd .lt. 1d-8 ) then
 
-    print *, ' bi-orthogonality: ok'
+    print *, ' bi-orthogonality between lapack vectors: ok'
     deallocate( S )
     return
 
   else
 
-    print *, ' '
-    print *, ' bi-orthogonality: not imposed yet'
+    print *, ' bi-orthogonality between lapack vectors: not imposed yet'
 
     ! ---
-
-    print *, ' orthog between degen eigenvect' 
 
     !call impose_orthog_degen_eigvec(n, eigval, reigvec)
     !call impose_orthog_degen_eigvec(n, eigval, leigvec)
 
-    !call impose_orthog_biorthog_degen_eigvec(n, eigval, leigvec, reigvec)
+    call impose_orthog_biorthog_degen_eigvec(n, eigval, leigvec, reigvec)
 
-    call impose_unique_biorthog_degen_eigvec(n, eigval, mo_coef, leigvec, reigvec)
+    !call impose_unique_biorthog_degen_eigvec(n, eigval, mo_coef, leigvec, reigvec)
 
 
-    print *, ' right eigenvect aft orthog' 
-    do i = 1, n
-      write(*, '(1000(F16.10,X))') reigvec(:,i)
-    enddo
-    print *, ' left eigenvect aft orthog' 
-    do i = 1, n
-      write(*, '(1000(F16.10,X))') leigvec(:,i)
-    enddo
+    call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S, .true.)
 
-!   double precision :: thr
-!   thr = 1.d-10
-    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
-
-    call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S)
-    if( accu_nd .lt. 1d-8 ) then
-      print *, ' bi-orthogonality: ok'
-      deallocate( S )
-      return
-    endif
-
-    ! ---
-
-    call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec, S)
+    !call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec, S)
     !call impose_biorthog_lu(n, n_real_eigv, leigvec, reigvec, S)
 
-    print *, ' '
-    print *, ' right eigenvect aft bi-orhtog' 
-    do i = 1, n
-      write(*, '(1000(F16.10,X))') reigvec(:,i)
-    enddo
-    print *, ' left eigenvect aft bi-orthog'
-    do i = 1, n
-      write(*, '(1000(F16.10,X))') leigvec(:,i)
-    enddo
-    print *, ' '
-
     ! ---
 
-    !print *, ' check_EIGVEC after QR:'
-    thr = 1.d-10
-    call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
+    thr = 1d-10
+    call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, thr, .true.)
 
-    call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S)
     deallocate( S )
 
-    !stop
-  
   endif
 
   !
@@ -498,177 +433,6 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   return
 
 end subroutine non_hrmt_bieig
-
-! ---
-
-!subroutine non_hrmt_bieiginv(n, A, leigvec, reigvec, n_real_eigv, eigval)
-!
-!  BEGIN_DOC
-!  ! 
-!  ! routine which returns the sorted REAL EIGENVALUES ONLY and corresponding LEFT/RIGHT eigenvetors 
-!  ! of a non hermitian matrix A(n,n)
-!  !
-!  ! n_real_eigv is the number of real eigenvalues, which might be smaller than the dimension "n" 
-!  !
-!  END_DOC
-!
-!  implicit none
-!  integer,          intent(in)  :: n
-!  double precision, intent(in)  :: A(n,n)
-!  integer,          intent(out) :: n_real_eigv
-!  double precision, intent(out) :: reigvec(n,n), leigvec(n,n), eigval(n)
-!
-!  integer                       :: i, j, n_good
-!  double precision              :: thr, accu_nd, r
-!
-!  integer,          allocatable :: list_good(:), iorder(:)
-!  double precision, allocatable :: Aw(:,:)
-!  double precision, allocatable :: WR(:), WI(:), VL(:,:), VR(:,:)
-!  double precision, allocatable :: S(:,:)
-!
-!
-!  ! -------------------------------------------------------------------------------------
-!  !
-!
-!  print *, 'Computing the left/right eigenvectors ...'
-!
-!  allocate( WR(n), WI(n), VL(n,n), VR(n,n), Aw(n,n) )
-!  Aw(:,:) = A(:,:)
-!  do i = 1, n
-!    call RANDOM_NUMBER(r)
-!    Aw(i,i) += 1d-10 * r
-!  enddo
-!
-!  call lapack_diag_non_sym(n, Aw, WR, WI, VL, VR)
-!  !call lapack_diag_non_sym_new(n, Aw, WR, WI, VL, VR)
-!
-!  deallocate( Aw )
-!
-!  !
-!  ! -------------------------------------------------------------------------------------
-!
-!  ! ---
-!
-!  ! -------------------------------------------------------------------------------------
-!  !                  track & sort the real eigenvalues 
-!
-!  n_good = 0
-!  thr    = 1.d-10
-!  do i = 1, n
-!    if(dabs(WI(i)) .lt. thr) then
-!      n_good += 1
-!    else
-!      print*, 'Found an imaginary component to eigenvalue on i = ', i
-!      print*, 'Re(i) + Im(i)', WR(i), WI(i)
-!    endif
-!  enddo
-!
-!  allocate(list_good(n_good), iorder(n_good))
-!
-!  n_good = 0
-!  do i = 1, n
-!    if( dabs(WI(i)).lt.thr ) then
-!      n_good += 1
-!      list_good(n_good) = i
-!      eigval(n_good) = WR(i)
-!    endif
-!  enddo
-!
-!  deallocate( WR, WI )
-!
-!  n_real_eigv = n_good 
-!  do i = 1, n_good
-!    iorder(i) = i
-!  enddo
-!  call dsort(eigval, iorder, n_good)
-!      
-!  reigvec(:,:) = 0.d0 
-!  leigvec(:,:) = 0.d0 
-!  do i = 1, n_real_eigv
-!    do j = 1, n
-!      reigvec(j,i) = VR(j,list_good(iorder(i)))
-!      leigvec(j,i) = VL(j,list_good(iorder(i)))
-!    enddo
-!  enddo
-!
-!  deallocate( list_good, iorder )
-!  deallocate( VL, VR )
-!
-!  !print *, ' check_EIGVEC before QR:'
-!    double precision :: thr
-!    thr = 1.d-10
-!  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
-!
-!  !
-!  ! -------------------------------------------------------------------------------------
-!
-!  ! ---
-!
-!  ! -------------------------------------------------------------------------------------
-!  !                               check bi-orthogonality
-!
-!  ! S = VL x VR
-!  allocate( S(n_real_eigv,n_real_eigv) )
-!  call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n, 1.d0          &
-!            , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
-!            , 0.d0, S, size(S, 1) )
-!  accu_nd = 0.d0
-!  do i = 1, n_real_eigv
-!    do j = 1, n_real_eigv
-!      if(i == j) cycle
-!      accu_nd = accu_nd + S(j,i) * S(j,i)
-!    enddo
-!  enddo
-!  deallocate( S )
-!
-!  accu_nd = dsqrt(accu_nd)
-!
-!  if(accu_nd .lt. 1d-8) then
-!
-!    print *, ' L & T bi-orthogonality: ok'
-!    print *, ' accu_nd = ', accu_nd
-!    return
-!
-!  else
-!
-!    print *, ' L & T bi-orthogonality: not imposed yet'
-!    print *, ' accu_nd = ', accu_nd
-!    call impose_biorthog_inv(n, n_real_eigv, leigvec, reigvec)
-!
-!    ! S = VL x VR
-!    allocate( S(n_real_eigv,n_real_eigv) )
-!    call dgemm( 'T', 'N', n_real_eigv, n_real_eigv, n, 1.d0          &
-!              , leigvec, size(leigvec, 1), reigvec, size(reigvec, 1) &
-!              , 0.d0, S, size(S, 1) )
-!    accu_nd = 0.d0
-!    do i = 1, n_real_eigv
-!      do j = 1, n_real_eigv
-!        if(i == j) cycle
-!        accu_nd = accu_nd + S(j,i) * S(j,i)
-!      enddo
-!    enddo
-!    deallocate( S )
-!    accu_nd = dsqrt(accu_nd)
-!    if(accu_nd .lt. 1d-8) then
-!      print *, ' L & T bi-orthogonality: ok'
-!      print *, ' accu_nd = ', accu_nd
-!      stop
-!    endif
-!    print *, ' accu_nd = ', accu_nd
-!
-!    !print *, ' check_EIGVEC after QR:'
-!    double precision :: thr
-!    thr = 1.d-10
-!    !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
-!  
-!  endif
-!
-!  !
-!  ! -------------------------------------------------------------------------------------
-!
-!  return
-!
-!end subroutine non_hrmt_bieiginv
 
 ! ---
 
@@ -924,11 +688,6 @@ subroutine non_hrmt_real_im(n, A, leigvec, reigvec, n_real_eigv, eigval)
   deallocate( iorder )
   deallocate( VL, VR )
 
-  !print *, ' check_EIGVEC :'
-!    double precision :: thr
-!    thr = 1.d-10
-  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
-
   !
   ! -------------------------------------------------------------------------------------
 
@@ -1033,11 +792,6 @@ subroutine non_hrmt_generalized_real_im(n, A, B, leigvec, reigvec, n_real_eigv, 
 
   deallocate( iorder )
   deallocate( VL, VR )
-
-  !print *, ' check_EIGVEC :'
-!    double precision :: thr
-!    thr = 1.d-10
-  !call check_EIGVEC(n, n_real_eigv, A, eigval, leigvec, reigvec,thr)
 
   !
   ! -------------------------------------------------------------------------------------

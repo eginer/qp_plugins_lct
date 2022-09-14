@@ -861,23 +861,21 @@ end subroutine impose_biorthog_lu
 
 ! ---
 
-subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec,thr)
+subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec, thr, stop_ifnot)
 
   implicit none
   integer,          intent(in)  :: n, m
+  logical,          intent(in)  :: stop_ifnot
   double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m), thr
  
   integer                       :: i, j
-  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel
+  double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel, tmp_dif
   double precision              :: V_nrm, U_nrm
   double precision, allocatable :: Mtmp(:,:)
 
- 
   allocate( Mtmp(n,m) )
   
   ! ---
-
-  print *, ' check right eigvec : '
 
   Mtmp = 0.d0
   call dgemm( 'N', 'N', n, m, n, 1.d0                  &
@@ -894,32 +892,26 @@ subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec,thr)
     do i = 1, n
       tmp     = tmp     + dabs(Mtmp(i,j) - eigval(j) * reigvec(i,j))
       tmp_nrm = tmp_nrm + dabs(Mtmp(i,j))
-      !V_nrm   = V_nrm   + dabs(reigvec(i,j))
       U_nrm   = U_nrm   + reigvec(i,j) * reigvec(i,j)
     enddo
 
     tmp_abs = tmp_abs + tmp
     V_nrm   = V_nrm   + U_nrm 
-    print *, j, tmp, U_nrm
+    !print *, j, tmp, U_nrm
 
   enddo
 
   tmp_rel = tmp_abs / tmp_nrm
-  V_nrm   = dsqrt(V_nrm)
+  tmp_dif = dabs(V_nrm - dble(m))
 
-  print *, ' err estim = ', tmp_abs, tmp_rel
-  print *, ' CR norm   = ', V_nrm 
-
-  if(tmp_rel .gt. thr) then
+  if( stop_ifnot .and. ((tmp_rel .gt. thr) .or. (tmp_dif .gt. thr)) ) then
     print *, ' error in right-eigenvectors'
-    !print *, ' err estim = ', tmp_abs, tmp_rel
-    !print *, ' CR norm   = ', V_nrm 
+    print *, ' err estim = ', tmp_abs, tmp_rel
+    print *, ' CR norm   = ', V_nrm 
     stop
   endif
 
   ! ---
-
-  print *, ' check left eigvec : '
 
   Mtmp = 0.d0
   call dgemm( 'T', 'N', n, m, n, 1.d0                  &
@@ -936,26 +928,20 @@ subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec,thr)
     do i = 1, n
       tmp     = tmp     + dabs(Mtmp(i,j) - eigval(j) * leigvec(i,j))
       tmp_nrm = tmp_nrm + dabs(Mtmp(i,j))
-      !V_nrm   = V_nrm   + dabs(leigvec(i,j))
       U_nrm   = U_nrm   + leigvec(i,j) * leigvec(i,j)
     enddo
 
     tmp_abs = tmp_abs + tmp
     V_nrm   = V_nrm   + U_nrm 
-    print *, j, tmp, U_nrm
+    !print *, j, tmp, U_nrm
 
   enddo
 
   tmp_rel = tmp_abs / tmp_nrm
-  V_nrm   = dsqrt(V_nrm)
-
-  print *, ' err estim = ', tmp_abs, tmp_rel
-  print *, ' CL norm   = ', V_nrm 
-
-  if(tmp_rel .gt. thr) then
+  if( stop_ifnot .and. ((tmp_rel .gt. thr) .or. (tmp_dif .gt. thr)) ) then
     print *, ' error in left-eigenvectors'
-    !print *, ' err estim = ', tmp_abs, tmp_rel
-    !print *, ' CR norm   = ', V_nrm 
+    print *, ' err estim = ', tmp_abs, tmp_rel
+    print *, ' CR norm   = ', V_nrm 
     stop
   endif
 
@@ -1430,12 +1416,13 @@ end subroutine get_halfinv_svd
 
 ! ---
 
-subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S)
+subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
 
   implicit none
   
   integer,          intent(in)  :: n, m
   double precision, intent(in)  :: Vl(n,m), Vr(n,m)
+  logical,          intent(in)  :: stop_ifnot
   double precision, intent(out) :: accu_d, accu_nd, S(m,m)
 
   integer                       :: i, j
@@ -1464,6 +1451,12 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S)
     enddo
   enddo
   accu_nd = dsqrt(accu_nd)
+
+  if(stop_ifnot .and. (accu_nd.gt.1d-14) ) then
+    print *, ' non bi-orthogonal vectors !'
+    print *, ' accu_nd = ', accu_nd
+    stop
+  endif
 
   !print*, '    diag acc: ', accu_d
   !print*, ' nondiag acc: ', accu_nd
@@ -1524,6 +1517,7 @@ subroutine impose_orthog_biorthog_degen_eigvec(n, e0, L0, R0)
 
   integer                         :: i, j, k, m
   double precision                :: ei, ej, de, de_thr
+  double precision                :: accu_d, accu_nd
   integer,          allocatable   :: deg_num(:)
   double precision, allocatable   :: L(:,:), R(:,:), S(:,:)
 
@@ -1580,28 +1574,23 @@ subroutine impose_orthog_biorthog_degen_eigvec(n, e0, L0, R0)
       call impose_orthog_svd(n, m, L)
       call impose_orthog_svd(n, m, R)
 
+      allocate(S(m,m))
+      call check_biorthog(n, m, L, L, accu_d, accu_nd, S, .true.)
+      call check_biorthog(n, m, R, R, accu_d, accu_nd, S, .true.)
+      deallocate(S)
+
       ! ---
   
       allocate(S(m,m))
-
       call dgemm( 'T', 'N', m, m, n, 1.d0      &
                 , L, size(L, 1), R, size(R, 1) &
                 , 0.d0, S, size(S, 1) )
-      print *, ' deg eigenvec overlap bef QR: '
-      do k = 1, m
-        write(*, '(1000(F16.10,X))') S(k,:)
-      enddo
 
       call impose_biorthog_qr(n, m, L, R, S)
 
-      call dgemm( 'T', 'N', m, m, n, 1.d0      &
-                , L, size(L, 1), R, size(R, 1) &
-                , 0.d0, S, size(S, 1) )
-      print *, ' deg eigenvec overlap aft QR: '
-      do k = 1, m
-        write(*, '(1000(F16.10,X))') S(k,:)
-      enddo
-
+      call check_biorthog(n, m, L, R, accu_d, accu_nd, S, .true.)
+      call check_biorthog(n, m, L, L, accu_d, accu_nd, S, .true.)
+      call check_biorthog(n, m, R, R, accu_d, accu_nd, S, .false.)
       deallocate(S)
 
       ! ---

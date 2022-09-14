@@ -132,7 +132,7 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
 
 !!! ONCE ALL EIGENVALUES ARE REAL ::: CHECK BI-ORTHONORMALITY
   !                               check bi-orthogonality
-  call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+  call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S, .false.)
   print *, ' accu_nd bi-orthog = ', accu_nd
   if( accu_nd .lt. 1d-10 ) then
     print *, ' bi-orthogonality: ok'
@@ -149,13 +149,13 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
     deallocate(S_nh_inv_half)
     call impose_orthog_degen_eigvec(n, eigval, reigvec_tmp)
     call impose_orthog_degen_eigvec(n, eigval, leigvec_tmp)
-    call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+    call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S, .false.)
     if( accu_nd .lt. 1d-10 ) then
       print *, ' bi-orthogonality: ok'
     else 
      print*,'New vectors not bi-orthonormals at ',accu_nd
      call impose_biorthog_qr(n, n, leigvec_tmp, reigvec_tmp, S)
-     call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+     call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S, .false.)
      if( accu_nd .lt. 1d-10 ) then
        print *, ' bi-orthogonality: ok'
      else 
@@ -199,8 +199,8 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   print*,'Checking for final reigvec/leigvec'
   shift_current = max(1.d-10,shift_current)
   print*,'Thr for eigenvectors = ',shift_current
-  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec,shift_current)
-  call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S)
+  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, shift_current, .false.)
+  call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S, .false.)
   print *, ' accu_nd bi-orthog = ', accu_nd
   
   if( accu_nd .lt. 1d-10 ) then
@@ -354,7 +354,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
 
 !!! ONCE ALL EIGENVALUES ARE REAL ::: CHECK BI-ORTHONORMALITY
   !                               check bi-orthogonality
-  call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+  call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S, .false.)
   print *, ' accu_nd bi-orthog = ', accu_nd
   if( accu_nd .lt. 1d-10 ) then
     print *, ' bi-orthogonality: ok'
@@ -371,7 +371,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
      ! bi-orthonormalization using orthogonalization of left, right and then QR between left and right
      call impose_orthog_degen_eigvec(n, eigval, reigvec_tmp) ! orthogonalization of reigvec
 !     call impose_orthog_degen_eigvec(n, eigval, leigvec_tmp) ! orthogonalization of leigvec
-     call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S) 
+     call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S, .false.) 
      if( accu_nd .lt. 1d-10 ) then
        print *, ' bi-orthogonality: ok'
      else 
@@ -388,7 +388,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
      print*,'S^{-1/2} exists !!'
      call bi_ortho_s_inv_half(n,leigvec_tmp,reigvec_tmp,S_nh_inv_half) ! use of S^{-1/2} bi-orthonormalization 
     endif
-    call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S)
+    call check_biorthog(n, n, leigvec_tmp, reigvec_tmp, accu_d, accu_nd, S, .false.)
     if( accu_nd .lt. 1d-10 ) then
       print *, ' bi-orthogonality: ok'
     else 
@@ -431,8 +431,8 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
   print*,'Checking for final reigvec/leigvec'
   shift_current = max(1.d-10,shift_current)
   print*,'Thr for eigenvectors = ',shift_current
-  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec,shift_current)
-  call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S)
+  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, shift_current, .false.)
+  call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S, .false.)
   print *, ' accu_nd bi-orthog = ', accu_nd
   
   if( accu_nd .lt. 1d-10 ) then

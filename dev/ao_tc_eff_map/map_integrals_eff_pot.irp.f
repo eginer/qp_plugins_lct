@@ -91,8 +91,8 @@ double precision function get_ao_tc_sym_two_e_pot(i,j,k,l,map) result(result)
 !  if (ao_two_e_integral_zero(i,j,k,l)) then
   if (.False.) then
     tmp = 0.d0
-  else if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < ao_integrals_threshold) then
-    tmp = 0.d0
+  !else if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < ao_integrals_threshold) then
+  !  tmp = 0.d0
   else
     ii = l-ao_tc_sym_two_e_pot_cache_min
     ii = ior(ii, k-ao_tc_sym_two_e_pot_cache_min)
