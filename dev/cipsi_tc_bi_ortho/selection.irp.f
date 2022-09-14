@@ -787,15 +787,28 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
           alpha_h_psi += alpha_h_i * reigvec_tc_bi_orth(iii,1) 
         enddo
 
-!        if(dabs(psi_h_alpha*psi_h_alpha/delta_E).gt.1.d-10)then
-!         print*,'E0,Hii,E_shift'
-!         print*, E0(istate),Hii,E_shift
-!         print*,psi_h_alpha,alpha_h_psi,delta_E
-!         print*,psi_h_alpha*alpha_h_psi/delta_E
-!        endif
+        !if(dabs(psi_h_alpha*psi_h_alpha/delta_E).gt.1.d-10)then
+          !print*, 'E0,Hii,E_shift'
+          !print*, E0(istate), Hii, E_shift
+          !print*, psi_h_alpha, alpha_h_psi, delta_E
+          !print*, psi_h_alpha*alpha_h_psi/delta_E
+          if(Hii .lt. E0(istate)) then
+            call debug_det(det, N_int)
+            print*, ' |E0| < |Hii| !!!'
+            print*, ' E0  = ', E0(istate)
+            print*, ' Hii = ', Hii
+          endif
+        !endif
 
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha
+
+        !if(e_pert(istate) .gt. 1.d-15) then
+        !  print*, 'E0,Hii,E_shift'
+        !  print*, E0(istate), Hii, E_shift
+        !  print*, psi_h_alpha, alpha_h_psi, delta_E
+        !  print*, psi_h_alpha*alpha_h_psi/delta_E
+        !endif
 
 !      elseif(cipsi_tc == "h_tc_2x2") then
 

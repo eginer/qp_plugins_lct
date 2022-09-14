@@ -32,7 +32,7 @@ subroutine compute_ao_integrals_gauss_dag_jl(j, l, n_integrals, buffer_i, buffer
       i1 += 1
       if(i1 > j1) exit
 
-      if(ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) cycle
+      !if(ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) cycle
 
       !DIR$ FORCEINLINE
       integral = ao_tc_sym_two_e_pot_dag(i,k,j,l)  ! i,k : r1    j,l : r2
@@ -85,7 +85,7 @@ subroutine compute_ao_tc_sym_two_e_pot_dag_jl(j, l, n_integrals, buffer_i, buffe
       i1 += 1
       if(i1 > j1) exit
 
-      if( ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) cycle
+      !if( ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thr ) cycle
 
       !DIR$ FORCEINLINE
       integral_pot = ao_tc_sym_two_e_pot_dag(i,k,j,l)  ! i,k : r1    j,l : r2

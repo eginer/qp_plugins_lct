@@ -216,7 +216,7 @@ subroutine get_many_ao_tc_sym_two_e_pot_dag_non_zero(j, k, l, sze, out_val, out_
   non_zero_int = 0
   do i = 1, sze
     !DIR$ FORCEINLINE
-    if( ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thresh ) cycle
+    !if( ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thresh ) cycle
     call two_e_integrals_index(i, j, k, l, hash)
     call map_get(ao_tc_sym_two_e_pot_dag_map, hash, tmp)
     if( dabs(tmp) < thresh ) cycle

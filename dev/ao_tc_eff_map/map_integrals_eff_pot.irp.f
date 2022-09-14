@@ -176,9 +176,9 @@ subroutine get_many_ao_tc_sym_two_e_pot_non_zero(j,k,l,sze,out_val,out_val_index
     integer, external :: ao_l4
     double precision, external :: ao_two_e_integral_eff_pot
     !DIR$ FORCEINLINE
-    if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thresh) then
-      cycle
-    endif
+    !if (ao_two_e_integral_erf_schwartz(i,k)*ao_two_e_integral_erf_schwartz(j,l) < thresh) then
+    !  cycle
+    !endif
     call two_e_integrals_index(i,j,k,l,hash)
     call map_get(ao_tc_sym_two_e_pot_map, hash,tmp)
     if (dabs(tmp) < thresh ) cycle

@@ -573,21 +573,55 @@ end subroutine non_hrmt_general_real_diag
 
 ! ---
 
-subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
+subroutine impose_biorthog_qr(m, n, Vl, Vr)
 
   implicit none 
   integer, intent(in)             :: m, n
-  double precision, intent(inout) :: Vl(m,n), Vr(m,n), S(n,n)
+  double precision, intent(inout) :: Vl(m,n), Vr(m,n)
 
   integer                         :: i, j
   integer                         :: LWORK, INFO
+  double precision                :: accu_nd, accu_d, thr_nd, thr_d
   double precision, allocatable   :: TAU(:), WORK(:)
-  double precision, allocatable   :: R(:,:), tmp(:,:)
+  double precision, allocatable   :: S(:,:), R(:,:), tmp(:,:)
 
-  print *, ' apply QR decomposition ...'
+  ! ---
+
+  call check_biorthog_binormalize(m, n, Vl, Vr, .false.)
+  
+  ! ---
+  
+  allocate(S(n,n))
+  call dgemm( 'T', 'N', n, n, m, 1.d0          &
+            , Vl, size(Vl, 1), Vr, size(Vr, 1) &
+            , 0.d0, S, size(S, 1) )
+
+  accu_nd = 0.d0
+  accu_d  = 0.d0
+  do i = 1, n
+    do j = 1, n
+      if(i==j) then
+        accu_d += S(j,i)
+      else
+        accu_nd = accu_nd + S(j,i) * S(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+
+  thr_d  = 1d-10
+  thr_nd = 1d-12
+  if((accu_nd .lt. thr_nd) .and. (dabs(accu_d-dble(n)) .lt. thr_d)) then
+    print *, ' bi-orthogonal vectors without QR !'
+    deallocate(S)
+    return
+  endif
 
   ! -------------------------------------------------------------------------------------
   !                           QR factorization of S: S = Q x R
+
+
+  print *, ' apply QR decomposition ...'
 
   allocate( TAU(n), WORK(1) )
 
@@ -677,7 +711,6 @@ subroutine impose_biorthog_qr(m, n, Vl, Vr, S)
   !do i = 1, n
   !  write(*, '(1000(F16.10,X))') R(i,:)
   !enddo
-
 
   ! Vr x inv(R) 
   allocate( tmp(m,n) )
@@ -861,12 +894,12 @@ end subroutine impose_biorthog_lu
 
 ! ---
 
-subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec, thr, stop_ifnot)
+subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec, thr_diag, thr_norm, stop_ifnot)
 
   implicit none
   integer,          intent(in)  :: n, m
   logical,          intent(in)  :: stop_ifnot
-  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m), thr
+  double precision, intent(in)  :: A(n,n), eigval(m), leigvec(n,m), reigvec(n,m), thr_diag, thr_norm
  
   integer                       :: i, j
   double precision              :: tmp, tmp_abs, tmp_nrm, tmp_rel, tmp_dif
@@ -897,14 +930,14 @@ subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec, thr, stop_ifnot)
 
     tmp_abs = tmp_abs + tmp
     V_nrm   = V_nrm   + U_nrm 
-    !print *, j, tmp, U_nrm
+    print *, j, tmp, U_nrm
 
   enddo
 
   tmp_rel = tmp_abs / tmp_nrm
   tmp_dif = dabs(V_nrm - dble(m))
 
-  if( stop_ifnot .and. ((tmp_rel .gt. thr) .or. (tmp_dif .gt. thr)) ) then
+  if( stop_ifnot .and. ((tmp_rel .gt. thr_diag) .or. (tmp_dif .gt. thr_norm)) ) then
     print *, ' error in right-eigenvectors'
     print *, ' err estim = ', tmp_abs, tmp_rel
     print *, ' CR norm   = ', V_nrm 
@@ -933,12 +966,12 @@ subroutine check_EIGVEC(n, m, A, eigval, leigvec, reigvec, thr, stop_ifnot)
 
     tmp_abs = tmp_abs + tmp
     V_nrm   = V_nrm   + U_nrm 
-    !print *, j, tmp, U_nrm
+    print *, j, tmp, U_nrm
 
   enddo
 
   tmp_rel = tmp_abs / tmp_nrm
-  if( stop_ifnot .and. ((tmp_rel .gt. thr) .or. (tmp_dif .gt. thr)) ) then
+  if( stop_ifnot .and. ((tmp_rel .gt. thr_diag) .or. (tmp_dif .gt. thr_norm)) ) then
     print *, ' error in left-eigenvectors'
     print *, ' err estim = ', tmp_abs, tmp_rel
     print *, ' CR norm   = ', V_nrm 
@@ -1035,9 +1068,7 @@ subroutine impose_orthog_svd(n, m, C)
   double precision, allocatable   :: S(:,:), tmp(:,:)
   double precision, allocatable   :: U(:,:), Vt(:,:), D(:)
 
-  print *, ''
   print *, ' apply SVD to orthogonalize vectors'
-  print *, ''
 
   ! ---
 
@@ -1048,10 +1079,10 @@ subroutine impose_orthog_svd(n, m, C)
             , C, size(C, 1), C, size(C, 1) &
             , 0.d0, S, size(S, 1) )
 
-  print *, ' eigenvec overlap bef SVD: '
-  do i = 1, m
-    write(*, '(1000(F16.10,X))') S(i,:)
-  enddo
+  !print *, ' eigenvec overlap bef SVD: '
+  !do i = 1, m
+  !  write(*, '(1000(F16.10,X))') S(i,:)
+  !enddo
 
   ! ---
  
@@ -1107,10 +1138,10 @@ subroutine impose_orthog_svd(n, m, C)
             , C, size(C, 1), C, size(C, 1) &
             , 0.d0, S, size(S, 1) )
 
-  print *, ' eigenvec overlap aft SVD: '
-  do i = 1, m
-    write(*, '(1000(F16.10,X))') S(i,:)
-  enddo
+  !print *, ' eigenvec overlap aft SVD: '
+  !do i = 1, m
+  !  write(*, '(1000(F16.10,X))') S(i,:)
+  !enddo
 
   deallocate(S)
 
@@ -1416,6 +1447,117 @@ end subroutine get_halfinv_svd
 
 ! ---
 
+subroutine check_biorthog_binormalize(n, m, Vl, Vr, stop_ifnot)
+
+  implicit none
+  
+  integer,          intent(in)    :: n, m
+  logical,          intent(in)    :: stop_ifnot
+  double precision, intent(inout) :: Vl(n,m), Vr(n,m)
+
+  integer                         :: i, j
+  double precision                :: thr_d, thr_nd
+  double precision                :: accu_d, accu_nd, s_tmp
+  double precision, allocatable   :: S(:,:)
+
+  thr_d  = 1d-6
+  thr_nd = 1d-7
+
+  print *, ' check bi-orthonormality'
+
+  ! ---
+
+  allocate(S(m,m))
+  call dgemm( 'T', 'N', m, m, n, 1.d0          &
+            , Vl, size(Vl, 1), Vr, size(Vr, 1) &
+            , 0.d0, S, size(S, 1) )
+  !print *, ' overlap matrix before:'
+  !do i = 1, m
+  !  write(*,'(1000(F16.10,X))') S(i,:)
+  !enddo
+
+  ! S(i,i) = -1
+  do i = 1, m
+    if( (S(i,i) + 1.d0) .lt. thr_d ) then
+      do j = 1, n
+        Vl(j,i) = -1.d0 * Vl(j,i)
+      enddo
+      S(i,i) = 1.d0
+    endif
+  enddo
+
+  accu_d  = 0.d0
+  accu_nd = 0.d0
+  do i = 1, m
+    do j = 1, m
+      if(i==j) then
+        accu_d = accu_d + S(i,i)
+      else
+        accu_nd = accu_nd + S(j,i) * S(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+  print*, '    diag acc: ', accu_d
+  print*, ' nondiag acc: ', accu_nd
+
+  ! ---
+
+  if( (accu_nd .lt. thr_nd) .and. (dabs(accu_d-dble(m))/dble(m) .gt. thr_d) ) then
+
+    do i = 1, m
+      print *, i, S(i,i)
+      if(dabs(S(i,i) - 1.d0) .gt. thr_d) then
+        s_tmp = 1.d0 / dsqrt(S(i,i))
+        do j = 1, n
+          Vl(j,i) = Vl(j,i) * s_tmp 
+          Vr(j,i) = Vr(j,i) * s_tmp 
+        enddo
+      endif
+    enddo
+
+  endif
+
+  ! ---
+
+  call dgemm( 'T', 'N', m, m, n, 1.d0          &
+            , Vl, size(Vl, 1), Vr, size(Vr, 1) &
+            , 0.d0, S, size(S, 1) )
+  !print *, ' overlap matrix after:'
+  !do i = 1, m
+  !  write(*,'(1000(F16.10,X))') S(i,:)
+  !enddo
+
+  accu_d  = 0.d0
+  accu_nd = 0.d0
+  do i = 1, m
+    do j = 1, m
+      if(i==j) then
+        accu_d = accu_d + S(i,i)
+      else
+        accu_nd = accu_nd + S(j,i) * S(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+  print *, '    diag acc: ', accu_d
+  print *, ' nondiag acc: ', accu_nd
+
+  deallocate(S)
+
+  ! ---
+
+  if( stop_ifnot .and. ((accu_nd .gt. thr_nd) .or. (dabs(accu_d-dble(m))/dble(m) .gt. thr_d)) ) then
+    print *, accu_nd, thr_nd 
+    print *, dabs(accu_d-dble(m))/dble(m), thr_d
+    print *, ' biorthog_binormalize failed !'
+    stop
+  endif
+
+end subroutine check_biorthog_binormalize
+
+! ---
+
 subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
 
   implicit none
@@ -1426,18 +1568,19 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
   double precision, intent(out) :: accu_d, accu_nd, S(m,m)
 
   integer                       :: i, j
+  double precision              :: thr_d, thr_nd
+  double precision, allocatable :: SS(:,:)
 
-  S = 0.d0
+  thr_d  = 1d-6
+  thr_nd = 1d-10
+
+  print *, ' check bi-orthogonality'
+
+  ! ---
+
   call dgemm( 'T', 'N', m, m, n, 1.d0          &
             , Vl, size(Vl, 1), Vr, size(Vr, 1) &
             , 0.d0, S, size(S, 1) )
-
-!  print *, ''
-!  print *, ' overlap matrix:'
-!  do i = 1, m
-!    write(*,'(1000(F16.10,X))') S(i,:)
-!  enddo
-!  print *, ''
 
   accu_d  = 0.d0
   accu_nd = 0.d0
@@ -1452,14 +1595,18 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
   enddo
   accu_nd = dsqrt(accu_nd)
 
-  if(stop_ifnot .and. (accu_nd.gt.1d-14) ) then
+  ! ---
+
+  if( stop_ifnot .and. ((accu_nd .gt. thr_nd) .or. dabs(accu_d-dble(m))/dble(m) .gt. thr_d) ) then
     print *, ' non bi-orthogonal vectors !'
     print *, ' accu_nd = ', accu_nd
+    print *, ' accu_d  = ', dabs(accu_d-dble(m))/dble(m)
+    !print *, ' overlap matrix:'
+    !do i = 1, m
+    !  write(*,'(1000(F16.10,X))') S(i,:)
+    !enddo
     stop
   endif
-
-  !print*, '    diag acc: ', accu_d
-  !print*, ' nondiag acc: ', accu_nd
 
 end subroutine check_biorthog
 
@@ -1504,6 +1651,104 @@ subroutine check_orthog(n, m, V, accu_d, accu_nd, S)
   !print*, ' nondiag acc: ', accu_nd
 
 end subroutine check_orthog
+
+! ---
+
+subroutine impose_biorthog_degen_eigvec(n, e0, L0, R0)
+
+  implicit none
+
+  integer,          intent(in)    :: n
+  double precision, intent(in)    :: e0(n)
+  double precision, intent(inout) :: L0(n,n), R0(n,n)
+
+  logical                         :: complex_root
+  integer                         :: i, j, k, m
+  double precision                :: ei, ej, de, de_thr
+  double precision                :: accu_d, accu_nd
+  integer,          allocatable   :: deg_num(:)
+  double precision, allocatable   :: L(:,:), R(:,:), S(:,:), S_inv_half(:,:)
+
+  ! ---
+
+  allocate( deg_num(n) )
+  do i = 1, n
+    deg_num(i) = 1
+  enddo
+
+  de_thr = 1d-10
+
+  do i = 1, n-1
+    ei = e0(i)
+
+    ! already considered in degen vectors
+    if(deg_num(i).eq.0) cycle
+
+    do j = i+1, n
+      ej = e0(j)
+      de = dabs(ei - ej)
+
+      if(de .lt. de_thr) then
+        deg_num(i) = deg_num(i) + 1 
+        deg_num(j) = 0
+      endif
+
+    enddo
+  enddo
+  
+  do i = 1, n
+    if(deg_num(i).gt.1) then
+      print *, ' degen on', i, deg_num(i)
+    endif
+  enddo
+
+  ! ---
+
+  do i = 1, n
+    m = deg_num(i)
+
+    if(m .gt. 1) then
+  
+      allocate(L(n,m))
+      allocate(R(n,m))
+
+      do j = 1, m
+        L(1:n,j) = L0(1:n,i+j-1)
+        R(1:n,j) = R0(1:n,i+j-1)
+      enddo
+
+      ! ---
+
+      !allocate(S(m,m))
+      !call dgemm( 'T', 'N', m, m, n, 1.d0      &
+      !          , L, size(L, 1), R, size(R, 1) &
+      !          , 0.d0, S, size(S, 1) )
+      !allocate(S_inv_half(m,m))
+      !call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
+      !if(complex_root) then
+      !  print*, ' complex roots in inv_half !!! '
+      !  stop
+      !endif
+      !call bi_ortho_s_inv_half(m, L, R, S_inv_half)
+      !deallocate(S, S_inv_half)
+
+      call impose_biorthog_svd(n, m, L, R)
+
+      !call impose_biorthog_qr(n, m, L, R)
+
+      ! ---
+
+      do j = 1, m
+        L0(1:n,i+j-1) = L(1:n,j)
+        R0(1:n,i+j-1) = R(1:n,j)
+      enddo
+
+      deallocate(L, R)
+
+    endif
+  enddo
+
+end subroutine impose_biorthog_degen_eigvec 
 
 ! ---
 
@@ -1574,23 +1819,14 @@ subroutine impose_orthog_biorthog_degen_eigvec(n, e0, L0, R0)
       call impose_orthog_svd(n, m, L)
       call impose_orthog_svd(n, m, R)
 
-      allocate(S(m,m))
-      call check_biorthog(n, m, L, L, accu_d, accu_nd, S, .true.)
-      call check_biorthog(n, m, R, R, accu_d, accu_nd, S, .true.)
-      deallocate(S)
-
       ! ---
   
+      call impose_biorthog_qr(n, m, L, R)
+
       allocate(S(m,m))
-      call dgemm( 'T', 'N', m, m, n, 1.d0      &
-                , L, size(L, 1), R, size(R, 1) &
-                , 0.d0, S, size(S, 1) )
-
-      call impose_biorthog_qr(n, m, L, R, S)
-
       call check_biorthog(n, m, L, R, accu_d, accu_nd, S, .true.)
-      call check_biorthog(n, m, L, L, accu_d, accu_nd, S, .true.)
-      call check_biorthog(n, m, R, R, accu_d, accu_nd, S, .false.)
+      !call check_biorthog(n, m, L, L, accu_d, accu_nd, S, .true.)
+      !call check_biorthog(n, m, R, R, accu_d, accu_nd, S, .false.)
       deallocate(S)
 
       ! ---
@@ -1609,20 +1845,20 @@ end subroutine impose_orthog_biorthog_degen_eigvec
 
 ! ---
 
-subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, L0, R0)
+subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, W0, L0, R0)
 
   implicit none
 
   integer,          intent(in)    :: n
   double precision, intent(in)    :: e0(n)
-  double precision, intent(inout) :: C0(n,n), L0(n,n), R0(n,n)
+  double precision, intent(inout) :: W0(n,n), C0(n,n), L0(n,n), R0(n,n)
 
   logical                         :: complex_root
   integer                         :: i, j, k, m
   double precision                :: ei, ej, de, de_thr
   integer,          allocatable   :: deg_num(:)
   double precision, allocatable   :: L(:,:), R(:,:), C(:,:)
-  double precision, allocatable   :: S(:,:), S_inv_half(:,:)
+  double precision, allocatable   :: S(:,:), S_inv_half(:,:), tmp(:,:)
 
   ! ---
 
@@ -1681,24 +1917,53 @@ subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, L0, R0)
 
       ! ---
 
+
       ! TODO:
       ! select C correctly via overlap
       ! or via selecting degen in HF
 
-      call max_overlap_qr(n, m, C, L)
-      call max_overlap_qr(n, m, C, R)
+      !call max_overlap_qr(n, m, C, L)
+      !call max_overlap_qr(n, m, C, R)
+
+
+      allocate(tmp(m,n))
+      allocate(S(m,m))
+
+      call dgemm( 'T', 'N', m, n, n, 1.d0        &
+                , L, size(L, 1), W0, size(W0, 1) &
+                , 0.d0, tmp, size(tmp, 1) )
+      call dgemm( 'N', 'N', m, m, n, 1.d0          &
+                , tmp, size(tmp, 1), C, size(C, 1) &
+                , 0.d0, S, size(S, 1) )
+
+      call max_overlap_qr(n, m, S, L)
+      !call max_overlap_invprod(n, m, S, L)
+
+      call dgemm( 'T', 'N', m, n, n, 1.d0        &
+                , C, size(C, 1), W0, size(W0, 1) &
+                , 0.d0, tmp, size(tmp, 1) )
+      call dgemm( 'N', 'N', m, m, n, 1.d0          &
+                , tmp, size(tmp, 1), R, size(R, 1) &
+                , 0.d0, S, size(S, 1) )
+
+      call max_overlap_qr(n, m, S, R)
+      !call max_overlap_invprod(n, m, S, R)
+
+      deallocate(S, tmp)
 
       ! ---
   
-      allocate(S(m,m), S_inv_half(m,m))
-      call dgemm( 'T', 'N', m, m, n, 1.d0      &
-                , L, size(L, 1), R, size(R, 1) &
-                , 0.d0, S, size(S, 1) )
-      call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
-      call bi_ortho_s_inv_half(m, L, R, S_inv_half)
-      deallocate(S, S_inv_half)
+      !allocate(S(m,m), S_inv_half(m,m))
+      !call dgemm( 'T', 'N', m, m, n, 1.d0      &
+      !          , L, size(L, 1), R, size(R, 1) &
+      !          , 0.d0, S, size(S, 1) )
+      !call get_inv_half_nonsymmat_diago(S, m, S_inv_half, complex_root)
+      !call bi_ortho_s_inv_half(m, L, R, S_inv_half)
+      !deallocate(S, S_inv_half)
 
       !call impose_biorthog_svd(n, m, L, R)
+
+      call impose_biorthog_qr(n, m, L, R)
 
       ! ---
 
@@ -1716,11 +1981,11 @@ end subroutine impose_unique_biorthog_degen_eigvec
 
 ! ---
 
-subroutine max_overlap_qr(m, n, V0, V)
+subroutine max_overlap_qr(m, n, S0, V)
 
   implicit none 
   integer,          intent(in)    :: m, n
-  double precision, intent(in)    :: V0(m,n)
+  double precision, intent(in)    :: S0(n,n)
   double precision, intent(inout) :: V(m,n)
 
   integer                         :: i, j
@@ -1728,13 +1993,8 @@ subroutine max_overlap_qr(m, n, V0, V)
   double precision, allocatable   :: TAU(:), WORK(:)
   double precision, allocatable   :: S(:,:), tmp(:,:)
 
-  ! ---
-
   allocate(S(n,n))
-
-  call dgemm( 'T', 'N', n, n, m, 1.d0        &
-            , V, size(V, 1), V0, size(V0, 1) &
-            , 0.d0, S, size(S, 1) )
+  S = S0
 
   ! ---
 
@@ -1801,6 +2061,41 @@ subroutine max_overlap_qr(m, n, V0, V)
 
   return
 end subroutine max_overlap_qr
+
+! ---
+
+subroutine max_overlap_invprod(n, m, S, V)
+
+  implicit none 
+  integer,          intent(in)    :: m, n
+  double precision, intent(in)    :: S(m,m)
+  double precision, intent(inout) :: V(n,m)
+
+  integer                         :: i
+  double precision, allocatable   :: invS(:,:), tmp(:,:)
+
+  allocate(invS(m,m))
+  call get_inverse(S, size(S, 1), m, invS, size(invS, 1))
+  print *, ' overlap '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+  print *, ' inv overlap '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') invS(i,:)
+  enddo
+
+  allocate(tmp(n,m))
+  tmp = V
+
+  call dgemm( 'N', 'N', n, m, m, 1.d0        &
+            , tmp, size(tmp, 1), invS, size(invS, 1) &
+            , 0.d0, V, size(V, 1) )
+
+  deallocate(tmp, invS)
+
+  return
+end subroutine max_overlap_invprod
 
 ! ---
 

@@ -137,42 +137,63 @@
   !!!! Normalization of the scalar product of the left/right eigenvectors
   double precision  :: accu, tmp 
   do i = 1, N_states
-   !!!! Normalization of right eigenvectors |Phi>
-   accu = 0.d0
-   do j = 1, N_det
-    accu += reigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
-   enddo
-   accu = 1.d0/dsqrt(accu)
-   print*,'accu_r = ',accu
-   do j = 1, N_det
-    reigvec_tc_bi_orth(j,i) *= accu 
-   enddo
-   tmp = reigvec_tc_bi_orth(1,i) / dabs(reigvec_tc_bi_orth(1,i))
-   do j = 1, N_det
-    reigvec_tc_bi_orth(j,i) *= tmp
-   enddo
-   !!!! Adaptation of the norm of the left eigenvector such that <chi|Phi> = 1
-   accu = 0.d0
-   do j = 1, N_det
-    accu += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
-!    print*,j, leigvec_tc_bi_orth(j,i) , reigvec_tc_bi_orth(j,i)
-   enddo
-   if(accu.gt.0.d0)then
-    accu = 1.d0/dsqrt(accu)
-   else
-    accu = 1.d0/dsqrt(-accu)
-   endif
-   tmp = (leigvec_tc_bi_orth(1,i) * reigvec_tc_bi_orth(1,i) )/dabs(leigvec_tc_bi_orth(1,i) * reigvec_tc_bi_orth(1,i))
-   do j = 1, N_det
-    leigvec_tc_bi_orth(j,i) *= accu * tmp
-    reigvec_tc_bi_orth(j,i) *= accu 
-   enddo
-   print*,'leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i) = ',leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i)
-   norm_ground_left_right_bi_orth = 0.d0
-   do j = 1, N_det
-    norm_ground_left_right_bi_orth += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
-   enddo
-   print*,'norm l/r = ',norm_ground_left_right_bi_orth
+
+    !!!!! Normalization of right eigenvectors |Phi>
+
+    accu = 0.d0
+    do j = 1, N_det
+      accu += reigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
+    enddo
+    accu = 1.d0 / dsqrt(accu)
+    print *, 'accu_r = ', accu
+    do j = 1, N_det
+      reigvec_tc_bi_orth(j,i) *= accu 
+    enddo
+    tmp = reigvec_tc_bi_orth(1,i) / dabs(reigvec_tc_bi_orth(1,i))
+    do j = 1, N_det
+      reigvec_tc_bi_orth(j,i) *= tmp
+    enddo
+    !!!! Adaptation of the norm of the left eigenvector such that <chi|Phi> = 1
+    accu = 0.d0
+    do j = 1, N_det
+      accu += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
+      !print*,j, leigvec_tc_bi_orth(j,i) , reigvec_tc_bi_orth(j,i)
+    enddo
+    if(accu.gt.0.d0)then
+      accu = 1.d0 / dsqrt(accu)
+    else
+      accu = 1.d0 / dsqrt(-accu)
+    endif
+    tmp = (leigvec_tc_bi_orth(1,i) * reigvec_tc_bi_orth(1,i) )/dabs(leigvec_tc_bi_orth(1,i) * reigvec_tc_bi_orth(1,i))
+    do j = 1, N_det
+      leigvec_tc_bi_orth(j,i) *= accu * tmp
+      reigvec_tc_bi_orth(j,i) *= accu 
+    enddo
+    print *, 'leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i) = ', leigvec_tc_bi_orth(1,i),reigvec_tc_bi_orth(1,i)
+
+    ! ---
+
+    !double precision :: tmp1, tmp2
+    !accu = 0.d0
+    !do j = 1, N_det
+    !  accu += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
+    !enddo
+    !accu = 1.d0 / dsqrt(dabs(accu))
+    !tmp1 = reigvec_tc_bi_orth(1,i) / dabs(reigvec_tc_bi_orth(1,i))
+    !tmp2 = leigvec_tc_bi_orth(1,i) / dabs(leigvec_tc_bi_orth(1,i))
+    !do j = 1, N_det
+    !  reigvec_tc_bi_orth(j,i) *= accu * tmp1
+    !  leigvec_tc_bi_orth(j,i) *= accu * tmp2
+    !enddo
+
+    ! ---
+
+    norm_ground_left_right_bi_orth = 0.d0
+    do j = 1, N_det
+      norm_ground_left_right_bi_orth += leigvec_tc_bi_orth(j,i) * reigvec_tc_bi_orth(j,i)
+    enddo
+    print *, 'norm l/r = ', norm_ground_left_right_bi_orth
+
   enddo
 
 END_PROVIDER 

@@ -25,7 +25,7 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:),S(:,:)
   double precision, allocatable :: Aw(:,:),diag_elem(:),A_save(:,:)
   double precision, allocatable :: im_part(:),re_part(:)
-  double precision :: accu,thr_cut
+  double precision :: accu,thr_cut, thr_norm=1d0
 
 
   thr_cut = 1.d-15
@@ -199,7 +199,7 @@ subroutine non_hrmt_diag_split_degen_bi_orthog(n, A, leigvec, reigvec, n_real_ei
   print*,'Checking for final reigvec/leigvec'
   shift_current = max(1.d-10,shift_current)
   print*,'Thr for eigenvectors = ',shift_current
-  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, shift_current, .false.)
+  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, shift_current, thr_norm, .false.)
   call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S, .false.)
   print *, ' accu_nd bi-orthog = ', accu_nd
   
@@ -243,7 +243,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
   double precision, allocatable :: WR(:), WI(:), Vl(:,:), VR(:,:),S(:,:)
   double precision, allocatable :: Aw(:,:),diag_elem(:),A_save(:,:)
   double precision, allocatable :: im_part(:),re_part(:)
-  double precision :: accu,thr_cut
+  double precision :: accu,thr_cut, thr_norm=1.d0
   double precision, allocatable :: S_nh_inv_half(:,:)
   logical :: complex_root
 
@@ -375,10 +375,10 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
      if( accu_nd .lt. 1d-10 ) then
        print *, ' bi-orthogonality: ok'
      else 
-      print*,'New vectors not bi-orthonormals at ',accu_nd
-      call get_inv_half_nonsymmat_diago(S, n, S_nh_inv_half,complex_root)
+      print*,'New vectors not bi-orthonormals at ', accu_nd
+      call get_inv_half_nonsymmat_diago(S, n, S_nh_inv_half, complex_root)
       if(complex_root)then 
-       call impose_biorthog_qr(n, n, leigvec_tmp, reigvec_tmp, S) ! bi-orthonormalization using QR
+       call impose_biorthog_qr(n, n, leigvec_tmp, reigvec_tmp) ! bi-orthonormalization using QR
       else
        print*,'S^{-1/2} exists !!'
        call bi_ortho_s_inv_half(n,leigvec_tmp,reigvec_tmp,S_nh_inv_half) ! use of S^{-1/2} bi-orthonormalization 
@@ -431,7 +431,7 @@ subroutine non_hrmt_diag_split_degen_s_inv_half(n, A, leigvec, reigvec, n_real_e
   print*,'Checking for final reigvec/leigvec'
   shift_current = max(1.d-10,shift_current)
   print*,'Thr for eigenvectors = ',shift_current
-  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, shift_current, .false.)
+  call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, shift_current, thr_norm, .false.)
   call check_biorthog(n, n, leigvec, reigvec, accu_d, accu_nd, S, .false.)
   print *, ' accu_nd bi-orthog = ', accu_nd
   

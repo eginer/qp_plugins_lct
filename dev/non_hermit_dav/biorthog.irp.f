@@ -271,8 +271,8 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
   integer                       :: i, j
   integer                       :: n_good
-  double precision              :: thr, thr_cut
-  double precision              :: accu_d, accu_nd
+  double precision              :: thr, thr_cut, thr_diag, thr_norm
+  double precision              :: accu_d, accu_nd, thr_d, thr_nd
 
   integer,          allocatable :: list_good(:), iorder(:)
   double precision, allocatable :: WR(:), WI(:), VL(:,:), VR(:,:)
@@ -314,8 +314,9 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   !  write(*, '(1000(F16.10,X))') VL(:,i)
   !enddo
 
-  thr = 1d-10
-  call check_EIGVEC(n, n, A, WR, VL, VR, thr, .true.)
+  thr_diag = 1d-10
+  thr_norm = 1d+10
+  call check_EIGVEC(n, n, A, WR, VL, VR, thr_diag, thr_norm, .false.)
 
   !
   ! -------------------------------------------------------------------------------------
@@ -326,7 +327,7 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   !                  track & sort the real eigenvalues 
 
   n_good = 0
-  thr    = 1.d-10
+  thr    = 1.d-8
   do i = 1, n
     if(dabs(WI(i)) .lt. thr) then
       n_good += 1
@@ -391,37 +392,55 @@ subroutine non_hrmt_bieig(n, A, leigvec, reigvec, n_real_eigv, eigval)
   ! -------------------------------------------------------------------------------------
   !                               check bi-orthogonality
 
+  thr_d  = 1d-8
+  thr_nd = 1d-8
+
   allocate( S(n_real_eigv,n_real_eigv) )
   call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S, .false.)
-  if( accu_nd .lt. 1d-8 ) then
 
-    print *, ' bi-orthogonality between lapack vectors: ok'
+  if( (accu_nd .lt. thr_nd) .and. (dabs(accu_d-dble(n_real_eigv)) .lt. thr_d) ) then
+
+    print *, ' lapack vectors are normalized and bi-orthogonalized'
     deallocate( S )
     return
 
+  elseif( (accu_nd .lt. thr_nd) .and. (dabs(accu_d-dble(n_real_eigv)) .gt. thr_d) ) then
+
+    print *, ' lapack vectors are not normalized but bi-orthogonalized'
+    call check_biorthog_binormalize(n, n_real_eigv, leigvec, reigvec, .true.)
+
   else
 
-    print *, ' bi-orthogonality between lapack vectors: not imposed yet'
+    print *, ' lapack vectors are not normalized neither bi-orthogonalized'
 
     ! ---
 
     !call impose_orthog_degen_eigvec(n, eigval, reigvec)
     !call impose_orthog_degen_eigvec(n, eigval, leigvec)
 
-    call impose_orthog_biorthog_degen_eigvec(n, eigval, leigvec, reigvec)
-
-    !call impose_unique_biorthog_degen_eigvec(n, eigval, mo_coef, leigvec, reigvec)
+    call impose_biorthog_degen_eigvec(n, eigval, leigvec, reigvec)
 
 
-    call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S, .true.)
+    !call impose_orthog_biorthog_degen_eigvec(n, eigval, leigvec, reigvec)
 
-    !call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec, S)
-    !call impose_biorthog_lu(n, n_real_eigv, leigvec, reigvec, S)
+    !call impose_unique_biorthog_degen_eigvec(n, eigval, mo_coef, ao_overlap, leigvec, reigvec)
 
     ! ---
 
-    thr = 1d-10
-    call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, thr, .true.)
+    call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S, .false.)
+    if( (accu_nd .lt. thr_nd) .and. (dabs(accu_d-dble(n_real_eigv)) .gt. thr_d) ) then
+      call check_biorthog_binormalize(n, n_real_eigv, leigvec, reigvec, .true.)
+    endif
+    call check_biorthog(n, n_real_eigv, leigvec, reigvec, accu_d, accu_nd, S, .true.)
+
+    !call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec)
+    !call impose_biorthog_lu(n, n_real_eigv, leigvec, reigvec)
+
+    ! ---
+
+    thr_diag = 1d-10
+    thr_norm = 1d+10
+    call check_EIGVEC(n, n, A, eigval, leigvec, reigvec, thr_diag, thr_norm, .true.)
 
     deallocate( S )
 
@@ -595,7 +614,7 @@ subroutine non_hrmt_bieig_random_diag(n, A, leigvec, reigvec, n_real_eigv, eigva
 
     print *, ' L & T bi-orthogonality: not imposed yet'
     print *, ' accu_nd = ', accu_nd
-    call impose_biorthog_qr( n, n_real_eigv, leigvec, reigvec, S )
+    call impose_biorthog_qr(n, n_real_eigv, leigvec, reigvec)
     deallocate( S )
   
   endif
@@ -945,7 +964,7 @@ subroutine non_hrmt_bieig_fullvect(n, A, leigvec, reigvec, n_real_eigv, eigval)
 
     !print *, ' L & T bi-orthogonality: not imposed yet'
     !print *, ' accu_nd = ', accu_nd
-    call impose_biorthog_qr(n, n, leigvec, reigvec, S)
+    call impose_biorthog_qr(n, n, leigvec, reigvec)
     deallocate( S )
   
   endif
