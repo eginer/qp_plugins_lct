@@ -153,29 +153,3 @@ subroutine test_overlap()
 end subroutine test_overlap
 
 ! ---
-
-subroutine LTxSxR(n, m, L, S, R, C)
-
-  implicit none
-  integer,          intent(in)  :: n, m
-  double precision, intent(in)  :: L(n,m), S(n,n), R(n,m)
-  double precision, intent(out) :: C(m,n)
-  double precision, allocatable :: tmp(:,:)
-
-  ! tmp = L.T x S
-  allocate(tmp(m,n))
-  call dgemm( 'T', 'N', m, n, n, 1.d0      &
-            , L, size(L, 1), S, size(S, 1) &
-            , 0.d0, tmp, size(tmp, 1) )
-
-  ! tmp x R
-  call dgemm( 'N', 'N', m, m, n, 1.d0          &
-            , tmp, size(tmp, 1), R, size(R, 1) &
-            , 0.d0, C, size(C, 1) )
-
-  deallocate(tmp)
-
-end subroutine LTxR
-
-! ---
-

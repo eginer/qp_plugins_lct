@@ -1719,6 +1719,11 @@ subroutine impose_biorthog_degen_eigvec(n, e0, L0, R0)
 
       ! ---
 
+      call impose_orthog_svd(n, m, L)
+      call impose_orthog_svd(n, m, R)
+
+      ! ---
+
       !allocate(S(m,m))
       !call dgemm( 'T', 'N', m, m, n, 1.d0      &
       !          , L, size(L, 1), R, size(R, 1) &
@@ -1850,8 +1855,8 @@ subroutine impose_unique_biorthog_degen_eigvec(n, e0, C0, W0, L0, R0)
   implicit none
 
   integer,          intent(in)    :: n
-  double precision, intent(in)    :: e0(n)
-  double precision, intent(inout) :: W0(n,n), C0(n,n), L0(n,n), R0(n,n)
+  double precision, intent(in)    :: e0(n), W0(n,n), C0(n,n)
+  double precision, intent(inout) :: L0(n,n), R0(n,n)
 
   logical                         :: complex_root
   integer                         :: i, j, k, m
