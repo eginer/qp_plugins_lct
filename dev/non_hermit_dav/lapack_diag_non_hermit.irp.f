@@ -1056,6 +1056,109 @@ end subroutine check_degen
 
 ! ---
 
+subroutine impose_weighted_orthog_svd(n, m, W, C)
+
+  implicit none
+
+  integer,          intent(in)    :: n, m
+  double precision, intent(inout) :: C(n,m), W(n,n)
+
+  integer                         :: i, j, num_linear_dependencies
+  double precision                :: threshold
+  double precision, allocatable   :: S(:,:), tmp(:,:)
+  double precision, allocatable   :: U(:,:), Vt(:,:), D(:)
+
+  print *, ' apply SVD to orthogonalize vectors'
+
+  ! ---
+
+  ! C.T x W x C
+  allocate(S(m,m))
+  allocate(tmp(m,n))
+  call dgemm( 'T', 'N', m, n, n, 1.d0      &
+            , C, size(C, 1), W, size(W, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  call dgemm( 'N', 'N', m, m, n, 1.d0          &
+            , tmp, size(tmp, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+  deallocate(tmp)
+
+  print *, ' eigenvec overlap bef SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  ! ---
+ 
+  allocate(U(m,m), Vt(m,m), D(m))
+
+  call svd(S, m, U, m, D, Vt, m, m, m)
+
+  deallocate(S)
+
+  threshold               = 1.d-6
+  num_linear_dependencies = 0
+  do i = 1, m
+    if(abs(D(i)) <= threshold) then
+      D(i) = 0.d0
+      num_linear_dependencies += 1
+    else
+      ASSERT (D(i) > 0.d0)
+      D(i) = 1.d0 / dsqrt(D(i))
+    endif
+  enddo
+  if(num_linear_dependencies > 0) then
+    write(*,*) ' linear dependencies = ', num_linear_dependencies
+    write(*,*) ' m                   = ', m
+    stop
+  endif
+
+  ! ---
+
+  allocate(tmp(n,m))
+
+  ! tmp <-- C x U
+  call dgemm( 'N', 'N', n, m, m, 1.d0      &
+            , C, size(C, 1), U, size(U, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+
+  deallocate(U, Vt)
+
+  ! C <-- tmp x sigma^-0.5
+  do j = 1, m
+    do i = 1, n
+      C(i,j) = tmp(i,j) * D(j)
+    enddo
+  enddo
+
+  deallocate(D, tmp)
+
+  ! ---
+
+  ! C.T x W x C
+  allocate(S(m,m))
+  allocate(tmp(m,n))
+  call dgemm( 'T', 'N', m, n, n, 1.d0      &
+            , C, size(C, 1), W, size(W, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  call dgemm( 'N', 'N', m, m, n, 1.d0          &
+            , tmp, size(tmp, 1), C, size(C, 1) &
+            , 0.d0, S, size(S, 1) )
+  deallocate(tmp)
+
+  print *, ' eigenvec overlap aft SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
+
+  deallocate(S)
+
+  ! ---
+
+end subroutine impose_weighted_orthog_svd
+
+! ---
+
 subroutine impose_orthog_svd(n, m, C)
 
   implicit none
@@ -1079,10 +1182,10 @@ subroutine impose_orthog_svd(n, m, C)
             , C, size(C, 1), C, size(C, 1) &
             , 0.d0, S, size(S, 1) )
 
-  !print *, ' eigenvec overlap bef SVD: '
-  !do i = 1, m
-  !  write(*, '(1000(F16.10,X))') S(i,:)
-  !enddo
+  print *, ' eigenvec overlap bef SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
 
   ! ---
  
@@ -1138,10 +1241,10 @@ subroutine impose_orthog_svd(n, m, C)
             , C, size(C, 1), C, size(C, 1) &
             , 0.d0, S, size(S, 1) )
 
-  !print *, ' eigenvec overlap aft SVD: '
-  !do i = 1, m
-  !  write(*, '(1000(F16.10,X))') S(i,:)
-  !enddo
+  print *, ' eigenvec overlap aft SVD: '
+  do i = 1, m
+    write(*, '(1000(F16.10,X))') S(i,:)
+  enddo
 
   deallocate(S)
 
@@ -1558,6 +1661,73 @@ end subroutine check_biorthog_binormalize
 
 ! ---
 
+subroutine check_weighted_biorthog(n, m, W, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
+
+  implicit none
+  
+  integer,          intent(in)  :: n, m
+  double precision, intent(in)  :: Vl(n,m), Vr(n,m), W(n,n)
+  logical,          intent(in)  :: stop_ifnot
+  double precision, intent(out) :: accu_d, accu_nd, S(m,m)
+
+  integer                       :: i, j
+  double precision              :: thr_d, thr_nd
+  double precision, allocatable :: SS(:,:), tmp(:,:)
+
+  thr_d  = 1d-6
+  thr_nd = 1d-10
+
+  print *, ' check weighted bi-orthogonality'
+
+  ! ---
+
+  allocate(tmp(m,n))
+  call dgemm( 'T', 'N', m, n, n, 1.d0        &
+            , Vl, size(Vl, 1), W, size(W, 1) &
+            , 0.d0, tmp, size(tmp, 1) )
+  call dgemm( 'N', 'N', m, m, n, 1.d0            &
+            , tmp, size(tmp, 1), Vr, size(Vr, 1) &
+            , 0.d0, S, size(S, 1) )
+  deallocate(tmp)
+
+  print *, ' overlap matrix:'
+  do i = 1, m
+    write(*,'(1000(F16.10,X))') S(i,:)
+  enddo
+
+  accu_d  = 0.d0
+  accu_nd = 0.d0
+  do i = 1, m
+    do j = 1, m
+      if(i==j) then
+        accu_d = accu_d + dabs(S(i,i))
+      else
+        accu_nd = accu_nd + S(j,i) * S(j,i)
+      endif
+    enddo
+  enddo
+  accu_nd = dsqrt(accu_nd)
+
+  print *, ' accu_nd = ', accu_nd
+  print *, ' accu_d  = ', dabs(accu_d-dble(m))/dble(m)
+
+  ! ---
+
+  if( stop_ifnot .and. ((accu_nd .gt. thr_nd) .or. dabs(accu_d-dble(m))/dble(m) .gt. thr_d) ) then
+    print *, ' non bi-orthogonal vectors !'
+    print *, ' accu_nd = ', accu_nd
+    print *, ' accu_d  = ', dabs(accu_d-dble(m))/dble(m)
+    !print *, ' overlap matrix:'
+    !do i = 1, m
+    !  write(*,'(1000(F16.10,X))') S(i,:)
+    !enddo
+    stop
+  endif
+
+end subroutine check_weighted_biorthog
+
+! ---
+
 subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
 
   implicit none
@@ -1581,6 +1751,10 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
   call dgemm( 'T', 'N', m, m, n, 1.d0          &
             , Vl, size(Vl, 1), Vr, size(Vr, 1) &
             , 0.d0, S, size(S, 1) )
+  print *, ' overlap matrix:'
+  do i = 1, m
+    write(*,'(1000(F16.10,X))') S(i,:)
+  enddo
 
   accu_d  = 0.d0
   accu_nd = 0.d0
@@ -1594,6 +1768,9 @@ subroutine check_biorthog(n, m, Vl, Vr, accu_d, accu_nd, S, stop_ifnot)
     enddo
   enddo
   accu_nd = dsqrt(accu_nd)
+
+  print *, ' accu_nd = ', accu_nd
+  print *, ' accu_d  = ', dabs(accu_d-dble(m))/dble(m)
 
   ! ---
 

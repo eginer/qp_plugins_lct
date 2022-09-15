@@ -40,8 +40,10 @@ subroutine maximize_overlap()
   C = mo_coef
   W = ao_overlap
 
+  print*, ' fock matrix diag elements'
   do i = 1, m
     e(i) = Fock_matrix_tc_mo_tot(i,i)
+    print*, e(i)
   enddo
 
   ! ---
