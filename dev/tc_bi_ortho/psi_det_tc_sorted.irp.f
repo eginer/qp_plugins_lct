@@ -84,24 +84,6 @@ END_PROVIDER
 
 END_PROVIDER
 
- BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
-&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
-
-  implicit none
-  integer :: i, k
-
-  psi_selectors_rcoef_bi_orth_transp = 0.d0
-  psi_selectors_lcoef_bi_orth_transp = 0.d0
-
-  print*,'N_det,N_det_selectors',N_det,N_det_selectors
-  do i = 1, N_det_selectors
-    do k = 1, N_states
-      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
-      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
-    enddo
-  enddo
-
-END_PROVIDER
 
  BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_tc_bit, (N_int,2,psi_det_size) ]
 &BEGIN_PROVIDER [ double precision, psi_coef_sorted_tc_bit, (psi_det_size,N_states) ]
