@@ -4,7 +4,7 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
  integer(bit_kind), intent(in) :: det_i(N_int,2), det_j(N_int,2)
  integer(bit_kind), intent(in) :: conf_i(N_int,2), conf_j(N_int,2)
  integer          , intent(in) :: sz_i, sz_j
- double precision, intent(out) :: soc_ij
+ complex*8, intent(out) :: soc_ij
  BEGIN_DOC
 ! det_i and det_j are two determinants of possibly different ms
 !
@@ -14,7 +14,7 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
  integer :: degree
  integer(bit_kind) :: det_i_tmp(N_int), det_j_tmp(N_int)
 
- soc_ij = 0.d0
+ soc_ij = complex(0.d0,0.d0)
  if(dabs(dble(sz_i-sz_j)).gt.1.d0)return
  ! degree of excitation of doubly occupied part 
  degree_doc = 0
@@ -85,7 +85,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
  use bitmasks ! you need to include the bitmasks_module.f90 features
  integer(bit_kind), intent(in) :: det_i(N_int,2), det_j(N_int,2)
  integer          , intent(in) :: sz_i, sz_j
- double precision, intent(out) :: soc_ij
+ complex*8, intent(out) :: soc_ij
 
  integer, allocatable           :: occ(:,:)
  integer                        :: n_occ_ab(2),iorb
@@ -93,7 +93,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
  integer          :: degree,ispin
  double precision :: phase,sign_spin(2)
 
- soc_ij = 0.d0
+ soc_ij = complex(0.d0,0.d0)
  if(sz_i.ne.sz_j)return ! S_z does not couple two determinants with different S_z
  sign_spin(1) =+1.d0
  sign_spin(2) =-1.d0
@@ -105,7 +105,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
   do ispin = 1,2 ! loop over the spins of electrons : ispin = 1 :: alpha , ispin = 2 :: beta
    do i = 1, n_occ_ab(ispin) ! loop over electrons of spin "ispin"
     iorb = occ(i,ispin) ! ith ispin-occupied orbital in det_i
-    soc_ij += v_soc_tot_mo(iorb,iorb,3) * sign_spin(ispin) ! contribution from orbital iorb with the good sign
+    soc_ij += mo_v_soc_tot(iorb,iorb,3) * complex(sign_spin(ispin),0.d0) ! contribution from orbital iorb with the good sign
    enddo
   enddo
  else if(degree == 1)then
@@ -120,7 +120,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
     p = exc(1,2,2)
     ispin = 2
   endif
-  soc_ij += v_soc_tot_mo(p,h,3) * sign_spin(ispin) * phase ! contribution of a^{dagger}_{p,ispin} a_{h,ispin} 
+  soc_ij += mo_v_soc_tot(p,h,3) * complex(sign_spin(ispin) * phase,0.d0) ! contribution of a^{dagger}_{p,ispin} a_{h,ispin} 
  endif
 
 end

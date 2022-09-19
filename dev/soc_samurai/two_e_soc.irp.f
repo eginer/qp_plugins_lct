@@ -1,12 +1,3 @@
-BEGIN_PROVIDER [ double precision, constant_soc]
- implicit none
- constant_soc = 
- double precision :: C_soc,alpha
- alpha = 1.d0/137.d0
- constant_soc = alpha**2 / 2.d0
-
-END_PROVIDER 
-
 BEGIN_PROVIDER [ double precision, v_c_ij_grid, ( ao_num, ao_num,n_points_final_grid)]
  implicit none
  BEGIN_DOC
@@ -181,20 +172,3 @@ BEGIN_PROVIDER [ double precision, E2_mu_nu_find_a_better_name, (3,ao_num, ao_nu
  enddo
  E2_mu_nu_find_a_better_name = -3.d0/2.d0 * E2_mu_nu_find_a_better_name 
 END_PROVIDER
-
-
-!!!!!!!!!!!!!!!!!! ONE BODY PART !!!!!!!!!!!!!!!!!!!!
-
-
-BEGIN_PROVIDER [ double precision, v_soc_tot_mo, (mo_num, mo_num,3)]
- implicit none
- BEGIN_DOC
- ! total one-body spin orbit operator on the MO basis 
- ! v_soc_tot_mo(i,j,k) = <ph_i| V_so^k | phi_j>
- ! k = 1 = +
- ! k = 2 = -
- ! k = 3 = z
- END_DOC
- v_soc_tot_mo = 0.d0
-
-END_PROVIDER 

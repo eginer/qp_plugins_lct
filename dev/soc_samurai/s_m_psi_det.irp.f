@@ -28,18 +28,24 @@ END_PROVIDER
 &BEGIN_PROVIDER [ double precision,  psi_norm_s_m, (n_states) ]
  implicit none
  double precision :: coef_sm(N_states,size_n_det_max_per_conf_sm),phase(elec_alpha_num)
- integer(bit_kind) :: dets_sm(N_int,2,size_n_det_max_per_conf_sm),det_out(N_int,2,elec_alpha_num),det_tmp(N_int,2)
+ integer(bit_kind), allocatable :: dets_sm(:,:,:),det_out(:,:,:),det_tmp(:,:)
  integer :: i,j,k,l,m,n_alpha_m,ndet_out,istate,degree,ndet_conf_sm
  double precision :: S,ms,factor_s_m,coef_tmp
+ allocate (dets_sm(N_int,2,size_n_det_max_per_conf_sm),det_out(N_int,2,elec_alpha_num),det_tmp(N_int,2))
  ms = 0.5d0 * dble(elec_alpha_num - elec_beta_num)
  do i = 1, N_configuration ! first loop over configurations (because S^- does not couple different configurations)
   det_tmp(:,:) = psi_configuration(:,:,i)
   coef_sm = 0.d0
-  n_alpha_m = elec_alpha_num - 1 ! Applying S^- I decrease by one the number of alpha electron
-  if(elec_alpha_num == 1)then ! just have to spin-flip the determinant 
+  if(elec_alpha_num == 1 .and. elec_beta_num == 0)then ! just have to spin-flip the determinant 
     do j =  psi_configuration_to_psi_det(1,i), psi_configuration_to_psi_det(2,i)
      k = psi_configuration_to_psi_det_data(j)
      call s_minus_det(psi_det(1,1,k),det_out,phase,ndet_out)
+     do m = 1, ndet_out
+      do l = 1, N_int
+       psi_det_s_m(l,1,m,j) = det_out(l,1,m)
+       psi_det_s_m(l,1,m,j) = det_out(l,2,m)
+      enddo
+     enddo
      do m = 1, ndet_conf_sm
       do l = 1, ndet_out
        call get_excitation_degree(dets_sm(1,1,m),det_out(1,1,l),degree,N_int)
@@ -51,51 +57,44 @@ END_PROVIDER
       enddo
      enddo
     enddo
-  else
+  else ! more than just one alpha electron 
    ndet_conf_sm = n_det_per_conf_s_m(i)
    if(ndet_conf_sm == 0)then
     psi_det_s_m(:,:,1,i) = 0_bit_kind
     psi_coef_s_m(1,i,:) = 0.d0
    else
-    if(elec_alpha_num .gt. 1 .and. elec_beta_num .gt. 0)then
-     call configuration_to_dets(psi_configuration(1,1,i),dets_sm,ndet_conf_sm,n_alpha_m,N_int)
-     do j = 1, ndet_conf_sm
-      psi_det_s_m(:,:,j,i) = dets_sm(:,:,j)
-     enddo
-    else if(elec_alpha_num == 1. and. elec_alpha_num == 0)then ! special case for elec_alpha_num == 1
-     do j =  psi_configuration_to_psi_det(1,i), psi_configuration_to_psi_det(2,i)
-      k = psi_configuration_to_psi_det_data(j)
-      call s_minus_det(psi_det(1,1,k),det_out,phase,ndet_out)
-      psi_det_s_m(:,:,j,i) = det_out(:,:)
-     enddo 
-    endif
-    do j =  psi_configuration_to_psi_det(1,i), psi_configuration_to_psi_det(2,i)
-     k = psi_configuration_to_psi_det_data(j)
-     call s_minus_det(psi_det(1,1,k),det_out,phase,ndet_out)
-     do m = 1, ndet_conf_sm
-      do l = 1, ndet_out
-       call get_excitation_degree(dets_sm(1,1,m),det_out(1,1,l),degree,N_int)
-       if(degree == 0)then
-        do istate = 1, N_states
-         coef_sm(istate,m) += psi_coef(k,istate) * phase(m)
-        enddo
-       endif
-      enddo
-     enddo
+    n_alpha_m = elec_alpha_num - 1 ! Applying S^- I decrease by one the number of alpha electron
+    call configuration_to_dets(psi_configuration(1,1,i),dets_sm,ndet_conf_sm,n_alpha_m,N_int) ! gives all dets for the conf with n_alpha -1
+    do j = 1, ndet_conf_sm
+     psi_det_s_m(:,:,j,i) = dets_sm(:,:,j)
     enddo
-    do j = 1, n_det_per_conf_s_m(i)
-     do istate = 1, N_states
-      S = s_values(istate)
-      coef_tmp = factor_s_m(S,ms)
-      if(dabs(coef_tmp).gt.1.d-12)then
-       psi_coef_s_m(j,i,istate) = coef_sm(istate,j) / coef_tmp
-      else
-       psi_coef_s_m(j,i,istate) = coef_sm(istate,j) 
+   endif
+   do j =  psi_configuration_to_psi_det(1,i), psi_configuration_to_psi_det(2,i)
+    k = psi_configuration_to_psi_det_data(j)
+    call s_minus_det(psi_det(1,1,k),det_out,phase,ndet_out)
+    do m = 1, ndet_conf_sm
+     do l = 1, ndet_out
+      call get_excitation_degree(dets_sm(1,1,m),det_out(1,1,l),degree,N_int)
+      if(degree == 0)then
+       do istate = 1, N_states
+        coef_sm(istate,m) += psi_coef(k,istate) * phase(m)
+       enddo
       endif
      enddo
     enddo
-   endif
+   enddo
   endif
+  do j = 1, n_det_per_conf_s_m(i)
+   do istate = 1, N_states
+    S = s_values(istate)
+    coef_tmp = factor_s_m(S,ms)
+    if(dabs(coef_tmp).gt.1.d-12)then
+     psi_coef_s_m(j,i,istate) = coef_sm(istate,j) / coef_tmp
+    else
+     psi_coef_s_m(j,i,istate) = coef_sm(istate,j) 
+    endif
+   enddo
+  enddo
  enddo
  psi_norm_s_m = 0.d0
  do istate = 1, N_states

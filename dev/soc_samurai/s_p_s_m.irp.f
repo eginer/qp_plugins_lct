@@ -196,17 +196,3 @@ subroutine s_minus_det(det_in,det_out,phase,ndet_out)
  enddo
 
 end
-
-
-
-double precision function factor_s_p(S,ms)
- implicit none
- double precision, intent(in) :: S,ms
- factor_s_p = dsqrt(S*(S+1.d0) - ms*(ms+1.d0))
-end
-
-double precision function factor_s_m(S,ms)
- implicit none
- double precision, intent(in) :: S,ms
- factor_s_m = dsqrt(S*(S+1.d0) - ms*(ms-1.d0))
-end
