@@ -70,7 +70,7 @@ subroutine routine_scf()
   it = 0
   print*,'iteration = ', it
 
-  !print*,'grad_good_hermit_tc_fock_mat = ', grad_good_hermit_tc_fock_mat
+  !print*,'grad_hermit = ', grad_hermit
   print*,'***'
   print*,'TC HF total energy = ', TC_HF_energy
   print*,'TC HF 1 e   energy = ', TC_HF_one_electron_energy
@@ -89,7 +89,7 @@ subroutine routine_scf()
    call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
    TOUCH mo_l_coef mo_r_coef
   else
-   print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
+   print*,'grad_hermit = ',grad_hermit
    call save_good_hermit_tc_eigvectors
    TOUCH mo_coef 
    call save_mos
@@ -115,8 +115,8 @@ subroutine routine_scf()
      TOUCH mo_l_coef mo_r_coef
    enddo
   else
-   do while( (grad_good_hermit_tc_fock_mat.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
-      print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
+   do while( (grad_hermit.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
+      print*,'grad_hermit = ',grad_hermit
       it += 1
       print*,'iteration = ', it
       print*,'***'
