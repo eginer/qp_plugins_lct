@@ -51,12 +51,6 @@ subroutine run_stochastic_cipsi
   call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
 !  call routine_save_right
 
-  call ezfio_has_hartree_fock_energy(has)
-  if (has) then
-    call ezfio_get_hartree_fock_energy(hf_energy_ref)
-  else
-    hf_energy_ref = ref_bitmask_energy
-  endif
 
   if (N_det > N_det_max) then
     psi_det(1:N_int,1:2,1:N_det) = psi_det_sorted_tc_gen(1:N_int,1:2,1:N_det)
