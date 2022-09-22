@@ -796,6 +796,16 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha
+        if(selection_tc     ==  1 )then
+         if(e_pert(istate).lt.0.d0)then
+          e_pert(istate) = 0.d0
+         endif
+        else if(selection_tc == -1)then
+         if(e_pert(istate).gt.0.d0)then
+          e_pert(istate) = 0.d0
+         endif
+        endif
+         
 
 !      elseif(cipsi_tc == "h_tc_2x2") then
 
