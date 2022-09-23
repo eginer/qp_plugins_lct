@@ -15,13 +15,13 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
 !
 ! |det_i> is also written with conf_i:: conf_i(1,:) = doubly occupied, conf_i(2,:) = somo
  END_DOC
- integer :: i,j, degree_doc, degree_somo,n_doc_i,n_doc_j,n_somo_i,n_somo_j
+ integer :: i,j, degree_doc, degree_somo,n_doc_i,n_doc_j,n_somo_i,n_somo_j,h,p
  integer :: degree,i_ok
  integer(bit_kind) :: somo_i(N_int,2),somo_j(N_int,2),somo_dif_ab(N_int,2),conf_dif(N_int,2)
  integer(bit_kind) :: det_tmp(N_int,2),det_tmp_2(N_int,2),domo_dif(N_int,2)
- integer, allocatable           :: somo_dif_ab_occ(N_int*bit_kind_size,2)
+ integer :: somo_dif_ab_occ(N_int*bit_kind_size,2), n_somo_dif_ab(2)
  double precision :: phase,phase_2
- integer          :: exc(0:2,2,2),pm,spin
+ integer          :: exc(0:2,2,2),pm,spin,orb_j
 
  soc_ij = complex(0.d0,0.d0)
  if(dabs(sz_i-sz_j).gt.1.d0)return
@@ -84,7 +84,6 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
     p = somo_dif_ab_occ(1,2)
     h = somo_dif_ab_occ(1,1) 
    endif
-   soc_ij = mo_v_soc_tot(p,h)
    if(sz_i .gt. sz_j)then  ! <det_i|S^+ V^-|det_j> == <det_i| a^{dagger}_p_alpha a_q_beta | det_j>
     pm = +1
     spin = +1 

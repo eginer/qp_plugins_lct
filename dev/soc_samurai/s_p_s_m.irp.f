@@ -5,10 +5,13 @@ subroutine s_plus_or_s_minus_det_orb_j(det_in,orb_j,pm,det_out,phase)
  integer          , intent(in)  :: orb_j,pm
  integer(bit_kind), intent(out) :: det_out(N_int,2)
  double precision, intent(out)  :: phase
- if(pm = +1)then
+ if(pm == +1)then
   call s_plus_det_orb_j(det_in,orb_j,det_out,phase)
- else if(pm = -1)then
+ else if(pm == -1)then
   call s_minus_det_orb_j(det_in,orb_j,det_out,phase)
+ else
+  print*,'wrong argument in s_plus_or_s_minus_det_orb_j'
+  stop
  endif
 end
 
