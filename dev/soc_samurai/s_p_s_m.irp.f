@@ -1,3 +1,17 @@
+
+subroutine s_plus_or_s_minus_det_orb_j(det_in,orb_j,pm,det_out,phase)
+  use bitmasks ! you need to include the bitmasks_module.f90 features
+ integer(bit_kind), intent(in)  :: det_in(N_int,2)
+ integer          , intent(in)  :: orb_j,pm
+ integer(bit_kind), intent(out) :: det_out(N_int,2)
+ double precision, intent(out)  :: phase
+ if(pm = +1)then
+  call s_plus_det_orb_j(det_in,orb_j,det_out,phase)
+ else if(pm = -1)then
+  call s_minus_det_orb_j(det_in,orb_j,det_out,phase)
+ endif
+end
+
 subroutine s_plus_det_orb_j(det_in,orb_j,det_out,phase)
  implicit none
  BEGIN_DOC

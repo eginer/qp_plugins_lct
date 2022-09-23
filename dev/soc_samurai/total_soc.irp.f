@@ -9,6 +9,6 @@ BEGIN_PROVIDER [ complex*8, mo_v_soc_tot, (mo_num, mo_num,3)]
 !
 !      mu = 3 ::> V^z 
  END_DOC
- mo_v_soc_tot = mo_one_e_soc_e_soc
+ mo_v_soc_tot = mo_one_e_soc
 
 END_PROVIDER 

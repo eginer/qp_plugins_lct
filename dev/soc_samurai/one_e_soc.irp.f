@@ -89,10 +89,10 @@ BEGIN_PROVIDER [ double precision, mo_one_e_soc_cartesian, (mo_num, mo_num,3)]
  enddo
 END_PROVIDER
 
-BEGIN_PROVIDER [ complex*8, mo_one_e_soc_e_soc, (mo_num, mo_num, 3)]
+BEGIN_PROVIDER [ complex*8, mo_one_e_soc, (mo_num, mo_num, 3)]
  implicit none
  BEGIN_DOC
-! mo_one_e_soc_e_soc(k,l,mu) = <MO_k | V_soc_1_e ^\mu | MO_l>, 
+! mo_one_e_soc(k,l,mu) = <MO_k | V_soc_1_e ^\mu | MO_l>, 
 ! 
 ! with mu = 1 ::> V^- = V^x + i V^y, 
 !      
@@ -105,12 +105,12 @@ BEGIN_PROVIDER [ complex*8, mo_one_e_soc_e_soc, (mo_num, mo_num, 3)]
   do j = 1, mo_num
    ! V^+ = V^x + i V^y = i(mo_one_e_soc_cartesian(1)) + i (i mo_one_e_soc_cartesian(2))
    !     = -mo_one_e_soc_cartesian(2) + i mo_one_e_soc_cartesian(1)
-   mo_one_e_soc_e_soc(j,i,1) = complex(-1.D0 * mo_one_e_soc_cartesian(j,i,2), mo_one_e_soc_cartesian(j,i,1))
+   mo_one_e_soc(j,i,1) = complex(-1.D0 * mo_one_e_soc_cartesian(j,i,2), mo_one_e_soc_cartesian(j,i,1))
    ! V^- = V^x - i V^y = i(mo_one_e_soc_cartesian(1)) - i (i mo_one_e_soc_cartesian(2))
    !     = +mo_one_e_soc_cartesian(2) + i mo_one_e_soc_cartesian(1)
-   mo_one_e_soc_e_soc(j,i,2) = complex( 1.D0 * mo_one_e_soc_cartesian(j,i,2), mo_one_e_soc_cartesian(j,i,1))
+   mo_one_e_soc(j,i,2) = complex( 1.D0 * mo_one_e_soc_cartesian(j,i,2), mo_one_e_soc_cartesian(j,i,1))
    ! V^z = i mo_one_e_soc_cartesian(3)
-   mo_one_e_soc_e_soc(j,i,3) = complex(0.d0,mo_one_e_soc_cartesian(j,i,3))
+   mo_one_e_soc(j,i,3) = complex(0.d0,mo_one_e_soc_cartesian(j,i,3))
   enddo
  enddo
 
