@@ -15,7 +15,7 @@ subroutine run_stochastic_cipsi
   double precision, external :: memory_of_double
   double precision :: correlation_energy_ratio,E_denom,E_tc,norm
   double precision, allocatable :: ept2(:), pt1(:),extrap_energy(:)
-  PROVIDE H_apply_buffer_allocated distributed_davidson mo_two_e_integrals_in_map
+  PROVIDE H_apply_buffer_allocated distributed_davidson 
 
   print*,'Diagonal elements of the Fock matrix '
   do i = 1, mo_num
@@ -95,15 +95,12 @@ subroutine run_stochastic_cipsi
     if (qp_stop()) exit
 
     ! Add selected determinants
-    call copy_H_apply_buffer_to_wf()
+    call copy_H_apply_buffer_to_wf_tc()
 
-    PROVIDE  psi_coef
+    PROVIDE  psi_l_coef_bi_ortho psi_r_coef_bi_ortho
     PROVIDE  psi_det
     PROVIDE  psi_det_sorted_tc
 
-    print *,'******'
-    print *,'norm = ',norm
-    print *,'******'
     ept2(N_iter-1) = E_tc + nuclear_repulsion + (pt2_data % pt2(1))/norm
     pt1(N_iter-1) = dsqrt(pt2_data % overlap(1,1))
     call diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
