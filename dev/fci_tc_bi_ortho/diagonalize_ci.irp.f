@@ -32,6 +32,8 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
    print*,'PT2               = ',pt2_tmp
    print*,'rPT2              = ',rpt2_tmp
    print*,'|PT2|             = ',abs_pt2
+   print*,'Positive PT2      = ',(pt2_tmp + abs_pt2)*0.5d0
+   print*,'Negative PT2      = ',(pt2_tmp - abs_pt2)*0.5d0
    print*,'E(before) + PT2   = ',E_tc + pt2_tmp/norm
    print*,'E(before) +rPT2   = ',E_tc + rpt2_tmp/norm
    write(*,'(A28,X,I10,X,100(F16.8,X))')'Ndet,E,E+PT2,E+RPT2,|PT2|=',ndet,E_tc ,E_tc  + pt2_tmp/norm,E_tc  + rpt2_tmp/norm,abs_pt2
