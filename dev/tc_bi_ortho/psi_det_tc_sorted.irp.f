@@ -100,3 +100,45 @@ END_PROVIDER
 
 END_PROVIDER
 
+
+ BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_tc_right, (N_int,2,N_det) ]
+&BEGIN_PROVIDER [double precision, psi_r_coef_sorted_bi_ortho_right, (N_det)]
+ implicit none
+ integer, allocatable           :: iorder(:)
+ double precision, allocatable :: coef(:)
+ integer :: i,j
+ allocate ( iorder(N_det) , coef(N_det))
+ do i=1,N_det
+   coef(i) = -dabs(psi_r_coef_bi_ortho(i,1)/psi_r_coef_bi_ortho(1,1))
+   iorder(i) = i
+ enddo
+ call dsort(coef,iorder,N_det)
+ do i=1,N_det
+   do j=1,N_int
+     psi_det_sorted_tc_right(j,1,i) = psi_det(j,1,iorder(i))
+     psi_det_sorted_tc_right(j,2,i) = psi_det(j,2,iorder(i))
+   enddo
+  psi_r_coef_sorted_bi_ortho_right(i) = psi_r_coef_bi_ortho(iorder(i),1)/psi_r_coef_bi_ortho(iorder(1),1)
+ enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_tc_left, (N_int,2,N_det) ]
+&BEGIN_PROVIDER [double precision, psi_l_coef_sorted_bi_ortho_left, (N_det)]
+ implicit none
+ integer, allocatable           :: iorder(:)
+ double precision, allocatable :: coef(:)
+ integer :: i,j
+ allocate ( iorder(N_det) , coef(N_det))
+ do i=1,N_det
+   coef(i) = -dabs(psi_l_coef_bi_ortho(i,1)/psi_r_coef_bi_ortho(1,1))
+   iorder(i) = i
+ enddo
+ call dsort(coef,iorder,N_det)
+ do i=1,N_det
+   do j=1,N_int
+     psi_det_sorted_tc_left(j,1,i) = psi_det(j,1,iorder(i))
+     psi_det_sorted_tc_left(j,2,i) = psi_det(j,2,iorder(i))
+   enddo
+  psi_l_coef_sorted_bi_ortho_left(i) = psi_l_coef_bi_ortho(iorder(i),1)/psi_l_coef_bi_ortho(iorder(1),1)
+ enddo
+END_PROVIDER 
