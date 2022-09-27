@@ -1,5 +1,6 @@
 use bitmasks
 
+
 BEGIN_PROVIDER [ double precision, psi_average_norm_contrib_tc, (psi_det_size) ]                                                                
   implicit none
   BEGIN_DOC
@@ -74,7 +75,7 @@ END_PROVIDER
 &BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
 
    implicit none
-   integer                       :: i, j, k
+   integer :: i, j, k
    reigvec_tc_bi_orth_sorted = 0.d0
    leigvec_tc_bi_orth_sorted = 0.d0
    do i = 1, N_det

@@ -123,26 +123,38 @@ subroutine test_overlap()
 
   allocate(C(mo_num,mo_num))
 
-  call LTxSxR(ao_num, mo_num, M, S, M, C)
   print*, " C.T x C"
+  call LTxSxR(ao_num, mo_num, M, S, M, C)
   do i = 1, mo_num
     write(*, '(100(F16.10,X))') C(i,:)
   enddo
 
-  call LTxSxR(ao_num, mo_num, L, S, R, C)
   print*, " L.T x R"
+  call LTxSxR(ao_num, mo_num, L, S, R, C)
   do i = 1, mo_num
     write(*, '(100(F16.10,X))') C(i,:)
   enddo
 
-  call LTxSxR(ao_num, mo_num, L, S, M, C)
   print*, " L.T x C"
+  call LTxSxR(ao_num, mo_num, L, S, M, C)
   do i = 1, mo_num
     write(*, '(100(F16.10,X))') C(i,i)
   enddo
 
-  call LTxSxR(ao_num, mo_num, M, S, R, C)
   print*, " C.T x R"
+  call LTxSxR(ao_num, mo_num, M, S, R, C)
+  do i = 1, mo_num
+    write(*, '(100(F16.10,X))') C(i,i)
+  enddo
+
+  print*, " L.T x L"
+  call LTxSxR(ao_num, mo_num, L, S, L, C)
+  do i = 1, mo_num
+    write(*, '(100(F16.10,X))') C(i,i)
+  enddo
+
+  print*, " R.T x R"
+  call LTxSxR(ao_num, mo_num, R, S, R, C)
   do i = 1, mo_num
     write(*, '(100(F16.10,X))') C(i,i)
   enddo

@@ -140,6 +140,8 @@ subroutine routine_scf()
       call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
       TOUCH mo_l_coef mo_r_coef
 
+      call ezfio_set_tc_scf_bitc_energy(TC_HF_energy)
+
     enddo
 
   else
