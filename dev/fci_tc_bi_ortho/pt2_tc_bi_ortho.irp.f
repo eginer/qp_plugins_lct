@@ -1,5 +1,5 @@
 program fci
-  implicit none
+
   BEGIN_DOC
   ! Selected Full Configuration Interaction with stochastic selection
   ! and PT2.
@@ -36,18 +36,19 @@ program fci
   !
   END_DOC
 
+  implicit none
 
   my_grid_becke = .True.
   my_n_pt_r_grid = 30
   my_n_pt_a_grid = 50
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid 
-  pruning = -1.d0
-  touch pruning
 !  pt2_relative_error = 0.01d0
 !  touch pt2_relative_error
   call run_cipsi_tc
 
 end
+!  read_wf = .True.
+!  touch read_wf 
 
 
 subroutine run_cipsi_tc
@@ -55,6 +56,9 @@ subroutine run_cipsi_tc
   implicit none
 
   if (.not.is_zmq_slave) then
+!!    PROVIDE psi_det psi_coef mo_two_e_integrals_in_map diag_htilde
+
+    ! ---
     PROVIDE psi_det psi_coef mo_bi_ortho_tc_two_e mo_bi_ortho_tc_one_e
     if(elec_alpha_num+elec_beta_num.ge.3)then
       if(three_body_h_tc)then
@@ -62,15 +66,13 @@ subroutine run_cipsi_tc
       endif
     endif
     ! ---
-
-    if (do_pt2) then
-      call run_stochastic_cipsi
-    else
-      call run_cipsi
-    endif
-
+      call pt2_tc_bi_ortho
   else
-    PROVIDE mo_bi_ortho_tc_one_e mo_bi_ortho_tc_two_e pt2_min_parallel_tasks
+!!    PROVIDE mo_two_e_integrals_in_map pt2_min_parallel_tasks
+
+    ! ---
+    PROVIDE pt2_min_parallel_tasks 
+    PROVIDE mo_bi_ortho_tc_two_e mo_bi_ortho_tc_one_e
     if(elec_alpha_num+elec_beta_num.ge.3)then
       if(three_body_h_tc)then
         call provide_all_three_ints_bi_ortho

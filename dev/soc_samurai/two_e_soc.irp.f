@@ -74,26 +74,6 @@ BEGIN_PROVIDER [ double precision, rdm_one_e_soc, ( ao_num, ao_num,n_states)]
 
 END_PROVIDER
 
-BEGIN_PROVIDER [ double precision, f_mu_nu_find_a_better_name, (3,n_points_final_grid, ao_num, ao_num)]
- implicit none
- BEGIN_DOC
-! f_mu_nu_find_a_better_name(coord,r_grid,ao1,ao2) = C * d ao1(r_grid)/di +d ao2(r_grid)/di
- END_DOC
- integer :: i,j,ipoint
- double precision :: C_soc,alpha
- alpha = 1.d0/137.d0
- C_soc = alpha**2 / 2.d0
- do i = 1, ao_num
-  do j = 1, ao_num
-   do ipoint = 1,n_points_final_grid 
-    f_mu_nu_find_a_better_name(1,ipoint,j,i) = aos_grad_in_r_array_transp_3(2,ipoint,j)*aos_grad_in_r_array_transp_3(3,ipoint,i) - aos_grad_in_r_array_transp_3(3,ipoint,j)*aos_grad_in_r_array_transp_3(2,ipoint,i)
-    f_mu_nu_find_a_better_name(2,ipoint,j,i) = aos_grad_in_r_array_transp_3(3,ipoint,j)*aos_grad_in_r_array_transp_3(1,ipoint,i) - aos_grad_in_r_array_transp_3(1,ipoint,j)*aos_grad_in_r_array_transp_3(3,ipoint,i)
-    f_mu_nu_find_a_better_name(3,ipoint,j,i) = aos_grad_in_r_array_transp_3(1,ipoint,j)*aos_grad_in_r_array_transp_3(2,ipoint,i) - aos_grad_in_r_array_transp_3(2,ipoint,j)*aos_grad_in_r_array_transp_3(1,ipoint,i)
-   enddo
-  enddo
- enddo
-f_mu_nu_find_a_better_name = f_mu_nu_find_a_better_name * C_soc  !CA MARCHE CA ????
-END_PROVIDER
 
 BEGIN_PROVIDER [ double precision, D_mu_nu_find_a_better_name, (3,ao_num, ao_num,n_states)]
  implicit none
@@ -112,7 +92,7 @@ BEGIN_PROVIDER [ double precision, D_mu_nu_find_a_better_name, (3,ao_num, ao_num
       grid_sum = 0d0
       do ipoint = 1,n_points_final_grid 
        do coord = 1,3 
-         grid_sum(coord) += f_mu_nu_find_a_better_name(coord,ipoint,j,i) * v_c_ij_grid_transp(ipoint,l,k) * final_weight_at_r_vector(ipoint)
+         grid_sum(coord) += vec_prod_grad_ao_at_r(coord,ipoint,j,i) * v_c_ij_grid_transp(ipoint,l,k) * final_weight_at_r_vector(ipoint)
        enddo
       enddo
 
@@ -144,7 +124,7 @@ BEGIN_PROVIDER [ double precision, E1_mu_nu_find_a_better_name, (3,ao_num, ao_nu
       grid_sum = 0d0
       do ipoint = 1, n_points_final_grid 
        do coord = 1,3 
-        grid_sum(coord) += f_mu_nu_find_a_better_name(coord,ipoint,k,i) * v_c_ij_grid_transp(ipoint,l,j) * final_weight_at_r_vector_extra(ipoint)
+        grid_sum(coord) += vec_prod_grad_ao_at_r(coord,ipoint,k,i) * v_c_ij_grid_transp(ipoint,l,j) * final_weight_at_r_vector_extra(ipoint)
        enddo
       enddo
 
@@ -177,7 +157,7 @@ BEGIN_PROVIDER [ double precision, E2_mu_nu_find_a_better_name, (3,ao_num, ao_nu
       grid_sum = 0d0
       do ipoint = 1, n_points_final_grid 
        do coord = 1,3 
-        grid_sum(coord) += f_mu_nu_find_a_better_name(coord,ipoint,j,l) * v_c_ij_grid_transp(ipoint,i,k) * final_weight_at_r_vector(ipoint)
+        grid_sum(coord) += vec_prod_grad_ao_at_r(coord,ipoint,j,l) * v_c_ij_grid_transp(ipoint,i,k) * final_weight_at_r_vector(ipoint)
        enddo
       enddo
 
@@ -192,59 +172,3 @@ BEGIN_PROVIDER [ double precision, E2_mu_nu_find_a_better_name, (3,ao_num, ao_nu
  enddo
  E2_mu_nu_find_a_better_name = -3.d0/2.d0 * E2_mu_nu_find_a_better_name 
 END_PROVIDER
-
-
-!!!!!!!!!!!!!!!!!! ONE BODY PART !!!!!!!!!!!!!!!!!!!!
-
-
-BEGIN_PROVIDER [ double precision, One_body_mu_nu_find_a_better_name, (3,nucl_num,ao_num, ao_num,n_states)]
- implicit none
- BEGIN_DOC
- !E1_mu_nu_find_a_better_name(ao1,ao2,nstate) = 
- END_DOC
- integer :: i,j,ipoint,istate,k,l,coord,n_nucl
- double precision :: r_n(3),r_e(3),dis,v_nucl,alpha,C_soc,z_n
- alpha = 1.d0/137.d0 !WARNING: maybe find a better value
- C_soc = alpha**2.d0 / 2.d0
- One_body_mu_nu_find_a_better_name = 0.d0
- do istate = 1, n_states
-  do n_nucl= 1, nucl_num
-   r_n(1) = nucl_coord(n_nucl,1) 
-   r_n(2) = nucl_coord(n_nucl,2) 
-   r_n(3) = nucl_coord(n_nucl,3) 
-   z_n = nucl_charge(n_nucl) 
-   do i= 1, ao_num
-    do j = 1, ao_num
-     do ipoint = 1, n_points_final_grid 
-      r_e(1) = final_grid_points (1,ipoint)
-      r_e(2) = final_grid_points (2,ipoint)
-      r_e(3) = final_grid_points (3,ipoint)
-      dis = sqrt((r_e(1)-r_n(1))**2 + (r_e(2)-r_n(2))**2 + (r_e(3)-r_n(3))**2 )
-      if (dis < 1.d-8) cycle
-      v_nucl = C_soc * z_n / dis  
-
-      do coord = 1,3 
-       One_body_mu_nu_find_a_better_name(coord,n_nucl,j, i,istate) += f_mu_nu_find_a_better_name(coord,ipoint,j,i) * v_nucl * final_weight_at_r_vector(ipoint)
-      enddo
-     !print*, f_mu_nu_find_a_better_name(1,ipoint,j,i),f_mu_nu_find_a_better_name(2,ipoint,j,i),f_mu_nu_find_a_better_name(3,ipoint,j,i)
-     !print*,One_body_mu_nu_find_a_better_name(1,n_nucl,j, i,istate), One_body_mu_nu_find_a_better_name(2,n_nucl,j, i,istate),One_body_mu_nu_find_a_better_name(3,n_nucl,j, i,istate) 
-     enddo
-    enddo
-   enddo
-  enddo
- enddo
-END_PROVIDER
-
-
-BEGIN_PROVIDER [ double precision, v_soc_tot_mo, (mo_num, mo_num,3)]
- implicit none
- BEGIN_DOC
- ! total one-body spin orbit operator on the MO basis 
- ! v_soc_tot_mo(i,j,k) = <ph_i| V_so^k | phi_j>
- ! k = 1 = +
- ! k = 2 = -
- ! k = 3 = z
- END_DOC
- v_soc_tot_mo = 0.d0
-
-END_PROVIDER 

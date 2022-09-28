@@ -11,8 +11,9 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
 !  eigenstates of the CI matrix
   END_DOC
   integer :: i,j
- double precision :: pt2_tmp,pt1_norm,rpt2_tmp
+ double precision :: pt2_tmp,pt1_norm,rpt2_tmp,abs_pt2
  pt2_tmp = pt2_data % pt2(1)
+ abs_pt2 = pt2_data % variance(1)
  pt1_norm = pt2_data % overlap(1,1)
  rpt2_tmp = pt2_tmp/(1.d0 + pt1_norm)
   print*,'*****'
@@ -30,9 +31,12 @@ subroutine diagonalize_CI_tc_bi_ortho(ndet, E_tc,norm,pt2_data,print_pt2)
    print*,'PT1 norm          = ',dsqrt(pt1_norm)
    print*,'PT2               = ',pt2_tmp
    print*,'rPT2              = ',rpt2_tmp
+   print*,'|PT2|             = ',abs_pt2
+   print*,'Positive PT2      = ',(pt2_tmp + abs_pt2)*0.5d0
+   print*,'Negative PT2      = ',(pt2_tmp - abs_pt2)*0.5d0
    print*,'E(before) + PT2   = ',E_tc + pt2_tmp/norm
    print*,'E(before) +rPT2   = ',E_tc + rpt2_tmp/norm
-   write(*,'(A22,X,I10,X,100(F16.8,X))')'Ndet,E,E+PT2,E+RPT2=',ndet,E_tc ,E_tc  + pt2_tmp/norm,E_tc  + rpt2_tmp/norm
+   write(*,'(A28,X,I10,X,100(F16.8,X))')'Ndet,E,E+PT2,E+RPT2,|PT2|=',ndet,E_tc ,E_tc  + pt2_tmp/norm,E_tc  + rpt2_tmp/norm,abs_pt2
    print*,'*****'
   endif
   E_tc  = eigval_right_tc_bi_orth(1)

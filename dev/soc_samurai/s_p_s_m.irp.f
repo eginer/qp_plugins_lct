@@ -1,3 +1,20 @@
+
+subroutine s_plus_or_s_minus_det_orb_j(det_in,orb_j,pm,det_out,phase)
+  use bitmasks ! you need to include the bitmasks_module.f90 features
+ integer(bit_kind), intent(in)  :: det_in(N_int,2)
+ integer          , intent(in)  :: orb_j,pm
+ integer(bit_kind), intent(out) :: det_out(N_int,2)
+ double precision, intent(out)  :: phase
+ if(pm == +1)then
+  call s_plus_det_orb_j(det_in,orb_j,det_out,phase)
+ else if(pm == -1)then
+  call s_minus_det_orb_j(det_in,orb_j,det_out,phase)
+ else
+  print*,'wrong argument in s_plus_or_s_minus_det_orb_j'
+  stop
+ endif
+end
+
 subroutine s_plus_det_orb_j(det_in,orb_j,det_out,phase)
  implicit none
  BEGIN_DOC
@@ -160,13 +177,13 @@ end
 subroutine s_minus_det(det_in,det_out,phase,ndet_out)
  implicit none
  BEGIN_DOC
-! a^dagger_orb_j_down a_orb_j_ups | det_in > = phase * | det_out >
+! a^dagger_orb_j_down a_orb_j_up | det_in > = phase * | det_out >
  END_DOC
   use bitmasks ! you need to include the bitmasks_module.f90 features
  integer(bit_kind), intent(in)  :: det_in(N_int,2)
- integer(bit_kind), intent(out) :: det_out(N_int,2,elec_beta_num)
+ integer(bit_kind), intent(out) :: det_out(N_int,2,elec_alpha_num)
  integer, intent(out)           :: ndet_out
- double precision , intent(out) :: phase(elec_beta_num)
+ double precision , intent(out) :: phase(elec_alpha_num)
  
  integer(bit_kind) :: open_shell(N_int),open_a_b(N_int,2),det_tmp(N_int,2)
  integer(bit_kind) :: det_orb_j(N_int)
@@ -195,18 +212,4 @@ subroutine s_minus_det(det_in,det_out,phase,ndet_out)
   endif
  enddo
 
-end
-
-
-
-double precision function factor_s_p(S,ms)
- implicit none
- double precision, intent(in) :: S,ms
- factor_s_p = dsqrt(S*(S+1.d0) - ms*(ms+1.d0))
-end
-
-double precision function factor_s_m(S,ms)
- implicit none
- double precision, intent(in) :: S,ms
- factor_s_m = dsqrt(S*(S+1.d0) - ms*(ms-1.d0))
 end

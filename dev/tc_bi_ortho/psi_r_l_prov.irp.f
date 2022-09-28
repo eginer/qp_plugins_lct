@@ -1,6 +1,6 @@
 use bitmasks
 
-BEGIN_PROVIDER [ double precision, psi_l_coef_bi_ortho, (N_det,N_states) ]
+BEGIN_PROVIDER [ double precision, psi_l_coef_bi_ortho, (psi_det_size,N_states) ]
   implicit none
   BEGIN_DOC
   ! The wave function coefficients. Initialized with Hartree-Fock if the |EZFIO| file
@@ -59,7 +59,7 @@ BEGIN_PROVIDER [ double precision, psi_l_coef_bi_ortho, (N_det,N_states) ]
 END_PROVIDER
 
 
-BEGIN_PROVIDER [ double precision, psi_r_coef_bi_ortho, (N_det,N_states) ]
+BEGIN_PROVIDER [ double precision, psi_r_coef_bi_ortho, (psi_det_size,N_states) ]
   implicit none
   BEGIN_DOC
   ! The wave function coefficients. Initialized with Hartree-Fock if the |EZFIO| file
@@ -186,7 +186,7 @@ end
 
 subroutine save_tc_bi_ortho_wavefunction
  implicit none
- call save_tc_wavefunction_general(N_det,N_states,psi_det,N_det,psi_l_coef_bi_ortho,psi_r_coef_bi_ortho)
+ call save_tc_wavefunction_general(N_det,N_states,psi_det,size(psi_l_coef_bi_ortho, 1),psi_l_coef_bi_ortho,psi_r_coef_bi_ortho)
  call routine_save_right_bi_ortho
 end
 

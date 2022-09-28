@@ -4,7 +4,7 @@ program test_det
  touch read_wf 
 ! call routine
 ! call test_conf
-! call test_prov_s_p
+ call test_prov_s_p
  call test_prov_s_m
 end
 

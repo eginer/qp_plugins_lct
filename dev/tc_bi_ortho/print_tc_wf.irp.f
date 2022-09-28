@@ -10,10 +10,26 @@ program print_tc_bi_ortho
   read_wf = .True.
   touch read_wf
   touch  my_grid_becke my_n_pt_r_grid my_n_pt_a_grid
-  if(three_body_h_tc)then
-   call provide_all_three_ints_bi_ortho
-  endif
-  call routine
+!  if(three_body_h_tc)then
+!   call provide_all_three_ints_bi_ortho
+!  endif
+!  call routine
+ call write_l_r_wf
+end
+
+subroutine write_l_r_wf
+ implicit none
+ character*(128) :: output
+ integer :: i_unit_output,getUnitAndOpen                                                                                 
+ output=trim(ezfio_filename)//'.tc_wf'
+ i_unit_output = getUnitAndOpen(output,'w')
+ integer :: i
+ print*,'Writing the left-right wf'
+ do i = 1, N_det
+  write(i_unit_output,*)i,psi_l_coef_sorted_bi_ortho_left(i),psi_r_coef_sorted_bi_ortho_right(i)
+ enddo
+
+
 end
 
 subroutine routine

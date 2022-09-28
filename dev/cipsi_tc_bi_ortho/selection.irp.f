@@ -802,6 +802,16 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
 
         coef(istate)   = alpha_h_psi / delta_E 
         e_pert(istate) = coef(istate) * psi_h_alpha
+        if(selection_tc     ==  1 )then
+         if(e_pert(istate).lt.0.d0)then
+          e_pert(istate) = 0.d0
+         endif
+        else if(selection_tc == -1)then
+         if(e_pert(istate).gt.0.d0)then
+          e_pert(istate) = 0.d0
+         endif
+        endif
+         
 
         !if(e_pert(istate) .gt. 1.d-15) then
         !  print*, 'E0,Hii,E_shift'
@@ -820,7 +830,7 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         alpha_h_psi = mat(istate, p1, p2)
 
         pt2_data % overlap(:,istate) = pt2_data % overlap(:,istate) + coef(:) * coef(istate)
-        pt2_data % variance(istate)  = pt2_data % variance(istate) + alpha_h_psi * alpha_h_psi
+        pt2_data % variance(istate)  = pt2_data % variance(istate) + dabs(e_pert(istate))
         pt2_data % pt2(istate)       = pt2_data % pt2(istate)      + e_pert(istate)
 
         select case (weight_selection)

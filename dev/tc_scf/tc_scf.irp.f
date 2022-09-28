@@ -73,7 +73,7 @@ subroutine routine_scf()
   it = 0
   print*,'iteration = ', it
 
-  !print*,'grad_good_hermit_tc_fock_mat = ', grad_good_hermit_tc_fock_mat
+  !print*,'grad_hermit = ', grad_hermit
   print*,'***'
   print*,'TC HF total energy = ', TC_HF_energy
   print*,'TC HF 1 e   energy = ', TC_HF_one_electron_energy
@@ -98,7 +98,7 @@ subroutine routine_scf()
 
   else
 
-   print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
+   print*,'grad_hermit = ',grad_hermit
    call save_good_hermit_tc_eigvectors
    TOUCH mo_coef 
    call save_mos
@@ -146,10 +146,15 @@ subroutine routine_scf()
     enddo
 
   else
+<<<<<<< HEAD
 
     do while( (grad_good_hermit_tc_fock_mat.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
 
       print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
+=======
+   do while( (grad_hermit.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
+      print*,'grad_hermit = ',grad_hermit
+>>>>>>> 78bd5b8e9d4247a0610890339bb6d13ea1dae4b8
       it += 1
       print*,'iteration = ', it
       print*,'***'
