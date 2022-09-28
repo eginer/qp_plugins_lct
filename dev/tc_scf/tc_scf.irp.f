@@ -127,6 +127,7 @@ subroutine routine_scf()
       mo_r_coef = fock_tc_reigvec_ao
 
       rho_new   = TCSCF_bi_ort_dm_ao
+      !print*, rho_new
       rho_delta = 0.d0
       do i = 1, ao_num 
         do j = 1, ao_num 

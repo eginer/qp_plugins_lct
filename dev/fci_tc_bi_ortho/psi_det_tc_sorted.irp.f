@@ -1,6 +1,5 @@
 use bitmasks
 
-
 BEGIN_PROVIDER [ double precision, psi_average_norm_contrib_tc, (psi_det_size) ]                                                                
   implicit none
   BEGIN_DOC
@@ -13,7 +12,7 @@ BEGIN_PROVIDER [ double precision, psi_average_norm_contrib_tc, (psi_det_size) ]
   do k=1,N_states
     do i=1,N_det
       psi_average_norm_contrib_tc(i) = psi_average_norm_contrib_tc(i) +    &
-          dabs(psi_l_coef_bi_ortho(i,k)*psi_l_coef_bi_ortho(i,k))*state_average_weight(k)
+          dabs(psi_l_coef_bi_ortho(i,k)*psi_r_coef_bi_ortho(i,k))*state_average_weight(k)
     enddo
   enddo
   f = 1.d0/sum(psi_average_norm_contrib_tc(1:N_det))
@@ -46,20 +45,20 @@ END_PROVIDER
        psi_det_sorted_tc(j,1,i) = psi_det(j,1,iorder(i))
        psi_det_sorted_tc(j,2,i) = psi_det(j,2,iorder(i))
      enddo
-     double precision :: accu
-     accu = 0.d0
-     do k=1,N_states
-       psi_coef_sorted_tc(i,k) = dabs(psi_l_coef_bi_ortho(iorder(i),k)*psi_l_coef_bi_ortho(iorder(i),k))
-       accu += psi_coef_sorted_tc(i,k)
-     enddo
-     accu = 1.d0/accu
-     do k=1,N_states
-       psi_coef_sorted_tc(i,k) *= accu
-     enddo
-     psi_average_norm_contrib_sorted_tc(i) = -psi_average_norm_contrib_sorted_tc(i)
+    psi_average_norm_contrib_sorted_tc(i) = -psi_average_norm_contrib_sorted_tc(i)
+    psi_det_sorted_tc_order(iorder(i)) = i
    enddo
-   do i=1,N_det
-     psi_det_sorted_tc_order(iorder(i)) = i
+   double precision :: accu
+   do k=1,N_states
+    accu = 0.d0
+    do i=1,N_det
+     psi_coef_sorted_tc(i,k) = dsqrt(dabs(psi_l_coef_bi_ortho(iorder(i),k)*psi_r_coef_bi_ortho(iorder(i),k)))
+     accu += psi_coef_sorted_tc(i,k)**2
+    enddo
+    accu = 1.d0/dsqrt(accu)
+    do i=1,N_det
+     psi_coef_sorted_tc(i,k) *= accu
+    enddo
    enddo
 
    psi_det_sorted_tc(:,:,N_det+1:psi_det_size) = 0_bit_kind
@@ -71,38 +70,20 @@ END_PROVIDER
 
 END_PROVIDER
 
- BEGIN_PROVIDER [double precision, reigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
-&BEGIN_PROVIDER [double precision, leigvec_tc_bi_orth_sorted, (psi_det_size, N_states)]
+ BEGIN_PROVIDER [double precision, psi_r_coef_sorted_bi_ortho, (psi_det_size, N_states)]
+&BEGIN_PROVIDER [double precision, psi_l_coef_sorted_bi_ortho, (psi_det_size, N_states)]
 
    implicit none
-   integer :: i, j, k
-   reigvec_tc_bi_orth_sorted = 0.d0
-   leigvec_tc_bi_orth_sorted = 0.d0
+   integer                       :: i, j, k
+   psi_r_coef_sorted_bi_ortho = 0.d0
+   psi_l_coef_sorted_bi_ortho = 0.d0
    do i = 1, N_det
-    reigvec_tc_bi_orth_sorted(i,1) = reigvec_tc_bi_orth(psi_det_sorted_tc_order(i),1)
-    leigvec_tc_bi_orth_sorted(i,1) = leigvec_tc_bi_orth(psi_det_sorted_tc_order(i),1)
+    psi_r_coef_sorted_bi_ortho(i,1) = psi_r_coef_bi_ortho(psi_det_sorted_tc_order(i),1)
+    psi_l_coef_sorted_bi_ortho(i,1) = psi_l_coef_bi_ortho(psi_det_sorted_tc_order(i),1)
    enddo
 
 END_PROVIDER
 
- BEGIN_PROVIDER [ double precision, psi_selectors_rcoef_bi_orth_transp, (N_states, psi_det_size) ]
-&BEGIN_PROVIDER [ double precision, psi_selectors_lcoef_bi_orth_transp, (N_states, psi_det_size) ]
-
-  implicit none
-  integer :: i, k
-
-  psi_selectors_rcoef_bi_orth_transp = 0.d0
-  psi_selectors_lcoef_bi_orth_transp = 0.d0
-
-  print*,'N_det,N_det_selectors',N_det,N_det_selectors
-  do i = 1, N_det_selectors
-    do k = 1, N_states
-      psi_selectors_rcoef_bi_orth_transp(k,i) = reigvec_tc_bi_orth_sorted(i,k)
-      psi_selectors_lcoef_bi_orth_transp(k,i) = leigvec_tc_bi_orth_sorted(i,k)
-    enddo
-  enddo
-
-END_PROVIDER
 
  BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_tc_bit, (N_int,2,psi_det_size) ]
 &BEGIN_PROVIDER [ double precision, psi_coef_sorted_tc_bit, (psi_det_size,N_states) ]
@@ -119,3 +100,45 @@ END_PROVIDER
 
 END_PROVIDER
 
+
+ BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_tc_right, (N_int,2,N_det) ]
+&BEGIN_PROVIDER [double precision, psi_r_coef_sorted_bi_ortho_right, (N_det)]
+ implicit none
+ integer, allocatable           :: iorder(:)
+ double precision, allocatable :: coef(:)
+ integer :: i,j
+ allocate ( iorder(N_det) , coef(N_det))
+ do i=1,N_det
+   coef(i) = -dabs(psi_r_coef_bi_ortho(i,1)/psi_r_coef_bi_ortho(1,1))
+   iorder(i) = i
+ enddo
+ call dsort(coef,iorder,N_det)
+ do i=1,N_det
+   do j=1,N_int
+     psi_det_sorted_tc_right(j,1,i) = psi_det(j,1,iorder(i))
+     psi_det_sorted_tc_right(j,2,i) = psi_det(j,2,iorder(i))
+   enddo
+  psi_r_coef_sorted_bi_ortho_right(i) = psi_r_coef_bi_ortho(iorder(i),1)/psi_r_coef_bi_ortho(iorder(1),1)
+ enddo
+END_PROVIDER 
+
+ BEGIN_PROVIDER [ integer(bit_kind), psi_det_sorted_tc_left, (N_int,2,N_det) ]
+&BEGIN_PROVIDER [double precision, psi_l_coef_sorted_bi_ortho_left, (N_det)]
+ implicit none
+ integer, allocatable           :: iorder(:)
+ double precision, allocatable :: coef(:)
+ integer :: i,j
+ allocate ( iorder(N_det) , coef(N_det))
+ do i=1,N_det
+   coef(i) = -dabs(psi_l_coef_bi_ortho(i,1)/psi_r_coef_bi_ortho(1,1))
+   iorder(i) = i
+ enddo
+ call dsort(coef,iorder,N_det)
+ do i=1,N_det
+   do j=1,N_int
+     psi_det_sorted_tc_left(j,1,i) = psi_det(j,1,iorder(i))
+     psi_det_sorted_tc_left(j,2,i) = psi_det(j,2,iorder(i))
+   enddo
+  psi_l_coef_sorted_bi_ortho_left(i) = psi_l_coef_bi_ortho(iorder(i),1)/psi_l_coef_bi_ortho(iorder(1),1)
+ enddo
+END_PROVIDER
