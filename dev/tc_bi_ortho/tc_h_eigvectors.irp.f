@@ -183,4 +183,5 @@ subroutine bi_normalize(u_l,u_r,n,ld,nstates)
     u_l(j,i) *= accu * tmp
     u_r(j,i) *= accu 
    enddo
+  enddo
 end
