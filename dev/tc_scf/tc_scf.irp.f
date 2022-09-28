@@ -98,6 +98,7 @@ subroutine routine_scf()
 
 
   else
+
    print*,'grad_hermit = ',grad_hermit
    call save_good_hermit_tc_eigvectors
    TOUCH mo_coef 
@@ -146,20 +147,8 @@ subroutine routine_scf()
     enddo
 
   else
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-    do while( (grad_good_hermit_tc_fock_mat.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
-
-      print*,'grad_good_hermit_tc_fock_mat = ',grad_good_hermit_tc_fock_mat
-=======
    do while( (grad_hermit.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
       print*,'grad_hermit = ',grad_hermit
->>>>>>> 78bd5b8e9d4247a0610890339bb6d13ea1dae4b8
-=======
-   do while( (grad_hermit.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
-      print*,'grad_hermit = ',grad_hermit
->>>>>>> 78bd5b8e9d4247a0610890339bb6d13ea1dae4b8
       it += 1
       print*,'iteration = ', it
       print*,'***'
