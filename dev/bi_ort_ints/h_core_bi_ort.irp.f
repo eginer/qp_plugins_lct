@@ -23,7 +23,9 @@ BEGIN_PROVIDER [ double precision, mo_bi_ortho_tc_one_e, (mo_num, mo_num)]
 !   enddo
 !  enddo
 ! enddo
- call ao_to_mo_bi_ortho(ao_one_e_integrals,ao_num,mo_bi_ortho_tc_one_e,mo_num)
+
+  call ao_to_mo_bi_ortho(ao_one_e_integrals_tc_tot, ao_num, mo_bi_ortho_tc_one_e, mo_num)
+
 !do i = 1, mo_num
 ! do k = 1, mo_num
 !   print*,k,i
@@ -45,9 +47,13 @@ BEGIN_PROVIDER [double precision, mo_bi_ortho_tc_one_e_slow, (mo_num, mo_num)]
   do k = 1, mo_num
    do p = 1, ao_num
     do q = 1, ao_num
-     mo_bi_ortho_tc_one_e_slow(k,i) +=   mo_l_coef(p,k) * ao_one_e_integrals(q,p) * mo_r_coef(q,i)
+     mo_bi_ortho_tc_one_e_slow(k,i) +=   mo_l_coef(p,k) * ao_one_e_integrals_tc_tot(q,p) * mo_r_coef(q,i)
+     !mo_bi_ortho_tc_one_e_slow(k,i) +=   mo_l_coef(p,k) * ao_one_e_integrals(q,p) * mo_r_coef(q,i)
     enddo
    enddo
   enddo
  enddo
 END_PROVIDER 
+
+! ---
+

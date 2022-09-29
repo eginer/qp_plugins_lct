@@ -43,6 +43,8 @@ BEGIN_PROVIDER [ double precision, mo_r_coef, (ao_num, mo_num) ]
       endif
     IRP_ENDIF
   else
+
+    print*, 'mo_r_coef are mo_coef'
     do i = 1, mo_num
       do j = 1, ao_num
         mo_r_coef(j,i) = mo_coef(j,i)
@@ -96,6 +98,8 @@ BEGIN_PROVIDER [ double precision, mo_l_coef, (ao_num, mo_num) ]
       endif
     IRP_ENDIF
   else
+
+    print*, 'mo_r_coef are mo_coef'
     do i = 1, mo_num
       do j = 1, ao_num
         mo_l_coef(j,i) = mo_coef(j,i)

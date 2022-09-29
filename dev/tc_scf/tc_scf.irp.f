@@ -64,8 +64,11 @@ end subroutine create_guess
 subroutine routine_scf()
 
   implicit none
-  integer          :: i, j, it
-  double precision :: e_save, e_delta
+  integer                       :: i, j, it
+  double precision              :: e_save, e_delta, rho_delta
+  double precision, allocatable :: rho_old(:,:), rho_new(:,:)
+
+  allocate(rho_old(ao_num,ao_num), rho_new(ao_num,ao_num))
 
   it = 0
   print*,'iteration = ', it
@@ -81,39 +84,68 @@ subroutine routine_scf()
   print*,'***'
   e_delta = 10.d0
   e_save  = 0.d0 !TC_HF_energy
+  rho_delta = 10.d0
+
 
   if(bi_ortho)then
+
    mo_l_coef = fock_tc_leigvec_ao
    mo_r_coef = fock_tc_reigvec_ao
+   rho_old   = TCSCF_bi_ort_dm_ao
    call ezfio_set_bi_ortho_mos_mo_l_coef(mo_l_coef)
    call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
    TOUCH mo_l_coef mo_r_coef
+
+
   else
+
    print*,'grad_hermit = ',grad_hermit
    call save_good_hermit_tc_eigvectors
    TOUCH mo_coef 
    call save_mos
+
   endif
 
-  if(bi_ortho)then
-   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)) )
-!   do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. thresh_tcscf) )
-     it += 1
-     print*,'iteration = ', it
-     print*,'***'
-     print*,'TC HF total energy = ', TC_HF_energy
-     print*,'TC HF 1 e   energy = ', TC_HF_one_electron_energy
-     print*,'TC HF 2 non hermit = ', TC_HF_two_e_energy
-     print*,'***'
-     e_delta = dabs( TC_HF_energy - e_save )
-     print*, 'it, delta E = ', it, e_delta
-     e_save = TC_HF_energy
-     mo_l_coef = fock_tc_leigvec_ao
-     mo_r_coef = fock_tc_reigvec_ao
-     call ezfio_set_bi_ortho_mos_mo_l_coef(mo_l_coef)
-     call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
-     TOUCH mo_l_coef mo_r_coef
-   enddo
+  ! ---
+
+  if(bi_ortho) then
+
+    !do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. dsqrt(thresh_tcscf)) )
+    !do while( it .lt. n_it_tcscf_max .and. (e_delta .gt. thresh_tcscf) )
+    do while( it .lt. n_it_tcscf_max .and. (rho_delta .gt. thresh_tcscf) )
+
+      it += 1
+      print*,'iteration = ', it
+      print*,'***'
+      print*,'TC HF total energy = ', TC_HF_energy
+      print*,'TC HF 1 e   energy = ', TC_HF_one_electron_energy
+      print*,'TC HF 2 non hermit = ', TC_HF_two_e_energy
+      print*,'***'
+      e_delta = dabs( TC_HF_energy - e_save )
+      print*, 'it, delta E = ', it, e_delta
+      e_save    = TC_HF_energy
+      mo_l_coef = fock_tc_leigvec_ao
+      mo_r_coef = fock_tc_reigvec_ao
+
+      rho_new   = TCSCF_bi_ort_dm_ao
+      !print*, rho_new
+      rho_delta = 0.d0
+      do i = 1, ao_num 
+        do j = 1, ao_num 
+          rho_delta += dabs(rho_new(j,i) - rho_old(j,i))
+        enddo
+      enddo
+      print*, ' rho_delta =', rho_delta
+      rho_old = rho_new
+
+      call ezfio_set_bi_ortho_mos_mo_l_coef(mo_l_coef)
+      call ezfio_set_bi_ortho_mos_mo_r_coef(mo_r_coef)
+      TOUCH mo_l_coef mo_r_coef
+
+      call ezfio_set_tc_scf_bitc_energy(TC_HF_energy)
+
+    enddo
+
   else
    do while( (grad_hermit.gt.dsqrt(thresh_tcscf)) .and. it .lt. n_it_tcscf_max )
       print*,'grad_hermit = ',grad_hermit
@@ -128,13 +160,18 @@ subroutine routine_scf()
       call save_good_hermit_tc_eigvectors
       TOUCH mo_coef 
       call save_mos
-   enddo
+
+    enddo
+
   endif
+
   print*,'Energy converged !'
   print*,'Diagonal Fock elements '
   do i = 1, mo_num
    print*,i,Fock_matrix_tc_mo_tot(i,i)
   enddo
+
+  deallocate(rho_old, rho_new)
 
 end subroutine routine_scf
 

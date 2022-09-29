@@ -6,10 +6,10 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      character*1 jobz,uplo
      character*64 file1,file2
      character*72 cdum
-     integer n,i,j,k,l,nmo(8),isym,nsym,idum,nrot(8),m
+     integer n,i,j,k,l,isym,nsym,idum,m
      integer info,lwork
      logical *1 z54
-     integer                        :: index_rot(1000,1)
+     integer                        :: nmo0(8), nrot(8), index_rot(1000,1)
      double precision               :: accu_norm
 
      double precision, allocatable  :: cmo(:,:,:),cmoref(:,:,:),newcmo(:,:,:)
@@ -30,10 +30,10 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      enddo
      print*,'accu_norm = ',accu_norm
      nsym = 1
-     nmo(1) = mo_num
+     nmo0(1) = mo_num
      cmo = 0.d0
      do isym=1,nsym
-       do i=1,nmo(isym)
+       do i=1,nmo0(isym)
          do j = 1, ao_num
            cmo(j,i,isym) = mo_coef(j,i)
          enddo
@@ -99,7 +99,7 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
        call maxovl(nrot(isym),nrot(isym),ovl,t,wi)
        do i=1,nrot(isym)
          do j=1,ao_num
-           !         write (6,*) 'isym,',isym,nrot(isym),nmo(isym)
+           !         write (6,*) 'isym,',isym,nrot(isym),nmo0(isym)
            newcmo(j,irot(i,isym),isym)=0.d0
            do k=1,nrot(isym)
              newcmo(j,irot(i,isym),isym)=newcmo(j,irot(i,isym),isym) + cmo(j,irot(k,isym),isym)*t(k,i)
@@ -116,7 +116,7 @@ subroutine loc_cele_routine_general(n_orb_for_loc,index_orb_for_loc,mo_guess_for
      
      mo_coef = 0.d0
      do isym=1,nsym
-       do i=1,nmo(isym)
+       do i=1,nmo0(isym)
          do j = 1, ao_num
            mo_coef(j,i) = newcmo(j,i,isym)
          enddo

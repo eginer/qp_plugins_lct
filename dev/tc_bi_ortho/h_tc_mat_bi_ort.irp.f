@@ -26,7 +26,9 @@ subroutine htilde_mu_mat_bi_ortho_tot(key_j, key_i, Nint, htot)
 
 end subroutine htilde_mu_mat_tot
 
-subroutine htilde_mu_mat_bi_ortho(key_j,key_i, Nint, hmono,htwoe,hthree,htot)
+! --
+
+subroutine htilde_mu_mat_bi_ortho(key_j, key_i, Nint, hmono, htwoe, hthree, htot)
  implicit none
   use bitmasks
   BEGIN_DOC
@@ -116,14 +118,14 @@ subroutine diag_htilde_mu_mat_bi_ortho(Nint, key_i, hmono, htwoe, htot)
     ii = occ(i,ispin) 
     hmono += mo_bi_ortho_tc_one_e(ii,ii)
 
-    if( j1b_gauss .eq. 1 ) then
-     print*,'j1b not implemented for bi ortho TC'
-     print*,'stopping  ....'
-     stop
-!      hmono += mo_j1b_gauss_hermI  (ii,ii) &
-!             + mo_j1b_gauss_hermII (ii,ii) &
-!             + mo_j1b_gauss_nonherm(ii,ii)
-    endif
+!    if(j1b_gauss .eq. 1) then
+!      print*,'j1b not implemented for bi ortho TC'
+!      print*,'stopping  ....'
+!      stop
+!      !hmono += mo_j1b_gauss_hermI  (ii,ii) &
+!      !       + mo_j1b_gauss_hermII (ii,ii) &
+!      !       + mo_j1b_gauss_nonherm(ii,ii)
+!    endif
 
 !    if(core_tc_op)then
 !   print*,'core_tc_op not already taken into account for bi ortho'
@@ -310,14 +312,14 @@ subroutine single_htilde_mu_mat_bi_ortho(Nint, key_j, key_i, hmono, htwoe, htot)
 
   hmono = mo_bi_ortho_tc_one_e(p1,h1) * phase
 
-  if( j1b_gauss .eq. 1 ) then
-     print*,'j1b not implemented for bi ortho TC'
-     print*,'stopping  ....'
-     stop
-!    hmono += ( mo_j1b_gauss_hermI  (h1,p1) &
-!             + mo_j1b_gauss_hermII (h1,p1) &
-!             + mo_j1b_gauss_nonherm(h1,p1) ) * phase
-  endif
+!  if(j1b_gauss .eq. 1) then
+!     print*,'j1b not implemented for bi ortho TC'
+!     print*,'stopping  ....'
+!     stop
+!    !hmono += ( mo_j1b_gauss_hermI  (h1,p1) &
+!    !         + mo_j1b_gauss_hermII (h1,p1) &
+!    !         + mo_j1b_gauss_nonherm(h1,p1) ) * phase
+!  endif
 
 !  if(core_tc_op)then
 !   print*,'core_tc_op not already taken into account for bi ortho'

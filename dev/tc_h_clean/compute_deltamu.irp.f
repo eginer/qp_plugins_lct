@@ -11,7 +11,7 @@ program compute_deltamu
   touch read_wf
 
   PROVIDE N_int 
-  call delta_dmcdressing
+  call delta_dmcdressing()
 
 end
 

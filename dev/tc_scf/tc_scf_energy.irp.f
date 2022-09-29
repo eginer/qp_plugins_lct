@@ -18,7 +18,7 @@
     do i = 1, ao_num
       TC_HF_two_e_energy += 0.5d0 * ( two_e_tc_non_hermit_integral_alpha(i,j) * TCSCF_density_matrix_ao_alpha(i,j) &
                                     + two_e_tc_non_hermit_integral_beta(i,j)  * TCSCF_density_matrix_ao_beta(i,j) )
-      TC_HF_one_electron_energy += ao_one_e_integrals(i,j) &
+      TC_HF_one_electron_energy += ao_one_e_integrals_tc_tot(i,j) &
                                        * (TCSCF_density_matrix_ao_alpha(i,j) + TCSCF_density_matrix_ao_beta (i,j) )
     enddo
   enddo

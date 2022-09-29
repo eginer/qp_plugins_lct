@@ -44,3 +44,31 @@ double precision function bi_ortho_mo_ints(l,k,j,i)
  enddo
 
 end
+
+! ---
+
+BEGIN_PROVIDER [double precision, ao_one_e_integrals_tc_tot, (ao_num,ao_num)]
+
+  implicit none
+  integer :: i, j
+
+  ao_one_e_integrals_tc_tot = ao_one_e_integrals      
+
+  provide j1b_gauss
+
+  if(j1b_gauss .eq. 1) then
+
+    do i = 1, ao_num
+      do j = 1, ao_num
+        ao_one_e_integrals_tc_tot(j,i) += ( j1b_gauss_hermI  (j,i) &
+                                          + j1b_gauss_hermII (j,i) &
+                                          + j1b_gauss_nonherm(j,i) )
+      enddo
+    enddo
+
+  endif
+
+END_PROVIDER
+
+! ---
+
