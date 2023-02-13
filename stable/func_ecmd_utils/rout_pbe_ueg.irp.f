@@ -236,6 +236,7 @@
   decdgrad_rho_a_b = decPBEdgrad_rho_a_b/denom - ecPBE*ddenomdgrad_rho_a_b/(denom**2)
 
   ! decdgrad_rho_2 = 0.25d0*(decdgrad_rho_a_2 + decdgrad_rho_b_2 + decdgrad_rho_a_b)
+!  print*,'decdrho_a = ',decdrho_a
   end subroutine ecmdsrPBE
 
 !---------------------------------------------------------------------------------------------------------------------------------------------
