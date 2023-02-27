@@ -78,3 +78,40 @@ BEGIN_PROVIDER [double precision, phi_ij_eff_pot_in_r, (n_points_final_grid, mo_
    enddo
 END_PROVIDER 
 
+BEGIN_PROVIDER[double precision, eff_two_e_lr, (mo_num,mo_num,mo_num,mo_num,N_states) ]
+ implicit none
+ BEGIN_DOC
+ END_DOC 
+ integer :: istate,ipoint,m,i,j,k,l
+ double precision :: weight
+ double precision :: mu, rho_a, rho_b, ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2, d2ecdrho2
+
+ eff_two_e = 0.d0
+ do istate = 1, N_states
+  do ipoint = 1, n_points_final_grid
+
+   weight = final_weight_at_r_vector(ipoint)
+
+   rho_a =  one_e_dm_and_grad_alpha_in_r(4,ipoint,istate)
+   rho_b =  one_e_dm_and_grad_beta_in_r(4,ipoint,istate)
+   mu = mu_of_r_prov(ipoint,istate)
+
+
+   call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2)
+   d2ecdrho2 = d2ecdrho_a2 + d2ecdrho_b2
+
+   do i = 1, mo_num
+    do j = 1, mo_num
+     do k = 1, mo_num
+      do l = 1, mo_num
+        eff_two_e_lr(l,k,j,i,istate) += weight * d2ecdrho2 * mos_in_r_array(i,ipoint) * mos_in_r_array(j,ipoint) * mos_in_r_array(k,ipoint) * mos_in_r_array(l,ipoint)
+      enddo
+     enddo
+    enddo
+   enddo
+
+  enddo
+ enddo
+
+END_PROVIDER
+

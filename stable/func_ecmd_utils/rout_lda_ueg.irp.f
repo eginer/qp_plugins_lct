@@ -263,7 +263,7 @@
   B1 = ecLDAn*(dbetadrho_a*mu**3)
   B2 = (1.d0 + beta*mu**3)**2
 
-  dA1 = kLDAn
+  dA1 = 0.d0 !kLDAn
   dA2 = dbetadrho_a*mu**3
 
   dB1 = decLDAndrho_a*dbetadrho_a*mu**3 + ecLDAn*d2betadrho_a2*mu**3
@@ -272,12 +272,13 @@
   sqA2 = A2**2
   sqB2 = B2**2
   
-  d2ecdrho_a2 = (dA1*A2 - dA2*A1)/sqA2 - (dB1*B2 - dB2*B1)/sqB2 
+ ! d2ecdrho_a2 = (dA1*A2 - dA2*A1)/sqA2 - (dB1*B2 - dB2*B1)/sqB2 
   
-  d2ecdrho_a2_test = (decLDAndrho_a_deltarho - decLDAndrho_a)/delta_rho_a
-  if (dabs(d2ecdrho_a2-d2ecdrho_a2_test).gt.1E-4)then
-   print*, 'WARNING ! d2ecdrho_a2-d2ecdrho_a2_test > 0.0001'
-  endif 
+ ! d2ecdrho_a2_test = (decLDAndrho_a_deltarho - decLDAndrho_a)/delta_rho_a
+  d2ecdrho_a2 = (decLDAndrho_a_deltarho - decLDAndrho_a)/delta_rho_a
+ !if (dabs(d2ecdrho_a2-d2ecdrho_a2_test).gt.1E-4)then
+ ! print*, 'WARNING ! d2ecdrho_a2-d2ecdrho_a2_test > 0.0001'
+ !endif 
   
 !d2ecdrho_b2
   A1 = decLDAndrho_b
@@ -286,7 +287,7 @@
   B1 = ecLDAn*(dbetadrho_b*mu**3)
   B2 = (1.d0 + beta*mu**3)**2
 
-  dA1 = kLDAn
+  dA1 = 0.d0 !kLDAn
   dA2 = dbetadrho_b*mu**3
 
   dB1 = decLDAndrho_b*dbetadrho_b*mu**3 + ecLDAn*d2betadrho_b2*mu**3
@@ -295,12 +296,12 @@
   sqA2 = A2**2
   sqB2 = B2**2
   
-  d2ecdrho_b2 = (dA1*A2 - dA2*A1)/sqA2 - (dB1*B2 - dB2*B1)/sqB2 
+!  d2ecdrho_b2 = (dA1*A2 - dA2*A1)/sqA2 - (dB1*B2 - dB2*B1)/sqB2 
 
-  d2ecdrho_b2_test = (decLDAndrho_b_deltarho - decLDAndrho_b)/delta_rho_b
-   if (dabs(d2ecdrho_b2-d2ecdrho_b2_test).gt.1E-4)then
-    print*, 'WARNING ! d2ecdrho_b2-d2ecdrho_b2_test > 0.0001'
-  endif 
+  d2ecdrho_b2 = (decLDAndrho_b_deltarho - decLDAndrho_b)/delta_rho_b
+! if (dabs(d2ecdrho_b2-d2ecdrho_b2_test).gt.1E-4)then
+!   print*, 'WARNING ! d2ecdrho_b2-d2ecdrho_b2_test > 0.0001'
+! endif 
  
 
 

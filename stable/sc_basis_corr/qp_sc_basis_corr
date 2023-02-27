@@ -20,7 +20,7 @@ Usage:
 
 Options:
   -m, --mu=<lower case string>          Type of mu(r) function can be either "hf", "cas_ful" or "read" (default=cas_ful)
-  -f, --func=<lower case string>        Complementary functional, can be either "pbe_ueg", "lda", "su_pbe_ot" or "su_pbe_ot_no_extrap" (default=su_pbe_ot)
+  -f, --func=<lower case string>        Complementary functional, can be either "pbe_ueg", "lda", "lda_ueg", "lda_on_top", "su_pbe_ot" or "su_pbe_ot_no_extrap" (default=su_pbe_ot)
   -p, --pt2max=<positive real>          Max value of the PT2 correction (default=1.e-3)
   -n, --ndetmax=<positive integer>      Max number of determinants in the CIPSI wf (default=1.e6)
   -t, --thresh=<positive real>          Threshold on the convergence of the variational energy (default=1.e-10)

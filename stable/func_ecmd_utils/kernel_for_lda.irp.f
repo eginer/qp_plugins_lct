@@ -173,20 +173,37 @@ double precision :: rho, rho_a, rho_b
 pi = acos(-1d0)
 z=0d0
 
+write(*,*) 'n_points_final_grid=', n_points_final_grid
+
+write(*,*) "spinex=",spinex
+
 do i=1,n_points_final_grid
-     rho_a = one_e_dm_and_grad_alpha_in_r(4,i,N_states)
-     rho_b = one_e_dm_and_grad_beta_in_r(4,i,N_states)
+!     rho_a = one_e_dm_and_grad_alpha_in_r(4,i,N_states)
+!     rho_b = one_e_dm_and_grad_beta_in_r(4,i,N_states)
+     rho_a = 1.d0 ! one_e_dm_and_grad_alpha_in_r(4,i,1)
+     rho_b = 1.d0 ! one_e_dm_and_grad_beta_in_r(4,i,1)
+
      rho = rho_a + rho_b
 
 !     call rho_ab_to_rho_oc(rho_a,rho_b,rho_o,rho_c)
 
    if (abs(rho).lt.1d-12) then
       kernelc(i) = 0d0
+         write(*,*) 'kernelc(',i,')=', kernelc(i) 
+         write(*,*) 'myecrs=', myecrs(rs,z) 
+         write(*,*) 'myecrs2(',i,')=', myecrs2(rs,z) 
+         write(*,*) '....................................'
    else
       rs = (3d0/(4d0*pi*rho))**(1d0/3d0)
       if (spinex.eq.0) then
          kernelc(i) = -rs*(2d0*(myecrs(rs,z)) - &
-              rs*(myecrs2(rs,z)))/(9d0*rho)
+              &rs*(myecrs2(rs,z)))/(9d0*rho)
+
+         write(*,*) 'kernelc(',i,')=', kernelc(i) 
+         write(*,*) 'myecrs=', myecrs(rs,z) 
+         write(*,*) 'myecrs2(',i,')=', myecrs2(rs,z) 
+         write(*,*) '....................................'
+        
       else
          kernelc(i) = (myecz2(rs,z))/rho
       endif
