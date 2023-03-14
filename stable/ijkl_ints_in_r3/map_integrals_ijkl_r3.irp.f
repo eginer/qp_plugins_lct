@@ -496,60 +496,6 @@ subroutine get_mo_bielec_integrals_ijkl_r3(j,k,l,sze,out_val,map)
   endif
 end
 
-subroutine get_mo_bielec_integrals_ijkl_r3_ij(k,l,sze,out_array,map)
-  use map_module
-  implicit none
-  BEGIN_DOC
-  ! Returns multiple integrals <ij|kl> in the MO basis, all
-  ! i(r)j(r) k(r)l(r)
-  ! i, j for k,l fixed.
-  END_DOC
-  integer, intent(in)            :: k,l, sze
-  double precision, intent(out)  :: out_array(sze,sze)
-  type(map_type), intent(inout)  :: map
-  integer                        :: i,j,kk,ll,m
-  integer(key_kind),allocatable  :: hash(:)
-  integer  ,allocatable          :: pairs(:,:), iorder(:)
-  real(integral_kind), allocatable :: tmp_val(:)
-
-  PROVIDE mo_bielec_integrals_ijkl_r3_in_map
-  allocate (hash(sze*sze), pairs(2,sze*sze),iorder(sze*sze), &
-  tmp_val(sze*sze))
-  
-  kk=0
-  out_array = 0.d0
-  do j=1,sze
-   do i=1,sze
-    kk += 1
-    !DIR$ FORCEINLINE
-    call two_e_integrals_index(i,j,k,l,hash(kk))
-    pairs(1,kk) = i
-    pairs(2,kk) = j
-    iorder(kk) = kk
-   enddo
-  enddo
-
-  logical :: integral_is_in_map
-  if (key_kind == 8) then
-    call i8radix_sort(hash,iorder,kk,-1)
-  else if (key_kind == 4) then
-    call iradix_sort(hash,iorder,kk,-1)
-  else if (key_kind == 2) then
-    call i2radix_sort(hash,iorder,kk,-1)
-  endif
-
-  call map_get_many(mo_integrals_ijkl_r3_map, hash, tmp_val, kk)
-
-  do ll=1,kk
-    m = iorder(ll)
-    i=pairs(1,m)
-    j=pairs(2,m)
-    out_array(i,j) = tmp_val(ll)
-  enddo  
-
-  deallocate(pairs,hash,iorder,tmp_val)
-end
-
 subroutine get_mo_bielec_integrals_ijkl_r3_coulomb_ii(k,l,sze,out_val,map)
   use map_module
   implicit none

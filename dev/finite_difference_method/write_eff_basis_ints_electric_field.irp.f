@@ -23,6 +23,6 @@ program write_effective_electric_field_hamiltonian
  touch io_ao_integrals_kinetic 
 
  ! integral of the effective potential 
- call save_v_ne_and_electric_filed_ao_ints
+! call save_v_ne_and_electric_filed_ao_ints
 end
 
