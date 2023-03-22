@@ -107,14 +107,14 @@ subroutine diagonalize_lr
  print*, "Eigenvalue problem"
  call cpu_time (cpu_time_1)
  omp_time_1 = omp_get_wtime()
-  print*,"AB matrix"
-  do det_I = 1, dim_half
-   write(*,'(100(f10.5,x))'), AB_matrix(1:dim_half, det_I)
-  enddo
-  print*, "S matrix"
-  do det_I = 1, dim_half
-   write(*,'(100(f10.5,x))'), S_matrix(1:dim_half, det_I)
-  enddo
+! print*,"AB matrix"
+! do det_I = 1, dim_half
+!  write(*,'(100(f10.5,x))'), AB_matrix(1:dim_half, det_I)
+! enddo
+! print*, "S matrix"
+! do det_I = 1, dim_half
+!  write(*,'(100(f10.5,x))'), S_matrix(1:dim_half, det_I)
+! enddo
 
 
   mat_a = AB_matrix
@@ -130,10 +130,10 @@ subroutine diagonalize_lr
  print*, "END Eigenvalue problem - CPUTIME =", cpu_time_2 - cpu_time_1
  print*, "END Eigenvalue problem - WALLCLOCK TIME =", omp_time_2 - omp_time_1
 
- print*, "Eigenvalues (alphareal/beta)"
- do det_I=1, dim
-  print*, eigenvalues(det_I)
- enddo
+!print*, "Eigenvalues (alphareal/beta)"
+!do det_I=1, dim
+! print*, eigenvalues(det_I)
+!enddo
 
  integer, allocatable :: iorder(:)
  allocate(iorder(dim))
