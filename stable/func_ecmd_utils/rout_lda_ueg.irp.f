@@ -254,18 +254,16 @@ subroutine exc_dexc_md_sr_LDAn(mu,rho_a,rho_b, &
  end subroutine excmdsrLDAn
 
  ---------------------------------------------------------------------------------------------------------------------------------------------
- subroutine fc_LDAUEG(mu, rho_a, rho_b,fcmdsrLDAUEG)
+ subroutine fc_LDAUEG(fcmdsrLDAUEG)
  implicit none
  BEGIN_DOC
- ! fc_LDAUEG_at_r : fcmdsrLDAUEG = [2*d]
  END_DOC
- double precision, intent(in) :: mu, rho_a, rho_b
- double precision, intent(out) :: fcmdsrLDAUEG
+ double precision, intent(out) :: fcmdsrLDAUEG(n_points_final_grid)
  
  double precision :: ecLDAn,decLDAndrho_a,decLDAndrho_b,decLDAndrho
  double precision :: ecLDAn_delta_a,decLDAndrho_a_delta_a,decLDAndrho_b_delta_a
  double precision :: ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2
- double precision :: kernelc
+ double precision, allocatable :: kernelc(:)
  double precision :: thr, pi, c, rho, delta_rho_a
  double precision :: g0, dg0drho, d2g0drho2
  double precision :: n2_UEG, dn2_UEGdrho, d2n2_UEGdrho2 
@@ -274,58 +272,84 @@ subroutine exc_dexc_md_sr_LDAn(mu,rho_a,rho_b, &
  double precision :: A1, A2, dA1, dA2
  double precision :: B1, B2, dB1, dB2
 
+ integer :: i
+ double precision :: mu, rho_a, rho_b
+ allocate(kernelc(n_points_final_grid))
+
+  pi = dacos(-1.d0)
+  c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0
+  thr = 1.d-12
+
+ fcmdsrLDAUEG = 0.d0
+
+ call kernel_ldac(0,kernelc)
+ do i=1,n_points_final_grid
+  rho_a = one_e_dm_and_grad_alpha_in_r(4,i,1)
+  rho_b = one_e_dm_and_grad_beta_in_r(4,i,1)
+  mu = mu_of_r_prov(i,1)
+  
+  if (dabs(rho_a + rho_b) < 1.d-4)then
+
+    fcmdsrLDAUEG(i) = 0.d0
+
+  else
+
   if(dabs(rho_a-rho_b)/dabs(rho_a+rho_b) > 1.d-1)then
    print*,'rho_a,rho_b        = ',rho_a,rho_b
    print*,'dabs(rho_a-rho_b)  = ',dabs(rho_a-rho_b)
    stop "routine implemented only for closed-shell systems"
   endif 
 
- pi = dacos(-1.d0)
- c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0
- rho = rho_a + rho_b
- delta_rho_a = 1.d-6*(rho_a + 1.d-6)
- !delta_rho_a = 1.d-3*(rho_a + 1.d-3)
- thr = 1.d-12
+  rho = rho_a + rho_b
+  delta_rho_a = 1.d-12!*(rho_a + 1.d-6)
+  !delta_rho_a = 1.d-3*(rho_a + 1.d-3)
 
- call ec_lda(rho_a,rho_b,ecLDAn,decLDAndrho_a,decLDAndrho_b)
- call ec_lda(rho_a + delta_rho_a,rho_b,ecLDAn_delta_a,decLDAndrho_a_delta_a,decLDAndrho_b_delta_a)
- call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2) 
-! call kernel_ldac(0,kernelc)
- kernelc = (decLDAndrho_a_delta_a - decLDAndrho_a)/(delta_rho_a)
+  call ec_lda(rho_a,rho_b,ecLDAn,decLDAndrho_a,decLDAndrho_b)
+  call ec_lda(rho_a + delta_rho_a,rho_b,ecLDAn_delta_a,decLDAndrho_a_delta_a,decLDAndrho_b_delta_a)
+  call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2) 
+ ! dv/drho = (dv/drho_a)(drho_a/drho) + (dv/drho_b)(drho_b/drho)
+ !         = 0.5*(dv/drho_a + dv/drho_b)
+ !         = dv/drho_a (because dv/drho_a = dv/drho_b)
+ kernelc(i) = (decLDAndrho_a_delta_a - decLDAndrho_a)/(delta_rho_a)
+ ! write(33,'(100(F16.10,X))') dsqrt(final_grid_points(1,i)**2+final_grid_points(2,i)**2+final_grid_points(3,i)**2),rho_a+rho_b, kernelc(i), (decLDAndrho_a_delta_a - decLDAndrho_a)/(delta_rho_a) 
 
- call g0_dg0_d2g0(rho, rho_a, rho_b, g0, dg0drho, d2g0drho2)
+  call g0_dg0_d2g0(rho, rho_a, rho_b, g0, dg0drho, d2g0drho2)
 
- n2_UEG = (rho**2)*g0
+  n2_UEG = (rho**2)*g0
 
- if(dabs(n2_UEG).lt.thr)then
+  if(dabs(n2_UEG).lt.thr)then
    n2_UEG = 1.d-12
- endif  
+  endif  
 
- dn2_UEGdrho = 2.d0*rho*g0 + (rho**2)*dg0drho
- d2n2_UEGdrho2 = 2.d0*g0 + 2.d0*rho*dg0drho + 2.d0*rho*dg0drho + (rho**2)*d2g0drho2
- beta = ecLDAn/(c*n2_UEG)
- dbetadrho  = (decLDAndrho_a + decLDAndrho_b)/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho
+  dn2_UEGdrho = 2.d0*rho*g0 + (rho**2)*dg0drho
+  d2n2_UEGdrho2 = 2.d0*g0 + 2.d0*rho*dg0drho + 2.d0*rho*dg0drho + (rho**2)*d2g0drho2
+  beta = ecLDAn/(c*n2_UEG)
+  dbetadrho  = (decLDAndrho_a + decLDAndrho_b)/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho
 
- D = kernelc/(c*n2_UEG)
- E = ((decLDAndrho_a + decLDAndrho_b)*dn2_UEGdrho)/(c*n2_UEG**2)
- F = ((decLDAndrho_a + decLDAndrho_b)*dn2_UEGdrho)/(c*n2_UEG**2)
- G = ecLDAn*d2n2_UEGdrho2/(c*n2_UEG**2)
- H = (2.d0*ecLDAn*(dn2_UEGdrho)**2)/(c*n2_UEG**3)
+  D = kernelc(i)/(c*n2_UEG)
+  E = ((decLDAndrho_a + decLDAndrho_b)*dn2_UEGdrho)/(c*n2_UEG**2)
+  F = ((decLDAndrho_a + decLDAndrho_b)*dn2_UEGdrho)/(c*n2_UEG**2)
+  G = ecLDAn*d2n2_UEGdrho2/(c*n2_UEG**2)
+  H = (2.d0*ecLDAn*(dn2_UEGdrho)**2)/(c*n2_UEG**3)
 
- d2betadrho2 = D - E -F -G + H
+  d2betadrho2 = D - E -F -G + H
 
- decLDAndrho = decLDAndrho_a + decLDAndrho_b
- A1 = decLDAndrho*(1.d0 + beta*mu**3)
- A2 = (1.d0 + beta*mu**3)**2
+  decLDAndrho = decLDAndrho_a + decLDAndrho_b
+  A1 = decLDAndrho*(1.d0 + beta*mu**3)
+  A2 = (1.d0 + beta*mu**3)**2
 
- B1 = ecLDAn*(dbetadrho*mu**3)
- B2 = (1.d0 + beta*mu**3)**2
+  B1 = ecLDAn*(dbetadrho*mu**3)
+  B2 = (1.d0 + beta*mu**3)**2
 
- dA1 = kernelc*(1.d0 + beta*mu**3) + decLDAndrho*dbetadrho*mu**3
- dA2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho*mu**3
+  dA1 = kernelc(i)*(1.d0 + beta*mu**3) + decLDAndrho*dbetadrho*mu**3
+  dA2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho*mu**3
 
- dB1 = decLDAndrho*dbetadrho*mu**3 + ecLDAn*d2betadrho2*mu**3
- dB2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho*mu**3
+  dB1 = decLDAndrho*dbetadrho*mu**3 + ecLDAn*d2betadrho2*mu**3
+  dB2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho*mu**3
  
- fcmdsrLDAUEG = (dA1*A2 - dA2*A1)/(A2**2) - (dB1*B2 - dB2*B1)/(B2**2) 
+  fcmdsrLDAUEG(i) = (dA1*A2 - dA2*A1)/(A2**2) - (dB1*B2 - dB2*B1)/(B2**2) 
+ endif
+ enddo
+
+ deallocate(kernelc)
  end subroutine fc_LDAUEG
