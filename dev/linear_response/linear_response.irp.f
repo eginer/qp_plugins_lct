@@ -66,15 +66,8 @@ subroutine diagonalize_lr
 
  S_matrix = 0.d0
 
- do det_I = 1, dim_half 
-  do det_J = det_I, dim_half 
-    S_matrix (det_I, det_J) = S_IJ(det_I, det_J, 1)  
-    S_matrix (det_J, det_I) = S_matrix (det_I, det_J)
-    
-    S_matrix (det_I + dim_half, det_J + dim_half) = - S_matrix (det_I, det_J)
-    S_matrix (det_J + dim_half, det_I + dim_half) = S_matrix (det_I + dim_half, det_J + dim_half)
-  enddo
- enddo
+ S_matrix(1:dim_half,1:dim_half)=S_IJ(:,:,1)
+ S_matrix(dim_half+1:dim,dim_half+1:dim)=-S_IJ(:,:,1)
 
  call cpu_time (cpu_time_2)
  omp_time_2 = OMP_get_wtime()
@@ -87,17 +80,13 @@ subroutine diagonalize_lr
  omp_time_1 = omp_get_wtime()
 
  AB_matrix = 0.d0
- do det_I = 1, dim_half 
-  do det_J = 1, dim_half 
-    AB_matrix (det_I, det_J) = A_IJ(det_I, det_J, 1)
-    AB_matrix (det_I + dim_half, det_J + dim_half) = AB_matrix (det_I, det_J)
-     
-    AB_matrix (det_I, det_J + dim_half) = B_IJ(det_I, det_J, 1) 
-    AB_matrix (det_I + dim_half, det_J) = AB_matrix (det_I, det_J + dim_half)
-    
-  enddo
- enddo
 
+ AB_matrix(1:dim_half,1:dim_half)=A_IJ(:,:,1)
+ AB_matrix(dim_half+1:dim,dim_half+1:dim)=A_IJ(:,:,1)
+
+ AB_matrix(1:dim_half,dim_half+1:dim)=B_IJ(:,:,1)
+ AB_matrix(dim_half+1:dim,1:dim_half)=B_IJ(:,:,1)
+ 
  call cpu_time (cpu_time_2)
  omp_time_2 = OMP_get_wtime()
  print*, "END Fill AB matrix - CPUTIME =", cpu_time_2 - cpu_time_1
@@ -107,14 +96,14 @@ subroutine diagonalize_lr
  print*, "Eigenvalue problem"
  call cpu_time (cpu_time_1)
  omp_time_1 = omp_get_wtime()
-! print*,"AB matrix"
-! do det_I = 1, dim_half
-!  write(*,'(100(f10.5,x))'), AB_matrix(1:dim_half, det_I)
-! enddo
-! print*, "S matrix"
-! do det_I = 1, dim_half
-!  write(*,'(100(f10.5,x))'), S_matrix(1:dim_half, det_I)
-! enddo
+ !print*,"AB matrix"
+ !do det_I = 1, dim
+ ! write(*,'(100(f10.5,x))') AB_matrix(1:dim_half, det_I)
+ !enddo
+ !print*, "S matrix"
+ !do det_I = 1, dim
+ ! write(*,'(100(f10.5,x))') S_matrix(1:dim_half, det_I)
+ !enddo
 
 
   mat_a = AB_matrix

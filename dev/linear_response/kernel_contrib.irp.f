@@ -23,7 +23,6 @@ BEGIN_PROVIDER[double precision, kernel_lr, (N_det, N_det, N_states)]
        enddo
       enddo
      enddo
-
    enddo
   enddo
  enddo

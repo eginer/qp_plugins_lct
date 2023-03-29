@@ -38,9 +38,9 @@ do i_state=1, N_states
  enddo
 enddo
 
-do i=1, mo_num
-  print*, gamma_i_j(i,:,1)
-enddo
+!do i=1, mo_num
+! print*, gamma_i_j(i,:,1)
+!enddo
 END_PROVIDER
 
  BEGIN_PROVIDER[double precision, gamma_I_i_j, (N_det, mo_num, mo_num, N_states)]

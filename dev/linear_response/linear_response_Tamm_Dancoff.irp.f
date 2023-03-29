@@ -42,7 +42,7 @@ subroutine diagonalize_lr_Tamm_Dancoff
  call cpu_time (cpu_time_1)
  omp_time_1 = OMP_get_wtime()
 
- dim_half = N_det -1
+ dim_half = N_det - 1
  dim = 2*dim_half
  lwork = 10*dim
 
@@ -66,15 +66,8 @@ subroutine diagonalize_lr_Tamm_Dancoff
 
  S_matrix = 0.d0
 
- do det_I = 1, dim_half 
-  do det_J = det_I, dim_half 
-    S_matrix (det_I, det_J) = S_IJ(det_I, det_J, 1)  
-    S_matrix (det_J, det_I) = S_matrix (det_I, det_J)
-    
-    S_matrix (det_I + dim_half, det_J + dim_half) = - S_matrix (det_I, det_J)
-    S_matrix (det_J + dim_half, det_I + dim_half) = S_matrix (det_I + dim_half, det_J + dim_half)
-  enddo
- enddo
+ S_matrix(1:dim_half,1:dim_half)=S_IJ(:,:,1)
+ S_matrix(dim_half+1:dim,dim_half+1:dim)=-S_IJ(:,:,1)
 
  call cpu_time (cpu_time_2)
  omp_time_2 = OMP_get_wtime()
@@ -87,16 +80,9 @@ subroutine diagonalize_lr_Tamm_Dancoff
  omp_time_1 = omp_get_wtime()
 
  AB_matrix = 0.d0
- do det_I = 1, dim_half 
-  do det_J = 1, dim_half 
-    AB_matrix (det_I, det_J) = A_IJ(det_I, det_J, 1)
-    AB_matrix (det_I + dim_half, det_J + dim_half) = AB_matrix (det_I, det_J)
-     
-    AB_matrix (det_I, det_J + dim_half) = B_IJ_K_equal_0(det_I, det_J, 1) 
-    AB_matrix (det_I + dim_half, det_J) = AB_matrix (det_I, det_J + dim_half)
-    
-  enddo
- enddo
+
+ AB_matrix(1:dim_half,1:dim_half)=A_IJ(:,:,1)
+ AB_matrix(dim_half+1:dim,dim_half+1:dim)=A_IJ(:,:,1)
 
  call cpu_time (cpu_time_2)
  omp_time_2 = OMP_get_wtime()
@@ -107,21 +93,20 @@ subroutine diagonalize_lr_Tamm_Dancoff
  print*, "Eigenvalue problem"
  call cpu_time (cpu_time_1)
  omp_time_1 = omp_get_wtime()
-
 ! print*,"AB matrix"
 ! do det_I = 1, dim_half
-!  write(*,'(100(f10.5,x))'), AB_matrix(1:dim_half, det_I)
+!  write(*,'(100(f10.5,x))') AB_matrix(1:dim_half, det_I)
 ! enddo
 ! print*, "S matrix"
 ! do det_I = 1, dim_half
-!  write(*,'(100(f10.5,x))'), S_matrix(1:dim_half, det_I)
+!  write(*,'(100(f10.5,x))') S_matrix(1:dim_half, det_I)
 ! enddo
+
 
   mat_a = AB_matrix
   mat_b = S_matrix
   call dggev("N", "V", dim, mat_a, dim, mat_b, dim, alphar, alphai, beta, &
   & eigenvectors_left,dim,eigenvectors,dim, work, lwork, info)
-
 
  deallocate(mat_a, mat_b, AB_matrix, S_matrix)
 
@@ -130,6 +115,11 @@ subroutine diagonalize_lr_Tamm_Dancoff
  omp_time_2 = OMP_get_wtime()
  print*, "END Eigenvalue problem - CPUTIME =", cpu_time_2 - cpu_time_1
  print*, "END Eigenvalue problem - WALLCLOCK TIME =", omp_time_2 - omp_time_1
+
+!print*, "Eigenvalues (alphareal/beta)"
+!do det_I=1, dim
+! print*, eigenvalues(det_I)
+!enddo
 
  integer, allocatable :: iorder(:)
  allocate(iorder(dim))
@@ -204,8 +194,9 @@ subroutine diagonalize_lr_Tamm_Dancoff
   print*, eigenvalues(istate+dim_half), S2_values_lr(istate)
  enddo
 
- 
- deallocate(work, alphar, alphai, beta)
+
  deallocate(eigenvectors_left, eigenvectors)
+ deallocate(work, alphar, alphai, beta)
 end subroutine
+
 

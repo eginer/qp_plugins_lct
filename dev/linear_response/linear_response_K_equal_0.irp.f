@@ -21,6 +21,7 @@ subroutine diagonalize_lr_k_equal_0
  ! - x are the eigenvectors with associated eigenvalues lambda.
  !
  END_DOC
+
  use omp_lib
  
  double precision, allocatable :: AB_matrix(:,:), S_matrix(:,:)
@@ -65,16 +66,8 @@ subroutine diagonalize_lr_k_equal_0
  omp_time_1 = omp_get_wtime()
 
  S_matrix = 0.d0
-
- do det_I = 1, dim_half 
-  do det_J = det_I, dim_half 
-    S_matrix (det_I, det_J) = S_IJ(det_I, det_J, 1)  
-    S_matrix (det_J, det_I) = S_matrix (det_I, det_J)
-    
-    S_matrix (det_I + dim_half, det_J + dim_half) = - S_matrix (det_I, det_J)
-    S_matrix (det_J + dim_half, det_I + dim_half) = S_matrix (det_I + dim_half, det_J + dim_half)
-  enddo
- enddo
+ S_matrix(1:dim_half,1:dim_half)=S_IJ(:,:,1)
+ S_matrix(dim_half+1:dim,dim_half+1:dim)=-S_IJ(:,:,1)
 
  call cpu_time (cpu_time_2)
  omp_time_2 = OMP_get_wtime()
@@ -87,16 +80,9 @@ subroutine diagonalize_lr_k_equal_0
  omp_time_1 = omp_get_wtime()
 
  AB_matrix = 0.d0
- do det_I = 1, dim_half 
-  do det_J = 1, dim_half 
-    AB_matrix (det_I, det_J) = A_IJ_K_equal_0(det_I, det_J, 1)
-    AB_matrix (det_I + dim_half, det_J + dim_half) = AB_matrix (det_I, det_J)
-     
-    AB_matrix (det_I, det_J + dim_half) = B_IJ_K_equal_0(det_I, det_J, 1) 
-    AB_matrix (det_I + dim_half, det_J) = AB_matrix (det_I, det_J + dim_half)
-    
-  enddo
- enddo
+
+ AB_matrix(1:dim_half,1:dim_half)=A_IJ_K_equal_0(:,:,1)
+ AB_matrix(dim_half+1:dim,dim_half+1:dim)=A_IJ_K_equal_0(:,:,1)
 
  call cpu_time (cpu_time_2)
  omp_time_2 = OMP_get_wtime()
@@ -110,11 +96,11 @@ subroutine diagonalize_lr_k_equal_0
 
 ! print*,"AB matrix"
 ! do det_I = 1, dim_half
-!  write(*,'(100(f10.5,x))'), AB_matrix(1:dim_half, det_I)
+!  write(*,'(100(f10.5,x))') AB_matrix(1:dim_half, det_I)
 ! enddo
 ! print*, "S matrix"
 ! do det_I = 1, dim_half
-!  write(*,'(100(f10.5,x))'), S_matrix(1:dim_half, det_I)
+!  write(*,'(100(f10.5,x))') S_matrix(1:dim_half, det_I)
 ! enddo
 
   mat_a = AB_matrix
