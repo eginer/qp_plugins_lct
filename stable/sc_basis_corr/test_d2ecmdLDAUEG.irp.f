@@ -26,7 +26,6 @@ program test_d2ecmdLDAUEG
 
  double precision :: mu
  double precision :: rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2
-  
  
  do istate = 1, N_states
   do ipoint = 1, n_points_final_grid
