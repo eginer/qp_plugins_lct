@@ -261,3 +261,11 @@ subroutine exc_dexc_md_sr_PBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_
 
  end subroutine excmdsrPBE
 
+ ---------------------------------------------------------------------------------------------------------------------------------------------
+ subroutine fc_PBEUEG(fcmdsrPBEUEG)
+ implicit none
+ BEGIN_DOC
+ END_DOC
+ double precision, intent(out) :: fcmdsrPBEUEG(n_points_final_grid)
+ 
+ end subroutine fc_PBEUEG
