@@ -50,6 +50,11 @@ subroutine write_all_ints_basis
  ! one-body effective potential and two-elec erf integrals
  END_DOC
  call save_one_e_tot_eff_pot_basis
+ print*, "####################################################"
+ print*, "####################################################"
+ print*, 'needs_eff_two_e_ints=', needs_eff_two_e_ints
+ print*, "####################################################"
+ print*, "####################################################"
  if(needs_eff_two_e_ints)then
   call save_eff_basis_two_e_ints
  else 

@@ -14,7 +14,7 @@ subroutine routine_save_one_e_dm_fc
  mo_one_e_alpha_fc = one_e_dm_mo_alpha(1:mo_num, 1:mo_num, 1)
  mo_one_e_beta_fc = one_e_dm_mo_beta(1:mo_num, 1:mo_num, 1)
  integer :: i,j,k,l,ii,jj
- do ii = 1, n_core
+ do ii = 1, n_core_orb
   i = list_core(ii)
   do j = 1, mo_num
    mo_one_e_alpha_fc(j,i) = 0.d0
