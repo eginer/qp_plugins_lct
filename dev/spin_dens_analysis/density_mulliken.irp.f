@@ -10,7 +10,7 @@ BEGIN_PROVIDER [double precision, density_population, (ao_num,ao_num)]
  density_population = 0.d0
  do i = 1, ao_num
   do j = 1, ao_num
-   density_population(j,i) = (one_e_dm_ao_alpha(j,i) + one_e_dm_ao_alpha(j,i)) * ao_overlap(j,i)
+   density_population(j,i) = (one_e_dm_ao_alpha(j,i) + one_e_dm_ao_beta(j,i)) * ao_overlap(j,i)
   enddo
  enddo
 END_PROVIDER

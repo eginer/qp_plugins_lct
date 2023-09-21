@@ -12,7 +12,7 @@ echo $TEMP
 function help()
 {
     cat <<EOF
-Range Separated CIPSI program: 
+Self Consistent Density Based Basis Set CIPSI program: 
 
 Usage:
   $(basename $0) -m <string> -f <string>  -p <real> -n <integer> [-t <real> -r <logical> -i <integer>] [--] EZFIO

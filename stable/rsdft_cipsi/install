@@ -12,7 +12,7 @@ fi
 currdir=${PWD}
 
 # list of the scripts to be used by the module 
-scripts_list="qp_cipsi_rsh"
+scripts_list="qp_cipsi_rsh qp_cipsi_rsh_mu_of_r"
 
 # Make a symbolic link for all scripts to be used in the ${QP_ROOT}/scripts/
 # directory. 

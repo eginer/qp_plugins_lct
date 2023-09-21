@@ -4,7 +4,7 @@
 &BEGIN_PROVIDER [ double precision, trans_dipole_z, (N_states,N_states) ]
   implicit none
   BEGIN_DOC
-  ! $\alpha$ and $\beta$ one-body density matrix for each state
+  ! Dipole transition matrix 
   END_DOC
 
   integer                        :: j,k,l,m,k_a,k_b,n
@@ -223,3 +223,4 @@ BEGIN_PROVIDER [double precision, oscillator_strength, (N_states)]
  enddo
 
 END_PROVIDER 
+

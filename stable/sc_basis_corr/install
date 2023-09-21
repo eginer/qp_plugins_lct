@@ -12,7 +12,7 @@ fi
 currdir=${PWD}
 
 # list of the scripts to be used by the module 
-scripts_list="qp_sc_basis_corr"
+scripts_list="qp_sc_basis_corr qp_sc_basis_corr_hf"
 
 # Make a symbolic link for all scripts to be used in the ${QP_ROOT}/scripts/
 # directory. 

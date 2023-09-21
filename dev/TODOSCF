@@ -1,0 +1,24 @@
+ F_mu,nu^tc = <mu|H + Delta|nu>                                                                                                              
+         = F_mu,nu + <mu|W_ee^h|nu> + <mu|W_ee^nh|nu> ! + <mu|W_eee^h|nu>
+
+in the plugin ao_tc_eff_map/  
+    you find the map "ao_tc_sym_two_e_pot_map" which corresponds to the integrals needed for <mu|W_ee^h|nu>
+    the function get_ao_tc_sym_two_e_pot(iao,jao,kao,lao,ao_tc_sym_two_e_pot_map) returns an integral (if you want to test for instance)
+in the plugin non_h_ints_mu/
+    you find ao_non_hermit_term_chemist(i,j,k,l) which is a four-index array of the non hermitian integrals on the AO basis 
+    watch out for the chemist and non hermitian convention 
+!                            1 1 2 2      1 2                                1 2                                                             
+!
+! ao_non_hermit_term_chemist(k,i,l,j) = < k l | [erf( mu r12) - 1] d/d_r12 | i j > on the AO basis
+  Here the differential operator d/d_r12 acts on i(1) and j(2) 
+
+in the plugin non_hermit_dav/
+    you will find lapack_diag_non_sym(n,A,WR,WI,VL,VR) and any sorts of routines that can be usefull to diagonalize non hermitian matrices
+    !!! WATCH OUT FOR COMPLEX EIGENVALUES !!! 
+
+in the plugin tc_h_clean/
+   you will find the routine htilde_mu_mat_tot(key_j,key_i,Nint,htot) which computes the total matrix element of the TC Hamiltonian 
+   between two random Slater determinants key_j,key_i. 
+   You can use that to test the extra diagonal matrix elements of the Fock operator for instance (specially the non hermitian part) 
+   You can also check the script.sh which gives you an idea to compute an iterative CIS 
+   

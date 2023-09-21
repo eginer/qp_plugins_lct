@@ -3,13 +3,15 @@
 
 """
 Usage:
-       qp_cipsi_rsh [-f <functional>] [-m <mu>] [-p <pt2max>] [-t <thresh>]
+       qp_cipsi_rsh [-f <functional>] [-m <mu>] [-l <length>] [-p <pt2max>] [-t <thresh>]
                     [-n <ndetmax>] [-r] [-i] EZFIO_DIR
 
 Options:
       -f <functional>  --functional=<functional>  Exchange/correlation functional.
                                                   Default=sr_pbe
       -m <mu>          --mu=<mu>                  Range-separation parameter. Default=0.5
+      -l <length>      --length                   Maximum number of CIPSI iterations 
+                                                  Default=20
       -p <pt2max>      --pt2max=<pt2max>          Max value of the E(PT2). Default=1.e-3
       -t <thresh>      --threshold=<thresh>       Convergence threshold on the energy.
                                                   Default=1.e-5
@@ -99,6 +101,11 @@ def get_params(arguments):
     else:
         mu = 0.5
 
+    if arguments["-l"]:
+        length = int(arguments["-l"])
+    else:
+        length = 20
+
     if arguments["-p"]:
         pt2max = float(arguments["-p"])
     else:
@@ -122,13 +129,14 @@ def get_params(arguments):
 EZFIO      : {filename}
 Functional : {functional}
 mu         : {mu}
+length     : {length}
 pt2max     : {pt2max}
 ndetmax    : {ndetmax}
 thresh     : {thresh}
 readints   : {readints}
 input_psi  : {input_psi}""")
 
-    return filename, functional, mu, pt2max, ndetmax, thresh, readints, input_psi
+    return filename, functional, mu, length, pt2max, ndetmax, thresh, readints, input_psi
 
 
 def reset_ezfio():
@@ -187,7 +195,7 @@ def update_density(filename, diis=None):
 
 def main():
     arguments = docopt(__doc__)
-    filename, functional, mu, pt2max, ndetmax, thresh, readints, input_psi  = \
+    filename, functional, mu, length, pt2max, ndetmax, thresh, readints, input_psi  = \
         get_params(arguments)
     ezfio.set_file(filename)
     ezfio.set_dft_keywords_exchange_functional(functional)
@@ -221,7 +229,7 @@ def main():
 
         diis_macro = [ DIIS(), DIIS() ]
         # Macro-iterations
-        for i in range(20):
+        for i in range(0,length,1):
             # Run the CIPSI calculation with the effective Hamiltonian
             # already stored in the EZFIO
 

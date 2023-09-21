@@ -18,8 +18,7 @@
  double precision :: weight
  double precision  :: eps_c_md_on_top_PBE,on_top_extrap,mu_correction_of_on_top
  integer :: ipoint,istate
- double precision :: eps_c_md_PBE,mu,rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),on_top
- mu = mu_erf_dft
+ double precision :: eps_c_md_PBE,rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),on_top
  ecmd_pbe_on_top_at_mu = 0.d0
   
  do istate = 1, N_states
@@ -34,8 +33,10 @@
 !  We take the extrapolated on-top pair density (Eq. 29)
    on_top = total_cas_on_top_density(ipoint,istate) !! C'EST PAS LE BON MU ICI
 !  Multiplied by 2 because of difference of normalizations between the on_top of QP2 and that of JCP, 150, 084103 1-10 (2019)
-   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu,on_top)
-   call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top_extrap,eps_c_md_on_top_PBE)
+   double precision :: mu_local 
+   mu_local = mu_of_r_dft(ipoint)
+   on_top_extrap = 2.d0 * mu_correction_of_on_top(mu_local,on_top)
+   call ec_md_pbe_on_top_general(mu_local,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top_extrap,eps_c_md_on_top_PBE)
  
    ecmd_pbe_on_top_at_mu(istate) += eps_c_md_on_top_PBE * weight
   enddo

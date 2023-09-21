@@ -40,9 +40,9 @@ subroutine print_eigv
  print*,'Overlap betwwen psi_coef and the right eigenvector = ',overlap_psi_det_r_eigevec
  print*,'Eigenvectors '
  print*,'******************'
- print*,'Right eigenvector             Left eigenvector               psi_coef'
+ print*,' Left eigenvector            Right eigenvector              psi_coef        '
  do i = 1, N_det
-  write(*,'(I5,X,100(F16.10,X))')i,reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),psi_coef(i,1)
+  write(*,'(I5,X,100(F16.10,X))')i,leigvec_trans(i,1)/dsqrt(leigvec_trans_norm(1)),reigvec_trans(i,1)/dsqrt(reigvec_trans_norm(1)),psi_coef(i,1)
  enddo
  double precision :: accu1,accu2,e
  accu1 = 0.d0

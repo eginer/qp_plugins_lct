@@ -1,0 +1,25 @@
+  1  2  3   3  2  1
+  k  l  n   m  j  i
+- l  k  n   m  j  i    1-2 
+- n  l  k   m  j  i    1-3
+- k  n  l   m  j  i    2-3
++ l  k  n   j  m  i    1-2 | 2-3
++ l  k  n   i  j  m    1-2 | 1-3
++ n  l  k   j  m  i    1-3 | 2-3
+#+ n  l  k   m  j  i    1-3 | 1-2 already done 
++ k  n  l   m  i  j    2-3 | 1-2 
+#+ k  n  l   m  j  i    2-3 | 1-3 already done 
+
+ 
+k == i, l == j, n == m
+  i  j  m   m  j  i
+- j  i  m   m  j  i    1-2 
+- m  j  i   m  j  i    1-3
+- i  m  j   m  j  i    2-3
++ j  i  m   j  m  i    1-2 | 2-3
++ j  i  m   i  j  m    1-2 | 1-3
++ m  j  i   j  m  i    1-3 | 2-3
+#! m  j  i   m  j  i    1-3 | 1-2 already dome 
++ i  m  j   m  i  j    2-3 | 1-2 
+#+ i  m  j   m  j  i    2-3 | 1-3 already dome 
+

@@ -34,6 +34,10 @@ program write_effective_RSDFT_hamiltonian
  io_mo_int_mu_of_r = "None" 
  touch io_mo_int_mu_of_r
 
+ no_core_density = .True.
+ touch no_core_density
+
+
  call routine
 end
 

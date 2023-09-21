@@ -60,9 +60,6 @@
     rho2 = total_cas_on_top_density(ipoint,istate)
    endif
 
-   ! The factor 2 is because the on-top is normalized to N(N-1)/2 
-   ! whereas the routine ecmdsrPBEn2 assumes a on-top normalized to N(N-1)
-   rho2 = rho2*2.d0 
    ! mu = mu(r)
    mu = mu_of_r_prov(ipoint,istate)
 

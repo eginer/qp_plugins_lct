@@ -16,9 +16,8 @@
  implicit none
  double precision :: weight
  integer :: ipoint,istate
- double precision :: eps_c_md_PBE,mu,rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),on_top
+ double precision :: eps_c_md_PBE,rho_a,rho_b,grad_rho_a(3),grad_rho_b(3),on_top
  double precision :: g0_UEG_mu_inf
- mu = mu_erf_dft
  ecmd_pbe_ueg_prov = 0.d0
   
  do istate = 1, N_states
@@ -33,7 +32,9 @@
 !  We take the on-top pair density of the UEG which is (1-zeta^2) rhoc^2 g0 = 4 rhoa * rhob * g0
    on_top = 4.d0 * rho_a * rho_b * g0_UEG_mu_inf(rho_a,rho_b)   
 
-   call ec_md_pbe_on_top_general(mu,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top,eps_c_md_PBE)
+   double precision :: mu_local 
+   mu_local = mu_of_r_dft(ipoint)
+   call ec_md_pbe_on_top_general(mu_local,rho_a,rho_b,grad_rho_a,grad_rho_b,on_top,eps_c_md_PBE)
 
    ecmd_pbe_ueg_prov(istate) += eps_c_md_PBE * weight
   enddo

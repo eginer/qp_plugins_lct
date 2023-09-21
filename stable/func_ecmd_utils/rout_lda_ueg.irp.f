@@ -190,8 +190,8 @@
 
 !  call v_rho_oc_to_v_rho_ab(decLDAndrho_o, decLDAndrho_c, decLDAndrho_a, decLDAndrho_b)
 
-!  call g0_dg0(rho, rho_a, rho_b, g0, dg0drho)
-  call g0_dg0_d2g0(rho, rho_a, rho_b, g0, dg0drho, d2g0drho2)
+  call g0_dg0(rho, rho_a, rho_b, g0, dg0drho)
+!  call g0_dg0_d2g0(rho, rho_a, rho_b, g0, dg0drho, d2g0drho2)
 
 ! calculation of energy
   c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0

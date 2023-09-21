@@ -87,7 +87,7 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
      print*,''
      print*,''
      call all_single(e_pt2)
-     call make_s2_eigenfunction_first_order
+     call make_s2_eigenfunction
      threshold_davidson = 1.d-6
      soft_touch threshold_davidson 
      call diagonalize_ci
@@ -174,7 +174,7 @@ subroutine FOBOCI_lmct_mlct_old_thr(iter)
       print*,''
       print*,''
       call all_single(e_pt2)
-      call make_s2_eigenfunction_first_order
+      call make_s2_eigenfunction
       threshold_davidson = 1.d-6
       soft_touch threshold_davidson threshold_davidson
 

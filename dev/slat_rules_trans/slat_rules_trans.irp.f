@@ -38,7 +38,7 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     jj = occ(j,jspin) 
     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map)
     heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) 
-    hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) 
+    hderiv += mo_non_hermit_term(ii,jj,ii,jj) 
    enddo
   enddo
 
@@ -49,8 +49,8 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     jj = occ(j,ispin) 
     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
     heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
-    hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
-    - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
+    hderiv += mo_non_hermit_term(ii,jj,ii,jj) & 
+    - 0.5d0 * mo_non_hermit_term(ii,jj,jj,ii) - 0.5d0 * mo_non_hermit_term(jj,ii,ii,jj) 
    enddo
   enddo
 
@@ -61,9 +61,9 @@ subroutine diag_htilde_mu_mat(key_i,hmono,herf,heff,hderiv,hthree,htot)
     jj = occ(j,jspin) 
     herf += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
     heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
-    hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
-    - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) & 
-    - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
+    hderiv += mo_non_hermit_term(ii,jj,ii,jj) & 
+    - 0.5d0 * mo_non_hermit_term(ii,jj,jj,ii) & 
+    - 0.5d0 * mo_non_hermit_term(jj,ii,ii,jj) 
    enddo
   enddo
  if(three_body_h_tc)then
@@ -176,7 +176,7 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    ii = occ(i,ispin) 
    herf   += get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map)
    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) 
-   hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1) 
+   hderiv += mo_non_hermit_term(ii,p1,ii,h1) 
   enddo
   ! same spin two-body 
   do i = 1, Ne(s1)
@@ -184,9 +184,9 @@ subroutine single_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
    ! (h1p1|ii ii) - (h1 ii| p1 ii)
    herf   += get_mo_two_e_integral_erf(ii,p1,ii,h1,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,p1,h1,ii,mo_integrals_erf_map) 
    heff   += mo_two_e_integral_eff_pot(ii,p1,ii,h1) - mo_two_e_integral_eff_pot(ii,p1,h1,ii)
-   hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,p1,ii,h1) & 
-          -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,p1,h1,ii) & 
-          -0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,ii,ii,h1)
+   hderiv += mo_non_hermit_term(ii,p1,ii,h1) & 
+          -0.5d0 * mo_non_hermit_term(ii,p1,h1,ii) & 
+          -0.5d0 * mo_non_hermit_term(p1,ii,ii,h1)
   enddo
 
  if(three_body_h_tc)then
@@ -287,13 +287,13 @@ subroutine double_htilde_mu_mat(key_j,key_i,hmono,herf,heff,hderiv,hthree,htot)
   ! opposite spin two-body 
   herf    = get_mo_two_e_integral_erf(p1,p2,h1,h2,mo_integrals_erf_map)   
   heff    = mo_two_e_integral_eff_pot(p1,p2,h1,h2) 
-  hderiv  = mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h1,h2) 
+  hderiv  = mo_non_hermit_term(p1,p2,h1,h2) 
   ! same spin two-body 
   if(s1.eq.s2)then
    herf   -= get_mo_two_e_integral_erf(p1,p2,h2,h1,mo_integrals_erf_map)   
    heff   -= mo_two_e_integral_eff_pot(p1,p2,h2,h1) 
-   hderiv -= 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p1,p2,h2,h1) & 
-            +0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(p2,p1,h1,h2)
+   hderiv -= 0.5d0 * mo_non_hermit_term(p1,p2,h2,h1) & 
+            +0.5d0 * mo_non_hermit_term(p2,p1,h1,h2)
   endif
   if(three_body_h_tc)then
    ! alpha/alpha/beta threee-body 

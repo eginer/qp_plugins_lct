@@ -1,0 +1,129 @@
+\documentclass[aip,jcp,reprint,noshowkeys,superscriptaddress]{revtex4-1}
+\usepackage{graphicx,dcolumn,bm,xcolor,microtype,multirow,amsmath,amssymb,amsfonts,physics,mhchem,xspace,subfigure}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{txfonts}
+
+\usepackage[
+	colorlinks=true,
+    citecolor=blue,
+    breaklinks=true
+	]{hyperref}
+\urlstyle{same}
+
+\definecolor{darkgreen}{HTML}{009900}
+\usepackage[normalem]{ulem}
+\newcommand{\sphi}[1]{\hat{{\bf S}}_{#1}}
+\newcommand{\overlap}[2]{\langle #1 | #2 \rangle}
+\newcommand{\matelem}[3]{\langle #1 | #2 | #3 \rangle}
+\newcommand{\deriv}[3]{\frac{\partial^{#3} #1}{\partial {#2}^{#3}}}
+\newcommand{\bd}[1]{{\bf {#1}}}
+\newcommand{\br}[0]{{\bf {r}}}
+\newcommand{\bs}[0]{{\bf {s}}}
+\newcommand{\dr}[1]{\text{d}{\bf {#1}}}
+\newcommand{\psiex}[0]{\Psi^{\text{ex}}}
+\newcommand{\energyex}[0]{E^{\text{ex}}}
+\newcommand{\opr}[1]{\,\hat{#1}}
+\newcommand{\oprd}[1]{\,\hat{#1}^\dagger}
+
+\begin{document}	
+
+\title{Computing matrix element of the three-body operator for parallel spins}
+
+\author{Emmanuel Giner}
+\email{emmanuel.giner@lct.jussieu.fr}
+
+\maketitle
+\section{What we need to compute}
+\subsection{General matrix element}
+We need to compute the matrix elements of this nasty operator
+\begin{equation}
+ O^3 = \frac{1}{6} \sum_{ijm} \sum_{kln} \overlap{ijm}{kln} \oprd{k} \oprd{l} \oprd{n}  \opr{m} \opr{j} \opr{i}.
+\end{equation}
+Therefore, it is the product of $\oprd{k} \oprd{l} \oprd{n}$ by $\opr{m} \opr{j} \opr{i}$, and each term posses a 6-fold permutation symmetry with $\pm 1$ signature. 
+Starting from $\oprd{k} \oprd{l} \oprd{n}$ there are two symmetric pertumations 
+\begin{equation}
+ \begin{aligned}
+   & \oprd{k} \oprd{l} \oprd{n} = \oprd{l} \oprd{n} \oprd{k} = \oprd{n} \oprd{k} \oprd{l}, \\
+ \end{aligned}
+\end{equation}
+and three anti-symmetric permutations 
+\begin{equation}
+ \begin{aligned}
+  \oprd{l} \oprd{k} \oprd{n}  =   \oprd{n} \oprd{l} \oprd{k} =  \oprd{k} \oprd{n} \oprd{l},
+ \end{aligned}
+\end{equation}
+which fulfill 
+\begin{equation}
+ \begin{aligned}
+ \oprd{k} \oprd{l} \oprd{n} = - \oprd{l} \oprd{k} \oprd{n}. 
+ \end{aligned}
+\end{equation}
+Therefore, one can express a $6\times 6$ matrix that is the product all possible permutations for $(k,l,n)$ and $(i,j,m)$, rearrange everything in terms of the original $\oprd{k} \oprd{l} \oprd{n}  \opr{m} \opr{j} \opr{i}$ operator and obtain the following terms 
+\begin{equation}
+ \begin{aligned}
+ & \frac{1}{6} \mathcal{P}_{ijm}^{kln}\overlap{ijm}{kln} \oprd{k} \oprd{l} \oprd{n}  \opr{m} \opr{j} \opr{i}= &\oprd{k} \oprd{l} \oprd{n}  \opr{m} \opr{j} \opr{i} \bigg( \\
+ &+ \big( \overlap{ijm}{kln} + \overlap{ijm}{lnk}  + \overlap{ijm}{nkl} \big) \\
+ &- \big( \overlap{ijm}{lkn} + \overlap{ijm}{nlk}  + \overlap{ijm}{knl} \big) \bigg),
+ \end{aligned}
+\end{equation}
+where $\mathcal{P}_{ijm}^{kln}$ contains the sum over the 36 permutations of the 6 indices with the corresponding signs. 
+
+\subsection{Diagonal term}
+For a diagonal term, one has that 
+\begin{equation}
+ \begin{aligned}
+  i = k \\
+  j = l \\
+  m = n \\
+ \end{aligned}
+\end{equation}
+and therefore one obtains 
+\begin{equation}
+ \begin{aligned}
+ \bra{I}O^3\ket{I} = \sum_{i>j>m\in \ket{I}}&+ \big(  \overlap{ijm}{ijm} + \overlap{ijm}{jmi}  + \overlap{ijm}{mij} \big) \\
+                                 &- \big(  \overlap{ijm}{jim} + \overlap{ijm}{mji}  + \overlap{ijm}{imj} \big)
+ \end{aligned}
+\end{equation}
+where the summation $\sum_{i>j>m\in \ket{I}}$ means running over all orbitals occupied in $\ket{I}$ in a unique way. 
+\subsection{Single excitation term}
+For a single excitation term, one has that 
+\begin{equation}
+ \begin{aligned}
+  i \ne k \\
+  j = l \\
+  m = n \\
+ \end{aligned}
+\end{equation}
+and then 
+\begin{equation}
+ \begin{aligned}
+ \bra{I}O^3 \oprd{k} \opr{i} \ket{I} = (-1)^{\mathcal{P}_{IJ}}
+ \sum_{j>m\in \ket{I}} 
+ &+ \big( \overlap{ijm}{kjm} + \overlap{ijm}{jmk}  + \overlap{ijm}{mkj} \big) \\
+ &- \big( \overlap{ijm}{jkm} + \overlap{ijm}{mjk}  + \overlap{ijm}{kmj} \big) \bigg).
+ \end{aligned}
+\end{equation}
+
+\subsection{Double excitation term}
+For a double excitation term, one has that 
+\begin{equation}
+ \begin{aligned}
+  i \ne k \\
+  j \ne l \\
+  m = n \\
+ \end{aligned}
+\end{equation}
+and then 
+\begin{equation}
+ \begin{aligned}
+ \bra{I}O^3 \oprd{k}\oprd{l} \opr{j} \opr{i} \ket{I} = (-1)^{\mathcal{P}_{IJ}}
+ \sum_{m\in \ket{I}} 
+ &+ \big( \overlap{ijm}{klm} + \overlap{ijm}{lmk}  + \overlap{ijm}{mkl} \big) \\
+ &- \big( \overlap{ijm}{lkm} + \overlap{ijm}{mlk}  + \overlap{ijm}{kml} \big) \bigg).
+ \end{aligned}
+\end{equation}
+
+
+\end{document}

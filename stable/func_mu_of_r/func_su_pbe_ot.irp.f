@@ -125,9 +125,6 @@ END_PROVIDER
     rho2 = total_cas_on_top_density(ipoint,istate)
    endif
 
-   ! The factor 2 is because the on-top is normalized to N(N-1)/2 
-   ! whereas the routine ecmdsrPBEn2 assumes a on-top normalized to N(N-1)
-   rho2 = 2.d0*rho2
    ! mu = mu(r)
    mu = mu_of_r_prov(ipoint,istate)
   ! mu = mu_of_r_hf(ipoint)
@@ -137,10 +134,7 @@ END_PROVIDER
    call ecmdsrPBEn2(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,rho2,ec_srmuOT,decdrho_a,decdrho_b, decdrho, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b, decdgrad_rho_2,decdrho2)
 
    e_c_md_basis_su_pbe_ot(istate) += ec_srmuOT * weight
-   ! The factor 1 (and not 2) is because the output is with the correct normalization factor (i.e. N(N-1)) 
-   ! for the computation of the effective operator of type 1/2  \sum_{ijkl} <ij|kl> a^k a^l a_j a_i
-    d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
-   !d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 2.d0*decdrho2/((1.d0 + 2.d0/(sqpi*mu))**2)
+   d_dn2_e_cmd_su_pbe_ot(ipoint,istate) = 1.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
    
    decdrho_a *= weight
    decdrho_b *= weight

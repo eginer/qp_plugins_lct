@@ -106,17 +106,6 @@ END_PROVIDER
    rho_a =  rho_tot * 0.5d0 
    rho_b =  rho_tot * 0.5d0 
 
-!   grad_rho_a(1:3) =  0.d0 ! one_e_dm_and_grad_alpha_in_r(1:3,ipoint,istate)
-!   grad_rho_b(1:3) =  0.d0 ! one_e_dm_and_grad_beta_in_r(1:3,ipoint,istate)
-!   grad_rho_a_2 = 0.d0
-!   grad_rho_b_2 = 0.d0
-!   grad_rho_a_b = 0.d0
-!  do m = 1, 3
-!   grad_rho_a_2 += grad_rho_a(m) * grad_rho_a(m)
-!   grad_rho_b_2 += grad_rho_b(m) * grad_rho_b(m)
-!   grad_rho_a_b += grad_rho_a(m) * grad_rho_b(m)
-!  enddo
-   
    if(mu_of_r_potential == "cas_ful")then
     ! You take the on-top of the CAS wave function which is computed with mu(r) 
     rho2 = on_top_cas_mu_r(ipoint,istate)
@@ -125,9 +114,6 @@ END_PROVIDER
     rho2 = total_cas_on_top_density(ipoint,istate)
    endif
 
-   ! The factor 2 is because the on-top is normalized to N(N-1)/2 
-   ! whereas the routine ecmdsrPBEn2 assumes a on-top normalized to N(N-1)
-   rho2 = 2.d0*rho2
    ! mu = mu(r)
    mu = mu_of_r_prov(ipoint,istate)
   ! mu = mu_of_r_hf(ipoint)
@@ -138,18 +124,10 @@ END_PROVIDER
     call ecmdsrLDAnn2(mu,rho_a,rho_b,rho2,ec_srmuLDAn,decdrho_a,decdrho_b, decdrho,decdrho2)
 
    e_c_md_basis_su_lda_ot(istate) += ec_srmuLDAn * weight
-   ! The factor 1 (and not 2) is because the output is with the correct normalization factor (i.e. N(N-1)) 
-   ! for the computation of the effective operator of type 1/2  \sum_{ijkl} <ij|kl> a^k a^l a_j a_i
-    d_dn2_e_cmd_su_lda_ot(ipoint,istate) = 2.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
-   !d_dn2_e_cmd_su_lda_ot(ipoint,istate) = 2.d0*decdrho2/((1.d0 + 2.d0/(sqpi*mu))**2)
+   d_dn2_e_cmd_su_lda_ot(ipoint,istate) = 1.d0*decdrho2 / ( 1.d0 + 2.d0/(sqpi*mu) )
    
    decdrho_a *= weight
    decdrho_b *= weight
-
-!   do m= 1,3
-!    contrib_grad_ca(m) = weight * (2.d0 * decdgrad_rho_a_2 *  grad_rho_a(m) + decdgrad_rho_a_b  * grad_rho_b(m) )
-!    contrib_grad_cb(m) = weight * (2.d0 * decdgrad_rho_b_2 *  grad_rho_b(m) + decdgrad_rho_a_b  * grad_rho_a(m) )
-!   enddo
 
    do j = 1, ao_num
     aos_vc_alpha_su_lda_ot_w(j,ipoint,istate) = decdrho_a * aos_in_r_array(j,ipoint)

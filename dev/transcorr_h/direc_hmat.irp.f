@@ -53,7 +53,7 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
      jj = occ(j,jspin) 
      heff += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) 
-     hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) 
+     hderiv += mo_non_hermit_term(ii,jj,ii,jj) 
     enddo
    enddo
  
@@ -64,8 +64,8 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
      jj = occ(j,ispin) 
      heff += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
-     hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
-     - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
+     hderiv += mo_non_hermit_term(ii,jj,ii,jj) & 
+     - 0.5d0 * mo_non_hermit_term(ii,jj,jj,ii) - 0.5d0 * mo_non_hermit_term(jj,ii,ii,jj) 
     enddo
    enddo
  
@@ -76,9 +76,9 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
      jj = occ(j,jspin) 
      heff += get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
-     hderiv += mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
-     - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) & 
-     - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
+     hderiv += mo_non_hermit_term(ii,jj,ii,jj) & 
+     - 0.5d0 * mo_non_hermit_term(ii,jj,jj,ii) & 
+     - 0.5d0 * mo_non_hermit_term(jj,ii,ii,jj) 
     enddo
    enddo
   !!!!!!!!!!!!!!!!!!!!!!!!!!!! ADJOINT OF THE TC HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!
@@ -95,7 +95,7 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
      heff += 2.d0 * get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) ! 2 / r12
      heff -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) ! - erf(mu r12)/r12
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) ! thanks to "adjoint_tc_h" keyword, proper eff two e pot
-     hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj)  !MARK THE MINUS SIGN HERE 
+     hderiv -= mo_non_hermit_term(ii,jj,ii,jj)  !MARK THE MINUS SIGN HERE 
     enddo
    enddo
  
@@ -107,8 +107,8 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
      heff += 2.d0 * (get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) - get_two_e_integral(ii,jj,jj,ii,mo_integrals_map))
      heff -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
-     hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
-     - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
+     hderiv -= mo_non_hermit_term(ii,jj,ii,jj) & 
+     - 0.5d0 * mo_non_hermit_term(ii,jj,jj,ii) - 0.5d0 * mo_non_hermit_term(jj,ii,ii,jj) 
     enddo
    enddo
  
@@ -120,8 +120,8 @@ subroutine direct_diag_htilde_mu_mat(key_i,hmono,heff,hderiv,hthree,htot)
      heff -= get_mo_two_e_integral_erf(ii,jj,ii,jj,mo_integrals_erf_map) - get_mo_two_e_integral_erf(ii,jj,jj,ii,mo_integrals_erf_map)
      heff += 2.d0 * (get_two_e_integral(ii,jj,ii,jj,mo_integrals_map) - get_two_e_integral(ii,jj,jj,ii,mo_integrals_map))
      heff += mo_two_e_integral_eff_pot(ii,jj,ii,jj) - mo_two_e_integral_eff_pot(ii,jj,jj,ii)
-     hderiv -= mo_two_e_eff_dr12_pot_array_physicist(ii,jj,ii,jj) & 
-     - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(ii,jj,jj,ii) - 0.5d0 * mo_two_e_eff_dr12_pot_array_physicist(jj,ii,ii,jj) 
+     hderiv -= mo_non_hermit_term(ii,jj,ii,jj) & 
+     - 0.5d0 * mo_non_hermit_term(ii,jj,jj,ii) - 0.5d0 * mo_non_hermit_term(jj,ii,ii,jj) 
     enddo
    enddo
   endif

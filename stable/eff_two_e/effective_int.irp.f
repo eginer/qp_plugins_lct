@@ -67,12 +67,31 @@ BEGIN_PROVIDER [double precision, phi_ij_eff_pot_in_r, (n_points_final_grid, mo_
  double precision :: decdrho2
 
   istate = 1
-   do i = 1, mo_num
-    do j = 1, mo_num
-     do ipoint = 1, n_points_final_grid
-      weight = final_weight_at_r_vector(ipoint)
-      decdrho2 = d_dn2_e_cmd_basis(ipoint,istate)
+   do ipoint = 1, n_points_final_grid
+    weight = final_weight_at_r_vector(ipoint)
+    decdrho2 = d_dn2_e_cmd_basis(ipoint,istate)
+    do i = 1, mo_num
+     do j = 1, mo_num
       phi_ij_eff_pot_in_r(ipoint,j,i)  = weight * decdrho2 * mos_in_r_array(i,ipoint) * mos_in_r_array(j,ipoint) 
+     enddo
+    enddo
+   enddo
+END_PROVIDER 
+
+
+BEGIN_PROVIDER [double precision, phi_ao_ij_eff_pot_in_r, (n_points_final_grid, ao_num, ao_num)]
+ implicit none
+ integer :: istate,ipoint,m,i,j,k,l
+ double precision :: weight
+ double precision :: decdrho2
+
+  istate = 1
+   do ipoint = 1, n_points_final_grid
+    weight = final_weight_at_r_vector(ipoint)
+    decdrho2 = d_dn2_e_cmd_basis(ipoint,istate)
+    do i = 1, ao_num
+     do j = 1, ao_num
+      phi_ao_ij_eff_pot_in_r(ipoint,j,i)  = weight * decdrho2 * aos_in_r_array(i,ipoint) * aos_in_r_array(j,ipoint) 
      enddo
     enddo
    enddo

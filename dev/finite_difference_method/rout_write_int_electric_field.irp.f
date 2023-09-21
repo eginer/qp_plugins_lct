@@ -26,6 +26,9 @@ subroutine save_v_ne_and_z_electric_filed_ao_ints
 
  call ezfio_set_ao_one_e_ints_ao_integrals_n_e(ao_one_e_potential_n_e_and_electric_field_z) ! ao_integrals_n_e - epsilon_<mu_z>_ao 
  call ezfio_set_ao_one_e_ints_io_ao_integrals_n_e("Read")
+ print*,' nuclei_electric_field_energy = ',nuclei_electric_field_energy
+ call ezfio_set_nuclei_nuclear_repulsion(nuclear_repulsion_with_electric_field)
+ call ezfio_set_nuclei_io_nuclear_repulsion("Read")
 end
 
  BEGIN_PROVIDER [ double precision, ao_one_e_integrals_tot_electric_field_x,(ao_num,ao_num)]
@@ -47,6 +50,7 @@ end
   ao_one_e_potential_n_e_and_electric_field_y = ao_integrals_n_e - field_strenght*ao_dipole_total_y
   ao_one_e_potential_n_e_and_electric_field_z = ao_integrals_n_e - field_strenght*ao_dipole_total_z
 END_PROVIDER
+
 
 BEGIN_PROVIDER [ double precision, ao_dipole_total_x, (ao_num, ao_num)]
 &BEGIN_PROVIDER [ double precision, ao_dipole_total_y, (ao_num, ao_num)]
@@ -84,3 +88,19 @@ BEGIN_PROVIDER [ double precision, mo_one_e_integrals_electric_field_x,(mo_num,m
   mo_one_e_integrals_electric_field_y  = mo_integrals_n_e + mo_kinetic_integrals - field_strenght*mo_dipole_y
   mo_one_e_integrals_electric_field_z  = mo_integrals_n_e + mo_kinetic_integrals - field_strenght*mo_dipole_z
 END_PROVIDER
+
+BEGIN_PROVIDER [ double precision, nuclei_electric_field_energy ]
+ implicit none
+ integer :: i
+ nuclei_electric_field_energy = 0.d0
+ do i = 1, nucl_num
+!  print*,field_strenght , nucl_coord(i,3) , nucl_charge(i)
+  nuclei_electric_field_energy += field_strenght * nucl_coord(i,3) * nucl_charge(i)
+ enddo
+
+END_PROVIDER 
+
+BEGIN_PROVIDER [ double precision, nuclear_repulsion_with_electric_field]
+ implicit none
+ nuclear_repulsion_with_electric_field = nuclear_repulsion + nuclei_electric_field_energy
+END_PROVIDER 
