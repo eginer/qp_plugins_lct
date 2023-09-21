@@ -34,6 +34,10 @@ program write_effective_RSDFT_hamiltonian
  io_mo_int_mu_of_r = "None" 
  touch io_mo_int_mu_of_r
 
+ no_core_density = .True.
+ touch no_core_density
+
+
  call routine
 end
 
@@ -55,8 +59,8 @@ subroutine routines_compute_energy
 ! density_for_dft = "WFT" 
 ! touch density_for_dft 
  call print_variational_energy
- call ezfio_set_aux_quantities_data_one_e_dm_alpha_mo(one_e_dm_mo_alpha)
- call ezfio_set_aux_quantities_data_one_e_dm_beta_mo(one_e_dm_mo_beta)
+ call ezfio_set_aux_quantities_data_one_e_dm_alpha_ao(one_e_dm_ao_alpha)
+ call ezfio_set_aux_quantities_data_one_e_dm_beta_ao(one_e_dm_ao_beta)
 
 end
 

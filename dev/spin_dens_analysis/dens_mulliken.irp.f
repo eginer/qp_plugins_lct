@@ -14,7 +14,7 @@ subroutine routine
  print*,'Mulliken density analysis '
  accu= 0.d0
  do i = 1, nucl_num
-  print*,i,nucl_charge(i)-mulliken_density_densities(i)
+  print*,i,nucl_charge(i)-mulliken_density_densities(i),nucl_coord(i,3)
   accu += nucl_charge(i)-mulliken_density_densities(i)
  enddo
  double precision, allocatable :: mull_dens_atoms(:)

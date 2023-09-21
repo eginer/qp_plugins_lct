@@ -21,6 +21,7 @@ subroutine plot_mu_tc
  double precision :: rs,grad_n,grad_n_a(3), grad_n_b(3)
  double precision :: g0_UEG_mu_inf
  double precision :: cst_rs,alpha_rs,mu_rs, mu_rs_c, mu_lda, mu_grad_n 
+ double precision :: mos_array(mo_num),accu
  character*(128) :: output
  integer :: i_unit_output,getUnitAndOpen
  if (no_core_density)then
@@ -46,20 +47,25 @@ subroutine plot_mu_tc
   rho_a_hf = 0.d0
   grad_n   = 0.d0
   call density_and_grad_alpha_beta(r,rho_a_hf,rho_b_hf, grad_n_a, grad_n_b)
+  call give_all_mos_at_r(r,mos_array)
   do m = 1, 3
    grad_n += grad_n_a(m)*grad_n_a(m) + grad_n_b(m)*grad_n_b(m) + 2.d0 * grad_n_a(m) * grad_n_b(m)
   enddo
   rho_hf = rho_a_hf + rho_b_hf
   grad_n = dsqrt(grad_n)
-  grad_n = grad_n/(4.d0 * rho_hf)
+  grad_n = grad_n
   rs = cst_rs * rho_hf**(-1.d0/3.d0)
+  double precision :: kf,s 
+  kf = (3.d0 * dacos(-1.d0)**2 * rho_hf)**0.3333d0
+  s  = grad_n / (2.d0 * kf * rho_hf)
   g0 = g0_UEG_mu_inf(rho_a_hf,rho_b_hf)
 
   mu_rs     = 1.d0/rs 
   mu_rs_c   = alpha_rs/dsqrt(rs) 
   mu_lda    =  - 1.d0 / (dlog(2.d0 * g0) * sqpi)  
-  mu_grad_n = grad_n 
-  write(i_unit_output,'(100(F16.10,X))')r(3),rho_hf,mu_rs,mu_rs_c,mu_lda,mu_grad_n
+  mu_grad_n = 1.d0/rs * s
+  accu = dsqrt(mos_array(3)**2+mos_array(4)**2+mos_array(5)**2)/3.d0
+  write(i_unit_output,'(100(F16.10,X))')r(3),rho_hf,mu_rs,mu_rs_c,mu_lda,mu_grad_n, mos_array(1), mos_array(2),accu
   r(3) += dx
  enddo
 

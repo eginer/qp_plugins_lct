@@ -7,7 +7,7 @@ program state_mulliken
   read_wf = .True.
   touch read_wf
   call routine
- call print_non_ad_coupl
+! call print_non_ad_coupl
 end
 
 
@@ -41,11 +41,11 @@ subroutine routine
   iorder(i) = i
  enddo
 
- print*,'Sorting '
- call dsort(pop_group_1,iorder,n_states)
- do i = 1, n_states
-  print*,i,iorder(i),-pop_group_1(i)
- enddo
+!print*,'Sorting '
+!call dsort(pop_group_1,iorder,n_states)
+!do i = 1, n_states
+! print*,i,iorder(i),-pop_group_1(i)
+!enddo
 end
 
 
