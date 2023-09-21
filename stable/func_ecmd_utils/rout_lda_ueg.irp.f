@@ -158,23 +158,16 @@
   double precision, intent(in)  :: rho_a, rho_b
   double precision, intent(out) :: ec_srmuLDAn, decdrho_a, decdrho_b
   double precision, intent(out) :: d2ecdrho_a2, d2ecdrho_b2
+  double precision              :: decdrho
   double precision              :: ecLDAn, decLDAndrho_a, decLDAndrho_b
   double precision              :: rho_c, rho_o, decLDAndrho_c, decLDAndrho_o
   double precision              :: beta, dbetadrho_a, dbetadrho_b
   double precision              :: denom, ddenomdrho_a, ddenomdrho_b
   double precision              :: pi, c, thr
   double precision              :: rho, m  
-  double precision              :: n2_UEG, dn2_UEGdrho_a, dn2_UEGdrho_b, d2n2_UEGdrho_a2, d2n2_UEGdrho_b2
+  double precision              :: n2_UEG, dn2_UEGdrho_a, dn2_UEGdrho_b
   double precision              :: g0, dg0drho, d2g0drho2
-  double precision :: A1, A2, B1, B2, C1, C2, D1, D2, A, B
-  double precision :: sqA2, sqB2, sqC2, sqD2 
-  double precision :: dA1, dA2, dB1, dB2, dC1, dC2, dD1, dD2
-  double precision :: d2betadrho_a2, d2betadrho_b2, kLDAn
 
- 
-  double precision :: delta_rho_a, delta_rho_b
-  double precision :: d2ecdrho_a2_test, d2ecdrho_b2_test
-  double precision :: ecLDAn_deltarho,decLDAndrho_a_deltarho,decLDAndrho_b_deltarho
   if(dabs(rho_a-rho_b)/dabs(rho_a+rho_b) > 1.d-1)then
    print*,'rho_a,rho_b        = ',rho_a,rho_b
    print*,'dabs(rho_a-rho_b)  = ',dabs(rho_a-rho_b)
@@ -183,7 +176,9 @@
 
   pi = dacos(-1.d0)
   rho = rho_a + rho_b
+
   m = rho_a - rho_b
+
   thr = 1.d-12
   
 ! correlation LDAn standard and on-top pair distribution 
@@ -191,12 +186,7 @@
 
 !  call ec_pbe_sr(1.d-12,rho_c,rho_o,grad_rho_c_2,grad_rho_o_2,grad_rho_o_c,ecLDAn,decLDAndrho_c,decLDAndrho_o,decLDAndgrad_rho_c_2,decLDAndgrad_rho_o_2, decLDAndgrad_rho_c_o)
 
-  delta_rho_a = 0.0001
-  delta_rho_b = 0.0001
   call ec_lda(rho_a,rho_b,ecLDAn,decLDAndrho_a,decLDAndrho_b)
-  call ec_lda(rho_a + delta_rho_a,rho_b + delta_rho_b,ecLDAn_deltarho,decLDAndrho_a_deltarho,decLDAndrho_b_deltarho)
-
-  call kernel_ldac(0,kLDAn)
 
 !  call v_rho_oc_to_v_rho_ab(decLDAndrho_o, decLDAndrho_c, decLDAndrho_a, decLDAndrho_b)
 
@@ -207,103 +197,38 @@
   c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0
   
   n2_UEG = (rho**2)*g0
+ 
   if(dabs(n2_UEG).lt.thr)then
    n2_UEG = 1.d-12
   endif  
-  
+
   beta = ecLDAn/(c*n2_UEG)
+
   if(dabs(beta).lt.thr)then
    beta = 1.d-12
   endif
 
   denom = 1.d0 + beta*mu**3
+
   ec_srmuLDAn=ecLDAn/denom
 
 ! calculation of derivatives 
-  !dec/dn
+ ! dec/dn
   
-  !n2_UEG = (na^2 + nb^2 + 2nanb)g0
-  !dn2_UEGdrhoa = (2na + 2nb)g0 + (na + nb)^2 * dg0drhoa
-  !dn2_UEGdrhoa = 2*rho*g0 + rho^2 *dg0drho
-  dn2_UEGdrho_a = 2.d0*rho*g0 + (rho**2)*dg0drho
-  dn2_UEGdrho_b = 2.d0*rho*g0 + (rho**2)*dg0drho
-
-  d2n2_UEGdrho_a2 = 2.d0*g0 + 4.d0*rho*dg0drho + (rho**2)*d2g0drho2
-  d2n2_UEGdrho_b2 = 2.d0*g0 + 4.d0*rho*dg0drho + (rho**2)*d2g0drho2
+ dn2_UEGdrho_a = 2.d0*rho*g0 + (rho**2)*dg0drho
+ dn2_UEGdrho_b = 2.d0*rho*g0 + (rho**2)*dg0drho
  
-  dbetadrho_a  = decLDAndrho_a/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho_a
-  dbetadrho_b  = decLDAndrho_b/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho_b
+ dbetadrho_a  = decLDAndrho_a/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho_a
+ dbetadrho_b  = decLDAndrho_b/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho_b
 
-  C1 = decLDAndrho_a
-  C2 = n2_UEG
-  sqC2 = C2**2
+ ddenomdrho_a = dbetadrho_a*mu**3
+ ddenomdrho_b = dbetadrho_b*mu**3
 
-  D1 = ecLDAn*dn2_UEGdrho_a
-  D2 = n2_UEG**2
-  sqD2 = D2**2
-
-  dC1 = kLDAn
-  dC2 = dn2_UEGdrho_a
-
-  dD1 = decLDAndrho_a*dn2_UEGdrho_a + ecLDAn*d2n2_UEGdrho_a2
-  dD2 = 2.d0*n2_UEG*dn2_UEGdrho_a
+ decdrho_a = decLDAndrho_a/denom - ecLDAn*ddenomdrho_a/(denom**2)
+ decdrho_b = decLDAndrho_b/denom - ecLDAn*ddenomdrho_b/(denom**2)
  
-  d2betadrho_a2 = (1.d0/c)*((dC1*C2 - dC2*C1)/sqC2 - (dD1*D2 - dD2*D1)/sqD2)
-
-  ddenomdrho_a = dbetadrho_a*mu**3
-  ddenomdrho_b = dbetadrho_b*mu**3
-  decdrho_a = decLDAndrho_a/denom - ecLDAn*ddenomdrho_a/(denom**2)
-  decdrho_b = decLDAndrho_b/denom - ecLDAn*ddenomdrho_b/(denom**2)
-
-! Calculation of second derivatives
-!d2ecdrho_a2   
-  A1 = decLDAndrho_a
-  A2 = 1.d0 + beta*mu**3
-
-  B1 = ecLDAn*(dbetadrho_a*mu**3)
-  B2 = (1.d0 + beta*mu**3)**2
-
-  dA1 = kLDAn
-  dA2 = dbetadrho_a*mu**3
-
-  dB1 = decLDAndrho_a*dbetadrho_a*mu**3 + ecLDAn*d2betadrho_a2*mu**3
-  dB2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho_a*mu**3
-  
-  sqA2 = A2**2
-  sqB2 = B2**2
-  
-  d2ecdrho_a2 = (dA1*A2 - dA2*A1)/sqA2 - (dB1*B2 - dB2*B1)/sqB2 
-  
-  d2ecdrho_a2_test = (decLDAndrho_a_deltarho - decLDAndrho_a)/delta_rho_a
-  if (dabs(d2ecdrho_a2-d2ecdrho_a2_test).gt.1E-4)then
-   print*, 'WARNING ! d2ecdrho_a2-d2ecdrho_a2_test > 0.0001'
-  endif 
-  
-!d2ecdrho_b2
-  A1 = decLDAndrho_b
-  A2 = 1.d0 + beta*mu**3
-
-  B1 = ecLDAn*(dbetadrho_b*mu**3)
-  B2 = (1.d0 + beta*mu**3)**2
-
-  dA1 = kLDAn
-  dA2 = dbetadrho_b*mu**3
-
-  dB1 = decLDAndrho_b*dbetadrho_b*mu**3 + ecLDAn*d2betadrho_b2*mu**3
-  dB2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho_b*mu**3
-  
-  sqA2 = A2**2
-  sqB2 = B2**2
-  
-  d2ecdrho_b2 = (dA1*A2 - dA2*A1)/sqA2 - (dB1*B2 - dB2*B1)/sqB2 
-
-  d2ecdrho_b2_test = (decLDAndrho_b_deltarho - decLDAndrho_b)/delta_rho_b
-   if (dabs(d2ecdrho_b2-d2ecdrho_b2_test).gt.1E-4)then
-    print*, 'WARNING ! d2ecdrho_b2-d2ecdrho_b2_test > 0.0001'
-  endif 
+ decdrho = decdrho_a + decdrho_b
  
-
-
   end subroutine ecmdsrLDAn
 
 !---------------------------------------------------------------------------------------------------------------------------------------------
@@ -328,26 +253,103 @@ subroutine exc_dexc_md_sr_LDAn(mu,rho_a,rho_b, &
 
  end subroutine excmdsrLDAn
 
-!---------------------------------------------------------------------------------------------------------------------------------------------
-!subroutine fc_LDAUEG_at_r(mu, rho_a, rho_b,fcmdsrLDAUEG)
-!implicit none
-!BEGIN_DOC
-!! fc_LDAUEG_at_r : fcmdsrLDAUEG = [2*d]
-!END_DOC
-!double precision, intent(in) :: rho_a, rho_b
-!double precision, intent(out) :: fcmdsrLDAUEG
-!double precision :: ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2
-!double precision :: rho
+ ---------------------------------------------------------------------------------------------------------------------------------------------
+ subroutine fc_LDAUEG(fcmdsrLDAUEG)
+ implicit none
+ BEGIN_DOC
+ END_DOC
+ double precision, intent(out) :: fcmdsrLDAUEG(n_points_final_grid)
+ 
+ double precision :: ecLDAn,decLDAndrho_a,decLDAndrho_b,decLDAndrho
+ double precision :: ecLDAn_delta_a,decLDAndrho_a_delta_a,decLDAndrho_b_delta_a
+ double precision :: ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2
+ double precision, allocatable :: kernelc(:)
+ double precision :: thr, pi, c, rho, delta_rho_a
+ double precision :: g0, dg0drho, d2g0drho2
+ double precision :: n2_UEG, dn2_UEGdrho, d2n2_UEGdrho2 
+ double precision :: beta, dbetadrho, d2betadrho2
+ double precision :: D, E, F, G, H
+ double precision :: A1, A2, dA1, dA2
+ double precision :: B1, B2, dB1, dB2
 
-! if(dabs(rho_a-rho_b)/dabs(rho_a+rho_b) > 1.d-1)then
-!  print*,'rho_a,rho_b        = ',rho_a,rho_b
-!  print*,'dabs(rho_a-rho_b)  = ',dabs(rho_a-rho_b)
-!  stop "routine implemented only for closed-shell systems"
-! endif 
+ integer :: i
+ double precision :: mu, rho_a, rho_b
+ allocate(kernelc(n_points_final_grid))
 
-!rho = rho_a + rho_b
-!call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2) 
-!
-!fcmdsrLDAUEG = (d2ecdrho_a2+d2ecdrho_b2)
-!
-!end subroutine fc_LDAUEG_at_r
+  pi = dacos(-1.d0)
+  c = 2*dsqrt(pi)*(1.d0 - dsqrt(2.d0))/3.d0
+  thr = 1.d-12
+
+ fcmdsrLDAUEG = 0.d0
+
+ call kernel_ldac(0,kernelc)
+ do i=1,n_points_final_grid
+  rho_a = one_e_dm_and_grad_alpha_in_r(4,i,1)
+  rho_b = one_e_dm_and_grad_beta_in_r(4,i,1)
+  mu = mu_of_r_prov(i,1)
+  
+  if (dabs(rho_a + rho_b) < 1.d-4)then
+
+    fcmdsrLDAUEG(i) = 0.d0
+
+  else
+
+  if(dabs(rho_a-rho_b)/dabs(rho_a+rho_b) > 1.d-1)then
+   print*,'rho_a,rho_b        = ',rho_a,rho_b
+   print*,'dabs(rho_a-rho_b)  = ',dabs(rho_a-rho_b)
+   stop "routine implemented only for closed-shell systems"
+  endif 
+
+  rho = rho_a + rho_b
+  delta_rho_a = 1.d-12!*(rho_a + 1.d-6)
+  !delta_rho_a = 1.d-3*(rho_a + 1.d-3)
+
+  call ec_lda(rho_a,rho_b,ecLDAn,decLDAndrho_a,decLDAndrho_b)
+  call ec_lda(rho_a + delta_rho_a,rho_b,ecLDAn_delta_a,decLDAndrho_a_delta_a,decLDAndrho_b_delta_a)
+  call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2) 
+ ! dv/drho = (dv/drho_a)(drho_a/drho) + (dv/drho_b)(drho_b/drho)
+ !         = 0.5*(dv/drho_a + dv/drho_b)
+ !         = dv/drho_a (because dv/drho_a = dv/drho_b)
+ kernelc(i) = (decLDAndrho_a_delta_a - decLDAndrho_a)/(delta_rho_a)
+ ! write(33,'(100(F16.10,X))') dsqrt(final_grid_points(1,i)**2+final_grid_points(2,i)**2+final_grid_points(3,i)**2),rho_a+rho_b, kernelc(i), (decLDAndrho_a_delta_a - decLDAndrho_a)/(delta_rho_a) 
+
+  call g0_dg0_d2g0(rho, rho_a, rho_b, g0, dg0drho, d2g0drho2)
+
+  n2_UEG = (rho**2)*g0
+
+  if(dabs(n2_UEG).lt.thr)then
+   n2_UEG = 1.d-12
+  endif  
+
+  dn2_UEGdrho = 2.d0*rho*g0 + (rho**2)*dg0drho
+  d2n2_UEGdrho2 = 2.d0*g0 + 2.d0*rho*dg0drho + 2.d0*rho*dg0drho + (rho**2)*d2g0drho2
+  beta = ecLDAn/(c*n2_UEG)
+  dbetadrho  = (decLDAndrho_a + decLDAndrho_b)/(c*n2_UEG) - (ecLDAn/(c*n2_UEG**2))*dn2_UEGdrho
+
+  D = kernelc(i)/(c*n2_UEG)
+  E = ((decLDAndrho_a + decLDAndrho_b)*dn2_UEGdrho)/(c*n2_UEG**2)
+  F = ((decLDAndrho_a + decLDAndrho_b)*dn2_UEGdrho)/(c*n2_UEG**2)
+  G = ecLDAn*d2n2_UEGdrho2/(c*n2_UEG**2)
+  H = (2.d0*ecLDAn*(dn2_UEGdrho)**2)/(c*n2_UEG**3)
+
+  d2betadrho2 = D - E -F -G + H
+
+  decLDAndrho = decLDAndrho_a + decLDAndrho_b
+  A1 = decLDAndrho*(1.d0 + beta*mu**3)
+  A2 = (1.d0 + beta*mu**3)**2
+
+  B1 = ecLDAn*(dbetadrho*mu**3)
+  B2 = (1.d0 + beta*mu**3)**2
+
+  dA1 = kernelc(i)*(1.d0 + beta*mu**3) + decLDAndrho*dbetadrho*mu**3
+  dA2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho*mu**3
+
+  dB1 = decLDAndrho*dbetadrho*mu**3 + ecLDAn*d2betadrho2*mu**3
+  dB2 = 2.d0*(1.d0 + beta*mu**3)*dbetadrho*mu**3
+ 
+  fcmdsrLDAUEG(i) = (dA1*A2 - dA2*A1)/(A2**2) - (dB1*B2 - dB2*B1)/(B2**2) 
+ endif
+ enddo
+
+ deallocate(kernelc)
+ end subroutine fc_LDAUEG

@@ -97,7 +97,7 @@ END_PROVIDER
  double precision :: weight,mu
  double precision :: ec_srmuLDAn
  double precision :: rho_a,rho_b
- double precision :: decdrho_a, decdrho_b
+ double precision :: decdrho_a, decdrho_b,d2ecdrho_a2,d2ecdrho_b2
 
  do istate = 1, N_states
   do i = 1, n_points_final_grid
@@ -107,7 +107,7 @@ END_PROVIDER
 
    mu = mu_of_r_prov(i,istate)
 !   call ecmdsrPBE(mu,rho_a,rho_b,grad_rho_a_2,grad_rho_b_2,grad_rho_a_b,ec_srmuPBE,decdrho_a,decdrho_b, decdgrad_rho_a_2,decdgrad_rho_b_2,decdgrad_rho_a_b)
-   call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b)
+   call ecmdsrLDAn(mu,rho_a,rho_b,ec_srmuLDAn,decdrho_a,decdrho_b,d2ecdrho_a2,d2ecdrho_b2)
 
    decdrho_a *= weight
    decdrho_b *= weight
