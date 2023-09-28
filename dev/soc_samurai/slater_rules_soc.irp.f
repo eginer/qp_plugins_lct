@@ -23,7 +23,7 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
  double precision :: phase,phase_2
  integer          :: exc(0:2,2,2),pm,spin,orb_j
 
- soc_ij = complex(0.d0,0.d0)
+ soc_ij = cmplx(0.d0,0.d0)
  if(dabs(sz_i-sz_j).gt.1.d0)return
  call get_good_things_dets(conf_i,conf_j,det_i, det_j,n_doc_i,n_doc_j,degree_doc,n_somo_i,n_somo_j,degree_somo)
  if(abs(n_doc_j - n_doc_i).gt.1)return
@@ -70,7 +70,7 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
      stop
     endif
    endif
-   soc_ij *= complex(phase,0.d0)
+   soc_ij *= cmplx(phase,0.d0)
   else ! doubly occupied have changed 
    do i = 1, N_int
     det_tmp(i,1) = conf_dif(i,1) ! new DOMO created/destroyed 
@@ -106,7 +106,7 @@ subroutine i_soc_j(conf_i,conf_j,det_i, det_j,sz_i,sz_j,soc_ij)
     print*,'Probleeeemmm tris '
     stop
    endif
-   soc_ij *= complex(phase,0.d0)
+   soc_ij *= cmplx(phase,0.d0)
   endif
  else if(sz_j == sz_i)then ! <det_i|S^z V^z|det_j>
   call i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
@@ -131,7 +131,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
  integer          :: degree,ispin
  double precision :: phase,sign_spin(2)
 
- soc_ij = complex(0.d0,0.d0)
+ soc_ij = cmplx(0.d0,0.d0)
  if(sz_i.ne.sz_j)return ! S_z does not couple two determinants with different S_z
  sign_spin(1) =+1.d0
  sign_spin(2) =-1.d0
@@ -143,7 +143,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
   do ispin = 1,2 ! loop over the spins of electrons : ispin = 1 :: alpha , ispin = 2 :: beta
    do i = 1, n_occ_ab(ispin) ! loop over electrons of spin "ispin"
     iorb = occ(i,ispin) ! ith ispin-occupied orbital in det_i
-    soc_ij += mo_v_soc_tot(iorb,iorb,3) * complex(sign_spin(ispin),0.d0) ! contribution from orbital iorb with the good sign
+    soc_ij += mo_v_soc_tot(iorb,iorb,3) * cmplx(sign_spin(ispin),0.d0) ! contribution from orbital iorb with the good sign
    enddo
   enddo
  else if(degree == 1)then
@@ -158,7 +158,7 @@ subroutine i_sz_j(det_i,det_j,sz_i,sz_j,soc_ij)
     p = exc(1,2,2)
     ispin = 2
   endif
-  soc_ij += mo_v_soc_tot(p,h,3) * complex(sign_spin(ispin) * phase,0.d0) ! contribution of a^{dagger}_{p,ispin} a_{h,ispin} 
+  soc_ij += mo_v_soc_tot(p,h,3) * cmplx(sign_spin(ispin) * phase,0.d0) ! contribution of a^{dagger}_{p,ispin} a_{h,ispin} 
  endif
 
 end
