@@ -1,3 +1,5 @@
+  use bitmasks ! you need to include the bitmasks_module.f90 features
+
 BEGIN_PROVIDER [ integer, n_virt_cisd]
  implicit none
  n_virt_cisd = mo_num - elec_alpha_num
@@ -72,7 +74,7 @@ BEGIN_PROVIDER [double precision, amplitudes, (n_virt_cisd, n_virt_cisd, n_inact
  integer :: ii,jj,aa,bb
  integer :: i,j,a,b,s1,s2
  integer :: index_i
- double precision :: inv_hf_coef
+ double precision :: inv_hf_coef, amplitude
  inv_hf_coef = 1.d0/psi_coef(hf_index,1)
  amplitudes = 0.d0
  do s2 = 1, 2
@@ -83,7 +85,9 @@ BEGIN_PROVIDER [double precision, amplitudes, (n_virt_cisd, n_virt_cisd, n_inact
          do bb = 1, n_virt_cisd
            index_i = amplitude_index(aa,bb,ii,jj,s1,s2)
            if(index_i.lt.0)cycle
-           amplitudes(aa,bb,ii,jj,s1,s2) = psi_coef(index_i,1) * inv_hf_coef 
+           amplitude = psi_coef(index_i,1) * inv_hf_coef 
+           amplitudes(aa,bb,ii,jj,s1,s2) = 0.5d0 * amplitude
+           amplitudes(bb,aa,jj,ii,s2,s1) = 0.5d0 * amplitude
          enddo
        enddo
      enddo
@@ -92,31 +96,3 @@ BEGIN_PROVIDER [double precision, amplitudes, (n_virt_cisd, n_virt_cisd, n_inact
  enddo
 END_PROVIDER 
 
- BEGIN_PROVIDER [double precision, ecorr_contrib, (n_virt_cisd, n_virt_cisd, n_inact_cisd, n_inact_cisd,2,2)]
-&BEGIN_PROVIDER [double precision, ecorr_tot ]
- implicit none
- integer :: ii,jj,aa,bb
- integer :: i,j,a,b,s1,s2
- integer :: index_i
- double precision :: inv_hf_coef,contrib
- inv_hf_coef = 1.d0/psi_coef(hf_index,1)
- ecorr_tot = 0.d0
- ecorr_contrib = 0.d0
- do s2 = 1, 2
-  do s1 = 1, 2
-   do jj = 1, n_inact_cisd
-     do ii = 1, n_inact_cisd
-       do bb = 1, n_virt_cisd
-         do aa = 1, n_virt_cisd
-           index_i = amplitude_index(aa,bb,ii,jj,s1,s2)
-           if(index_i.lt.0)cycle
-           contrib =  (psi_coef(index_i,1) * inv_hf_coef * vij_ab(aa,bb,ii,jj,s1,s2))
-           ecorr_contrib(aa,bb,ii,jj,s1,s2) = contrib 
-           ecorr_tot += contrib 
-         enddo
-       enddo
-     enddo
-   enddo
-  enddo
- enddo
-END_PROVIDER 
