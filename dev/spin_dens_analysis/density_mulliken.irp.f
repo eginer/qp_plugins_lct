@@ -28,7 +28,7 @@ BEGIN_PROVIDER [double precision, density_gross_orbital_product, (ao_num,N_state
  do istate= 1, N_states
   do i = 1, ao_num
    do j = 1, ao_num
-    density_gross_orbital_product(i,istate) += density_population(j,i,N_states)
+    density_gross_orbital_product(i,istate) += density_population(j,i,istate)
    enddo
   enddo
  enddo
