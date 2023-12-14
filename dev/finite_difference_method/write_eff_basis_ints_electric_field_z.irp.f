@@ -23,6 +23,8 @@ program write_effective_z_electric_field_hamiltonian
  touch io_ao_integrals_kinetic 
  io_ao_one_e_integrals = "None"
  touch io_ao_one_e_integrals  
+ io_nuclear_repulsion = "None" 
+ touch io_nuclear_repulsion  
 
  call save_v_ne_and_z_electric_filed_ao_ints
 end

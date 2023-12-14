@@ -28,6 +28,7 @@ subroutine save_v_ne_and_z_electric_filed_ao_ints
  call ezfio_set_ao_one_e_ints_io_ao_integrals_n_e("Read")
  print*,' nuclei_electric_field_energy = ',nuclei_electric_field_energy
  call ezfio_set_nuclei_nuclear_repulsion(nuclear_repulsion_with_electric_field)
+! call ezfio_set_nuclei_nuclear_repulsion(nuclear_repulsion)
  call ezfio_set_nuclei_io_nuclear_repulsion("Read")
 end
 
@@ -106,7 +107,7 @@ BEGIN_PROVIDER [ double precision, nuclei_electric_field_energy ]
  nuclei_electric_field_energy = 0.d0
  do i = 1, nucl_num
 !  print*,field_strenght , nucl_coord(i,3) , nucl_charge(i)
-  nuclei_electric_field_energy += field_strenght * nucl_coord(i,3) * nucl_charge(i)
+  nuclei_electric_field_energy -= field_strenght * nucl_coord(i,3) * nucl_charge(i)
  enddo
 
 END_PROVIDER 
