@@ -2,10 +2,37 @@ program test_det
  implicit none
  read_wf = .True.
  touch read_wf 
+ call test_int
 ! call routine
 ! call test_conf
- call test_prov_s_p
- call test_prov_s_m
+! call test_prov_s_p
+! call test_prov_s_m
+end
+
+subroutine test_int
+ implicit none 
+ integer :: i,j
+ print*,'Kin'
+ do i = 1, mo_num
+  write(*,'(100(F10.5,X))')ao_kinetic_integrals(i,:)
+ enddo
+ print*,'hcore'
+ do i = 1, mo_num
+  write(*,'(100(F10.5,X))')ao_one_e_integrals(i,:)
+ enddo
+ print*,'X'
+ do i = 1, mo_num
+  write(*,'(100(F10.5,X,F10.5,X))')ao_one_e_soc_cartesian(i,:,1)
+ enddo
+ print*,'Y'
+ do i = 1, mo_num
+  write(*,'(100(F10.5,X,F10.5,X))')ao_one_e_soc_cartesian(i,:,2)
+ enddo
+ print*,'Z'
+ do i = 1, mo_num
+  write(*,'(100(F10.5,X,F10.5,X))')ao_one_e_soc_cartesian(i,:,3)
+ enddo
+
 end
 
 subroutine test_prov_s_p
