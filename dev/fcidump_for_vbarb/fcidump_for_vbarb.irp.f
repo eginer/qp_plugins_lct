@@ -1,4 +1,4 @@
-program fcidump_pbe
+program fcidump_vbarb
  implicit none
  read_wf = .true.
  touch read_wf
@@ -31,10 +31,10 @@ program fcidump_pbe
  no_core_density = .True.
  touch no_core_density
 
- call write_fcidump
+ call write_fcidump_vbarb
 end
 
-subroutine write_fcidump
+subroutine write_fcidump_vbarb
   implicit none
   BEGIN_DOC
 ! Produce a regular `FCIDUMP` file from the |MOs| stored in the |EZFIO|
@@ -92,7 +92,7 @@ subroutine write_fcidump
        if (i1>=j1) then
           integral = get_two_e_integral(i1,j1,k1,l1,mo_integrals_map)
           if (dabs(integral) > mo_integrals_threshold) then
-            if(needs_eff_two_e_ints)then	
+            if(needs_eff_two_e_ints)then
               integral += eff_two_e(i1,j1,k1,l1,1)
              endif
             write(i_unit_output,*) integral, i,k,j,l
