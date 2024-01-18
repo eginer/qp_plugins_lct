@@ -15,13 +15,20 @@ program write_dm_in_aux_quantities
   subroutine build_dm_for_aux_quantities
   implicit none
   ! Faire plutôt des allocates
-  double precision, dimension (mo_num, mo_num) :: one_e_dm_beta_mo_from_file_mo_num_size
-  double precision, dimension (mo_num, mo_num) :: one_e_dm_alpha_mo_from_file_mo_num_size
-  double precision, dimension (n_act_orb, n_act_orb) :: one_e_dm_beta_mo_from_file
-  double precision, dimension (n_act_orb, n_act_orb) :: one_e_dm_alpha_mo_from_file
-  double precision, dimension (ao_num, ao_num) :: one_e_dm_alpha_ao_from_file
-  double precision, dimension (ao_num, ao_num) :: one_e_dm_beta_ao_from_file
+  double precision, allocatable :: one_e_dm_beta_mo_from_file_mo_num_size(:,:)
+  double precision, allocatable :: one_e_dm_alpha_mo_from_file_mo_num_size (:,:)
+  double precision, allocatable :: one_e_dm_beta_mo_from_file(:,:)
+  double precision, allocatable :: one_e_dm_alpha_mo_from_file(:,:)
+  double precision, allocatable :: one_e_dm_alpha_ao_from_file (:,:)
+  double precision, allocatable :: one_e_dm_beta_ao_from_file (:,:)
   integer :: i, j, ii, jj
+
+  allocate(one_e_dm_beta_mo_from_file_mo_num_size(mo_num, mo_num)) 
+  allocate(one_e_dm_alpha_mo_from_file_mo_num_size(mo_num, mo_num)) 
+  allocate(one_e_dm_beta_mo_from_file(n_act_orb, n_act_orb))
+  allocate(one_e_dm_alpha_mo_from_file(n_act_orb, n_act_orb))
+  allocate(one_e_dm_alpha_ao_from_file(ao_num, ao_num))
+  allocate(one_e_dm_beta_ao_from_file(ao_num, ao_num))
 
 
   one_e_dm_alpha_mo_from_file_mo_num_size = 0.d0 
