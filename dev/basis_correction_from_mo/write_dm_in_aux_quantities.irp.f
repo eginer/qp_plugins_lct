@@ -34,10 +34,10 @@ program write_dm_in_aux_quantities
   one_e_dm_alpha_mo_from_file_mo_num_size = 0.d0 
   one_e_dm_beta_mo_from_file_mo_num_size = 0.d0 
   
-  do i=1, n_core_orb
-    one_e_dm_alpha_mo_from_file_mo_num_size(i,i) = 1.d0
-    one_e_dm_beta_mo_from_file_mo_num_size(i,i) = 1.d0
-  enddo
+  !do i=1, n_core_orb
+  !  one_e_dm_alpha_mo_from_file_mo_num_size(i,i) = 1.d0
+  !  one_e_dm_beta_mo_from_file_mo_num_size(i,i) = 1.d0
+  !enddo
 
   ! READ 1-e alpha density matrix in MO basis:
   open(12, file="mo_alpha_1rdm.txt") 
