@@ -4,7 +4,7 @@ program print_eff_basis_potential
 ! Compute <Psi | V^B |Psi> 
   END_DOC
   double precision :: potential_tot_alpha, potential_tot_beta
-  integer :: i, j, nst 
+  integer :: i, j, ii, jj, nst 
 
   provide pot_basis_alpha_mo_basis_pbe_ueg
   provide pot_basis_beta_mo_basis_pbe_ueg
@@ -15,10 +15,12 @@ program print_eff_basis_potential
   potential_tot_alpha = 0.d0
   potential_tot_beta = 0.d0
 
-  do i=1, mo_num
-   do j=1, mo_num
-    potential_tot_alpha+= data_one_e_dm_alpha_mo(i,j,nst)*pot_basis_alpha_mo_basis_pbe_ueg(i,j,nst)
-    potential_tot_beta+= data_one_e_dm_beta_mo(i,j,nst)*pot_basis_beta_mo_basis_pbe_ueg(i,j,nst)
+  do ii=1, n_act_orb
+   i=list_act(ii)
+   do jj=1, n_act_orb
+    j=list_act(jj)
+    potential_tot_alpha+= data_one_e_dm_alpha_mo(i,j,nst)*pot_basis_alpha_mo_basis_pbe_ueg(ii,jj,nst)
+    potential_tot_beta+= data_one_e_dm_beta_mo(i,j,nst)*pot_basis_beta_mo_basis_pbe_ueg(ii,jj,nst)
    enddo
   enddo
 
