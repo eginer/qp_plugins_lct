@@ -1,4 +1,4 @@
-program fcidump_vbarb
+program fcidump_and_vbarb
  implicit none
  read_wf = .true.
  touch read_wf
@@ -32,5 +32,29 @@ program fcidump_vbarb
  touch no_core_density
 
  call write_fcidump_vbarb
+ call write_only_vbarb
+end
+
+subroutine write_only_vbarb
+ implicit none
+ integer :: i,j
+ !          set directory             variable 
+ double precision, allocatable :: pot_a(:,:)
+ allocate(pot_a(mo_num, mo_num))
+ do i = 1, mo_num
+  do j = 1, mo_num
+   pot_a(j,i) = pot_basis_alpha_mo(j,i,1)
+  enddo
+ enddo
+ call ezfio_set_basis_correction_from_mo_v_one_e_a_mo( pot_a)
+
+ do i = 1, mo_num
+  do j = 1, mo_num
+   pot_a(j,i) = pot_basis_beta_mo(j,i,1)
+  enddo
+ enddo
+ call ezfio_set_basis_correction_from_mo_v_one_e_b_mo( pot_a)
+
+ 
 end
 

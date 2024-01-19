@@ -15,12 +15,10 @@ program print_eff_basis_potential
   allocate(pot_basis_beta_mo_from_file(mo_num, mo_num))
 
   ! READ alpha potential in MO basis:
-  open(12, file="pot_basis_alpha_mo.txt") 
-  read(12,*) pot_basis_alpha_mo_from_file
+  call ezfio_get_basis_correction_from_mo_v_one_e_a_mo(pot_basis_alpha_mo_from_file)
 
   ! READ beta potential in MO basis:
-  open(13, file="pot_basis_beta_mo.txt") 
-  read(13,*) pot_basis_beta_mo_from_file
+  call ezfio_get_basis_correction_from_mo_v_one_e_b_mo(pot_basis_beta_mo_from_file)
 
   provide data_one_e_dm_alpha_mo
   provide data_one_e_dm_beta_mo
@@ -33,11 +31,11 @@ program print_eff_basis_potential
    i = list_act(ii)
    do jj=1, n_act_orb
     j = list_act(jj)
-    print*, 'data_one_e_dm_alpha_mo', ii, jj, nst, data_one_e_dm_alpha_mo(ii,jj,nst)
-    print*, 'pot_basis_alpha_mo_from_file', i, j, pot_basis_alpha_mo_from_file(i,j)
-    print*, ' '
-    potential_tot_alpha+= data_one_e_dm_alpha_mo(ii,jj,nst)*pot_basis_alpha_mo_from_file(i,j)
-    potential_tot_beta+= data_one_e_dm_beta_mo(ii,jj,nst)*pot_basis_beta_mo_from_file(i,j)
+!    print*, 'data_one_e_dm_alpha_mo', ii, jj, nst, data_one_e_dm_alpha_mo(ii,jj,nst)
+!    print*, 'pot_basis_alpha_mo_from_file', i, j, pot_basis_alpha_mo_from_file(i,j)
+!    print*, ' '
+    potential_tot_alpha+= data_one_e_dm_alpha_mo(i,j,nst)*pot_basis_alpha_mo_from_file(i,j)
+    potential_tot_beta += data_one_e_dm_beta_mo(i,j,nst)*pot_basis_beta_mo_from_file(i,j)
    enddo
   enddo
 
@@ -45,7 +43,7 @@ program print_eff_basis_potential
   close(13)
 
  print*,'POTENTIAL ALPHA =', potential_tot_alpha
- print*,'POTENTIAL BETA =', potential_tot_beta
- print*,'POTENTIAL TOT =', potential_tot_alpha + potential_tot_beta
+ print*,'POTENTIAL BETA  =', potential_tot_beta
+ print*,'POTENTIAL TOT   =', potential_tot_alpha + potential_tot_beta
 
 end
