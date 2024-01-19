@@ -33,6 +33,9 @@ program print_eff_basis_potential
    i = list_act(ii)
    do jj=1, n_act_orb
     j = list_act(jj)
+    print*, 'data_one_e_dm_alpha_mo', ii, jj, nst, data_one_e_dm_alpha_mo(ii,jj,nst)
+    print*, 'pot_basis_alpha_mo_from_file', i, j, pot_basis_alpha_mo_from_file(i,j)
+    print*, ' '
     potential_tot_alpha+= data_one_e_dm_alpha_mo(ii,jj,nst)*pot_basis_alpha_mo_from_file(i,j)
     potential_tot_beta+= data_one_e_dm_beta_mo(ii,jj,nst)*pot_basis_beta_mo_from_file(i,j)
    enddo
