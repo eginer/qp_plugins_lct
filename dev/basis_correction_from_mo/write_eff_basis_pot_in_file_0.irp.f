@@ -8,11 +8,11 @@ program write_eff_basis_pot_in_file
 
   !read_wf=.True.
   !touch read_wf 
-  call build_eff_pot_for_aux_quantities
+  call build_eff_pot_for_aux_quantities_0
 
   end 
 
-  subroutine build_eff_pot_for_aux_quantities
+  subroutine build_eff_pot_for_aux_quantities_0
   implicit none
   ! Faire plutôt des allocates
   integer :: i, ii, nst

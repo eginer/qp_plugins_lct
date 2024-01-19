@@ -7,6 +7,9 @@ program print_eff_basis_potential
   double precision, allocatable :: pot_basis_beta_mo_from_file(:,:)
   double precision :: potential_tot_alpha, potential_tot_beta
   integer :: i, j, ii, jj, nst 
+  read_wf=.True.
+  touch read_wf 
+
 
   allocate(pot_basis_alpha_mo_from_file(mo_num, mo_num))
   allocate(pot_basis_beta_mo_from_file(mo_num, mo_num))
