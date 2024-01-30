@@ -53,6 +53,7 @@ for e in eS:
   print('E_S '+str(iroot)+' =  '+str(e)+'  eV = '+str(e*27.2114))
 
 eT, c_T = mycc.eomee_ccsd_triplet(nroots=n_roots)
+iroot=0
 for e in eT:
   iroot+= 1
   print('E_T '+str(iroot)+' =  '+str(e)+'  eV = '+str(e*27.2114))
