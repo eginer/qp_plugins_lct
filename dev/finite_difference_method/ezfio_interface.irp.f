@@ -1,6 +1,6 @@
 ! DO NOT MODIFY BY HAND
 ! Created by $QP_ROOT/scripts/ezfio_interface/ei_handler.py
-! from file /home_lct/dtraore/qp2/src/finite_difference_method/EZFIO.cfg
+! from file /home/eginer/qp2/src/finite_difference_method/EZFIO.cfg
 
 
 BEGIN_PROVIDER [ double precision, field_strenght  ]
