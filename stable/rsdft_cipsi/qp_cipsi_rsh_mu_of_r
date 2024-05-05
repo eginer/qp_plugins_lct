@@ -204,7 +204,7 @@ def main():
 ###################################
 # Set a clean environement for the mu(r) integrals and so on
     ezfio.set_dft_keywords_mu_dft_type(vmur)
-    ezfio.set_ao_two_e_erf_ints_mu_erf(mu)
+    ezfio.set_hamiltonian_mu_erf(mu)
     ezfio.set_mo_two_e_erf_ints_io_mo_two_e_integrals_erf("None")
     ezfio.set_ao_two_e_erf_ints_io_ao_two_e_integrals_erf("None")
     save_mu_of_r_ints(filename)

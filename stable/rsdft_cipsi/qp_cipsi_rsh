@@ -200,7 +200,7 @@ def main():
     ezfio.set_file(filename)
     ezfio.set_dft_keywords_exchange_functional(functional)
     ezfio.set_dft_keywords_correlation_functional(functional)
-    ezfio.set_ao_two_e_erf_ints_mu_erf(mu)
+    ezfio.set_hamiltonian_mu_erf(mu)
     ezfio.set_perturbation_pt2_max(pt2max)
     ezfio.set_determinants_n_det_max(ndetmax)
     ezfio.set_density_for_dft_density_for_dft("WFT")
