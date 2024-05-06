@@ -6,7 +6,7 @@ program print_mu_av_tc
 !   print*,'average_mu_rs        = ',average_mu_rs 
    print*,'average_mu_rs_c      = ',average_mu_rs_c
    print*,'average_mu_rs_c_lda  = ',average_mu_rs_c_lda
-   call plot_mu_tc
+!   call plot_mu_tc
 end
 
 
