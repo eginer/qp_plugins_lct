@@ -1,5 +1,5 @@
 dft_one_e 
-erf_slater_rules
+determinants
 func_ecmd_utils
 func_ecmd
-mu_of_r_ints_bis
+erf_slater_rules

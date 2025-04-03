@@ -25,5 +25,5 @@ subroutine routine_write
  call ezfio_set_mo_two_e_ints_io_mo_two_e_integrals('Read')
 
  call map_save_to_disk(trim(ezfio_filename)//'/work/mo_ints_erf',mo_integrals_erf_map)
- call ezfio_set_mo_two_e_erf_ints_io_mo_two_e_integrals_erf("Read")
+ call ezfio_set_mo_two_e_ints_io_mo_two_e_integrals_erf("Read")
 end

@@ -160,37 +160,3 @@ subroutine routine_print_1h_and_cas
 end
 
 
-subroutine remove_extra_1h
- implicit none
- integer :: i
- logical :: is_the_hole_in_det,is_ok
- logical , allocatable :: list_ok(:)
- allocate(list_ok(N_det))
- list_ok = .False.
- do i = 1, N_det
-  if(is_a_1h(psi_det(1,1,i)))then
-   is_ok = .False.
-   do j = 1, N_list_lmct
-    i_hole = list_lmct_tmp(j)
-
-    do ispin = 1, 2 
-     is_ok = is_the_hole_in_det(psi_det(1,1,i),ispin,i_hole)
-     if(is_ok)then
-      exit
-     endif
-    enddo
-
-    if(is_ok)then
-     exit
-    endif
-    list_ok(i) = is_ok
-   enddo
-  else
-   list_ok(i) = .True.
-  endif
-  
- enddo
-
-
-
-end
