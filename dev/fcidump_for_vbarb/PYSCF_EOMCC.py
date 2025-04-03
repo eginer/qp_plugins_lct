@@ -25,10 +25,11 @@ from pyscf.tools import fcidump
 ## PYSCF_EOMCC.py xyz_file basis n_roots n_frozen 
 
 
-xyz_file=str(sys.argv[1]) 
-basis=str(sys.argv[2])
-n_roots=int(sys.argv[3])
-n_frozen=int(sys.argv[4])
+xyz_file=str(sys.argv[1]) # name of the xyz file 
+basis=str(sys.argv[2]) # basis 
+n_roots=int(sys.argv[3]) # number of roots for both singlets and triplets 
+n_frozen=int(sys.argv[4]) # number of frozen orbitals in CC calculations 
+direct=str(sys.argv[5]) # direct=T => direct calculations 
 
 mol = gto.Mole()
 #mol.atom = 'C  0.00000000 0.00000000 -1.24942055; O  0.00000000 0.00000000 0.89266692'
@@ -43,7 +44,12 @@ mf.scf()
 
 mf.mol.verbose = 4
 
-mycc = cc.CCSD(mf,frozen=n_frozen).run()
+mycc = cc.CCSD(mf,frozen=n_frozen)
+if direct =="T": 
+ mycc.direct = True
+ print("Running with direct integrals !")
+
+mycc.run()
 
 #e_ee, c_ee = mycc.eeccsd(nroots=10)
 eS, c_S = mycc.eomee_ccsd_singlet(nroots=n_roots)
