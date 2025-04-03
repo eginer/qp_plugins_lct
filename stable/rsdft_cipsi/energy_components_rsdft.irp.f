@@ -28,6 +28,17 @@ BEGIN_PROVIDER [double precision, electronic_energy_mr_dft, (N_states)]
 END_PROVIDER
 
 
+ subroutine print_hrsdft_expec_value
+ implicit none 
+ print*,'ref_bitmask_energy_erf   = ',ref_bitmask_energy_erf
+ print*,'ref_bitmask_two_e_energy = ',ref_bitmask_two_e_energy
+ print*,'ref_vhxc                 = ',ref_vhxc
+ print*,'ref_bitmask_kinetic_energy ',ref_bitmask_kinetic_energy
+ print*,'ref_bitmask_n_e_energy   = ',ref_bitmask_n_e_energy
+
+
+end
+
  subroutine print_variational_energy_dft
  implicit none
  BEGIN_DOC
@@ -59,6 +70,11 @@ END_PROVIDER
   print*,  '****************************************'
   print*, ''
   write(*, '(A22,X,F16.10)') 'Trace_v_Hxc         = ',Trace_v_Hxc(i)
+  print*,  '****************************************'
+  print*, 'Qualitative eigenvalue for the effective Hamiltonian '
+  print*, 'Epsilon = ',psi_energy_erf(i) + Trace_v_Hxc(i) + psi_dft_energy_h_core(i) + nuclear_repulsion 
+  print*,'You can use Epsilon to qualitatively check '
+  print*,'if the integrals are correctly written     '
  enddo
  end
 
