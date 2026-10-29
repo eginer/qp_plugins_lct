@@ -125,10 +125,8 @@ subroutine add_integrals_to_mo_tc_sym_two_e_pot_dag_map(mask_ijkl)
       !$OMP  buffer_i,buffer_value,n_integrals,wall_2,i0,j0,k0,l0,   &
       !$OMP  wall_0,thread_num,accu_bis)                             &
       !$OMP  DEFAULT(NONE)                                           &
-      !$OMP  SHARED(size_buffer,ao_num,mo_num,n_i,n_j,n_k,n_l,   &
-      !$OMP  mo_coef_transp,                                         &
-      !$OMP  mo_coef_transp_is_built, list_ijkl,                     &
-      !$OMP  mo_coef_is_built, wall_1,                               &
+      !$OMP  SHARED(size_buffer,ao_num,mo_num,n_i,n_j,n_k,n_l,       &
+      !$OMP  mo_coef_transp, list_ijkl, wall_1,                      &
       !$OMP  mo_coef,mo_integrals_threshold,mo_tc_sym_two_e_pot_dag_map)
   n_integrals = 0
   wall_0 = wall_1
